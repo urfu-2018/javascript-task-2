@@ -80,10 +80,6 @@ function find(query) {
         return [];
     }
 
-    if (query === '*') {
-        return correctOutput([...phoneBook]);
-    }
-
     return correctOutput(searchInBook(query));
 }
 
@@ -128,6 +124,9 @@ function isDataCorrect(phone, name, email) {
 }
 
 function searchInBook(query) {
+    if (query === '*') {
+        return [...phoneBook];
+    }
     const founded = [];
     phoneBook.forEach(value => {
         if (value.indexOf(query) !== -1) {
