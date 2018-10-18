@@ -19,7 +19,20 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    console.log(name + " " + phone + " " + email);
+    phoneBook = {};
+    const correctPhone = /^\d\d\d\d\d\d\d\d\d\d$/.test(phone);
+    console.log(correctPhone);
+    if (!correctPhone || Object.values(phoneBook).includes(phone) ||
+     Object.values(phoneBook).includes(name) || name === undefined) {
+        return false;
+    }
 
+    phoneBook.phone = phone;
+    phoneBook.name = name;
+    phoneBook.email = email;
+
+    return true;
 }
 
 /**
@@ -30,7 +43,22 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    console.log(name + " " + phone + " " + email);
+    console.log(phoneBook.phone === phone);
+    if (phoneBook.phone === phone) {
+        phoneBook.name = name;
+        
+        if (email === undefined) {
+            phone.email = undefined;
+        }
+        else {
+            phoneBook.email = email;
+        }
+        
+        return true;
+    }
 
+    return false;
 }
 
 /**
