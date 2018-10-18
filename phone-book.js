@@ -95,8 +95,20 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    const items = csv.split('\n').map(item => item.split(';'));
+    let importedCount = 0;
+    items.forEach(item => {
+        const [name, phone, email] = item;
+        if (!add(phone, name, email)) {
+            if (update(phone, name, email)) {
+                importedCount++;
+            }
+        } else {
+            importedCount++;
+        }
+    });
 
-    return csv.split('\n').length;
+    return importedCount;
 }
 
 function isDataCorrect(phone, name, email) {
