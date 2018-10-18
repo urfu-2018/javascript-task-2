@@ -20,6 +20,7 @@ let phoneBook = new Set();
  */
 function add(phone, name, email) {
     email = email || '';
+    email = email.trim();
     if (!isDataCorrect(phone, name, email)) {
         return false;
     }
@@ -40,6 +41,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     email = email || '';
+    email = email.trim();
     if (!isDataCorrect(phone, name, email)) {
         return false;
     }
@@ -101,6 +103,7 @@ function importFromCsv(csv) {
     items.forEach(item => {
         let [name, phone, email] = item;
         email = email || '';
+        email = email.trim();
         if (!add(phone, name, email)) {
             if (update(phone, name, email)) {
                 importedCount++;
