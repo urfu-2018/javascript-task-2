@@ -4,12 +4,12 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,17 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-
+    if (typeof phone !== 'string' || typeof name !== 'string') {
+        console.log('FALSE1');
+        return false;
+    }
+    if (/^[0-9]{10}$/.test(phone) && name) {
+        phoneBook.push(`${phone}, ${name}${email ? `, ${email}` : ''}`)
+        console.log(`${phone}, ${name}${email ? `, ${email}` : ''}`)
+        return true;
+    }
+    console.log('FALSE2');
+    return false;
 }
 
 /**
@@ -30,7 +40,17 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-
+    if (typeof phone !== 'string' || typeof name !== 'string') {
+        console.log('FALSE1');
+        return false;
+    }
+    if (/^[0-9]{10}$/.test(phone) && name) {
+        phoneBook.push(`${phone}, ${name}${email ? `, ${email}` : ''}`)
+        console.log(`${phone}, ${name}${email ? `, ${email}` : ''}`)
+        return true;
+    }
+    console.log('FALSE2');
+    return false;
 }
 
 /**
@@ -48,7 +68,11 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-
+    if (typeof query !== 'string') {
+        throw new TypeError();
+    }
+    return query === '*' ? phoneBook :
+    phoneBook.filter(x => -1 < x.indexOf(query));
 }
 
 /**
