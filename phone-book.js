@@ -114,7 +114,7 @@ function importFromCsv(csv) {
 }
 
 function isDataCorrect(phone, name, email) {
-    if (typeof name !== 'string' || typeof email !== 'string') {
+    if (typeof name !== 'string' || typeof email !== 'string' || typeof phone !== 'string') {
         return false;
     }
     if (!name) {
