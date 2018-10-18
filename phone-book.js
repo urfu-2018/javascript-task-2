@@ -19,7 +19,7 @@ let phoneBook = new Set();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    email = email || '';
+    email = email.trim() || '';
     if (!isDataCorrect(phone, name, email)) {
         return false;
     }
@@ -39,7 +39,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    email = email || '';
+    email = email.trim() || '';
     if (!isDataCorrect(phone, name, email)) {
         return false;
     }
@@ -117,7 +117,7 @@ function isDataCorrect(phone, name, email) {
     if (typeof name !== 'string' || typeof email !== 'string' || typeof phone !== 'string') {
         return false;
     }
-    if (!name) {
+    if (!name.trim()) {
         return false;
     }
 
