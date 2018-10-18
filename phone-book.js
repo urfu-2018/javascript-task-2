@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = new Set();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,16 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    email = email || '';
+    if (!isDataCorrect(phone, name, email)) {
+        return false;
+    }
+    if (searchInBook(phone).length !== 0) {
+        return false;
+    }
+    phoneBook.add(`${name};${phone};${email}`);
 
+    return true;
 }
 
 /**
@@ -30,7 +39,18 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    email = email || '';
+    if (!isDataCorrect(phone, name, email)) {
+        return false;
+    }
+    const founded = searchInBook(phone)[0];
+    if (!founded) {
+        return false;
+    }
+    phoneBook.delete(founded);
+    phoneBook.add(`${name};${phone};${email}`);
 
+    return true;
 }
 
 /**
@@ -39,7 +59,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (typeof query !== 'string' || !query) {
+        return 0;
+    }
+    const founded = searchInBook(query);
+    founded.forEach(item => phoneBook.delete(item));
 
+    return founded.length;
 }
 
 /**
@@ -48,7 +74,15 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (typeof query !== 'string' || !query) {
+        return [];
+    }
 
+    if (query === '*') {
+        return correctOutput([...phoneBook]);
+    }
+
+    return correctOutput(searchInBook(query));
 }
 
 /**
@@ -63,6 +97,44 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
 
     return csv.split('\n').length;
+}
+
+function isDataCorrect(phone, name, email) {
+    if (typeof name !== 'string' || typeof email !== 'string') {
+        return false;
+    }
+    if (!name) {
+        return false;
+    }
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+        return false;
+    }
+
+    return true;
+}
+
+function searchInBook(query) {
+    const founded = [];
+    phoneBook.forEach(value => {
+        if (value.indexOf(query) !== -1) {
+            founded.push(value);
+        }
+    });
+
+    return founded;
+}
+
+function correctOutput(array) {
+    return array.map(item => {
+        const data = item.split(';');
+
+        return `${data[0]}, ${getFullPhone(data[1])}${data[2] ? ', ' + data[2] : ''}`;
+    }).sort();
+}
+
+function getFullPhone(phone) {
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
 }
 
 module.exports = {
