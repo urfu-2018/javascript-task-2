@@ -92,9 +92,10 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    if (typeof csv !== 'string' || !csv) {
+        return 0;
+    }
+
     const items = csv.split('\n').map(item => item.split(';'));
     let importedCount = 0;
     items.forEach(item => {
@@ -119,11 +120,7 @@ function isDataCorrect(phone, name, email) {
         return false;
     }
 
-    if (!/^[0-9]{10}$/.test(phone)) {
-        return false;
-    }
-
-    return true;
+    return /^[0-9]{10}$/.test(phone);
 }
 
 function searchInBook(query) {
