@@ -99,7 +99,8 @@ function importFromCsv(csv) {
     const items = csv.split('\n').map(item => item.split(';'));
     let importedCount = 0;
     items.forEach(item => {
-        const [name, phone, email] = item;
+        let [name, phone, email] = item;
+        email = email || '';
         if (!add(phone, name, email)) {
             if (update(phone, name, email)) {
                 importedCount++;
