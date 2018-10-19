@@ -17,6 +17,12 @@ let phoneBook = new Map();
 const phonePattern = /^[0-9]{10}$/;
 
 /**
+ *
+ *  Шаблон отформатированного номера с группами
+ */
+const prettyPhonePattern = /\+7 \(([0-9]{3})\) ([0-9]{3})-([0-9]{2})-([0-9]{2})/;
+
+/**
  * Проверка корректности аргументов
  * @param {String} phone
  * @param {String?} name
@@ -49,7 +55,16 @@ function prettifyPhone(phone) {
 }
 
 /**
- *
+ * Вырезать обычный номер (ключ) из форматированной строки
+ * @param {String} prettyEntry
+ * @returns {String}
+ */
+function getPhone(prettyEntry) {
+    return prettyEntry.match(prettyPhonePattern).join('');
+}
+
+/**
+ * Отформатировать строку для вывода find
  * @param {Any[]} phoneBookEntry
  * @returns {String}
  */
@@ -122,7 +137,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return query.length;
+    const records = find(query);
+    records.forEach(prettyEntry => phoneBook.delete(getPhone(prettyEntry)));
+
+    return records.length;
 }
 
 /**
@@ -145,11 +163,22 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    return csv.split('\n').reduce((acc, s) => {
+        s = s.split(';');
+        if (!isCorrect(s[1], s[0])) {
+            return acc;
+        }
 
-    return csv.split('\n').length;
+        if (!phoneBook.has(s[1])) {
+            add(s[1], s[0], s[2]);
+
+            return acc + 1;
+        }
+
+        update(s[1], s[0], s[2]);
+
+        return acc + 1;
+    }, 0);
 }
 
 module.exports = {
