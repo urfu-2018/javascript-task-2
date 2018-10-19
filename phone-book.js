@@ -155,10 +155,6 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string') {
-        return [];
-    }
-
     const prettyEntries = Array.from(phoneBook)
         .sort((a, b) => a[1].name > b[1].name)
         .map(entry => prettifyEntry(entry));
