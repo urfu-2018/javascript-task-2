@@ -82,9 +82,9 @@ function find(query) {
     if (!query) {
         return [];
     }
-    const sortedPhoneBook = phoneBook.sort(sortContactsByName);
+    const sortedPhoneBook = phoneBook.slice().sort(sortContactsByName);
     if (query === '*') {
-        return phoneBook.map(contactToString);
+        return sortedPhoneBook.map(contactToString);
     }
 
     return sortedPhoneBook.filter(contact =>
