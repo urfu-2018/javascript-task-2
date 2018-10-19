@@ -79,8 +79,8 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string' || query === '') {
-        return 0;
+    if (!query) {
+        return [];
     }
     const sortedPhoneBook = phoneBook.sort(sortContactsByName);
     if (query === '*') {
