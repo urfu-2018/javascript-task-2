@@ -44,7 +44,7 @@ function extractPhone(str) {
  */
 function add(phone, name, email) {
     const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!correctPhone.test(phone) || !isString(name) || phoneBook[phone]) {
+    if (!isString(name) || !correctPhone.test(phone) || phoneBook[phone]) {
         return false;
     }
 
@@ -92,7 +92,7 @@ function formatPhone(phone) {
  */
 function update(phone, name, email) {
     const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!correctPhone.test(phone) || !isString(name)) {
+    if (!isString(name) || !correctPhone.test(phone)) {
         return false;
     }
 
