@@ -21,7 +21,7 @@ let phoneBook = {};
 function add(phone, name, email) {
     const correctPhone = /^\d{10}$/.test(phone);
     if (!correctPhone || Object.keys(phoneBook).includes(phone) ||
-    name === undefined) {
+    name === undefined || name === '') {
         return false;
     }
     phoneBook[phone] = {
@@ -40,7 +40,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (Object.keys(phoneBook).includes(phone) && name !== undefined) {
+    if (Object.keys(phoneBook).includes(phone) && name !== undefined && name !== '') {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -73,15 +73,11 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === undefined) {
-        return;
-    }
-
     const res = findKeys(query);
 
     return res.map(
         phone =>
-            phoneBook[phone].email !== undefined
+            phoneBook[phone].email
                 ? `${phoneBook[phone].name}, ${getPhone(phone)}, ${phoneBook[phone].email}`
                 : `${phoneBook[phone].name}, ${getPhone(phone)}`);
 }
@@ -112,6 +108,10 @@ function importFromCsv(csv) {
 }
 
 function findKeys(query) {
+    if (query === undefined || query === '') {
+        return [];
+    }
+
     if (query === '*') {
         return Object.keys(phoneBook)
             .sort((a, b) => phoneBook[a].name > phoneBook[b].name);
