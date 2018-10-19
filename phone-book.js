@@ -148,7 +148,7 @@ function getTextRepresentation(personalData) {
     if (personalData.name.length) {
         values.push(personalData.name);
     }
-    values.push(personalData.phone);
+    values.push(formatPhone(personalData.phone));
     if (personalData.email.length) {
         values.push(personalData.email);
     }
