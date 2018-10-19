@@ -125,7 +125,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '') {
+    if (!isString(query) || query === '') {
         return [];
     }
 
