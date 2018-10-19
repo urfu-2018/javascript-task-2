@@ -65,9 +65,10 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let deleteContacts = find(query);
-
     deleteContacts.forEach(deleteContact => {
-        phoneBook.splice(phoneBook.indexOf(deleteContact.split(', ')[1]), 1);
+        let i = phoneBook.findIndex(contact =>
+            formatPhone(contact.phone) === deleteContact.split(', ')[1]);
+        phoneBook.splice(i, 1);
     });
 
     return deleteContacts.length;
