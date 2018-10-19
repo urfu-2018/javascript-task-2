@@ -11,14 +11,28 @@ const isStar = true;
  */
 let phoneBook = {};
 
-let id = 0;
-
 class PhoneBookEntry {
     constructor(phone, name, email) {
-        this.phone = phone;
+        this.phone = phone; // +7 (555) 666-77-88
         this.name = name;
         this.email = email;
     }
+
+    toString() {
+        let str = `${this.name}, ${this.phone}`;
+        if (this.email) {
+            str += `, ${this.email}`;
+        }
+
+        return str;
+    }
+}
+
+function extractPhone(str) {
+    const regexp = /.*, \+7 \((\d{3})\) (\d{3})-(\d{2})-(\d{2}),*.*/;
+    const match = str.match(regexp);
+
+    return `${match[1]}${match[2]}${match[3]}${match[4]}`;
 }
 
 /**
@@ -30,11 +44,11 @@ class PhoneBookEntry {
  */
 function add(phone, name, email) {
     const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!correctPhone.test(phone) || !isString(name)) {
+    if (!correctPhone.test(phone) || !isString(name) || phoneBook[phone]) {
         return false;
     }
 
-    phoneBook[id] = new PhoneBookEntry(phone, name, email);
+    phoneBook[phone] = new PhoneBookEntry(formatPhone(phone), name, email);
 
     return true;
 }
@@ -48,14 +62,25 @@ function isString(obj) {
 }
 
 function findByPhone(phone) {
-    const keys = phoneBook.keys();
-    for (const key in keys) {
-        if (phone[key].phone === phone) {
-            return phone[key];
-        }
-    }
+    return phoneBook[phone];
+}
 
-    return undefined;
+function getAllEntries() {
+    const phones = allPhones();
+
+    return phones.map((phone) => phoneBook[phone].toString());
+}
+
+function allPhones() {
+    return Object.keys(phoneBook);
+}
+
+
+function formatPhone(phone) {
+    const correctPhone = /^(\d{3})(\d{3})(\d{2})(\d{2})$/; // 5556667788
+    const match = phone.match(correctPhone);
+
+    return `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`; // +7 (555) 666-77-88
 }
 
 /**
@@ -88,7 +113,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return query.length;
+    const found = find(query);
+    found.map(entry => delete phoneBook[extractPhone(entry)]);
+
+    return found.length;
 }
 
 /**
@@ -97,10 +125,17 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let a = query.length;
-    if (a) {
+    if (query === '') {
         return [];
     }
+
+    let entries = getAllEntries();
+    entries.sort();
+    if (query === '*') {
+        return entries;
+    }
+
+    return entries.filter(entry => entry.includes(query));
 }
 
 /**
