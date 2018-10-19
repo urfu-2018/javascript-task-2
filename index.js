@@ -2,6 +2,8 @@
 
 const phoneBook = require('./phone-book');
 
+
+console.log(phoneBook.formatNumber('5554440044'))
 // Эти записи добавятся, вернется `true`
 phoneBook.add('5554440044', 'Григорий', 'grisha@example.com');
 phoneBook.add('5552220022', 'Борис', 'boris@example.com');

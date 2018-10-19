@@ -9,7 +9,7 @@ const isStar = false;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,17 +19,22 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof phone !== 'string' || typeof name !== 'string') {
+    if (typeof phone !== 'string' || typeof name !== 'string' || !phoneBook[phone]) {
         console.log('FALSE1');
         return false;
     }
     if (/^[0-9]{10}$/.test(phone) && name) {
-        phoneBook.push(`${phone}, ${name}${email ? `, ${email}` : ''}`)
-        console.log(`${phone}, ${name}${email ? `, ${email}` : ''}`)
+        phoneBook[phone] = (`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`)
+        console.log(`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`)
         return true;
     }
     console.log('FALSE2');
     return false;
+}
+
+function formatNumber(phone){
+    return phone.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
+    `${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`;
 }
 
 /**
@@ -45,8 +50,8 @@ function update(phone, name, email) {
         return false;
     }
     if (/^[0-9]{10}$/.test(phone) && name) {
-        phoneBook.push(`${phone}, ${name}${email ? `, ${email}` : ''}`)
-        console.log(`${phone}, ${name}${email ? `, ${email}` : ''}`)
+        phoneBook[phone] = (`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`)
+        console.log(`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`)
         return true;
     }
     console.log('FALSE2');
@@ -59,7 +64,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
+    const find = this.find(query);
+    const res = find.length;
+    //find.forEach(z => delete z);
+    return res;
 }
 
 /**
@@ -71,8 +79,9 @@ function find(query) {
     if (typeof query !== 'string') {
         throw new TypeError();
     }
-    return query === '*' ? phoneBook :
-    phoneBook.filter(x => -1 < x.indexOf(query));
+    console.log(phoneBook.values)
+    return query === '*' ? (phoneBook.sort()) :
+    phoneBook.filter(x => x.include(query)).sort();
 }
 
 /**
@@ -95,6 +104,7 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
+    formatNumber, // delete
 
     isStar
 };
