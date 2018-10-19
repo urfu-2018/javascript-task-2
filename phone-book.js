@@ -68,7 +68,6 @@ function findAndRemove(query) {
 
     deleteContacts.forEach(deleteContact => {
         phoneBook.splice(phoneBook.indexOf(deleteContact.split(', ')[1]), 1);
-
     });
 
     return deleteContacts.length;
@@ -123,11 +122,11 @@ function checkFields(phone, name, email) {
 }
 
 function checkName(name) {
-    return typeof name === 'string' && name !== '';
+    return typeof name === 'string' && name.trim() !== '';
 }
 
 function checkEmail(email) {
-    return email === undefined || (typeof email === 'string' && email !== '');
+    return email === undefined || (typeof email === 'string' && email.trim() !== '');
 }
 
 function checkPhone(phone) {
