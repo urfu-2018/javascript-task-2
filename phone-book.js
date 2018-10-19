@@ -127,8 +127,9 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
     return csv.split('\n')
-        .map((entry) => entry.split(';'))
-        .map(([name, phone, email]) => {
+        .map((entry) => {
+            const [name, phone, email] = entry.split(';');
+
             return phoneBook[phone] ? update(phone, name, email) : add(phone, name, email);
         })
         .reduce((a, b) => a + b);
