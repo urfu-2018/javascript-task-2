@@ -134,7 +134,7 @@ function checkEmail(email) {
 }
 
 function checkPhone(phone) {
-    if (phone === undefined || (typeof phone === 'string' && /^\d{10}$/.test(phone))) {
+    if (typeof phone === 'string' && /^\d{10}$/.test(phone)) {
         return true;
     }
 
