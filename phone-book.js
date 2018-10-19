@@ -17,7 +17,6 @@ let phoneBook = new Map();
 const phonePattern = /^[0-9]{10}$/;
 
 /**
- *
  *  Шаблон отформатированного номера с группами
  */
 const prettyPhonePattern = /\+7 \(([0-9]{3})\) ([0-9]{3})-([0-9]{2})-([0-9]{2})/;
@@ -60,7 +59,9 @@ function prettifyPhone(phone) {
  * @returns {String}
  */
 function getPhone(prettyEntry) {
-    return prettyEntry.match(prettyPhonePattern).join('');
+    return prettyEntry.match(prettyPhonePattern)
+        .slice(1)
+        .join('');
 }
 
 /**
@@ -69,16 +70,14 @@ function getPhone(prettyEntry) {
  * @returns {String}
  */
 function prettifyEntry(phoneBookEntry) {
-    return (phoneBookEntry[1].email)
-        ? [
-            phoneBookEntry[1].name,
-            prettifyPhone(phoneBookEntry[0]),
-            phoneBookEntry[1].email
-        ].join(', ')
-        : [
-            phoneBookEntry[1].name,
-            prettifyPhone(phoneBookEntry[0])
-        ].join(', ');
+    return (phoneBookEntry[1].email) ? [
+        phoneBookEntry[1].name,
+        prettifyPhone(phoneBookEntry[0]),
+        phoneBookEntry[1].email
+    ].join(', ') : [
+        phoneBookEntry[1].name,
+        prettifyPhone(phoneBookEntry[0])
+    ].join(', ');
 }
 
 /**
@@ -99,8 +98,8 @@ function add(phone, name, email) {
 
     email = email || '';
     phoneBook.set(phone, {
-        'name': name,
-        'email': email
+        name,
+        email
     });
 
     return true;
@@ -124,8 +123,8 @@ function update(phone, name, email) {
 
     email = email || '';
     phoneBook.set(phone, {
-        'name': name,
-        'email': email
+        name,
+        email
     });
 
     return true;
@@ -137,6 +136,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (query === '*') {
+        const length = phoneBook.size;
+        phoneBook.clear();
+
+        return length;
+    }
+
     const records = find(query);
     records.forEach(prettyEntry => phoneBook.delete(getPhone(prettyEntry)));
 
@@ -149,6 +155,10 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (typeof query !== 'string') {
+        return [];
+    }
+
     const prettyEntries = Array.from(phoneBook)
         .sort((a, b) => a[1].name > b[1].name)
         .map(entry => prettifyEntry(entry));
@@ -165,13 +175,9 @@ function find(query) {
 function importFromCsv(csv) {
     return csv.split('\n').reduce((acc, s) => {
         s = s.split(';');
-        if (!isCorrect(s[1], s[0])) {
-            return acc;
-        }
 
         return (add(s[1], s[0], s[2]) || update(s[1], s[0], s[2]))
-            ? acc + 1
-            : acc;
+            ? acc + 1 : acc;
     }, 0);
 }
 
