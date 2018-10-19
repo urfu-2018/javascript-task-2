@@ -9,7 +9,62 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = new Map();
+
+/**
+ *  Шаблон номера
+ */
+const phonePattern = /^[0-9]{10}$/;
+
+/**
+ * Проверка корректности аргументов
+ * @param {String} phone
+ * @param {String?} name
+ * @returns {Boolean}
+ */
+function isCorrect(phone, name) {
+    if (typeof phone !== 'string' ||
+        typeof name !== 'string') {
+        return false;
+    }
+
+    if (!name) {
+        return false;
+    }
+
+    if (!phonePattern.test(phone)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Форматирует номер телефона
+ * @param {String} phone
+ * @returns {String}
+ */
+function prettifyPhone(phone) {
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
+}
+
+/**
+ *
+ * @param {Any[]} phoneBookEntry
+ * @returns {String}
+ */
+function prettifyEntry(phoneBookEntry) {
+    return (phoneBookEntry[1].email)
+        ? [
+            phoneBookEntry[1].name,
+            prettifyPhone(phoneBookEntry[0]),
+            phoneBookEntry[1].email
+        ].join(', ')
+        : [
+            phoneBookEntry[1].name,
+            prettifyPhone(phoneBookEntry[0])
+        ].join(', ');
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +74,21 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!isCorrect(phone, name)) {
+        return false;
+    }
 
+    if (phoneBook.has(phone)) {
+        return false;
+    }
+
+    email = email || '';
+    phoneBook.set(phone, {
+        'name': name,
+        'email': email
+    });
+
+    return true;
 }
 
 /**
@@ -30,7 +99,21 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!isCorrect(phone, name)) {
+        return false;
+    }
 
+    if (!phoneBook.has(phone)) {
+        return false;
+    }
+
+    email = email || '';
+    phoneBook.set(phone, {
+        'name': name,
+        'email': email
+    });
+
+    return true;
 }
 
 /**
@@ -39,7 +122,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
+    return query.length;
 }
 
 /**
@@ -48,7 +131,11 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    const prettyEntries = Array.from(phoneBook)
+        .sort((a, b) => a[1].name > b[1].name)
+        .map(entry => prettifyEntry(entry));
 
+    return (query === '*') ? prettyEntries : prettyEntries.filter(v => v.includes(query));
 }
 
 /**
