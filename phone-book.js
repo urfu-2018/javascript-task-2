@@ -9,7 +9,15 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
+
+function isValidName(name) {
+    return typeof name === 'string' && name !== '';
+}
+
+function isValidPhone(phone) {
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +27,13 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!isValidPhone(phone) || !isValidName(name) || phoneBook[phone]) {
+        return false;
+    }
 
+    phoneBook[phone] = { name, email };
+
+    return true;
 }
 
 /**
@@ -30,7 +44,50 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!isValidPhone(phone) || !isValidName(name)) {
+        return false;
+    }
 
+    phoneBook[phone] = { name, email };
+
+    return true;
+}
+
+function queryPhones(query) {
+    if (query === '') {
+        return [];
+    }
+    if (query === '*') {
+        return Object.keys(phoneBook);
+    }
+
+
+    return Object.keys(phoneBook)
+        .filter(
+            (phone) => phone.includes(query) ||
+                phoneBook[phone].name.includes(query) ||
+                (phoneBook[phone].email && phoneBook[phone].email.includes(query))
+        );
+}
+
+function formatPhone(phone) {
+    const groups = /(\d{3})(\d{3})(\d{2})(\d{2})/.exec(phone);
+
+    return `+7 (${groups[1]}) ${groups[2]}-${groups[3]}-${groups[4]}`;
+}
+
+function comparePhoneByOwner(first, second) {
+    return phoneBook[first].name.localeCompare(phoneBook[second].name);
+}
+
+function getFormattedEntry(phone) {
+    const entry = phoneBook[phone];
+
+    if (entry.email) {
+        return `${entry.name}, ${formatPhone(phone)}, ${entry.email}`;
+    }
+
+    return `${entry.name}, ${formatPhone(phone)}`;
 }
 
 /**
@@ -39,7 +96,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    const resp = queryPhones(query);
 
+    resp.forEach((phone) => {
+        delete phoneBook[phone];
+    });
+
+    return resp.length;
 }
 
 /**
@@ -48,7 +111,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-
+    return queryPhones(query)
+        .sort(comparePhoneByOwner)
+        .map(getFormattedEntry);
 }
 
 /**
@@ -61,8 +126,10 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-
-    return csv.split('\n').length;
+    return csv.split('\n')
+        .map((entry) => entry.split(';'))
+        .map(([name, phone, email]) => update(phone, name, email))
+        .reduce((a, b) => a + b);
 }
 
 module.exports = {
