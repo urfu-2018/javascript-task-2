@@ -149,7 +149,20 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').length;
+    let split = csv.split('\n');
+    let total = 0;
+    split.forEach(line => {
+        let [name, phone, email] = line.split(';');
+        if (addOrUpdate(phone, name, email)) {
+            total++;
+        }
+    });
+
+    return total;
+}
+
+function addOrUpdate(phone, name, email) {
+    return add(phone, name, email) || update(phone, name, email);
 }
 
 module.exports = {
