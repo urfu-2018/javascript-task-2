@@ -138,8 +138,8 @@ function findAndRemove(query) {
 function getTextRepresentation(personalData) {
 
     function formatPhone(phone) {
-        return '+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 3) + '-' +
-            phone.slice(6, 2) + '-' + phone.slice(8, 2);
+        return '+7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) + '-' +
+            phone.substr(6, 2) + '-' + phone.substr(8, 2);
     }
 
     return formatPhone(personalData.phone) +
@@ -159,8 +159,8 @@ function find(query) {
     if (!query.length) {
         return [];
     }
-    const entries = findEntries(query);
-    entries.map(entry => {
+    let entries = findEntries(query);
+    entries = entries.map(entry => {
         return getTextRepresentation(entry);
     });
 
