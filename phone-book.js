@@ -19,8 +19,7 @@ let phoneBook = new Set();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    email = email || '';
-    email = email.trim();
+    [phone, name, email] = trimData(phone, name, email);
     if (!isDataCorrect(phone, name, email)) {
         return false;
     }
@@ -40,8 +39,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    email = email || '';
-    email = email.trim();
+    [phone, name, email] = trimData(phone, name, email);
     if (!isDataCorrect(phone, name, email)) {
         return false;
     }
@@ -61,9 +59,6 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string' || !query) {
-        return 0;
-    }
     const founded = searchInBook(query);
     founded.forEach(item => phoneBook.delete(item));
 
@@ -76,10 +71,6 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string' || !query) {
-        return [];
-    }
-
     return correctOutput(searchInBook(query));
 }
 
@@ -116,25 +107,30 @@ function isDataCorrect(phone, name, email) {
     if (typeof name !== 'string' || typeof email !== 'string' || typeof phone !== 'string') {
         return false;
     }
-    if (!name.trim()) {
+    if (!name) {
         return false;
     }
 
     return /^[0-9]{10}$/.test(phone);
 }
 
+function trimData(phone, name, email) {
+    phone = phone || '';
+    name = name || '';
+    email = email || '';
+
+    return [phone.trim(), name.trim(), email.trim()];
+}
+
 function searchInBook(query) {
+    if (typeof query !== 'string' || !query) {
+        return [];
+    }
     if (query === '*') {
         return [...phoneBook];
     }
-    const founded = [];
-    phoneBook.forEach(value => {
-        if (value.indexOf(query) !== -1) {
-            founded.push(value);
-        }
-    });
 
-    return founded;
+    return [...phoneBook].filter(value => value.indexOf(query) !== -1);
 }
 
 function correctOutput(array) {
