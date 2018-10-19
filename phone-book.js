@@ -167,6 +167,9 @@ function find(query) {
         return [];
     }
     let entries = findEntries(query);
+    entries.sort((a, b) => {
+        return a.name.localeCompare(b.name);
+    });
     entries = entries.map(entry => {
         return getTextRepresentation(entry);
     });
