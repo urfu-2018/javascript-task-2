@@ -64,7 +64,7 @@ function queryPhones(query) {
 
     return Object.keys(phoneBook)
         .filter(
-            (phone) => phone.includes(query) ||
+            phone => phone.includes(query) ||
                 phoneBook[phone].name.includes(query) ||
                 (phoneBook[phone].email && phoneBook[phone].email.includes(query))
         );
@@ -98,7 +98,7 @@ function getFormattedEntry(phone) {
 function findAndRemove(query) {
     const resp = queryPhones(query);
 
-    resp.forEach((phone) => {
+    resp.forEach(phone => {
         delete phoneBook[phone];
     });
 
@@ -127,12 +127,12 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
     return csv.split('\n')
-        .map((entry) => {
+        .map(entry => {
             const [name, phone, email] = entry.split(';');
 
             return phoneBook[phone] ? update(phone, name, email) : add(phone, name, email);
         })
-        .reduce((a, b) => a + b);
+        .reduce((totalCount, importedFromEntry) => totalCount + importedFromEntry);
 }
 
 module.exports = {
