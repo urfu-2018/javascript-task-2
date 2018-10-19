@@ -95,6 +95,9 @@ function update(phone, name, email) {
  */
 function findEntries(query) {
     const result = [];
+    if (!query) {
+        return result;
+    }
     phoneBook.forEach((personalData, phone) => {
         personalData.phone = phone;
         if (query === '*') {
