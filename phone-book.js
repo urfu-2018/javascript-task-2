@@ -81,7 +81,9 @@ function update(phone, name, email) {
     if (isValidName(name)) {
         entry.name = name;
     }
-    entry.email = (typeof email === 'string' ? email : '');
+    if (typeof email !== 'string') {
+        entry.email = '';
+    }
     phoneBook.set(phone, entry);
 
     return true;
@@ -138,7 +140,7 @@ function findAndRemove(query) {
 function getTextRepresentation(personalData) {
 
     function formatPhone(phone) {
-        return '+7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) + '-' +
+        return '+7 (' + phone.slice(0, 3) + ') ' + phone.substr(3, 3) + '-' +
             phone.substr(6, 2) + '-' + phone.substr(8, 2);
     }
 
@@ -146,7 +148,7 @@ function getTextRepresentation(personalData) {
     if (personalData.name.length) {
         values.push(personalData.name);
     }
-    values.push(formatPhone(personalData.phone));
+    values.push(personalData.phone);
     if (personalData.email.length) {
         values.push(personalData.email);
     }
@@ -170,11 +172,10 @@ function find(query) {
     entries.sort((a, b) => {
         return a.name.localeCompare(b.name);
     });
-    entries = entries.map(entry => {
+
+    return entries.map(entry => {
         return getTextRepresentation(entry);
     });
-
-    return entries;
 }
 
 /**
