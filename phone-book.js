@@ -23,7 +23,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (phoneBook.hasOwnProperty(phone)) {
+    if (phoneBook.hasOwnProperty(phone) && phoneBook[phone] !== undefined) {
         return false;
     }
 
@@ -47,7 +47,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.hasOwnProperty(phone)) {
+    if (!phoneBook.hasOwnProperty(phone) || phoneBook[phone] === undefined) {
         return false;
     }
 
@@ -78,12 +78,9 @@ function findAndRemove(query) {
 }
 
 function findPhones(query) {
-    const filterFunc = key => key.includes(query) || phoneBook[key].name.includes(query) ||
-        (phoneBook[key].email !== undefined && phoneBook[key].email.includes(query));
 
     if (query === '*') {
-        return Object.keys(phoneBook)
-            .filter(filterFunc);
+        return Object.keys(phoneBook);
     }
 
     if (query === '') {
@@ -91,7 +88,9 @@ function findPhones(query) {
     }
 
     return Object.keys(phoneBook)
-        .filter(filterFunc);
+        .filter(key => key.includes(query) || phoneBook[key].name.includes(query) ||
+            (phoneBook[key].email !== undefined && phoneBook[key].email.includes(query)));
+}
 
 /**
  * Поиск записей по запросу в телефонной книге
@@ -100,13 +99,16 @@ function findPhones(query) {
  */
 function find(query) {
     const transformPhone = phone => `+7 (${phone.substr(0, 3)}) ` +
-    `${phone.substr(3, 3)}-${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
+        `${phone.substr(3, 3)}-${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
 
     return findPhones(query)
         .sort((firstPhone, secondPhone) =>
             phoneBook[firstPhone].name.localeCompare(phoneBook[secondPhone].name))
-        .map(phone =>[phoneBook[phone].name, transformPhone(phone),
-            phoneBook[phone].email]
+        .map(phone => [
+            phoneBook[phone].name,
+            transformPhone(phone),
+            phoneBook[phone].email
+        ]
             .filter(field => field !== undefined)
             .join(', '));
 }
