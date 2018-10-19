@@ -19,11 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof name !== 'string') {
-        return false;
-    }
-
-    if (!checkPhone(phone) || !checkEmail(email)) {
+    if (!checkFields(phone, name, email)) {
         return false;
     }
 
@@ -47,7 +43,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhone(phone) || phone === undefined || !checkEmail(email)) {
+    if (!checkFields(phone, name, email)) {
         return false;
     }
     let modifiedContact = phoneBook.findIndex(contact => contact.phone === phone);
@@ -57,9 +53,7 @@ function update(phone, name, email) {
     }
 
     phoneBook[modifiedContact].email = email;
-    if (name !== undefined) {
-        phoneBook[modifiedContact].name = name;
-    }
+    phoneBook[modifiedContact].name = name;
 
     return true;
 }
@@ -73,7 +67,7 @@ function findAndRemove(query) {
     let deleteContacts = find(query);
 
     deleteContacts.forEach(deleteContact => {
-        phoneBook.splice(phoneBook.indexOf(deleteContact.split(', ')[0]), 1);
+        phoneBook.splice(phoneBook.indexOf(deleteContact.split(', ')[1]), 1);
 
     });
 
@@ -95,8 +89,7 @@ function find(query) {
     }
 
     return sortedPhoneBook.filter(contact =>
-        contact.name.includes(query) ||
-        (contact.phone !== undefined && contact.phone.includes(query)) ||
+        contact.name.includes(query) || contact.phone.includes(query) ||
         (contact.email !== undefined && contact.email.includes(query)))
         .map(contactToString);
 }
@@ -125,20 +118,20 @@ function importFromCsv(csv) {
     return contactCount;
 }
 
-function checkEmail(email) {
-    if (email === undefined || typeof email === 'string') {
-        return true;
-    }
+function checkFields(phone, name, email) {
+    return checkPhone(phone) && checkName(name) && checkEmail(email);
+}
 
-    return false;
+function checkName(name) {
+    return typeof name === 'string' && name !== '';
+}
+
+function checkEmail(email) {
+    return email === undefined || (typeof email === 'string' && email !== '');
 }
 
 function checkPhone(phone) {
-    if (typeof phone === 'string' && /^\d{10}$/.test(phone)) {
-        return true;
-    }
-
-    return false;
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
 function sortContactsByName(firstContact, secondContact) {
