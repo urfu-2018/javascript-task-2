@@ -44,7 +44,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isValidPhone(phone) || !isValidName(name)) {
+    if (!isValidPhone(phone) || !isValidName(name) || !phoneBook[phone]) {
         return false;
     }
 
@@ -128,7 +128,9 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
     return csv.split('\n')
         .map((entry) => entry.split(';'))
-        .map(([name, phone, email]) => update(phone, name, email))
+        .map(([name, phone, email]) => {
+            return phoneBook[phone] ? update(phone, name, email) : add(phone, name, email);
+        })
         .reduce((a, b) => a + b);
 }
 
