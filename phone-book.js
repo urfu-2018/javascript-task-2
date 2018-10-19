@@ -169,15 +169,9 @@ function importFromCsv(csv) {
             return acc;
         }
 
-        if (!phoneBook.has(s[1])) {
-            add(s[1], s[0], s[2]);
-
-            return acc + 1;
-        }
-
-        update(s[1], s[0], s[2]);
-
-        return acc + 1;
+        return (add(s[1], s[0], s[2]) || update(s[1], s[0], s[2]))
+            ? acc + 1
+            : acc;
     }, 0);
 }
 
