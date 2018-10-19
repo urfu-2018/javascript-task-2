@@ -142,9 +142,16 @@ function getTextRepresentation(personalData) {
             phone.substr(6, 2) + '-' + phone.substr(8, 2);
     }
 
-    return formatPhone(personalData.phone) +
-        (personalData.name.length ? ', ' + personalData.name : '') +
-        (personalData.email.length ? ', ' + personalData.email : '');
+    const values = [];
+    if (personalData.name.length) {
+        values.push(personalData.name);
+    }
+    values.push(formatPhone(personalData.phone));
+    if (personalData.email.length) {
+        values.push(personalData.email);
+    }
+
+    return values.join(', ');
 }
 
 /**
