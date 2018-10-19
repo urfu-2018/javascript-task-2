@@ -23,7 +23,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (phoneBook.hasOwnProperty(phone) && phoneBook[phone] !== undefined) {
+    if (phoneBook[phone] !== undefined) {
         return false;
     }
 
@@ -47,7 +47,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.hasOwnProperty(phone) || phoneBook[phone] === undefined) {
+    if (phoneBook[phone] === undefined) {
         return false;
     }
 
@@ -80,7 +80,8 @@ function findAndRemove(query) {
 function findPhones(query) {
 
     if (query === '*') {
-        return Object.keys(phoneBook);
+        return Object.keys(phoneBook)
+            .filter(key => phoneBook[key] !== undefined);
     }
 
     if (query === '') {
@@ -88,6 +89,7 @@ function findPhones(query) {
     }
 
     return Object.keys(phoneBook)
+        .filter(key => phoneBook[key] !== undefined)
         .filter(key => key.includes(query) || phoneBook[key].name.includes(query) ||
             (phoneBook[key].email !== undefined && phoneBook[key].email.includes(query)));
 }
