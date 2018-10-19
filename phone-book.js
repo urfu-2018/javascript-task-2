@@ -27,7 +27,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (name === undefined) {
+    if (!name) {
         return false;
     }
 
@@ -51,7 +51,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    if (name === undefined) {
+    if (!name) {
         return false;
     }
 
@@ -78,8 +78,12 @@ function findAndRemove(query) {
 }
 
 function findPhones(query) {
+    const filterFunc = key => key.includes(query) || phoneBook[key].name.includes(query) ||
+        (phoneBook[key].email !== undefined && phoneBook[key].email.includes(query));
+
     if (query === '*') {
-        return Object.keys(phoneBook);
+        return Object.keys(phoneBook)
+            .filter(filterFunc);
     }
 
     if (query === '') {
@@ -87,9 +91,7 @@ function findPhones(query) {
     }
 
     return Object.keys(phoneBook)
-        .filter(key => key.includes(query) || phoneBook[key].name.includes(query) ||
-            (phoneBook[key].email !== undefined && phoneBook[key].email.includes(query)));
-}
+        .filter(filterFunc);
 
 /**
  * Поиск записей по запросу в телефонной книге
