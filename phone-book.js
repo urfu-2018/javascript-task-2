@@ -155,11 +155,17 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const prettyEntries = Array.from(phoneBook)
-        .sort((a, b) => a[1].name > b[1].name)
-        .map(entry => prettifyEntry(entry));
+    if (typeof query !== 'string' || !query) {
+        return [];
+    }
 
-    return (query === '*') ? prettyEntries : prettyEntries.filter(v => v.includes(query));
+    const prettyEntries = Array.from(phoneBook, entry => prettifyEntry(entry));
+
+    return (query === '*')
+        ? prettyEntries.sort()
+        : prettyEntries
+            .filter(v => v.includes(query))
+            .sort();
 }
 
 /**
@@ -170,10 +176,17 @@ function find(query) {
  */
 function importFromCsv(csv) {
     return csv.split('\n').reduce((acc, s) => {
-        s = s.split(';');
+        let [name, phone, email] = s.split(';');
 
-        return (add(s[1], s[0], s[2]) || update(s[1], s[0], s[2]))
-            ? acc + 1 : acc;
+        if (add(phone, name, email)) {
+            return acc + 1;
+        }
+
+        if (update(phone, name, email)) {
+            return acc + 1;
+        }
+
+        return acc;
     }, 0);
 }
 
