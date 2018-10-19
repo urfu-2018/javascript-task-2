@@ -46,10 +46,7 @@ function isValidName(name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isValidPhone(phone)) {
-        return false;
-    }
-    if (!isValidName(name)) {
+    if (!isValidPhone(phone) || !isValidName(name)) {
         return false;
     }
     if (phoneBook.has(phone)) {
@@ -71,17 +68,19 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isValidPhone(phone)) {
-        return false;
+
+    function argumentsAreValid() {
+        return isValidPhone(phone) && phoneBook.has(phone) && isValidName(name);
     }
-    if (!phoneBook.has(phone)) {
+
+    if (!argumentsAreValid()) {
         return false;
     }
     let entry = phoneBook.get(phone);
-    if (isValidName(name)) {
-        entry.name = name;
-    }
-    if (typeof email !== 'string') {
+    entry.name = name;
+    if (typeof email === 'string' && email.length) {
+        entry.email = email;
+    } else if (typeof email === 'undefined') {
         entry.email = '';
     }
     phoneBook.set(phone, entry);
