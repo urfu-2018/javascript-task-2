@@ -96,7 +96,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    email = email || '';
+    email = typeof email === 'string' && email ? email : '';
     phoneBook.set(phone, {
         name,
         email
@@ -121,7 +121,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    email = email || '';
+    email = typeof email === 'string' && email ? email : '';
     phoneBook.set(phone, {
         name,
         email
