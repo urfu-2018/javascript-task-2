@@ -93,14 +93,16 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    return findRecords(query).sort().map(record => {
-        const [phone, name, email] = record;
-        if (email) {
-            return `${name}, ${formatPhoneNumber(phone)}, ${email}`;
-        }
+    return findRecords(query)
+        .sort()
+        .map(record => {
+            const [phone, name, email] = record;
+            if (email) {
+                return `${name}, ${formatPhoneNumber(phone)}, ${email}`;
+            }
 
-        return `${name}, ${formatPhoneNumber(phone)}`;
-    });
+            return `${name}, ${formatPhoneNumber(phone)}`;
+        });
 }
 
 /**
