@@ -33,7 +33,7 @@ function isCorrect(phone, name) {
         return false;
     }
 
-    if (!name) {
+    if (!name || name.trim() === '') {
         return false;
     }
 
@@ -159,13 +159,12 @@ function find(query) {
         return [];
     }
 
-    const prettyEntries = Array.from(phoneBook, entry => prettifyEntry(entry));
+    const prettyEntries = Array.from(phoneBook, entry => prettifyEntry(entry)).sort();
 
     return (query === '*')
-        ? prettyEntries.sort()
+        ? prettyEntries
         : prettyEntries
-            .filter(v => v.includes(query))
-            .sort();
+            .filter(v => v.includes(query) || getPhone(v).includes(query));
 }
 
 /**
@@ -178,15 +177,8 @@ function importFromCsv(csv) {
     return csv.split('\n').reduce((acc, s) => {
         let [name, phone, email] = s.split(';');
 
-        if (add(phone, name, email)) {
-            return acc + 1;
-        }
-
-        if (update(phone, name, email)) {
-            return acc + 1;
-        }
-
-        return acc;
+        return (add(phone, name, email) || update(phone, name, email))
+            ? acc + 1 : acc;
     }, 0);
 }
 
