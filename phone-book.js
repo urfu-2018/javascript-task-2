@@ -52,7 +52,7 @@ function update(phone, name, email = '') {
 }
 
 function addNote(name, phone, email) {
-    phoneBook[phone] = email !== undefined ? {
+    phoneBook[phone] = email !== '' ? {
         name: name,
         phone: phone,
         email: email }
@@ -120,7 +120,7 @@ function findQueryInSorted(query) {
 }
 
 function formatForOutput(note) {
-    if (note.email === '' || note.email === undefined) {
+    if (note.email === undefined) {
         return note.name + ', ' + note.phone;
     }
 
@@ -136,12 +136,16 @@ function sortedBook() {
 
     return sorted
         .map(x => {
-            return {
+            return (x.email === undefined) ? {
+                name: x.name,
+                phone: rightFormatForPhone(x.phone)
+            } : {
                 name: x.name,
                 phone: rightFormatForPhone(x.phone),
-                email: x.email !== undefined ? x.email : ''
+                email: x.email
             };
-        });
+        }
+        );
 }
 
 function rightFormatForPhone(phone) {
