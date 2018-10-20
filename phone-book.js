@@ -11,6 +11,24 @@ const isStar = true;
  */
 let phoneBook = [];
 
+function isString(str) {
+    return typeof str === 'string';
+}
+
+function isCorrectName(name) {
+    return isString(name) && name !== '';
+}
+
+function isCorrectPhone(phone) {
+    const phoneRegex = /^\d{10}$/;
+
+    return isString(phone) && phoneRegex.test(phone);
+}
+
+function isBookContains(phone) {
+    return phoneBook.some(contact => contact.phone === phone);
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,13 +37,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const phoneRegex = /^\d{10}$/;
-
-    if (!isString(name) || name === '') {
-        return false;
-    }
-
-    if (!phoneRegex.test(phone) || phoneBook.some(contact => contact.phone === phone)) {
+    if (!isCorrectName(name) || !isCorrectPhone(phone) || isBookContains(phone)) {
         return false;
     }
 
@@ -46,23 +58,15 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isString(name) || name === '') {
+    if (!isCorrectName(name) || !isCorrectPhone(phone) || !isBookContains(phone)) {
         return false;
     }
 
-    var contactToUpdate = phoneBook.filter(contact => contact.phone === phone);
-    if (contactToUpdate.length === 0) {
-        return false;
-    }
-
-    contactToUpdate[0].name = name;
-    contactToUpdate[0].email = email;
+    let contactToResult = getContactsBy(phone)[0];
+    contactToResult.name = name;
+    contactToResult.email = email;
 
     return true;
-}
-
-function isString(str) {
-    return typeof str === 'string';
 }
 
 /**
@@ -125,9 +129,8 @@ function filterByQuery(contact, query) {
         return true;
     }
 
-    return isContains(contact.phone, query) ||
-        isContains(contact.name, query) ||
-        isContains(contact.email, query);
+    return Object.keys(contact)
+        .some(key => isContains(contact[key], query));
 }
 
 function isContains(source, stringToFind) {
