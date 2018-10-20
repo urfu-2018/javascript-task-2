@@ -58,7 +58,7 @@ function checkBookOfExist() {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkBookOfExist() || !checkExistName(name)) {
+    if (!checkBookOfExist() || !checkExistName(name) || !(phone in phoneBook)) {
         return false;
     }
 
