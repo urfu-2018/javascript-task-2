@@ -29,7 +29,7 @@ function add(phone, name, email) {
 }
 
 function checkPhoneFormat(phone) {
-    return phone && isString(phone) && (/^[0-9]{10}$/).test(phone);
+    return phone && (/^(\d){10}$/).test(phone);
 }
 
 /**
@@ -112,9 +112,9 @@ function isString(query) {
 function findQueryInSorted(query) {
     return sortedBook()
         .filter(x => {
-            return x.name.includes(query) ||
-                x.phone.includes(query) ||
-                (x.email && x.email.includes(query));
+            return x.name.indexOf(query) + 1 ||
+                x.phone.indexOf(query) + 1 ||
+                (x.email && x.email.indexOf(query) + 1);
         });
 }
 
