@@ -75,14 +75,14 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let toDelete = getContactsBy(query);
+    const toDelete = getContactsBy(query);
     toDelete.forEach(removeFromBook);
 
     return toDelete.length;
 }
 
 function removeFromBook(contact) {
-    phoneBook = phoneBook.splice(phoneBook.indexOf(contact), 1);
+    phoneBook.splice(phoneBook.indexOf(contact), 1);
 }
 
 function getContactsBy(query) {
