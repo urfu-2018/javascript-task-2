@@ -97,6 +97,10 @@ function formatPhone(phone) {
 }
 
 function findRecordsByQuery(query) {
+    if (typeof query !== 'string' || query === '') {
+        return [];
+    }
+
     return Object.values(phoneBook)
         .map(toPhoneAndStringValue)
         .filter(x => query === '*' ? true : x.stringValue.includes(query));
