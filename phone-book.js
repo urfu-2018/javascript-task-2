@@ -12,8 +12,29 @@ const isStar = true;
 let phoneBook;
 phoneBook = new Map();
 
-function checkPhone(phone) {
-    return /^\d{10}$/.test(phone);
+function isString(arg) {
+    return typeof arg === 'string';
+}
+
+function isCorrectPhone(phone) {
+    return isString(phone) && /^\d{10}$/.test(phone);
+}
+
+function isCorrectName(name) {
+    return isString(name) && name !== '';
+}
+
+function isCorrectEmail(email) {
+    if (email === undefined) {
+        return true;
+    }
+
+    return isString(email) && email !== '' && email.indexOf('@') !== -1;
+}
+
+function isIncorrectInput(phone, name, email) {
+    return !isCorrectPhone(phone) || !isCorrectName(name) || !isCorrectEmail(email) ||
+        arguments.length === 1;
 }
 
 function formatPhone(phone) {
@@ -58,7 +79,7 @@ function decorateFoundMap(foundMap) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if ((!checkPhone(phone)) || (phoneBook.has(phone)) || (arguments.length === 1)) {
+    if (isIncorrectInput(phone, name, email) || phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
@@ -74,7 +95,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (arguments.length === 1 || !phoneBook.has(phone) || !checkPhone(phone)) {
+    if (isIncorrectInput(phone, name, email) || !phoneBook.has(phone)) {
         return false;
     }
     if (arguments.length === 2) {
