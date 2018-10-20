@@ -54,7 +54,7 @@ function fromGlobToRus(phone) {
  */
 function isCorrectInput(phone, name) {
 
-    return isCorrectPhone(phone) && typeof(name) !== 'undefined';
+    return isCorrectPhone(phone) && typeof(name) !== 'undefined' && name !== '';
 }
 
 /**
