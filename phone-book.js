@@ -18,7 +18,7 @@ let phoneBook = {};
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email = '') {
+function add(phone, name, email) {
     if (checkNameFormat(name) && checkPhoneFormat(phone) && !(phone in phoneBook)) {
         addNote(name, phone, email);
 
@@ -39,7 +39,7 @@ function checkPhoneFormat(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email = '') {
+function update(phone, name, email) {
     if (checkNameFormat(name) &&
         checkPhoneFormat(phone) &&
         (phone in phoneBook)) {
@@ -52,14 +52,13 @@ function update(phone, name, email = '') {
 }
 
 function addNote(name, phone, email) {
-    phoneBook[phone] = email ? {
+    phoneBook[phone] = {
         name: name,
-        phone: phone,
-        email: email }
-        : {
-            name: name,
-            phone: phone
-        };
+        phone: phone
+    };
+    if (email) {
+        phoneBook[phone].email = email;
+    }
 }
 function checkNameFormat(name) {
     return name && isString(name);
@@ -107,7 +106,7 @@ function find(query) {
 }
 
 function isString(query) {
-    return typeof query === 'string';
+    return typeof query === 'string' && query !== '';
 }
 
 function findQueryInSorted(query) {
@@ -120,7 +119,7 @@ function findQueryInSorted(query) {
 }
 
 function formatForOutput(note) {
-    if (note.email === undefined) {
+    if (!note.email) {
         return note.name + ', ' + note.phone;
     }
 
