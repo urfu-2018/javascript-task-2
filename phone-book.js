@@ -19,15 +19,13 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const trueData = name !== undefined && /^\d{10}$/.test(phone) && name.length !== 0;
-    const onlyOneNumber = !(phone in phoneBook);
-    if (trueData && onlyOneNumber) {
-        phoneBook[phone] = [name, email];
+    if (!name || ! /^\d{10}$/.test(phone) || phoneBook.hasOwnProperty(phone)) {
 
-        return true;
+        return false;
     }
+    phoneBook[phone] = [name, email];
 
-    return false;
+    return true;
 
 }
 
@@ -39,14 +37,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const whenOk = phone in phoneBook && name !== undefined && name.length !== 0;
-    if (whenOk) {
-        phoneBook[phone] = [name, email];
+    const notOk = !phoneBook.hasOwnProperty(phone) || !name;
+    if (notOk) {
 
-        return true;
+        return false;
     }
+    phoneBook[phone] = [name, email];
 
-    return false;
+    return true;
 }
 // В обоих случаях вывод будет следующий
 // [
