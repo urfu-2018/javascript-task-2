@@ -102,7 +102,7 @@ function findRecordsByQuery(query) {
 
     return Object.values(phoneBook)
         .sort((a, b) => a.name.localeCompare(b.name))
-        .filter(x => query === '*' ? true : checkIfMatchQuery(x, query))
+        .filter(x => checkIfMatchQuery(x, query))
         .map(toPhoneAndStringValue);
 }
 
