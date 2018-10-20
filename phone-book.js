@@ -9,7 +9,19 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+var phoneBook = {};
+
+function isCorrectPhone(phone) {
+    return /^\d{10}$/.test(phone) && phone;
+}
+
+function isCorrectName(name) {
+    return typeof name === 'string' && name;
+}
+
+function isCorrectEmail(email) {
+    return typeof email === 'string' && (/[\w.-_\d]+?@\w+?\.\w+/.test(email) || !email.length);
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,8 +30,15 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name, email = '') {
+    if (isCorrectPhone(phone) && isCorrectName(name) &&
+        isCorrectEmail(email) && !phoneBook[phone]) {
+        phoneBook[phone] = [name, email];
 
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -30,7 +49,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (isCorrectPhone(phone) && isCorrectName(name)) {
+        phoneBook[phone] = [name, email];
 
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -39,7 +64,21 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (typeof query !== 'string' || !query) {
+        return 0;
+    }
+    if (query === '*') {
+        return phoneBook.length;
+    }
+    let count = 0;
+    for (let phone of Object.keys(phoneBook)) {
+        if (containsInBook(query, phone)) {
+            delete phoneBook[phone];
+            count++;
+        }
+    }
 
+    return count;
 }
 
 /**
@@ -48,7 +87,33 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (typeof query !== 'string' || !query) {
+        return [];
+    }
+    const result = [];
+    const isAll = query === '*';
 
+    for (let phone of Object.keys(phoneBook).sort()) {
+        if (isAll || containsInBook(query, phone)) {
+            result.push(convert2Format(phone, phoneBook[phone][0], phoneBook[phone][1]));
+        }
+    }
+
+    return result;
+}
+
+function containsInBook(query, phone) {
+    const name = phoneBook[phone][0];
+    const email = phoneBook[phone][1];
+
+    return phone.includes(query) || name.includes(query) || (email && email.includes(query));
+}
+
+function convert2Format(phone, name, email = '') {
+    phone =
+    `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+
+    return email ? [name, phone, email].join(', ') : [name, phone].join(', ');
 }
 
 /**
@@ -58,11 +123,16 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    const lines = csv.split('\n');
+    let count = 0;
+    for (let i = 0; i < lines.length; i++) {
+        const contact = lines[i].split(';');
+        if (add(contact[1], contact[0], contact[2]) || update(contact[1], contact[0], contact[2])) {
+            count++;
+        }
+    }
 
-    return csv.split('\n').length;
+    return count;
 }
 
 module.exports = {
