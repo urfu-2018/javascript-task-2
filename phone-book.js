@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,23 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    const phoneRegex = /^\d{10}$/;
 
+    if (!isString(name) || name === '') {
+        return false;
+    }
+
+    if (!phoneRegex.test(phone) || phoneBook.some(contact => contact.phone === phone)) {
+        return false;
+    }
+
+    phoneBook.push({
+        phone: phone,
+        email: email,
+        name: name
+    });
+
+    return true;
 }
 
 /**
@@ -30,7 +46,23 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!isString(name) || name === '') {
+        return false;
+    }
 
+    var contactToUpdate = phoneBook.filter(contact => contact.phone === phone);
+    if (contactToUpdate.length === 0) {
+        return false;
+    }
+
+    contactToUpdate[0].name = name;
+    contactToUpdate[0].email = email;
+
+    return true;
+}
+
+function isString(str) {
+    return typeof str === 'string';
 }
 
 /**
@@ -39,7 +71,19 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let toDelete = getContactsBy(query);
+    toDelete.forEach(removeFromBook);
 
+    return toDelete.length;
+}
+
+function removeFromBook(contact) {
+    phoneBook = phoneBook.splice(phoneBook.indexOf(contact));
+}
+
+function getContactsBy(query) {
+    return phoneBook
+        .filter(contact => filterByQuery(contact, query));
 }
 
 /**
@@ -48,7 +92,46 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    return getContactsBy(query)
+        .sort((first, second) => first.name.localeCompare(second.name))
+        .map(contactToString);
+}
 
+function contactToString(contact) {
+    let parts = [
+        contact.name,
+        formatPhone(contact.phone),
+        contact.email
+    ];
+
+    return parts.filter(part => part !== undefined)
+        .join(', ');
+}
+
+function formatPhone(phone) {
+    let first = phone.substr(0, 3);
+    let second = phone.substr(3, 3);
+    let third = phone.substr(6, 2);
+    let fourth = phone.substr(8, 2);
+
+    return `+7 (${first}) ${second}-${third}-${fourth}`;
+}
+
+function filterByQuery(contact, query) {
+    if (query === '') {
+        return false;
+    }
+    if (query === '*') {
+        return true;
+    }
+
+    return isContains(contact.phone, query) ||
+        isContains(contact.name, query) ||
+        isContains(contact.email, query);
+}
+
+function isContains(source, stringToFind) {
+    return source !== undefined && source.indexOf(stringToFind) !== -1;
 }
 
 /**
@@ -62,7 +145,21 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').length;
+    return csv.split('\n')
+        .map(contactAsString => contactAsString.split(';'))
+        .reduce(countAddedAndUpdated, 0);
+}
+
+function countAddedAndUpdated(acc, item) {
+    let name = item[0];
+    let phone = item[1];
+    let email = item[2];
+
+    if (update(phone, name, email) || add(phone, name, email)) {
+        acc += 1;
+    }
+
+    return acc;
 }
 
 module.exports = {
