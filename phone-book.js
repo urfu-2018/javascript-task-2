@@ -29,7 +29,7 @@ function add(phone, name, email = '') {
 }
 
 function checkPhoneFormat(phone) {
-    return phone && isString(phone) && phone.search(/^[0-9]{10}$/i) === 0;
+    return phone && isString(phone) && (/^[0-9]{10}$/).test(phone);
 }
 
 /**
@@ -71,7 +71,7 @@ function checkNameFormat(name) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isString(query) || !query) {
+    if (!(isString(query) && query)) {
         return 0;
     }
     if (query === '*') {
@@ -94,7 +94,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query) || !query) {
+    if (!(isString(query) && query)) {
         return [];
     }
     if (query === '*') {
@@ -115,7 +115,7 @@ function findQueryInSorted(query) {
         .filter(x => {
             return x.name.includes(query) ||
                 x.phone.includes(query) ||
-                (x.email !== undefined && x.email.includes(query));
+                (x.email && x.email.includes(query));
         });
 }
 
