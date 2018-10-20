@@ -12,21 +12,13 @@ const isStar = true;
 let phoneBook = [];
 
 function correctPhone(phone) {
-    if (typeof phone !== 'string') {
 
-        return false;
-    }
-
-    return /^\d{10}$/.test(phone);
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
 function correctName(name) {
-    if (typeof name !== 'string' || name === '') {
 
-        return false;
-    }
-
-    return true;
+    return name && typeof name === 'string' && name.trim() !== '';
 }
 
 /**
@@ -46,7 +38,7 @@ function add(phone, name, email) {
     const contact = {
         phone: phone,
         name: name,
-        email: email || ''
+        email: email && typeof email === 'string' ? email : ''
     };
 
     phoneBook.push(contact);
@@ -62,20 +54,17 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    let flag = false;
-    if (correctName(name)) {
-        phoneBook.forEach(contact => {
-            if (contact.phone === phone) {
-                contact.email = email || '';
-                contact.name = name;
-                flag = true;
-            }
-        });
+    if (!correctName(name) ||
+    !phoneBook.some(contact => contact.phone === phone)) {
 
-        return flag;
+        return false;
     }
 
-    return flag;
+    const index = phoneBook.findIndex(contact => contact.phone === phone);
+    phoneBook[index].name = name;
+    phoneBook[index].email = email && typeof email === 'string' ? email : '';
+
+    return true;
 }
 
 /**
