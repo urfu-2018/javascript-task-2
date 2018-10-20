@@ -29,7 +29,7 @@ function add(phone, name, email = '') {
 }
 
 function checkPhoneFormat(phone) {
-    return phone !== undefined && isString(phone) && phone.search(/^[0-9]{10}$/i) === 0;
+    return phone && isString(phone) && phone.search(/^[0-9]{10}$/i) === 0;
 }
 
 /**
@@ -62,7 +62,7 @@ function addNote(name, phone, email) {
         };
 }
 function checkNameFormat(name) {
-    return name !== undefined && isString(name);
+    return name && isString(name);
 }
 
 /**
@@ -71,7 +71,7 @@ function checkNameFormat(name) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isString(query) || query === undefined) {
+    if (!isString(query) || !query) {
         return 0;
     }
     if (query === '*') {
@@ -94,7 +94,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query) || query === undefined) {
+    if (!isString(query) || !query) {
         return [];
     }
     if (query === '*') {
@@ -136,7 +136,7 @@ function sortedBook() {
 
     return sorted
         .map(x => {
-            return (x.email === undefined) ? {
+            return !x.email ? {
                 name: x.name,
                 phone: rightFormatForPhone(x.phone)
             } : {
