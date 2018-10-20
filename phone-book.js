@@ -34,7 +34,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook[phone]) {
+    if (typeof phone !== 'string' || !phoneBook[phone]) {
         return false;
     }
 
@@ -83,8 +83,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     return findRecordsByQuery(query)
-        .map(x => x.stringValue)
-        .sort();
+        .map(x => x.stringValue);
 }
 
 function formatPhone(phone) {
@@ -102,8 +101,26 @@ function findRecordsByQuery(query) {
     }
 
     return Object.values(phoneBook)
-        .map(toPhoneAndStringValue)
-        .filter(x => query === '*' ? true : x.stringValue.includes(query));
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .filter(x => query === '*' ? true : chechIfMatchQuery(x, query))
+        .map(toPhoneAndStringValue);
+}
+
+function chechIfMatchQuery(entitiy, query) {
+    if (query === '*') {
+        return true;
+    }
+    for (let key in entitiy) {
+        if (!entitiy.hasOwnProperty(key) || typeof entitiy[key] === 'undefined') {
+            continue;
+        }
+
+        if (entitiy[key].indexOf(query) !== -1) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function toPhoneAndStringValue(phoneRecord) {
@@ -128,11 +145,10 @@ function importFromCsv(csv) {
         .map(x => x.split(';'))
         .reduce((accumulator, x) => {
             const [name, phone, email] = x;
-            if (tryAddOrUpdate(phone, name, email)) {
-                return accumulator + 1;
-            }
 
-            return accumulator;
+            return tryAddOrUpdate(phone, name, email)
+                ? accumulator + 1
+                : accumulator;
         }, 0);
 }
 
