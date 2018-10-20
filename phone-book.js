@@ -19,10 +19,6 @@ function isCorrectName(name) {
     return typeof name === 'string' && name;
 }
 
-function isCorrectEmail(email) {
-    return typeof email === 'string' && (/[\w.-_\d]+?@\w+?\.\w+/.test(email) || !email);
-}
-
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -31,13 +27,8 @@ function isCorrectEmail(email) {
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    if (isCorrectPhone(phone) && isCorrectName(name) &&
-        isCorrectEmail(email) && !phoneBook[phone]) {
-        if (email) {
-            phoneBook[phone] = [name, email];
-        } else {
-            phoneBook[phone] = [name];
-        }
+    if (isCorrectPhone(phone) && isCorrectName(name) && !phoneBook[phone]) {
+        phoneBook[phone] = email ? [name, email] : [name];
 
         return true;
     }
@@ -52,9 +43,9 @@ function add(phone, name, email = '') {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone, name, email = '') {
     if (isCorrectPhone(phone) && isCorrectName(name) && phone in phoneBook) {
-        phoneBook[phone] = [name, email];
+        phoneBook[phone] = email ? [name, email] : [name];
 
         return true;
     }
