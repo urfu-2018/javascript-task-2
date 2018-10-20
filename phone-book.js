@@ -91,13 +91,13 @@ function find(query) {
     const result = [];
     const isAll = query === '*';
 
-    for (let phone of Object.keys(phoneBook).sort()) {
+    for (let phone of Object.keys(phoneBook)) {
         if (isAll || containsInBook(query, phone)) {
             result.push(convert2Format(phone, phoneBook[phone][0], phoneBook[phone][1]));
         }
     }
 
-    return result;
+    return result.sort();
 }
 
 function containsInBook(query, phone) {
