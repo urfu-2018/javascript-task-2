@@ -138,7 +138,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string') {
+    if (typeof query !== 'string' || query === '') {
         throw new TypeError();
     }
     if (query === '*') {
@@ -148,7 +148,7 @@ function find(query) {
     return phoneBook
         .filter((person) => (person.phone.indexOf(query) !== -1 ||
             person.name.indexOf(query) !== -1 || (person.email.indexOf(query) !== -1)))
-        .sort((person, nextPers) => person.name < nextPers.name ? -1 : 1)
+        .sort((person, nextPers) => person.name.localeCompare(nextPers.name))
         .map(person => {
             return (person.email !== '')
                 ? [person.name, fromGlobToRus(person.phone), person.email].join(', ')
