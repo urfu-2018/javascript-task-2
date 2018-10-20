@@ -69,7 +69,7 @@ function tryAddOrUpdate(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let removingValues = findRecordsByQuery(query)
+    const removingValues = findRecordsByQuery(query)
         .map(x => x.phone);
     removingValues.forEach(phone => delete phoneBook[phone]);
 
@@ -102,20 +102,20 @@ function findRecordsByQuery(query) {
 
     return Object.values(phoneBook)
         .sort((a, b) => a.name.localeCompare(b.name))
-        .filter(x => query === '*' ? true : chechIfMatchQuery(x, query))
+        .filter(x => query === '*' ? true : checkIfMatchQuery(x, query))
         .map(toPhoneAndStringValue);
 }
 
-function chechIfMatchQuery(entitiy, query) {
+function checkIfMatchQuery(entity, query) {
     if (query === '*') {
         return true;
     }
-    for (let key in entitiy) {
-        if (!entitiy.hasOwnProperty(key) || typeof entitiy[key] === 'undefined') {
+    for (let key in entity) {
+        if (!entity.hasOwnProperty(key) || typeof entity[key] === 'undefined') {
             continue;
         }
 
-        if (entitiy[key].indexOf(query) !== -1) {
+        if (entity[key].includes(query)) {
             return true;
         }
     }
