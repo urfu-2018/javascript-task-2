@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -23,7 +23,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (phoneBook[phone] !== undefined) {
+    if (phoneBook.has(phone)) {
         return false;
     }
 
@@ -31,10 +31,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    phoneBook[phone] = {
-        name: name,
-        email: email
-    };
+    phoneBook.set(phone, { name: name, email: email });
 
     return true;
 }
@@ -47,7 +44,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook[phone] === undefined) {
+    if (!phoneBook.has(phone)) {
         return false;
     }
 
@@ -55,10 +52,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    phoneBook[phone] = {
-        name: name,
-        email: email
-    };
+    phoneBook.set(phone, { name: name, email: email });
 
     return true;
 }
@@ -71,7 +65,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     const phones = findPhones(query);
     phones.forEach(phone => {
-        phoneBook[phone] = undefined;
+        phoneBook.delete(phone);
     });
 
     return phones.length;
@@ -80,18 +74,17 @@ function findAndRemove(query) {
 function findPhones(query) {
 
     if (query === '*') {
-        return Object.keys(phoneBook)
-            .filter(key => phoneBook[key] !== undefined);
+        return Array.from(phoneBook.keys());
     }
 
     if (query === '') {
         return [];
     }
 
-    return Object.keys(phoneBook)
-        .filter(key => phoneBook[key] !== undefined)
-        .filter(key => key.includes(query) || phoneBook[key].name.includes(query) ||
-            (phoneBook[key].email !== undefined && phoneBook[key].email.includes(query)));
+    return Array.from(phoneBook.keys())
+        .filter(phone => phone.includes(query) || phoneBook.get(phone).name.includes(query) ||
+            (phoneBook.get(phone).email !== undefined &&
+                phoneBook.get(phone).email.includes(query)));
 }
 
 /**
@@ -105,11 +98,11 @@ function find(query) {
 
     return findPhones(query)
         .sort((firstPhone, secondPhone) =>
-            phoneBook[firstPhone].name.localeCompare(phoneBook[secondPhone].name))
+            phoneBook.get(firstPhone).name.localeCompare(phoneBook.get(secondPhone).name))
         .map(phone => [
-            phoneBook[phone].name,
+            phoneBook.get(phone).name,
             transformPhone(phone),
-            phoneBook[phone].email
+            phoneBook.get(phone).email
         ]
             .filter(field => field !== undefined)
             .join(', '));
