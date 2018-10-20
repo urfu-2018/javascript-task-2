@@ -114,8 +114,8 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string') {
-        throw new TypeError();
+    if (query === '') {
+        return 0;
     }
     if (query === '*') { // т.к. * это все записи, то можно вернуть длину массива, а его обнулить
         const deletions = phoneBook.length;
@@ -138,8 +138,8 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string' || query === '') {
-        throw new TypeError();
+    if (query === '') {
+        return [];
     }
     if (query === '*') {
         query = ''; // пустая строка везде найдется
