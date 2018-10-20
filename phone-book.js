@@ -19,15 +19,21 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (name === undefined || !checkPhoneFormat(phone)) {
+    if (!checkExistName(name) || !checkPhoneFormat(phone)) {
         return false;
     }
-    let note = {
+    if (!checkBookOfExist()) {
+        phoneBook = {};
+    }
+    let note = email !== undefined ? {
         name: name,
         phone: phone,
         email: email
-    };
-    checkBookOfExist();
+    }
+        : {
+            name: name,
+            phone: phone
+        };
     if (phone in phoneBook) {
         return false;
     }
@@ -41,9 +47,7 @@ function checkPhoneFormat(phone) {
 }
 
 function checkBookOfExist() {
-    if (phoneBook === undefined) {
-        phoneBook = {};
-    }
+    return phoneBook !== undefined;
 }
 
 /**
@@ -54,21 +58,25 @@ function checkBookOfExist() {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    checkBookOfExist();
-    if (email !== undefined) {
-        phoneBook[phone] = {
-            name: name,
-            phone: phone,
-            email: email
-        };
-    } else {
-        phoneBook[phone] = {
+    if (!checkBookOfExist() || !checkExistName(name)) {
+        return false;
+    }
+
+    phoneBook[phone] = email !== undefined ? {
+        name: name,
+        phone: phone,
+        email: email
+    }
+        : {
             name: name,
             phone: phone
         };
-    }
 
     return true;
+}
+
+function checkExistName(name) {
+    return name !== undefined;
 }
 
 /**
@@ -77,6 +85,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!checkBookOfExist() || !checkString(query)) {
+        return 0;
+    }
     let found = findQueryInSorted(query);
     for (let i = 0; i < found.length; i++) {
         delete(phoneBook[backToBadPhoneFormat(found[i].phone)]);
@@ -91,10 +102,11 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (!checkBookOfExist() || !checkString(query)) {
+        return [];
+    }
     if (query === '*') {
         return sortedBook().map(formatForOutput);
-    } else if (query === '') {
-        return;
     }
 
     return findQueryInSorted(query)
@@ -102,6 +114,9 @@ function find(query) {
 
 }
 
+function checkString(query) {
+    return typeof query === 'string';
+}
 function findQueryInSorted(query) {
     return sortedBook()
         .filter(x => {
