@@ -54,7 +54,7 @@ function tryAddOrUpdate(phone, name, email) {
         return false;
     }
 
-    if (name === undefined || typeof name === 'string' || name === '') {
+    if (name === undefined || typeof name !== 'string' || name === '') {
         return false;
     }
 
