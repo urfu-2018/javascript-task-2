@@ -114,6 +114,13 @@ function findAndRemove(query) {
 
         return 0;
     }
+
+    if (query === '*') {
+        var length = convertArrForSearch(phoneBook).length;
+        phoneBook = {};
+
+        return length;
+    }
     let countOfDeletedItems = 0;
     let arr = convertArrForSearch(phoneBook);
     arr.forEach(function (item) {
