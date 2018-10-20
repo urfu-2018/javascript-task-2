@@ -20,7 +20,7 @@ function isCorrectName(name) {
 }
 
 function isCorrectEmail(email) {
-    return typeof email === 'string' && (/[\w.-_\d]+?@\w+?\.\w+/.test(email) || !email.length);
+    return typeof email === 'string' && (/[\w.-_\d]+?@\w+?\.\w+/.test(email) || !email);
 }
 
 /**
@@ -33,7 +33,11 @@ function isCorrectEmail(email) {
 function add(phone, name, email = '') {
     if (isCorrectPhone(phone) && isCorrectName(name) &&
         isCorrectEmail(email) && !phoneBook[phone]) {
-        phoneBook[phone] = [name, email];
+        if (email) {
+            phoneBook[phone] = [name, email];
+        } else {
+            phoneBook[phone] = [name];
+        }
 
         return true;
     }
