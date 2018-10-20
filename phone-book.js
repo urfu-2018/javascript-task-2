@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook[phone]) {
+    if (typeof phone !== 'string' || phoneBook[phone]) {
         return false;
     }
 
@@ -54,7 +54,7 @@ function tryAddOrUpdate(phone, name, email) {
         return false;
     }
 
-    if (name === undefined) {
+    if (name === undefined || typeof name === 'string' || name === '') {
         return false;
     }
 
@@ -120,10 +120,6 @@ function toPhoneAndStringValue(phoneRecord) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-
     return csv.split('\n')
         .map(x => x.split(';'))
         .reduce((accumulator, x) => {
