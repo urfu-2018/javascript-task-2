@@ -27,7 +27,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (!name.trim()) {
+    if (name === undefined || !name.trim()) {
         return false;
     }
 
@@ -48,7 +48,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    if (!name.trim()) {
+    if (name === undefined || !name.trim()) {
         return false;
     }
 
