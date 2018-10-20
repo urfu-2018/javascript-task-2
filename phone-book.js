@@ -1,6 +1,5 @@
 'use strict';
 
-
 const phoneBook = [];
 const phoneFormat = new RegExp(/^\d{3}\d{3}\d{2}\d{2}$/);
 
@@ -8,8 +7,7 @@ const phoneFormat = new RegExp(/^\d{3}\d{3}\d{2}\d{2}$/);
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-// eslint-disable-next-line no-unused-vars
-const isStar = true;
+exports.isStar = true;
 
 
 const createRecord = function (phone, name, email) {
