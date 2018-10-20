@@ -19,31 +19,19 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!checkExistName(name) || !checkPhoneFormat(phone)) {
-        return false;
-    }
     if (!checkBookOfExist()) {
         phoneBook = {};
     }
-    let note = email !== undefined ? {
-        name: name,
-        phone: phone,
-        email: email
-    }
-        : {
-            name: name,
-            phone: phone
-        };
-    if (phone in phoneBook) {
+    if (!checkNameFormat(name) || !checkPhoneFormat(phone) || phone in phoneBook) {
         return false;
     }
-    phoneBook[phone] = note;
+    addNote(name, phone, email);
 
     return true;
 }
 
 function checkPhoneFormat(phone) {
-    return phone.search(/^[0-9]{10}$/i) === 0;
+    return isString(phone) && phone.search(/^[0-9]{10}$/i) === 0;
 }
 
 function checkBookOfExist() {
@@ -58,25 +46,41 @@ function checkBookOfExist() {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkBookOfExist() || !checkExistName(name) || !(phone in phoneBook)) {
+    if (!(checkBookOfExist() &&
+        checkNameFormat(name) &&
+        checkPhoneFormat(phone) &&
+        (phone in phoneBook))) {
         return false;
     }
 
-    phoneBook[phone] = email !== undefined ? {
-        name: name,
-        phone: phone,
-        email: email
-    }
-        : {
-            name: name,
-            phone: phone
-        };
+    addNote(name, phone, email);
 
     return true;
 }
 
-function checkExistName(name) {
-    return name !== undefined;
+function addNote(name, phone, email) {
+    if (email !== undefined) {
+        if (!checkEmailFormat(email)) {
+            return false;
+        }
+        phoneBook[phone] = {
+            name: name,
+            phone: phone,
+            email: email
+        };
+    } else {
+        phoneBook[phone] = {
+            name: name,
+            phone: phone
+        };
+    }
+}
+function checkNameFormat(name) {
+    return name !== undefined && isString(name);
+}
+
+function checkEmailFormat(email) {
+    return isString(email);
 }
 
 /**
@@ -85,7 +89,7 @@ function checkExistName(name) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!checkBookOfExist() || !checkString(query)) {
+    if (!checkBookOfExist() || !isString(query)) {
         return 0;
     }
     let found = findQueryInSorted(query);
@@ -102,7 +106,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!checkBookOfExist() || !checkString(query)) {
+    if (!checkBookOfExist() || !isString(query)) {
         return [];
     }
     if (query === '*') {
@@ -114,7 +118,7 @@ function find(query) {
 
 }
 
-function checkString(query) {
+function isString(query) {
     return typeof query === 'string';
 }
 function findQueryInSorted(query) {
