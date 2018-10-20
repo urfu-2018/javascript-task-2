@@ -174,6 +174,10 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (typeof csv !== 'string' || !csv) {
+        return 0;
+    }
+
     return csv.split('\n').reduce((acc, s) => {
         let [name, phone, email] = s.split(';');
 
