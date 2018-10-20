@@ -4,12 +4,12 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,11 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (phoneBook[phone]) {
+        return false;
+    }
 
+    return addOrUpdate(phone, name, email);
 }
 
 /**
@@ -30,7 +34,33 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!phoneBook[phone]) {
+        return false;
+    }
 
+    return addOrUpdate(phone, name, email);
+}
+
+/**
+ * Добавление или обновление записи в телефонной книге
+ * @param {String} phone
+ * @param {String?} name
+ * @param {String?} email
+ * @returns {Boolean}
+ */
+function addOrUpdate(phone, name, email) {
+    const phoneNumberRegex = /^[0-9]{10}$/g;
+    if (!phoneNumberRegex.test(phone)) {
+        return false;
+    }
+
+    if (name === undefined) {
+        return false;
+    }
+
+    phoneBook[phone] = { phone, name, email };
+
+    return true;
 }
 
 /**
@@ -39,7 +69,11 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let removingValues = findRecordsByQuery(query)
+        .map(x => x.phone);
+    removingValues.forEach(phone => delete phoneBook[phone]);
 
+    return removingValues.length;
 }
 
 /**
@@ -48,7 +82,35 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    return findRecordsByQuery(query)
+        .map(x => x.stringValue)
+        .sort();
+}
 
+function formatPhone(phone) {
+    const p1 = phone.slice(0, 3);
+    const p2 = phone.slice(3, 6);
+    const p3 = phone.slice(6, 8);
+    const p4 = phone.slice(8, 10);
+
+    return `+7 (${p1}) ${p2}-${p3}-${p4}`;
+}
+
+function findRecordsByQuery(query) {
+    return Object.values(phoneBook)
+        .map(toPhoneAndStringValue)
+        .filter(x => query === '*' ? true : x.stringValue.includes(query));
+}
+
+function toPhoneAndStringValue(phoneRecord) {
+    const phone = formatPhone(phoneRecord.phone);
+    const name = phoneRecord.name;
+    const email = phoneRecord.email;
+    const stringValue = [name, phone, email]
+        .filter(x => x !== undefined)
+        .join(', ');
+
+    return { phone: phoneRecord.phone, stringValue };
 }
 
 /**
