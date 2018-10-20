@@ -82,7 +82,7 @@ function findAndRemove(query) {
 }
 
 function removeFromBook(contact) {
-    phoneBook = phoneBook.splice(phoneBook.indexOf(contact));
+    phoneBook = phoneBook.splice(phoneBook.indexOf(contact), 1);
 }
 
 function getContactsBy(query) {
