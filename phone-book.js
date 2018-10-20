@@ -82,9 +82,15 @@ function findPhones(query) {
     }
 
     return Array.from(phoneBook.keys())
-        .filter(phone => phone.includes(query) || phoneBook.get(phone).name.includes(query) ||
-            (phoneBook.get(phone).email !== undefined &&
-                phoneBook.get(phone).email.includes(query)));
+        .filter(phone => {
+            if (phone.includes(query)) {
+                return true;
+            }
+            const phoneRecord = phoneBook.get(phone);
+
+            return phoneRecord.name.includes(query) ||
+                (phoneRecord.email !== undefined && phoneRecord.email.includes(query));
+        });
 }
 
 /**
@@ -97,15 +103,20 @@ function find(query) {
         `${phone.substr(3, 3)}-${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
 
     return findPhones(query)
-        .sort((firstPhone, secondPhone) =>
-            phoneBook.get(firstPhone).name.localeCompare(phoneBook.get(secondPhone).name))
+        // .sort((firstPhone, secondPhone) => {
+        //     const firstRecord = phoneBook.get(firstPhone);
+        //     const secondRecord = phoneBook.get(secondPhone);
+        //
+        //     return firstRecord.name.localeCompare(secondRecord.name);
+        // })
         .map(phone => [
             phoneBook.get(phone).name,
             transformPhone(phone),
             phoneBook.get(phone).email
         ]
             .filter(field => field !== undefined)
-            .join(', '));
+            .join(', '))
+        .sort();
 }
 
 /**
