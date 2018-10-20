@@ -110,17 +110,10 @@ function checkIfMatchQuery(entity, query) {
     if (query === '*') {
         return true;
     }
-    for (let key in entity) {
-        if (!entity.hasOwnProperty(key) || typeof entity[key] === 'undefined') {
-            continue;
-        }
 
-        if (entity[key].includes(query)) {
-            return true;
-        }
-    }
-
-    return false;
+    return Object.values(entity)
+        .filter(x => x !== undefined)
+        .some(x => x.includes(query));
 }
 
 function toPhoneAndStringValue(phoneRecord) {
