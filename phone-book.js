@@ -27,7 +27,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (name === undefined || !name.trim()) {
+    if (typeof name !== 'string' || !name) {
         return false;
     }
 
@@ -48,7 +48,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    if (name === undefined || !name.trim()) {
+    if (typeof name !== 'string' || !name) {
         return false;
     }
 
@@ -125,9 +125,6 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
     let count = 0;
     csv.split('\n')
         .forEach(record => {
