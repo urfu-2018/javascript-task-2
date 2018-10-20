@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
