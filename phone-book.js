@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,20 +18,18 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
-    if (!checkBookOfExist()) {
-        phoneBook = {};
-    }
-    if (!checkNameFormat(name) || !checkPhoneFormat(phone) || phone in phoneBook) {
-        return false;
-    }
-    addNote(name, phone, email);
+function add(phone, name, email = '') {
+    if (checkNameFormat(name) && checkPhoneFormat(phone) && !(phone in phoneBook)) {
+        addNote(name, phone, email);
 
-    return true;
+        return true;
+    }
+
+    return false;
 }
 
 function checkPhoneFormat(phone) {
-    return isString(phone) && phone.search(/^[0-9]{10}$/i) === 0;
+    return phone !== undefined && isString(phone) && phone.search(/^[0-9]{10}$/i) === 0;
 }
 
 function checkBookOfExist() {
@@ -45,42 +43,30 @@ function checkBookOfExist() {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-    if (!(checkBookOfExist() &&
-        checkNameFormat(name) &&
+function update(phone, name, email = '') {
+    if (checkNameFormat(name) &&
         checkPhoneFormat(phone) &&
-        (phone in phoneBook))) {
-        return false;
+        (phone in phoneBook)) {
+        addNote(name, phone, email);
+
+        return true;
     }
 
-    addNote(name, phone, email);
-
-    return true;
+    return false;
 }
 
 function addNote(name, phone, email) {
-    if (email !== undefined) {
-        if (!checkEmailFormat(email)) {
-            return false;
-        }
-        phoneBook[phone] = {
-            name: name,
-            phone: phone,
-            email: email
-        };
-    } else {
-        phoneBook[phone] = {
+    phoneBook[phone] = email !== undefined ? {
+        name: name,
+        phone: phone,
+        email: email }
+        : {
             name: name,
             phone: phone
         };
-    }
 }
 function checkNameFormat(name) {
     return name !== undefined && isString(name);
-}
-
-function checkEmailFormat(email) {
-    return isString(email);
 }
 
 /**
@@ -121,6 +107,7 @@ function find(query) {
 function isString(query) {
     return typeof query === 'string';
 }
+
 function findQueryInSorted(query) {
     return sortedBook()
         .filter(x => {
