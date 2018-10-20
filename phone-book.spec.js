@@ -83,7 +83,7 @@ describe('phone-book', () => {
     });
 
     it('должен удалять все элементы из телефонной книги с помощью "*"', () => {
-        assert.strictEqual(phoneBook.findAndRemove('*', 1));
+        assert.strictEqual(phoneBook.findAndRemove('*'), 1);
         assert.deepStrictEqual(phoneBook.find('*'), []);
     });
 

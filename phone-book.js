@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-var phoneBook = {};
+let phoneBook = {};
 
 function isCorrectPhone(phone) {
     return /^\d{10}$/.test(phone) && phone;
@@ -63,7 +63,7 @@ function findAndRemove(query) {
         return 0;
     }
     if (query === '*') {
-        const result = phoneBook.length;
+        const result = Object.keys(phoneBook).length;
         phoneBook = {};
 
         return result;
