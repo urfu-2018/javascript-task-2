@@ -19,15 +19,11 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!phone.match(/^\d{10}$/)) {
+    if (!isDataValid(phone, name, email)) {
         return false;
     }
 
     if (phoneBook.has(phone)) {
-        return false;
-    }
-
-    if (typeof name !== 'string' || !name) {
         return false;
     }
 
@@ -44,17 +40,30 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone)) {
+    if (!isDataValid(phone, name, email)) {
         return false;
     }
 
-    if (typeof name !== 'string' || !name) {
+    if (!phoneBook.has(phone)) {
         return false;
     }
 
     phoneBook.set(phone, { name: name, email: email });
 
     return true;
+}
+
+function isDataValid(phone, name, email) {
+    if (typeof phone !== 'string' || typeof name !== 'string' ||
+        (email !== undefined && typeof email !== 'string')) {
+        return false;
+    }
+
+    if (!phone.match(/^\d{10}$/)) {
+        return false;
+    }
+
+    return name.length > 0;
 }
 
 /**
