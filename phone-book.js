@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = new Map();
+const phoneBook = new Map();
 
 /**
  *  Шаблон номера
@@ -70,13 +70,15 @@ function getPhone(prettyEntry) {
  * @returns {String}
  */
 function prettifyEntry(phoneBookEntry) {
-    return (phoneBookEntry[1].email) ? [
-        phoneBookEntry[1].name,
-        prettifyPhone(phoneBookEntry[0]),
-        phoneBookEntry[1].email
+    const [phone, entry] = phoneBookEntry;
+
+    return (entry.email) ? [
+        entry.name,
+        prettifyPhone(phone),
+        entry.email
     ].join(', ') : [
-        phoneBookEntry[1].name,
-        prettifyPhone(phoneBookEntry[0])
+        entry.name,
+        prettifyPhone(phone)
     ].join(', ');
 }
 
@@ -161,10 +163,17 @@ function find(query) {
 
     const prettyEntries = Array.from(phoneBook, entry => prettifyEntry(entry)).sort();
 
-    return (query === '*')
-        ? prettyEntries
-        : prettyEntries
-            .filter(v => v.includes(query) || getPhone(v).includes(query));
+    return (query === '*') ? prettyEntries : prettyEntries
+        .filter(v => {
+            const [name, prettyPhone, email] = v.split(',');
+            const phone = getPhone(prettyPhone);
+
+            if (email) {
+                return name.includes(query) || phone.includes(query) || email.includes(query);
+            }
+
+            return name.includes(query) || phone.includes(query);
+        });
 }
 
 /**
@@ -179,10 +188,9 @@ function importFromCsv(csv) {
     }
 
     return csv.split('\n').reduce((acc, s) => {
-        let [name, phone, email] = s.split(';');
+        const [name, phone, email] = s.split(';');
 
-        return (add(phone, name, email) || update(phone, name, email))
-            ? acc + 1 : acc;
+        return (add(phone, name, email) || update(phone, name, email)) ? acc + 1 : acc;
     }, 0);
 }
 
