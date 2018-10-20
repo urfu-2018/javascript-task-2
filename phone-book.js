@@ -33,8 +33,7 @@ function isCorrectEmail(email) {
 }
 
 function isIncorrectInput(phone, name, email) {
-    return !isCorrectPhone(phone) || !isCorrectName(name) || !isCorrectEmail(email) ||
-        arguments.length === 1;
+    return !isCorrectPhone(phone) || !isCorrectName(name) || !isCorrectEmail(email);
 }
 
 function formatPhone(phone) {
@@ -79,7 +78,7 @@ function decorateFoundMap(foundMap) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isIncorrectInput(phone, name, email) || phoneBook.has(phone)) {
+    if (isIncorrectInput(phone, name, email) || phoneBook.has(phone) || arguments.length === 1) {
         return false;
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
@@ -95,7 +94,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isIncorrectInput(phone, name, email) || !phoneBook.has(phone)) {
+    if (isIncorrectInput(phone, name, email) || !phoneBook.has(phone) || arguments.length === 1) {
         return false;
     }
     if (arguments.length === 2) {
