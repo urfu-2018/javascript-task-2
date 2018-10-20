@@ -32,10 +32,6 @@ function checkPhoneFormat(phone) {
     return phone !== undefined && isString(phone) && phone.search(/^[0-9]{10}$/i) === 0;
 }
 
-function checkBookOfExist() {
-    return phoneBook !== undefined;
-}
-
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -75,8 +71,14 @@ function checkNameFormat(name) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!checkBookOfExist() || !isString(query)) {
+    if (!isString(query) || query === undefined) {
         return 0;
+    }
+    if (query === '*') {
+        let count = Object.keys(phoneBook).length;
+        phoneBook = {};
+
+        return count;
     }
     let found = findQueryInSorted(query);
     for (let i = 0; i < found.length; i++) {
@@ -92,7 +94,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!checkBookOfExist() || !isString(query)) {
+    if (!isString(query) || query === undefined) {
         return [];
     }
     if (query === '*') {
@@ -113,7 +115,7 @@ function findQueryInSorted(query) {
         .filter(x => {
             return x.name.includes(query) ||
                 x.phone.includes(query) ||
-                x.email.includes(query);
+                (x.email !== undefined && x.email.includes(query));
         });
 }
 
