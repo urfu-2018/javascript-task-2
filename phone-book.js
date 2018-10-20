@@ -52,7 +52,7 @@ function update(phone, name, email = '') {
 }
 
 function addNote(name, phone, email) {
-    phoneBook[phone] = email !== '' ? {
+    phoneBook[phone] = email ? {
         name: name,
         phone: phone,
         email: email }
