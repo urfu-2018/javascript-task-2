@@ -26,6 +26,12 @@ describe('phone-book', () => {
         assert.ok(phoneBook.update('5553330033', 'Валерий'));
     });
 
+    it('не должен обновлять несуществующие и некорректные записи', () => {
+        assert.ok(!phoneBook.update('8005553535', 'Николай', 'abc@example.com'));
+        assert.ok(!phoneBook.update('assa8005553535', 'Николай', 'abc@example.com'));
+        assert.ok(!phoneBook.update('8005553535saas', 'Николай', 'abc@example.com'));
+    });
+
     it('должен искать все записи по запросу "*"', () => {
         assert.deepStrictEqual(phoneBook.find('*'), [
             'Алексей, +7 (555) 111-00-11, alex@example.com',

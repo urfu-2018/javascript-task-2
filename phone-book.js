@@ -53,7 +53,7 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isCorrectPhone(phone) && isCorrectName(name)) {
+    if (isCorrectPhone(phone) && isCorrectName(name) && phone in phoneBook) {
         phoneBook[phone] = [name, email];
 
         return true;
@@ -72,7 +72,10 @@ function findAndRemove(query) {
         return 0;
     }
     if (query === '*') {
-        return phoneBook.length;
+        const result = phoneBook.length;
+        phoneBook = {};
+
+        return result;
     }
     let count = 0;
     for (let phone of Object.keys(phoneBook)) {
@@ -113,7 +116,7 @@ function containsInBook(query, phone) {
     return phone.includes(query) || name.includes(query) || (email && email.includes(query));
 }
 
-function convert2Format(phone, name, email = '') {
+function convert2Format(phone, name, email) {
     phone =
     `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 
