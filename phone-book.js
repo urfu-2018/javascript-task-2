@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -19,7 +19,7 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!name || ! /^\d{10}$/.test(phone) || phoneBook.hasOwnProperty(phone)) {
+    if (!name || !/^\d{10}$/.test(phone) || phoneBook.hasOwnProperty(phone)) {
 
         return false;
     }
@@ -92,14 +92,15 @@ function filtArr(arr, searchParam) {
     });
 
 }
-function compare(a, b) {
-    if (a > b) {
-        return 1;
-    }
-    if (a < b) {
-        return -1;
-    }
+function compare(array) {
+    array.sort(function (a, b) {
+        var a1 = a.slice(0, a.indexOf(',')).toLowerCase();
+        var b1 = b.slice(0, b.indexOf(',')).toLowerCase();
 
+        return a1.localeCompare(b1);
+    });
+
+    return array;
 }
 
 /**
@@ -139,10 +140,10 @@ function find(query) {
     }
     if (query === '*') {
 
-        return showArr(convertArrForSearch(phoneBook)).sort(compare);
+        return compare(showArr(convertArrForSearch(phoneBook)));
     }
 
-    return showArr(filtArr(convertArrForSearch(phoneBook), query)).sort(compare);
+    return compare(showArr(filtArr(convertArrForSearch(phoneBook), query)));
 }
 
 /**
