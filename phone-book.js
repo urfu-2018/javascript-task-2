@@ -19,7 +19,7 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const trueData = name !== undefined && /^\d{10}$/.test(phone);
+    const trueData = name !== undefined && /^\d{10}$/.test(phone) && name.length !== 0;
     const onlyOneNumber = !(phone in phoneBook);
     if (trueData && onlyOneNumber) {
         phoneBook[phone] = [name, email];
@@ -39,7 +39,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const whenOk = phone in phoneBook && name !== undefined;
+    const whenOk = phone in phoneBook && name !== undefined && name.length !== 0;
     if (whenOk) {
         phoneBook[phone] = [name, email];
 
@@ -111,7 +111,7 @@ function compare(a, b) {
  */
 function findAndRemove(query) {
 
-    if (query === undefined) {
+    if (!query) {
 
         return 0;
     }
@@ -135,7 +135,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === undefined) {
+    if (!query) {
 
         return [];
     }
