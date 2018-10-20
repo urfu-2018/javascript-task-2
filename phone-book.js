@@ -74,7 +74,8 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const contactToRemove = queryPhoneBook(query);
-    phoneBook.filter(contact => !contactToRemove.includes(contact));
+    const newPhoneBook = phoneBook.filter(contact => !contactToRemove.includes(contact));
+    phoneBook = newPhoneBook;
 
     return contactToRemove.length;
 }
@@ -91,7 +92,7 @@ function find(query) {
 
 function queryPhoneBook(query) {
 
-    if (query === '') {
+    if (! typeof query === 'string' || query === '') {
         return [];
     }
 
