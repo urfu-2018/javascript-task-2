@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,6 +19,15 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    const trueData = name !== undefined && /^\d{10}$/.test(phone);
+    const onlyOneNumber = !(phone in phoneBook);
+    if (trueData && onlyOneNumber) {
+        phoneBook[phone] = [name, email];
+
+        return true;
+    }
+
+    return false;
 
 }
 
@@ -30,6 +39,68 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    const whenOk = phone in phoneBook && name !== undefined;
+    if (whenOk) {
+        phoneBook[phone] = [name, email];
+
+        return true;
+    }
+
+    return false;
+}
+// В обоих случаях вывод будет следующий
+// [
+//   'Алексей, +7 (555) 111-00-11, alex@example.com',
+//   'Борис, +7 (555) 222-00-22, boris@example.com',
+//   'Валерий, +7 (555) 333-00-33',
+//   'Григорий, +7 (555) 444-00-44, grisha@example.com'
+// ]
+// { '5554440044': [ 'Григорий', 'grisha@example.com' ],
+//   '5552220022': [ 'Борис', 'boris@example.com' ],
+//   '5551110011': [ 'Алексей', 'alex@example.com' ],
+//   '5553330033': [ 'Валерий', undefined ] }
+function convertPhoneNumber(number) {
+    const convertedNumber = `+7 (${number.slice(0, 3)})` +
+    ` ${number.slice(3, 6)}` +
+    `-${number.slice(6, 8)}` +
+    `-${number.slice(8, 10)}`;
+
+    return convertedNumber;
+}
+
+function convertArrForSearch(obj) {
+    let arr = Object.entries(obj);
+
+    return arr.map(function (item) {
+        let phone = item[0];
+        let name = item[1][0];
+        let email = item[1][1];
+
+        return [name, phone, email].join(', ');
+    });
+}
+
+function showArr(arr) {
+    return arr.map(function (item) {
+        let [name, phone, email] = item.split(', ');
+        phone = convertPhoneNumber(phone);
+
+        return [name, phone, email].join(', ').replace(/,\s*$/, '');
+    });
+}
+function filtArr(arr, searchParam) {
+    return arr.filter(function (item) {
+        return item.indexOf(searchParam) !== -1;
+    });
+
+}
+function compare(a, b) {
+    if (a > b) {
+        return 1;
+    }
+    if (a < b) {
+        return -1;
+    }
 
 }
 
@@ -40,6 +111,22 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
 
+    if (query === undefined) {
+
+        return 0;
+    }
+    let countOfDeletedItems = 0;
+    let arr = convertArrForSearch(phoneBook);
+    arr.forEach(function (item) {
+        if (item.indexOf(query) !== -1) {
+            countOfDeletedItems ++;
+            let data = item.split(', ');
+            let phone = data[1];
+            delete phoneBook[phone];
+        }
+    });
+
+    return countOfDeletedItems;
 }
 
 /**
@@ -48,7 +135,16 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (query === undefined) {
 
+        return [];
+    }
+    if (query === '*') {
+
+        return showArr(convertArrForSearch(phoneBook)).sort(compare);
+    }
+
+    return showArr(filtArr(convertArrForSearch(phoneBook), query)).sort(compare);
 }
 
 /**
@@ -61,8 +157,19 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    let csvArr = csv.split('\n');
+    let addCount = 0;
+    let updatedCount = 0;
+    csvArr.forEach(function (item) {
+        let [name, phone, email] = item.split(';');
+        if (add(phone, name, email)) {
+            addCount++;
+        } else if (update(phone, name, email)) {
+            updatedCount++;
+        }
+    });
 
-    return csv.split('\n').length;
+    return addCount + updatedCount;
 }
 
 module.exports = {
