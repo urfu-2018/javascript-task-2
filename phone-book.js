@@ -74,7 +74,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (arguments.length === 1 || !phoneBook.has(phone)) {
+    if (arguments.length === 1 || !phoneBook.has(phone) || !checkPhone(phone)) {
         return false;
     }
     if (arguments.length === 2) {
