@@ -9,7 +9,10 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+const phoneBook = {};
+const canAddRecord = (phone, name) =>
+    isValidPhone(phone) && !phoneBook.hasOwnProperty(phone) && name;
+const canUpdateRecord = (phone, name) => phoneBook.hasOwnProperty(phone) && name;
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +22,13 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    return tryAddRecord(phone, name, email);
+    if (canAddRecord(phone, name)) {
+        phoneBook[phone] = { name, email };
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -30,7 +39,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    return tryUpdateRecord(phone, name, email);
+    if (canUpdateRecord(phone, name)) {
+        phoneBook[phone] = { name, email };
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -88,36 +103,16 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
 
     var records = csv.split('\n');
-    let newRecordsCount = 0;
     let updatedRecordsCount = 0;
     for (var i = 0; i < records.length; i++) {
         let [name, phone, email] = records[i].split(';');
-        if (tryAddRecord(phone, name, email)) {
-            newRecordsCount++;
-        } else if (tryUpdateRecord(phone, name, email)) {
+        if (canAddRecord(phone, name, email) || canUpdateRecord(phone, name, email)) {
+            phoneBook[phone] = { name, email };
             updatedRecordsCount++;
         }
     }
 
-    return newRecordsCount + updatedRecordsCount;
-}
-
-function tryAddRecord(phone, name, email) {
-    if (!name || !isValidPhone(phone) || phoneBook.hasOwnProperty(phone)) {
-        return false;
-    }
-    phoneBook[phone] = { name, email };
-
-    return true;
-}
-
-function tryUpdateRecord(phone, name, email) {
-    if (!phoneBook.hasOwnProperty(phone) || !name) {
-        return false;
-    }
-    phoneBook[phone] = { name, email };
-
-    return true;
+    return updatedRecordsCount;
 }
 
 /**
@@ -167,6 +162,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-
     isStar
 };
