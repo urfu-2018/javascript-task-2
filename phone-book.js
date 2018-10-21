@@ -54,7 +54,7 @@ function validateEmail(email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!validatePhoneNumber(phone) || !validateName(name) || !contactExist(phone)) {
+    if (!validatePhoneNumber(phone) || !validateName(name)) {
         return false;
     }
 
@@ -97,7 +97,7 @@ function getFormatPhone(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!query) {
+    if (!query || typeof query !== 'string') {
         return [];
     }
 
