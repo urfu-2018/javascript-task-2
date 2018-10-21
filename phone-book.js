@@ -31,10 +31,6 @@ function add(phone, name, email) {
     return true;
 }
 
-function isContactExist(phone) {
-    return Object.keys(phoneBook).some(item => phone === item);
-}
-
 function isValidPhone(phone) {
     return phone && typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
