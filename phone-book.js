@@ -9,8 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
-phoneBook = new Map();
+let phoneBook = new Map();
 
 function isString(arg) {
     return typeof arg === 'string';
@@ -33,17 +32,21 @@ function formatPhone(phone) {
         phone.slice(6, 8) + '-' + phone.slice(8, 10);
 }
 
+function contains(str, substr) {
+    return str.indexOf(substr) !== -1;
+}
+
 function findMap(query) {
     if (query === '*') {
         return phoneBook;
     }
-    if (query === '') {
+    if (query === '' || query === undefined) {
         return new Map();
     }
     const found = new Map();
     phoneBook.forEach(function (value, key) {
-        if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
-            value.email.indexOf(query) !== -1) {
+        if (contains(key, query) || contains(value.name, query) ||
+            contains(value.email, query)) {
             found.set(key, value);
         }
     });
