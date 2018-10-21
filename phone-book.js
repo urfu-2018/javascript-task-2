@@ -148,10 +148,11 @@ function importFromCsv(csv) {
     csv = csv.split('\n');
     for (let i = 0; i < csv.length; i++) {
         let note = csv[i].split(';');
-        if (/^[0-9]{10}$/.test(note[1])) {
-            if(!update(note[0], note[1], note[2])) {
-                add(note[0], note[1], note[2]);
-            }
+        if (update(note[1], note[0], note[2])) {
+            count++;
+            continue;
+        }
+        if (add(note[1], note[0], note[2])) {
             count++;
         }
     }
