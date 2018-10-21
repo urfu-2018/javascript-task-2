@@ -125,13 +125,17 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    if (!isValidContactParam(csv)) {
+        return 0;
+    }
     const contacts = csv.split('\n');
 
     return contacts.reduce((count, contact) => {
         const [name, phone, email] = contact.split(';');
         const isUpdated = update(phone, name, email);
+        const isAdded = add(phone, name, email);
 
-        return isUpdated ? ++count : count;
+        return isUpdated || isAdded ? ++count : count;
     }, 0);
 }
 
