@@ -143,6 +143,9 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    if (!isString(csv)) {
+        return 0;
+    }
     let addedOrUpdatedCount = 0;
     const csvStrings = csv.split('\n');
     csvStrings.forEach(function (item) {
