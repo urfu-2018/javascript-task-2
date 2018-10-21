@@ -9,7 +9,15 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
+
+function isString(phone, name, email) {
+    if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
+        return false;
+    }
+
+    return true;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,8 +26,16 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name, email = '') {
+    if (!isString(phone, name, email) || phoneBook[phone] !== undefined) {
+        return false;
+    }
+    if (!/^[0-9]{10}$/.test(phone) || name.length === 0) {
+        return false;
+    }
+    phoneBook[phone] = [name, email];
 
+    return true;
 }
 
 /**
@@ -29,8 +45,13 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone, name, email = '') {
+    if (!isString(phone, name, email) || phoneBook[phone] === undefined) {
+        return false;
+    }
+    phoneBook[phone] = [name, email];
 
+    return true;
 }
 
 /**
@@ -39,7 +60,19 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let removes = find(query);
+    let records = [];
+    for (let p of removes) {
+        let str = p.split(', ');
+        records[str[1]] = [str[0], str[2]];
+    }
+    let count = 0;
+    for (let key of Object.keys(records)) {
+        phoneBook[key] = undefined;
+        count++;
+    }
 
+    return count;
 }
 
 /**
@@ -47,8 +80,47 @@ function findAndRemove(query) {
  * @param {String} query
  * @returns {String[]}
  */
-function find(query) {
 
+function find(query) {
+    let bookRecords = [];
+    if (typeof query !== 'string' || query.length === 0) {
+        return;
+    }
+    if (query === '*') {
+        return give(phoneBook);
+    }
+    bookRecords = existInBook(query);
+
+    return give(bookRecords);
+}
+
+//  Проверка на существование записей в книге
+function existInBook(query) {
+    let result = [];
+    for (let key of Object.keys(phoneBook)) {
+        if (key.indexOf(query) !== -1 || phoneBook[key][0].indexOf(query) !== -1 ||
+            phoneBook[key][1].indexOf(query) !== -1) {
+            result[key] = [phoneBook[key][0], phoneBook[key][1]];
+        }
+    }
+    result.sort();
+
+    return result;
+}
+//  Получение записей из книги
+function give(records) {
+    let result = [];
+    for (let key of Object.keys(records)) {
+        let record = records[key][0] + ', +7 (' + key.substring(0, 3) + ') ' + key.substring(3, 6) +
+        '-' + key.substring(6, 8) + '-' + key.substring(8, 10) + ', ' + records[key][1];
+        if (records[key][1].length === 0) {
+            record = record.slice(0, record.length - 2);
+        }
+        result.push(record);
+    }
+    result.sort();
+
+    return result;
 }
 
 /**
@@ -58,11 +130,35 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    let count = 0;
+    if (typeof csv !== 'string') {
+        return count;
+    }
+    let str = csv.split('\n');
+    let preResult = [];
+    let phone;
+    let name;
+    let email;
+    for (let p = 0; p < str.length; p++) {
+        preResult[p] = str[p].split(';');
+        phone = preResult[p][1];
+        name = preResult[p][0];
+        email = preResult[p][2];
+        count += addOrUpdateBook(phone, name, email);
+    }
 
-    return csv.split('\n').length;
+    return count;
+}
+//  Попытки обновить запись или же добавить с подсчётом успешных операций
+function addOrUpdateBook(phone, name, email) {
+    if (update(phone, name, email)) {
+        return 1;
+    }
+    if (add(phone, name, email)) {
+        return 1;
+    }
+
+    return 0;
 }
 
 module.exports = {
