@@ -49,6 +49,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (query === '') {
+        return [];
+    }
+
     let count = 0;
     for (let [key, value] of phoneBook) {
         if (containsInRecords(key, value, query)) {
