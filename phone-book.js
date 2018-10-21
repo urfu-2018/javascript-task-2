@@ -166,7 +166,6 @@ function find(query) {
  */
 function importFromCsv(csv) {
     let counter = 0;
-    let usedPhones = [];
     if (isNullOrUndefinedOrEmptyString(csv)) {
         return counter;
     }
@@ -184,8 +183,7 @@ function importFromCsv(csv) {
 
         let result = add(phone, name, email) || update(phone, name, email);
 
-        if (result && !usedPhones.includes(phone)) {
-            usedPhones.push(phone);
+        if (result) {
             counter++;
         }
     });
