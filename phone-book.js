@@ -51,7 +51,7 @@ function isValidContactParam(param) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isValidPhone(phone) || !isValidContactParam(name) || !isContactExist(phone)) {
+    if (!isValidPhone(phone) || !isValidContactParam(name)) {
         return false;
     }
 
