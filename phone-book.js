@@ -165,6 +165,9 @@ function find(query) {
  */
 function importFromCsv(csv) {
     let counter = 0;
+    if (isNullOrUndefinedOrEmptyString(csv)) {
+        return counter;
+    }
     let stringsFromCsv = csv.split('\n');
     let recordsCount = stringsFromCsv.length;
     if (recordsCount === 0 ||
