@@ -104,10 +104,8 @@ function find(query) {
 
 function getNote(index) {
     let note;
-    if (typeof phoneBook[index].name !== 'undefined')
-    {
-        note = `${phoneBook[index].name}, ${getCorrectPhoneFormat(phoneBook[index].phone)}`;
-    }
+    if (typeof phoneBook[index].name !== 'undefined') {
+        note = `${phoneBook[index].name}, ${getCorrectPhoneFormat(phoneBook[index].phone)}`; }
     else {
         note = `${getCorrectPhoneFormat(phoneBook[index].phone)}`;
     }
