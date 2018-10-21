@@ -198,12 +198,11 @@ function importFromCsv(csv) {
         entries.push(entry);
     }
 
+    let entriesImported = 0; // Счётчик импортированных записей
+
     // Обновление телефонной книги
-    let entriesImported = 0;
     for (let entry of entries) {
-
         let result;
-
         // Если такой записи ещё не существует, добавляем её
         if (getEntryByPhone(entry.phone) === undefined) {
             result = add(entry.name, entry.phone, entry.email);
@@ -213,7 +212,7 @@ function importFromCsv(csv) {
             result = update(entry.phone, entry.name, entry.email);
         }
 
-        // Если операция успешна, увеличить счётчик импортированных записей
+        // Если операция успешна, увеличить счётчик
         if (result === true) {
             entriesImported++;
         }
