@@ -51,13 +51,13 @@ function isValidContactParam(param) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isValidPhone(phone) || !isValidContactParam(name)) {
+    if (!isValidPhone(phone) || !isContactExist(phone)) {
         return false;
     }
 
     phoneBook[phone] = {
         email: isValidContactParam(email) ? email : '',
-        name
+        name: isValidContactParam(name) ? name : phoneBook[phone].name
     };
 
     return true;
