@@ -24,20 +24,7 @@ function isCorrectName(name) {
     return isString(name) && name !== '';
 }
 
-/*
-function isCorrectEmail(email) {
-    if (email === undefined) {
-        return true;
-    }
-
-    return isString(email) && email !== '' && email.indexOf('@') !== -1;
-}
-*/
-
 function isIncorrectInput(phone, name) {
-
-    /* return !isCorrectPhone(phone) || !isCorrectName(name) || !isCorrectEmail(email); */
-
     return !isCorrectPhone(phone) || !isCorrectName(name);
 }
 
@@ -86,8 +73,11 @@ function decorateFoundMap(foundMap) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isIncorrectInput(phone, name, email) || phoneBook.has(phone) || arguments.length === 1) {
+    if (isIncorrectInput(phone, name) || phoneBook.has(phone) || arguments.length === 1) {
         return false;
+    }
+    if (arguments.length === 2) {
+        email = '';
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
 
@@ -102,7 +92,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isIncorrectInput(phone, name, email) || !phoneBook.has(phone) || arguments.length === 1) {
+    if (isIncorrectInput(phone, name) || !phoneBook.has(phone) || arguments.length === 1) {
         return false;
     }
     if (arguments.length === 2) {
