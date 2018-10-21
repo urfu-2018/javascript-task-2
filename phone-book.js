@@ -40,6 +40,25 @@ function isValidPhone(phone) {
     return PHONE_REGEX.test(phone);
 }
 
+function isQueryContainsInRecordFields(query, record) {
+
+    return query === '*' ||
+        record.phone.includes(query) ||
+        record.name.includes(query) ||
+        !isNullOrUndefined(record.email) &&
+        record.email.includes(query);
+}
+
+function isBadNameOrPhone(phone, name) {
+
+    return isNullOrUndefined(name) || !isValidPhone(phone);
+}
+
+function isNullOrUndefinedOrEmptyString(query) {
+    return isNullOrUndefined(query) ||
+        typeof query === 'string' &&
+        query === '';
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -49,7 +68,7 @@ function isValidPhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isNullOrUndefined(name) || !isValidPhone(phone)) {
+    if (isBadNameOrPhone(phone, name)) {
         return false;
     }
     let phoneIsInPhoneBook = findRecordByPhone(phone) !== undefined;
@@ -71,7 +90,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isNullOrUndefined(name) || isNullOrUndefined(phone)) {
+    if (isBadNameOrPhone(phone, name)) {
         return false;
     }
 
@@ -94,13 +113,12 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (isNullOrUndefined(query) ||
-        typeof query === 'string' &&
-        query === '') {
+    if (isNullOrUndefinedOrEmptyString(query)) {
         return 0;
     }
+
     let phoneBookBeforeDeleteLength = phoneBook.length;
-    var phoneBookAfterDelete = phoneBook
+    let phoneBookAfterDelete = phoneBook
         .filter(record => !isQueryContainsInRecordFields(query, record));
     phoneBook = phoneBookAfterDelete;
 
@@ -113,11 +131,10 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (isNullOrUndefined(query) ||
-            typeof query === 'string' &&
-            query === '') {
+    if (isNullOrUndefinedOrEmptyString(query)) {
         return [];
     }
+
     const PHONE_REGEX = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
     let result = phoneBook
         .filter(record => isQueryContainsInRecordFields(query, record))
@@ -139,15 +156,6 @@ function find(query) {
     });
 }
 
-function isQueryContainsInRecordFields(query, record) {
-
-    return query === '*' ||
-        record.phone.includes(query) ||
-        record.name.includes(query) ||
-        !isNullOrUndefined(record.email) &&
-        record.email.includes(query);
-}
-
 /**
  * Импорт записей из csv-формата
  * @star
@@ -159,7 +167,27 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').length;
+    let counter = 0;
+    let stringsFromCsv = csv.split('\n');
+    stringsFromCsv.forEach((record) => {
+        let values = record.split(';');
+        let name = values[0];
+        let phone = values[1];
+        let email = values[2];
+
+        if (isBadNameOrPhone(phone, name)) {
+            return;
+        }
+
+        let result = add(phone, name, email) || update(phone, name, email);
+
+        if (result) {
+            counter++;
+        }
+    });
+
+
+    return counter;
 }
 
 module.exports = {
