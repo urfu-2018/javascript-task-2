@@ -94,7 +94,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (isNullOrUndefined(query)) {
+    if (isNullOrUndefined(query) ||
+        typeof query === 'string' &&
+        query === '') {
         return 0;
     }
     let phoneBookBeforeDeleteLength = phoneBook.length;
