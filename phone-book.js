@@ -78,7 +78,7 @@ function add(phone, name, email) {
     if (isIncorrectInput(phone, name) || phoneBook.has(phone) || arguments.length === 1) {
         return false;
     }
-    if (arguments.length === 2) {
+    if (arguments.length === 2 || email === undefined) {
         email = '';
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
@@ -97,7 +97,7 @@ function update(phone, name, email) {
     if (isIncorrectInput(phone, name) || !phoneBook.has(phone) || arguments.length === 1) {
         return false;
     }
-    if (arguments.length === 2) {
+    if (arguments.length === 2 || email === undefined) {
         email = '';
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
