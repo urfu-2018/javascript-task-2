@@ -24,7 +24,7 @@ function isUndefined(field) {
         return false;
     }
 
-    return true
+    return true;
 }
 
 /**
@@ -75,9 +75,6 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query !== 'string' || query.length === 0) {
-        return 0;
-    }
     let removes = find(query);
     let records = [];
     for (let p of removes) {
