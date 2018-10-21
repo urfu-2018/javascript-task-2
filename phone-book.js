@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -20,6 +20,38 @@ let phoneBook;
  */
 function add(phone, name, email) {
 
+    // Если телефон указан в неправильном формате, не добавлять запись
+    const phoneRegex = /^(\d)\1\1(\d)\2\2(\d)\3(\d)\4$/;
+    if (!(phoneRegex.test(phone))) {
+        return false;
+    }
+
+    // Если не указано имя, не добавлять запись
+    if (name === undefined) {
+        return false;
+    }
+
+    // Если запись с таким номером уже существует, не добавлять её
+    const samePhonePredicate = function (element) {
+        return element.phone === phone;
+    };
+    if (phoneBook.findIndex(samePhonePredicate) !== -1) {
+        return false;
+    }
+
+    // Составить новую запись
+    const phoneBookEntry = {
+        phone,
+        name
+    };
+    if (email !== undefined) {
+        phoneBookEntry.email = email;
+    }
+
+    // Добавить запись в телефонную книгу
+    phoneBook.push(phoneBookEntry);
+
+    return true;
 }
 
 /**
