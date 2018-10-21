@@ -102,9 +102,9 @@ function find(query) {
     return notes.sort(function (a, b) {
         if (a.split(', ')[0] >= b.split(', ')[0]) {
             return 1;
-        } else {
-            return 0;
         }
+
+        return 0;
     });
 }
 
