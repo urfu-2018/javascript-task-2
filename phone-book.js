@@ -27,7 +27,7 @@ function add(phone, name, email) {
     }
 
     // Если не указано имя, не добавлять запись
-    if (name === undefined) {
+    if (name === undefined || name.length === 0) {
         return false;
     }
 
@@ -52,7 +52,7 @@ function add(phone, name, email) {
 }
 
 /*
- * Извлечь запись из телефонной книги по ключу
+ * Получить запись из телефонной книги по ключу
  */
 function getEntryByPhone(phone) {
 
@@ -79,7 +79,7 @@ function update(phone, name, email) {
     }
 
     // Если имя не указано, обновления не происходит - имя удалить нельзя
-    if (name === undefined) {
+    if (name === undefined || name.length === 0) {
         return false;
     }
 
