@@ -29,6 +29,7 @@ function add(phone, name, email) {
 
         return true;
     }
+    phoneBook = mapSort(phoneBook);
 
     return false;
 }
@@ -98,7 +99,7 @@ function find(query) {
             email = phoneBook.get(phone)[1].toString();
         }
         if (isIncludes([phone, name, email], query)) {
-            res.push([phone, name, email]);
+            res.push(arrayToString([name, phone = formatingPhone(phone), email]));
         }
     }
 
@@ -133,8 +134,40 @@ function isIncludes(strings, includingString) {
     return false;
 }
 
+function mapSort(map) {
+    map = new Map(
+        Array
+            .from(map)
+            .sort((a, b) => {
+                return a[0] - b[0];
+            })
+    );
+
+    return map;
+}
+
+function arrayToString(array) {
+    let res = '';
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].length !== 0) {
+            res += array[i] + ', ';
+        }
+    }
+    res = res.substr(0, res.length - 2);
+
+    return res;
+}
+
+function formatingPhone(phone) {
+    phone = '+7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) + '-' + phone.substr(6, 2) +
+        '-' + phone.substr(8, 2);
+
+    return phone;
+
+}
+
 function checking(phone, name) {
-    const phoneRegexp = new RegExp('^[0-9]{10}$|^[0-9]{6}$');
+    const phoneRegexp = new RegExp('^[0-9]{10}$');
 
     return ((typeof phone && typeof name) === 'string' && name.length !== 0 &&
         phoneRegexp.test(phone));
