@@ -12,8 +12,9 @@ const isStar = true;
 let phoneBook;
 
 function areTypesCorrect(phone, name, email) {
-    const a = typeof phone === 'string';
-    const b = typeof name === 'string';
+    const phonePattern = '^(\\d{3})(\\d{3})(\\d{2})(\\d{2})$';
+    const a = typeof phone === 'string' && phone.match(phonePattern) !== null;
+    const b = typeof name === 'string' && name !== '';
     const c = (email !== undefined) ? typeof email === 'string' : true;
 
     return a && b && c;
@@ -27,14 +28,13 @@ function areTypesCorrect(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const phonePattern = '^[0-9]{10}$';
     if (!phoneBook) {
         phoneBook = {};
     }
-    if (phoneBook[phone] !== undefined || !areTypesCorrect(phone, name, email)) {
+    if (phoneBook[phone] !== undefined) {
         return false;
     }
-    if (phone.match(phonePattern) !== null && name !== undefined) {
+    if (areTypesCorrect(phone, name, email)) {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -55,9 +55,6 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (phoneBook[phone] !== undefined && areTypesCorrect(phone, name, email)) {
-        if (name === undefined) {
-            return false;
-        }
         phoneBook[phone].name = name;
         phoneBook[phone].email = email;
 
@@ -73,7 +70,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string') {
+    if (typeof query !== 'string' || query === '') {
         return 0;
     }
     const [indexes, phonesIndexes] = getIndexes(query);
@@ -91,7 +88,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === undefined || typeof query !== 'string') {
+    if (query === undefined || typeof query !== 'string' || query === '') {
         return [];
     } else if (query === '*') {
         return formatSelection(sortSelection(phoneBook));
