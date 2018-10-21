@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = Map();
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -32,22 +32,33 @@ function add(phone, name, email) {
     }
 
     // Если запись с таким номером уже существует, не добавлять её
-    if (phoneBook.has(phone)) {
+    if (getEntryByPhone(phone) !== undefined) {
         return false;
     }
 
     // Составить новую запись
     const phoneBookEntry = {
-        name
+        name,
+        phone
     };
     if (email !== undefined) {
         phoneBookEntry.email = email;
     }
 
     // Добавить запись в телефонную книгу
-    phoneBook.set(phone, phoneBookEntry);
+    phoneBook.push(phoneBookEntry);
 
     return true;
+}
+
+/**
+ * Извлечь запись из телефонной книги по ключу
+ */
+function getEntryByPhone(phone) {
+
+    return phoneBook.find((element) => {
+        return element.phone === phone;
+    });
 }
 
 /**
@@ -60,7 +71,7 @@ function add(phone, name, email) {
 function update(phone, name, email) {
 
     // Извлечь запись из телефонной книги
-    let entry = phoneBook.get(phone);
+    let entry = getEntryByPhone(phone);
 
     // Если записи не существует, обновлять нечего
     if (entry === undefined) {
@@ -74,13 +85,11 @@ function update(phone, name, email) {
 
     // Обновить данные записи
     entry.name = name;
-    if ('email' in entry) {
-        if (email === undefined) {
-            delete entry.email;
-        }
-        else {
-            entry.email = email;
-        }
+    if (email === undefined) {
+        delete entry.email;
+    }
+    else {
+        entry.email = email;
     }
 
     return true;
@@ -102,6 +111,59 @@ function findAndRemove(query) {
  */
 function find(query) {
 
+    // Пустой запрос не должен ничего находить
+    if (query.length === 0) {
+        return undefined;
+    }
+
+    // Найти все подходящие записи и преобразовать их в нужный формат
+    const matchingEntries = findMatchingEntries(query);
+    const matchingEntryStrings = matchingEntries.map(toString);
+    matchingEntryStrings.sort();
+
+    return matchingEntryStrings;
+}
+
+/**
+ * Поиск записей-объектов по запросу в телефонной книге
+ */
+function findMatchingEntries(query) {
+
+    // Если запрос содержит единственный символ '*', подходят все записи
+    if (query === '*') {
+        return phoneBook.slice();
+    }
+
+    // Иначе ищем записи, поля которых содержат запрос в качестве подстроки
+    const matchingEntries = [];
+    for (let i = 0; i < phoneBook.length; i++) {
+        for (let field of Object.keys(phoneBook[i])) {
+            if (field.includes(query)) {
+                matchingEntries.push(phoneBook[i]);
+                break;
+            }
+        }
+    }
+
+    return matchingEntries;
+}
+
+/**
+ *  Получить строковое представление записи из телефонной книги
+ */
+function toString(entry) {
+
+    // Преобразовать телефон в нужный формат
+    const phoneRegex = /(\d{3})(\d{3})(\d{2})(\d{2})/;
+    const phoneFormatted = entry.phone.replace(phoneRegex, '+7 ($1) $2-$3-$4');
+
+    // Составить список полей в нужном порядке
+    const entryFields = [entry.name, phoneFormatted];
+    if ('email' in entry) {
+        entryFields.push(entry.email);
+    }
+
+    return entryFields.join(', ');
 }
 
 /**
