@@ -45,10 +45,13 @@ function findMap(query) {
     if (query === '*') {
         return phoneBook;
     }
-    const reg = new RegExp(query);
+    if (query === '') {
+        return new Map();
+    }
     const found = new Map();
     phoneBook.forEach(function (value, key) {
-        if (reg.test(key) || reg.test(value.name) || reg.test(value.email)) {
+        if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
+            value.email.indexOf(query) !== -1) {
             found.set(key, value);
         }
     });
