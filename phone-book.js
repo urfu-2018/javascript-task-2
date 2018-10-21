@@ -125,9 +125,10 @@ function findAndRemove(query) {
     }
     // если хоть где-то индекс подстроки не -1, то добавить этот элемент в массив для удалений
     const toDelete = phoneBook.filter((person) => (person.phone.indexOf(query) !== -1 ||
-    person.name.indexOf(query) !== -1 || person.email.indexOf(query) !== -1));
+        person.name.indexOf(query) !== -1 ||
+        (person.email !== undefined && person.email.indexOf(query) !== -1)));
     // удалить каждый toDelete из phoneBook
-    toDelete.forEach(person => phoneBook.splice(getIndexOfPhone(person.phone)));
+    toDelete.forEach(person => phoneBook.splice(getIndexOfPhone(person.phone), 1));
 
     return toDelete.length;
 }
