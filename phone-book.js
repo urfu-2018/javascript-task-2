@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 'use strict';
 
 /**
@@ -165,6 +166,12 @@ function find(query) {
 function importFromCsv(csv) {
     let counter = 0;
     let stringsFromCsv = csv.split('\n');
+    let recordsCount = stringsFromCsv.length;
+    if (recordsCount === 0 ||
+        recordsCount === 1 &&
+        isNullOrUndefinedOrEmptyString(stringsFromCsv[0])) {
+        return counter;
+    }
     stringsFromCsv.forEach((record) => {
         let values = record.split(';');
         let name = values[0];
