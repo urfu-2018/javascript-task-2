@@ -112,8 +112,8 @@ function find(query) {
             return result;
         }, [])
         .sort((a, b) => {
-            const nameA = a.split(',')[0];
-            const nameB = b.split(',')[0];
+            const nameA = a.split(',')[0].trim();
+            const nameB = b.split(',')[0].trim();
 
             return nameA.localeCompare(nameB);
         });
