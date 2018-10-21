@@ -64,7 +64,7 @@ function decorateFoundMap(foundMap) {
         result.push(note);
     });
 
-    return result.sort();
+    return result;
 }
 
 /**
