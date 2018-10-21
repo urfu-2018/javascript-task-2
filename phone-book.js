@@ -40,7 +40,7 @@ function isValidPhone(phone) {
 }
 
 function isValidContactParam(param) {
-    return param && typeof param === 'string';
+    return param && typeof param === 'string' && param.trim();
 }
 
 /**
