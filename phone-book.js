@@ -53,7 +53,9 @@ function findMap(query) {
 
 function decorateFoundMap(foundMap) {
     const result = [];
-    foundMap.forEach(function (value, key) {
+    const sortedMap = new Map(Array.from(foundMap)
+        .sort((a, b) => a[1].name.localeCompare(b[1].name)));
+    sortedMap.forEach(function (value, key) {
         const formattedPhone = formatPhone(key);
         let note = value.name + ', ' + formattedPhone;
         if (value.email !== '') {
