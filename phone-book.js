@@ -19,7 +19,7 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isValidPhone(phone) || !isValidContactParam(name) || isContactExist(phone)) {
+    if (!isValidPhone(phone) || !isValidContactParam(name) || phoneBook[phone]) {
         return false;
     }
 
@@ -51,7 +51,7 @@ function isValidContactParam(param) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isValidPhone(phone) || !isContactExist(phone) || !isValidContactParam(name)) {
+    if (!isValidPhone(phone) || !phoneBook[phone] || !isValidContactParam(name)) {
         return false;
     }
 
