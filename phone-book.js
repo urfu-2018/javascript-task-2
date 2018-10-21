@@ -1,4 +1,3 @@
-/* eslint-disable no-trailing-spaces */
 'use strict';
 
 /**
@@ -26,9 +25,10 @@ function isNullOrUndefined(variable) {
     return variable === null || variable === undefined;
 }
 
-function findRecordByPhone(phone) {
+function findIndexOfPhone(phone) {
 
-    return phoneBook.find(r => r.phone === phone);
+    return phoneBook
+        .findIndex(record => record.phone === phone);
 }
 
 function isValidPhone(phone) {
@@ -72,8 +72,10 @@ function add(phone, name, email) {
     if (isBadNameOrPhone(phone, name)) {
         return false;
     }
-    let phoneIsInPhoneBook = findRecordByPhone(phone) !== undefined;
-    if (phoneIsInPhoneBook) {
+
+    let indexOfRecord = findIndexOfPhone(phone);
+
+    if (indexOfRecord !== -1) {
 
         return false;
     }
@@ -95,11 +97,10 @@ function update(phone, name, email) {
         return false;
     }
 
-    let indexOfRecord = phoneBook.findIndex((element) => {
-        return element.phone === phone;
-    });
+    let indexOfRecord = findIndexOfPhone(phone);
 
     if (indexOfRecord === -1) {
+
         return false;
     }
 
@@ -169,12 +170,6 @@ function importFromCsv(csv) {
         return counter;
     }
     let stringsFromCsv = csv.split('\n');
-    let recordsCount = stringsFromCsv.length;
-    if (recordsCount === 0 ||
-        recordsCount === 1 &&
-        isNullOrUndefinedOrEmptyString(stringsFromCsv[0])) {
-        return counter;
-    }
     stringsFromCsv.forEach((record) => {
         let values = record.split(';');
         let name = values[0];
