@@ -19,8 +19,9 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof phone !== 'string')
+    if (typeof phone !== 'string') {
         return false;
+    }
     if (!/^[0-9]{10}$/.test(phone)) {
         return false;
     }
