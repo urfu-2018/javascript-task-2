@@ -19,31 +19,28 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!validatePhoneNumber(phone) || !validateName(name) || contactExist(phone)) {
+    if (!isValidPhone(phone) || !isValidContactParam(name) || isContactExist(phone)) {
         return false;
     }
 
     phoneBook[phone] = {
-        email: validateEmail(email) ? email : '',
+        email: isValidContactParam(email) ? email : '',
         name
     };
 
     return true;
 }
 
-function contactExist(phone) {
+function isContactExist(phone) {
     return Object.keys(phoneBook).some(item => phone === item);
 }
 
-function validatePhoneNumber(phone) {
+function isValidPhone(phone) {
     return phone && typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
-function validateName(name) {
-    return name && typeof name === 'string';
-}
-function validateEmail(email) {
-    return email && typeof email === 'string';
+function isValidContactParam(param) {
+    return param && typeof param === 'string';
 }
 
 /**
@@ -54,14 +51,12 @@ function validateEmail(email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!validatePhoneNumber(phone) || !validateName(name)) {
+    if (!isValidPhone(phone)) {
         return false;
     }
 
-    phoneBook[phone] = {
-        name,
-        email: validateEmail(email) ? email : ''
-    };
+    phoneBook[phone].name = isValidContactParam(name) ? name : phoneBook[phone].name;
+    phoneBook[phone].email = isValidContactParam(email) ? email : '';
 
     return true;
 }
@@ -97,7 +92,7 @@ function getFormatPhone(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!query || typeof query !== 'string') {
+    if (!isValidContactParam(query)) {
         return [];
     }
 
