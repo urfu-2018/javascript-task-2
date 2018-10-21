@@ -24,6 +24,7 @@ function isCorrectName(name) {
     return isString(name) && name !== '';
 }
 
+/*
 function isCorrectEmail(email) {
     if (email === undefined) {
         return true;
@@ -31,9 +32,13 @@ function isCorrectEmail(email) {
 
     return isString(email) && email !== '' && email.indexOf('@') !== -1;
 }
+*/
 
-function isIncorrectInput(phone, name, email) {
-    return !isCorrectPhone(phone) || !isCorrectName(name) || !isCorrectEmail(email);
+function isIncorrectInput(phone, name) {
+
+    /* return !isCorrectPhone(phone) || !isCorrectName(name) || !isCorrectEmail(email); */
+
+    return !isCorrectPhone(phone) || !isCorrectName(name);
 }
 
 function formatPhone(phone) {
