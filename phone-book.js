@@ -34,7 +34,7 @@ function isUndefined(field) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email = '') {
+function add(phone, name = '', email = '') {
     if (!isString(phone, name, email)) {
         return false;
     }
@@ -57,13 +57,17 @@ function add(phone, name, email = '') {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email = '') {
+function update(phone, name = '', email = '') {
     if (!isString(phone, name, email)) {
         return false;
     }
     if (isUndefined(phoneBook[phone])) {
         return false;
     }
+    if (!/^[0-9]{10}$/.test(phone) || name.length === 0) {
+        return false;
+    }
+
     phoneBook[phone] = [name, email];
 
     return true;
@@ -146,7 +150,7 @@ function give(records) {
  */
 function importFromCsv(csv) {
     let count = 0;
-    if (typeof csv !== 'string') {
+    if (typeof csv !== 'string' || csv.length === 0) {
         return count;
     }
     let str = csv.split('\n');
