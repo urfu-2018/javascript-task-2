@@ -111,7 +111,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (isNullOrUndefined(query)) {
+    if (isNullOrUndefined(query) ||
+            typeof query === 'string' &&
+            query === '') {
         return [];
     }
     const PHONE_REGEX = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
