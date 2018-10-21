@@ -226,9 +226,9 @@ function importFromCsv(csv) {
 
 function proceedMemo(memoString) {
     const memoParts = memoString.split(';'); // warning here if ; is bad
-    const firstAttemptResult = add(memoParts[1], memoParts[0], memoParts[3]);
+    const firstAttemptResult = add(memoParts[1], memoParts[0], memoParts[2]);
     if (!firstAttemptResult) {
-        return update(memoParts[1], memoParts[0], memoParts[3]);
+        return update(memoParts[1], memoParts[0], memoParts[2]);
     }
 
     return true;
