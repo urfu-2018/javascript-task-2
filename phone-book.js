@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -32,16 +32,12 @@ function add(phone, name, email) {
     }
 
     // Если запись с таким номером уже существует, не добавлять её
-    const samePhonePredicate = function (element) {
-        return element.phone === phone;
-    };
-    if (phoneBook.findIndex(samePhonePredicate) !== -1) {
+    if (phoneBook.has(phone)) {
         return false;
     }
 
     // Составить новую запись
     const phoneBookEntry = {
-        phone,
         name
     };
     if (email !== undefined) {
@@ -49,7 +45,7 @@ function add(phone, name, email) {
     }
 
     // Добавить запись в телефонную книгу
-    phoneBook.push(phoneBookEntry);
+    phoneBook.set(phone, phoneBookEntry);
 
     return true;
 }
@@ -63,6 +59,31 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
 
+    // Извлечь запись из телефонной книги
+    let entry = phoneBook.get(phone);
+
+    // Если записи не существует, обновлять нечего
+    if (entry === undefined) {
+        return false;
+    }
+
+    // Если имя не указано, обновления не происходит - имя удалить нельзя
+    if (name === undefined) {
+        return false;
+    }
+
+    // Обновить данные записи
+    entry.name = name;
+    if ('email' in entry) {
+        if (email === undefined) {
+            delete entry.email;
+        }
+        else {
+            entry.email = email;
+        }
+    }
+
+    return true;
 }
 
 /**
