@@ -34,7 +34,6 @@ phoneBook.findAndRemove('@');
 
 if (phoneBook.isStar) {
     const csv = [
-        'Tom',
         'Борис;5552220022;boris@example.com',
         'Григорий;5554440044;grisha@example.com',
         'Алексей;5551110011;alex@example.com',

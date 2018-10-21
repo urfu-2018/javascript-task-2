@@ -24,8 +24,8 @@ function isCorrectName(name) {
     return isString(name) && name !== '';
 }
 
-function isIncorrectInput(phone, name, argsLength) {
-    return !isCorrectPhone(phone) || !isCorrectName(name) || argsLength === 1;
+function isIncorrectInput(phone, name) {
+    return !isCorrectPhone(phone) || !isCorrectName(name);
 }
 
 function formatPhone(phone) {
@@ -75,7 +75,7 @@ function decorateFoundMap(foundMap) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isIncorrectInput(phone, name, arguments.length) || phoneBook.has(phone)) {
+    if (isIncorrectInput(phone, name) || phoneBook.has(phone)) {
         return false;
     }
     if (email === undefined) {
@@ -94,7 +94,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isIncorrectInput(phone, name, arguments.length) || !phoneBook.has(phone)) {
+    if (isIncorrectInput(phone, name) || !phoneBook.has(phone)) {
         return false;
     }
     if (email === undefined) {
@@ -161,6 +161,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-
     isStar
 };
