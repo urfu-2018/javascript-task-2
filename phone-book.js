@@ -102,6 +102,15 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
 
+    // Найти все подходящие записи
+    const matchingEntries = findMatchingEntries(query);
+
+    // Удалить каждую из найденных записей из книги
+    for (let entry of matchingEntries) {
+        phoneBook.splice(phoneBook.indexOf(entry), 1);
+    }
+
+    return matchingEntries.length;
 }
 
 /**
@@ -111,13 +120,10 @@ function findAndRemove(query) {
  */
 function find(query) {
 
-    // Пустой запрос не должен ничего находить
-    if (query.length === 0) {
-        return undefined;
-    }
-
-    // Найти все подходящие записи и преобразовать их в нужный формат
+    // Найти все подходящие записи в виде объектов
     const matchingEntries = findMatchingEntries(query);
+
+    // Преобразовать записи в нужный формат
     const matchingEntryStrings = matchingEntries.map(toString);
     matchingEntryStrings.sort();
 
@@ -129,17 +135,22 @@ function find(query) {
  */
 function findMatchingEntries(query) {
 
-    // Если запрос содержит единственный символ '*', подходят все записи
+    // Пустой запрос не должен ничего находить
+    if (query.length === 0) {
+        return [];
+    }
+
+    // Если запрос состоит из единственного символа '*', подходят все записи
     if (query === '*') {
         return phoneBook.slice();
     }
 
     // Иначе ищем записи, поля которых содержат запрос в качестве подстроки
     const matchingEntries = [];
-    for (let i = 0; i < phoneBook.length; i++) {
-        for (let field of Object.keys(phoneBook[i])) {
-            if (field.includes(query)) {
-                matchingEntries.push(phoneBook[i]);
+    for (let entry of phoneBook) {
+        for (let field of Object.keys(entry)) {
+            if (entry[field].includes(query)) {
+                matchingEntries.push(entry);
                 break;
             }
         }
