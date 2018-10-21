@@ -54,7 +54,7 @@ function validateEmail(email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!validatePhoneNumber(phone) || !validateName(name)) {
+    if (!validatePhoneNumber(phone) || !validateName(name) || !contactExist(phone)) {
         return false;
     }
 
