@@ -51,7 +51,7 @@ function add(phone, name, email) {
     return true;
 }
 
-/**
+/*
  * Извлечь запись из телефонной книги по ключу
  */
 function getEntryByPhone(phone) {
@@ -87,8 +87,7 @@ function update(phone, name, email) {
     entry.name = name;
     if (email === undefined) {
         delete entry.email;
-    }
-    else {
+    } else {
         entry.email = email;
     }
 
@@ -130,7 +129,7 @@ function find(query) {
     return matchingEntryStrings;
 }
 
-/**
+/*
  * Поиск записей-объектов по запросу в телефонной книге
  */
 function findMatchingEntries(query) {
@@ -148,18 +147,29 @@ function findMatchingEntries(query) {
     // Иначе ищем записи, поля которых содержат запрос в качестве подстроки
     const matchingEntries = [];
     for (let entry of phoneBook) {
-        for (let field of Object.keys(entry)) {
-            if (entry[field].includes(query)) {
-                matchingEntries.push(entry);
-                break;
-            }
+        if (contains(entry, query)) {
+            matchingEntries.push(entry);
         }
     }
 
     return matchingEntries;
 }
 
-/**
+/*
+ * Проверяет, содержит ли данная запись запрос в качестве подстроки некоторого поля
+ */
+function contains(entry, query) {
+
+    for (let field of Object.keys(entry)) {
+        if (entry[field].includes(query)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/*
  *  Получить строковое представление записи из телефонной книги
  */
 function toString(entry) {
@@ -206,8 +216,7 @@ function importFromCsv(csv) {
         // Если такой записи ещё не существует, добавляем её
         if (getEntryByPhone(entry.phone) === undefined) {
             result = add(entry.name, entry.phone, entry.email);
-        }
-        else {
+        } else {
             // Иначе обновляем запись
             result = update(entry.phone, entry.name, entry.email);
         }
