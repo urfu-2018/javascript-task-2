@@ -184,11 +184,42 @@ function toString(entry) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').length;
+    // Парсим csv и составляем список записей
+    const csvEntries = csv.split('\n');
+    const entries = [];
+    for (let csvEntry of csvEntries) {
+        const entryFields = csvEntry.split(';');
+        const entry = {
+            name: entryFields[0],
+            phone: entryFields[1],
+            email: entryFields[2]
+        };
+        entries.push(entry);
+    }
+
+    // Обновление телефонной книги
+    let entriesImported = 0;
+    for (let entry of entries) {
+
+        let result;
+
+        // Если такой записи ещё не существует, добавляем её
+        if (getEntryByPhone(entry.phone) === undefined) {
+            result = add(entry.name, entry.phone, entry.email);
+        }
+        else {
+            // Иначе обновляем запись
+            result = update(entry.phone, entry.name, entry.email);
+        }
+
+        // Если операция успешна, увеличить счётчик импортированных записей
+        if (result === true) {
+            entriesImported++;
+        }
+    }
+
+    return entriesImported;
 }
 
 module.exports = {
