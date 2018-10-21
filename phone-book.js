@@ -170,6 +170,7 @@ function importFromCsv(csv) {
     if (isNullOrUndefinedOrEmptyString(csv)) {
         return counter;
     }
+
     let stringsFromCsv = csv.split('\n');
     stringsFromCsv.forEach((record) => {
         let values = record.split(';');
