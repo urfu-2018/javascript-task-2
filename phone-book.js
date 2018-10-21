@@ -11,6 +11,14 @@ const isStar = true;
  */
 let phoneBook;
 
+function areTypesCorrect(phone, name, email) {
+    const a = typeof phone === 'string';
+    const b = typeof name === 'string';
+    const c = (email !== undefined) ? typeof email === 'string' : true;
+
+    return a && b && c;
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -23,7 +31,7 @@ function add(phone, name, email) {
     if (!phoneBook) {
         phoneBook = {};
     }
-    if (phoneBook[phone] !== undefined) {
+    if (phoneBook[phone] !== undefined || !areTypesCorrect(phone, name, email)) {
         return false;
     }
     if (phone.match(phonePattern) !== null && name !== undefined) {
@@ -46,7 +54,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook[phone] !== undefined) {
+    if (phoneBook[phone] !== undefined && areTypesCorrect(phone, name, email)) {
         if (name === undefined) {
             return false;
         }
@@ -65,6 +73,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (typeof query !== 'string') {
+        return 0;
+    }
     const [indexes, phonesIndexes] = getIndexes(query);
     var phoneBookCopy = Object.assign({}, phoneBook);
     for (var i = 0; i < indexes.length; i++) {
@@ -80,10 +91,10 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '*') {
+    if (query === undefined || typeof query !== 'string') {
+        return [];
+    } else if (query === '*') {
         return formatSelection(sortSelection(phoneBook));
-    } else if (query === undefined) {
-        return undefined;
     }
     const [foundIndexes, phoneSelection] = getIndexes(query);
     const resultSelection = extractMemos(foundIndexes, phoneSelection);
