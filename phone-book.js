@@ -24,8 +24,8 @@ function isCorrectName(name) {
     return isString(name) && name !== '';
 }
 
-function isIncorrectInput(phone, name) {
-    return !isCorrectPhone(phone) || !isCorrectName(name);
+function isIncorrectInput(phone, name, argsLength) {
+    return !isCorrectPhone(phone) || !isCorrectName(name) || argsLength === 1;
 }
 
 function formatPhone(phone) {
@@ -75,10 +75,10 @@ function decorateFoundMap(foundMap) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isIncorrectInput(phone, name) || phoneBook.has(phone) || arguments.length === 1) {
+    if (isIncorrectInput(phone, name, arguments.length) || phoneBook.has(phone)) {
         return false;
     }
-    if (arguments.length === 2 || email === undefined) {
+    if (email === undefined) {
         email = '';
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
@@ -94,10 +94,10 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isIncorrectInput(phone, name) || !phoneBook.has(phone) || arguments.length === 1) {
+    if (isIncorrectInput(phone, name, arguments.length) || !phoneBook.has(phone)) {
         return false;
     }
-    if (arguments.length === 2 || email === undefined) {
+    if (email === undefined) {
         email = '';
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
