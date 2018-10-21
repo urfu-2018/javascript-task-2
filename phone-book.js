@@ -81,7 +81,7 @@ function find(query) {
         }
     }
 
-    return records.sort((a, b) => a.name > b.name).map(formatRecord);
+    return records.sort((a, b) => a.name.localeCompare(b.name)).map(formatRecord);
 }
 
 function containsInRecords(key, value, query) {
@@ -126,7 +126,7 @@ function importFromCsv(csv) {
 }
 
 function isValidPhone(phone) {
-    return /^\d{10}$/.test(phone);
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
 function isValidName(name) {
