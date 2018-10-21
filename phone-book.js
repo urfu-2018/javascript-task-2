@@ -19,9 +19,6 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof phone !== 'string') {
-        return false;
-    }
     if (!/^[0-9]{10}$/.test(phone)) {
         return false;
     }
@@ -102,7 +99,13 @@ function find(query) {
         }
     }
 
-    return notes.sort();
+    return notes.sort(function (a, b) {
+        if (a.split(', ')[0] >= b.split(', ')[0]) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 }
 
 function getNote(index) {
