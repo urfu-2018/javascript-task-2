@@ -55,8 +55,10 @@ function update(phone, name, email) {
         return false;
     }
 
-    phoneBook[phone].name = isValidContactParam(name) ? name : phoneBook[phone].name;
-    phoneBook[phone].email = isValidContactParam(email) ? email : '';
+    phoneBook[phone] = {
+        email: isValidContactParam(email) ? email : '',
+        name
+    };
 
     return true;
 }
