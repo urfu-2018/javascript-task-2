@@ -215,7 +215,7 @@ function importFromCsv(csv) {
         let result;
         // Если такой записи ещё не существует, добавляем её
         if (getEntryByPhone(entry.phone) === undefined) {
-            result = add(entry.name, entry.phone, entry.email);
+            result = add(entry.phone, entry.name, entry.email);
         } else {
             // Иначе обновляем запись
             result = update(entry.phone, entry.name, entry.email);
