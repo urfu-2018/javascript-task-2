@@ -62,6 +62,7 @@ function tryUpdateNote(phone, name, email, index) {
             phoneBook[index].name = name;
         }
         phoneBook[index].email = email;
+
         return true;
     }
 
@@ -117,7 +118,7 @@ function getNote(index) {
 }
 
 function getCorrectPhoneFormat(phone) {
-    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-`+
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
         `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 }
 
