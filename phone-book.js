@@ -30,9 +30,10 @@ function add(phone, name, email) {
     if (typeof name === 'undefined') {
         return false;
     }
-    let notation = {phone: phone, name: name, email: email};
+    let notation = { phone: phone, name: name, email: email };
     phoneBook.push(notation);
-    return true
+
+    return true;
 }
 
 /**
@@ -47,14 +48,23 @@ function update(phone, name, email) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            if (typeof name !== 'undefined') {
-                phoneBook[i].name = name;
-            }
-            phoneBook[i].email = email;
+        if (tryUpdateNote(phone, name, email, i)) {
             return true;
         }
     }
+
+    return false;
+}
+
+function tryUpdateNote(phone, name, email, index) {
+    if (phoneBook[index].phone === phone) {
+        if (typeof name !== 'undefined') {
+            phoneBook[index].name = name;
+        }
+        phoneBook[index].email = email;
+        return true;
+    }
+
     return false;
 }
 
@@ -84,33 +94,41 @@ function find(query) {
     let notes = [];
     for (let i = 0; i < phoneBook.length; i++) {
         if (isMatchFound(query, i)) {
-            let note;
-            if (typeof phoneBook[i].name !== 'undefined') {
-                note = `${phoneBook[i].name}, ${getCorrectPhoneFormat(phoneBook[i].phone)}`;
-            }
-            else {
-                note = `${getCorrectPhoneFormat(phoneBook[i].phone)}`;
-            }
-            if (typeof phoneBook[i].email !== 'undefined') {
-                note += `, ${phoneBook[i].email}`;
-            }
-            notes.push(note);
+            notes.push(getNote(i));
         }
     }
 
-    return notes.sort()
+    return notes.sort();
+}
+
+function getNote(index) {
+    let note;
+    if (typeof phoneBook[index].name !== 'undefined') {
+        note = `${phoneBook[index].name}, ${getCorrectPhoneFormat(phoneBook[index].phone)}`;
+    }
+    else {
+        note = `${getCorrectPhoneFormat(phoneBook[index].phone)}`;
+    }
+    if (typeof phoneBook[index].email !== 'undefined') {
+        note += `, ${phoneBook[index].email}`;
+    }
+
+    return note;
 }
 
 function getCorrectPhoneFormat(phone) {
-    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-`+
+        `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 }
 
 function isMatchFound(query, index) {
     if (query === '*') {
         return true;
     }
+
     return (phoneBook[index].name.indexOf(query) >= 0 ||
-        (typeof phoneBook[index].email !== 'undefined' && phoneBook[index].email.indexOf(query) >= 0) ||
+        (typeof phoneBook[index].email !== 'undefined' &&
+            phoneBook[index].email.indexOf(query) >= 0) ||
         phoneBook[index].phone.indexOf(query) >= 0);
 }
 
