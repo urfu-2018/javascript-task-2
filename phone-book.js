@@ -12,11 +12,19 @@ const isStar = true;
 let phoneBook = [];
 
 function isString(phone, name, email) {
-    if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
+    if (typeof phone === 'string' && typeof name === 'string' && typeof email === 'string') {
+        return true;
+    }
+
+    return false;
+}
+
+function isUndefined(field) {
+    if (field !== undefined) {
         return false;
     }
 
-    return true;
+    return true
 }
 
 /**
@@ -27,15 +35,19 @@ function isString(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    if (!isString(phone, name, email) || phoneBook[phone] !== undefined) {
+    if (!isString(phone, name, email)) {
         return false;
     }
-    if (!/^[0-9]{10}$/.test(phone) || name.length === 0) {
+    if (!isUndefined(phoneBook[phone])) {
         return false;
     }
-    phoneBook[phone] = [name, email];
+    if (/^[0-9]{10}$/.test(phone) && name.length !== 0) {
+        phoneBook[phone] = [name, email];
 
-    return true;
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -46,7 +58,10 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    if (!isString(phone, name, email) || phoneBook[phone] === undefined) {
+    if (!isString(phone, name, email)) {
+        return false;
+    }
+    if (isUndefined(phoneBook[phone])) {
         return false;
     }
     phoneBook[phone] = [name, email];
@@ -60,6 +75,9 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (query !== 'string' || query.length === 0) {
+        return 0;
+    }
     let removes = find(query);
     let records = [];
     for (let p of removes) {
