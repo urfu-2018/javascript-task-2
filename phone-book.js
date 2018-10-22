@@ -91,8 +91,6 @@ function findAndRemove(query) {
 function find(query) {
     if (query === undefined || typeof query !== 'string' || query === '') {
         return [];
-    } else if (query === '*') {
-        return formatSelection(sortSelection(phoneBook));
     }
     const [foundIndexes, phoneSelection] = getIndexes(query);
     const resultSelection = extractMemos(foundIndexes, phoneSelection);
@@ -104,6 +102,10 @@ function find(query) {
 
 function getIndexes(query) {
     const phoneSelection = createSelection('phone');
+
+    if (query === '*') {
+        return [selectAllIndexes(), phoneSelection];
+    }
     const nameSelection = createSelection('name');
     const emailSelection = createSelection('email');
 
@@ -117,6 +119,14 @@ function getIndexes(query) {
     return [resultIndexes.filter(onlyUnique), phoneSelection];
 }
 
+function selectAllIndexes() {
+    var result = [];
+    for (var i = 0; i < Object.keys(phoneBook).length; i++) {
+        result.push(i);
+    }
+
+    return result;
+}
 function sortSelection(selection) {
     var result = [];
     const keys = Object.keys(selection);
