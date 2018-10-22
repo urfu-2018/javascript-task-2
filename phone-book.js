@@ -23,7 +23,7 @@ function phoneIsCorrect(phone) {
  * @returns {Boolean}
  */
 function add(phone, name = '', email = '') {
-    if (phoneIsCorrect(phone) && phoneBook[phone] === undefined && name.length !== 0) {
+    if (phoneIsCorrect(phone) && !phoneBook[phone] && name.length !== 0) {
         phoneBook[phone] = { 'name': name, 'email': email };
 
         return true;
@@ -40,7 +40,7 @@ function add(phone, name = '', email = '') {
  * @returns {Boolean}
  */
 function update(phone, name = '', email = '') {
-    if (phoneBook[phone] !== undefined && name.length !== 0) {
+    if (phoneIsCorrect(phone) && phoneBook[phone] !== undefined && name.length !== 0) {
         phoneBook[phone] = { 'name': name, 'email': email };
 
         return true;
