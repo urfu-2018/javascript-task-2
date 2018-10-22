@@ -50,7 +50,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     if (query === '') {
-        return [];
+        return 0;
     }
 
     let count = 0;
