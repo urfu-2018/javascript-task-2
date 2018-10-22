@@ -9,7 +9,19 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
+
+function changePhoneFormat(str) {
+    return '+7 (' + str.slice(0, 3) + ') ' +
+        str.slice(3, 6) + '-' + str.slice(6, 8) + '-' + str.slice(8);
+}
+
+function contains(phone, name, email, query) {
+    return query && (query === '*' ||
+        phone.indexOf(query) !== -1 ||
+        name.indexOf(query) !== -1 ||
+        email && email.indexOf(query) !== -1);
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +31,22 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!/^\d{10}$/.test(phone)) {
+        return false;
+    }
+    if (phoneBook.hasOwnProperty(phone)) {
+        return false;
+    }
+    if (!name) {
+        return false;
+    }
+    if (email) {
+        phoneBook[phone] = { name, email };
+    } else {
+        phoneBook[phone] = { name };
+    }
 
+    return true;
 }
 
 /**
@@ -30,7 +57,22 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!/\d{10}/.test(phone)) {
+        return false;
+    }
+    if (!name) {
+        return false;
+    }
+    if (!phoneBook.hasOwnProperty(phone)) {
+        return false;
+    }
+    if (email) {
+        phoneBook[phone] = { name, email };
+    } else {
+        phoneBook[phone] = { name };
+    }
 
+    return true;
 }
 
 /**
@@ -39,7 +81,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    const found = find(query);
+    for (let i = 0; i < found.length; ++i) {
+        let phone = found[i].phone;
+        delete phoneBook[phone];
+    }
 
+    return found.length;
 }
 
 /**
@@ -48,7 +96,22 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    const keys = Object.keys(phoneBook);
+    const result = {};
+    for (let i = 0; i < keys.length; ++i) {
+        const phone = keys[i];
+        const value = phoneBook[phone];
+        if (contains(phone, value.name, value.email, query)) {
+            result[value.name] = value.name + ', ' +
+                changePhoneFormat(phone) + (value.email ? ', ' + value.email : '');
+        }
+    }
+    const ans = Object.keys(result).sort()
+        .map(function (key) {
+            return result[key];
+        });
 
+    return ans;
 }
 
 /**
