@@ -32,13 +32,7 @@ function isNameCorrect(name) {
 }
 
 function phoneBookHasPhone(phone) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return true;
-        }
-    }
-
-    return false;
+    return phoneBook.some(note => note.phone === phone);
 }
 
 function isPhoneCorrect(phone) {
@@ -65,18 +59,13 @@ function update(phone, name, email) {
     if (!isNameCorrect(name) || !isPhoneCorrect(phone)) {
         return false;
     }
-    phoneBook.filter(note => note.phone === phone);
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
+    let notesForUpdate = phoneBook.filter(note => note.phone === phone);
+    notesForUpdate.forEach(note => {
+        note.name = name;
+        note.email = email;
+    });
 
-            phoneBook[i].name = name;
-            phoneBook[i].email = email;
-
-            return true;
-        }
-    }
-
-    return false;
+    return notesForUpdate.length !== 0;
 }
 
 /**
@@ -105,7 +94,9 @@ function find(query) {
     }
     let result = getNotesFromPhoneBookByQuery(query);
 
-    return getNotesSortedByName(result).map(getFormatedNote);
+    return result
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(getFormatedNote);
 }
 
 function getNotesFromPhoneBookByQuery(query) {
@@ -119,12 +110,6 @@ function getNotesFromPhoneBookByQuery(query) {
 function noteHasQuery(note, query) {
     return note.phone.includes(query) || note.name.includes(query) ||
         note.email !== undefined && note.email.includes(query);
-}
-
-function getNotesSortedByName(notes) {
-    return notes.sort((a, b) => {
-        return a.name.localeCompare(b.name);
-    });
 }
 
 function getFormatedNote(note) {
@@ -144,21 +129,10 @@ function getFormatedNote(note) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-    let inputNotes = csv.split('\n').map(line => line.split(';'));
-    let addedOrUpdatedNotesCount = 0;
-    for (let i = 0; i < inputNotes.length; i++) {
-        let phone = inputNotes[i][1];
-        let name = inputNotes[i][0];
-        let email = inputNotes[i][2];
-        if (add(phone, name, email) || update(phone, name, email)) {
-            addedOrUpdatedNotesCount++;
-        }
-    }
-
-    return addedOrUpdatedNotesCount;
+    return csv.split('\n')
+        .map(line => line.split(';'))
+        .filter(note => add(note[1], note[0], note[2]) || update(note[1], note[0], note[2]))
+        .length;
 }
 
 module.exports = {
