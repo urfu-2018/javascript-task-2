@@ -175,6 +175,7 @@ function importFromCsv(csv) {
 }
 
 function isSuccess(isAdd) {
+
     return isAdd ? 1 : 0;
 }
 
