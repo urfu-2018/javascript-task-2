@@ -12,11 +12,11 @@ const isStar = true;
 let phoneBook = [];
 
 function isString(phone, name, email) {
-    if (typeof phone === 'string' && typeof name === 'string' && typeof email === 'string') {
-        return true;
+    if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 function isUndefined(field) {
@@ -83,6 +83,8 @@ function findAndRemove(query) {
     let records = [];
     for (let p of removes) {
         let str = p.split(', ');
+        str[1] = str[1].substring(4, 7) + str[1].substring(9, 12) +
+        str[1].substring(13, 15) + str[1].substring(16, 19);
         records[str[1]] = [str[0], str[2]];
     }
     let count = 0;
