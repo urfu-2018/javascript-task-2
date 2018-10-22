@@ -129,7 +129,8 @@ function getFormatedNote(note) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    return csv.split('\n')
+    return csv
+        .split('\n')
         .map(line => line.split(';'))
         .filter(note => add(note[1], note[0], note[2]) || update(note[1], note[0], note[2]))
         .length;
