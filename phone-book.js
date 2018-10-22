@@ -20,14 +20,8 @@ let phoneBook = [];
  */
 function add(phone, name, email) {
 
-    // Если телефон указан в неправильном формате, не добавлять запись
-    const phoneRegex = /^(\d)\1\1(\d)\2\2(\d)\3(\d)\4$/;
-    if (!(phoneRegex.test(phone))) {
-        return false;
-    }
-
-    // Если не указано имя, не добавлять запись
-    if (name === undefined || name.length === 0) {
+    // Проверить валидность входных данных
+    if (!validateInput(phone, name, email)) {
         return false;
     }
 
@@ -36,29 +30,11 @@ function add(phone, name, email) {
         return false;
     }
 
-    // Составить новую запись
-    const phoneBookEntry = {
-        name,
-        phone
-    };
-    if (email !== undefined) {
-        phoneBookEntry.email = email;
-    }
-
     // Добавить запись в телефонную книгу
+    const phoneBookEntry = createPhoneBookEntry(phone, name, email);
     phoneBook.push(phoneBookEntry);
 
     return true;
-}
-
-/*
- * Получить запись из телефонной книги по ключу
- */
-function getEntryByPhone(phone) {
-
-    return phoneBook.find((element) => {
-        return element.phone === phone;
-    });
 }
 
 /**
@@ -70,16 +46,14 @@ function getEntryByPhone(phone) {
  */
 function update(phone, name, email) {
 
-    // Извлечь запись из телефонной книги
-    let entry = getEntryByPhone(phone);
-
-    // Если записи не существует, обновлять нечего
-    if (entry === undefined) {
+    // Проверить валидность входных данных
+    if (!validateInput(phone, name, email)) {
         return false;
     }
 
-    // Если имя не указано, обновления не происходит - имя удалить нельзя
-    if (name === undefined || name.length === 0) {
+    // Если записи не существует, обновлять нечего
+    let entry = getEntryByPhone(phone);
+    if (entry === undefined) {
         return false;
     }
 
@@ -127,6 +101,88 @@ function find(query) {
     matchingEntryStrings.sort();
 
     return matchingEntryStrings;
+}
+
+/**
+ * Импорт записей из csv-формата
+ * @star
+ * @param {String} csv
+ * @returns {Number} – количество добавленных и обновленных записей
+ */
+function importFromCsv(csv) {
+
+    // Парсим csv и составляем список записей
+    const entries = parseCsv(csv);
+
+    // Импорт записей в телефонную книгу
+    const importedCount = importEntries(entries);
+
+    return importedCount;
+}
+
+/*
+ * Проверить валидность входных данных
+ */
+function validateInput(phone, name, email) {
+
+    if (!validatePhone(phone) || !validateName(name) || !validateEmail(email)) {
+        return false;
+    }
+
+    return true;
+}
+
+/*
+ * Проверить валидность номера телефона
+ */
+function validatePhone(phone) {
+
+    // Телефон должен быть строкой в указанном формате
+    const phoneRegex = /^(\d)\1\1(\d)\2\2(\d)\3(\d)\4$/;
+
+    return (typeof phone === 'string' && phoneRegex.test(phone));
+}
+
+/*
+ * Проверить валидность имени
+ */
+function validateName(name) {
+
+    return (typeof name === 'string' && name.length !== 0);
+}
+
+/*
+ * Проверить валидность электронной почты
+ */
+function validateEmail(email) {
+
+    return (email === undefined || typeof email === 'string');
+}
+
+/*
+ * Создать запись для телефонной книги
+ */
+function createPhoneBookEntry(phone, name, email) {
+
+    const phoneBookEntry = {
+        phone,
+        name
+    };
+    if (email !== undefined) {
+        phoneBookEntry.email = email;
+    }
+
+    return phoneBookEntry;
+}
+
+/*
+ * Получить запись из телефонной книги по ключу
+ */
+function getEntryByPhone(phone) {
+
+    return phoneBook.find((element) => {
+        return element.phone === phone;
+    });
 }
 
 /*
@@ -187,26 +243,26 @@ function toString(entry) {
     return entryFields.join(', ');
 }
 
-/**
- * Импорт записей из csv-формата
- * @star
- * @param {String} csv
- * @returns {Number} – количество добавленных и обновленных записей
+/*
+ * Получить записи из формата csv
  */
-function importFromCsv(csv) {
+function parseCsv(csv) {
 
-    // Парсим csv и составляем список записей
     const csvEntries = csv.split('\n');
     const entries = [];
     for (let csvEntry of csvEntries) {
         const entryFields = csvEntry.split(';');
-        const entry = {
-            name: entryFields[0],
-            phone: entryFields[1],
-            email: entryFields[2]
-        };
+        const entry = createPhoneBookEntry(entryFields[1], entryFields[0], entryFields[2]);
         entries.push(entry);
     }
+
+    return entries;
+}
+
+/*
+ * Импортировать записи в телефонную книгу
+ */
+function importEntries(entries) {
 
     let entriesImported = 0; // Счётчик импортированных записей
 
