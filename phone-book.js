@@ -1,7 +1,7 @@
 'use strict';
-
-const phoneBook = [];
 const phoneFormat = new RegExp(/^\d{3}\d{3}\d{2}\d{2}$/);
+
+let phoneBook = [];
 
 /**
  * Сделано задание на звездочку
@@ -9,67 +9,68 @@ const phoneFormat = new RegExp(/^\d{3}\d{3}\d{2}\d{2}$/);
  */
 exports.isStar = true;
 
+function isString(value) {
+    return typeof value === 'string' || value instanceof String;
+}
 
-const createRecord = function (phone, name, email) {
+function createRecord(phone, name, email) {
     return { phone: phone, name: name, email: email };
-};
+}
 
-const phoneIsCorrect = function (phone) {
-    return typeof(phone) === 'string' && phone.match(phoneFormat) !== null;
-};
+function phoneIsCorrect(phone) {
+    return phoneFormat.test(phone);
+}
 
-const nameIsCorrect = function (name) {
-    return typeof(name) === 'string' && name.length > 0;
-};
+function nameIsCorrect(name) {
+    return isString(name) && name;
+}
 
-const isCorrect = function (name, phone) {
+function isCorrect(name, phone) {
     return nameIsCorrect(name) && phoneIsCorrect(phone);
-};
+}
 
-const findIndexByProperty = function (propertyName, propertyValue) {
-    for (let i = 0; i < phoneBook.length; ++i) {
-        if (phoneBook[i][propertyName] === propertyValue) {
-            return i;
-        }
+function findIndexByProperty(propertyName, propertyValue) {
+    return phoneBook.map(dict => dict[propertyName]).findIndex(x => x === propertyValue);
+}
+
+function getFields(record) {
+    return [record.name, record.phone, record.email];
+}
+
+function formatPhone(phone) {
+    function part(left, right) {
+        return phone.slice(left, right);
     }
 
-    return -1;
-};
+    return `+7 (${part(0, 3)}) ${part(3, 6)}-${part(6, 8)}-${part(8, 10)}`;
+}
 
-const getFields = function (record) {
-    return [record.name, record.phone, record.email];
-};
-
-const formatPhone = function (phone) {
-    return ('+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) +
-        '-' + phone.slice(6, 8) + '-' + phone.slice(8, 10));
-};
-
-let formatRecord = function (record) {
+function formatRecord(record) {
     let fields = [record.name, formatPhone(record.phone)];
-    if (typeof(record.email) === 'string' && record.email.length > 0) {
+    if (isString(record.email) && record.email) {
         fields.push(record.email);
     }
 
     return fields.join(', ');
-};
+}
 
-const findIndexesByQuery = function (query) {
-    if (typeof(query) !== 'string' || query === '') {
+function isRecordMatchQuery(field, query) {
+    return query === '*' || (field !== undefined && field.includes(query));
+}
+
+function findIndexesByQuery(query) {
+    if (!(isString(query) && query)) {
         return [];
     }
     let indexes = [];
     for (let i = 0; i < phoneBook.length; ++i) {
-        let queryFound = getFields(phoneBook[i]).some(function (field) {
-            return query === '*' || (field !== undefined && field.indexOf(query) !== -1);
-        });
-        if (queryFound) {
+        if (getFields(phoneBook[i]).some(field => isRecordMatchQuery(field, query))) {
             indexes.push(i);
         }
     }
 
     return indexes;
-};
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -125,12 +126,8 @@ exports.findAndRemove = function (query) {
  */
 exports.find = function (query) {
     return findIndexesByQuery(query)
-        .map(function (index) {
-            return phoneBook[index];
-        })
-        .sort(function (a, b) {
-            return a.name.localeCompare(b.name);
-        })
+        .map(index => phoneBook[index])
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map(formatRecord);
 };
 
