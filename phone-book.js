@@ -1,5 +1,5 @@
 'use strict';
-
+/*eslint-disable*/
 /**
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
@@ -9,7 +9,23 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
+
+/**
+ * Проверяет, принадлежит ли каждый элемент массива типу type
+ * @param {[]} arr
+ * @param {String} type
+ * @returns {Boolean}
+ */
+function arrayOfType(arr, type) {
+    for (let i in arr) {
+        if (arr[i] !== type) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +35,11 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (phoneBook[phone] !== undefined) {
+        return false;
+    }
 
+    return update(phone, name, email);
 }
 
 /**
@@ -30,7 +50,32 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (arrayOfType([phone, name], 'string') ||
+        (email !== undefined && typeof email !== 'string') ||
+        name === undefined ||
+        !/^\d{10}$/.test(phone)) {
+        return false;
+    }
 
+    phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
+
+    return true;
+}
+
+/**
+ * Проверяет, является строка подстрокой любого элемента массива
+ * @param {String[]} arr
+ * @param {String} query
+ * @returns {Boolean}
+ */
+function arrayIncludes(arr, query) {
+    for (let i in arr) {
+        if (arr[i] !== undefined && arr[i].includes(query)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -39,7 +84,26 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (query === null) {
+        return null;
+    }
 
+    if (query === '*') {
+        const count = phoneBook.size;
+        phoneBook.clear();
+
+        return count;
+    }
+
+    let count = 0;
+    for (let phone in phoneBook) {
+        if (arrayIncludes(phoneBook[phone], query) || phone.includes(query)) {
+            delete phoneBook.phone;
+            count++;
+        }
+    }
+
+    return count;
 }
 
 /**
@@ -48,7 +112,32 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (query === null) {
+        return null;
+    }
 
+    if (query === '*') {
+        query = '';
+    }
+
+    let result = [];
+    for (let p in phoneBook) {
+        let checkArray = phoneBook[p];
+        checkArray.push(p);
+
+        const formattedPhone =
+            `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
+
+        if (arrayIncludes(checkArray, query)) {
+            if (phoneBook[p][1] === undefined) {
+                result.push(phoneBook[p][0] + ', ' + formattedPhone);
+            } else {
+                result.push(phoneBook[p][0] + ', ' + formattedPhone + ', ' + phoneBook[p][1]);
+            }
+        }
+    }
+
+    return result.sort();
 }
 
 /**
@@ -61,8 +150,20 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    const elements = csv.split('\n');
+    const parsed = [];
+    for (let i of elements) {
+        parsed.push(i.split(';'));
+    }
 
-    return csv.split('\n').length;
+    let count = 0;
+    for (let i in parsed) {
+        if (update(parsed[i][1], parsed[i][0], parsed[i][2])) {
+            count++;
+        }
+    }
+
+    return count;
 }
 
 module.exports = {
