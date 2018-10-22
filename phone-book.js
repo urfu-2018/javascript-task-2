@@ -24,13 +24,15 @@ function add(phone, name, email) {
     }
     if (phoneBook.get(phone) === undefined) {
         phoneBook.set(phone, [name, email]);
+        phoneBook = mapSort(phoneBook);
 
         return true;
     }
-    phoneBook = mapSort(phoneBook);
+
 
     return false;
 }
+
 
 /**
  * Обновление записи в телефонной книге
@@ -45,6 +47,7 @@ function update(phone, name, email) {
     }
     if (phoneBook.get(phone) !== undefined) {
         phoneBook.set(phone, [name, email]);
+        phoneBook = mapSort(phoneBook);
 
         return true;
     }
