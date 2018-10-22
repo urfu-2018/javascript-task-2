@@ -44,7 +44,7 @@ function extractPhone(str) {
  */
 function add(phone, name, email) {
     const correctPhone = formatPhone(phone);
-    if (!correctPhone || !isString(name) || name === '' || phoneBook[phone]) {
+    if (!correctPhone || !isString(name) || name === '' || !isString(email) || phoneBook[phone]) {
         return false;
     }
 
