@@ -28,13 +28,6 @@ class PhoneBookEntry {
     }
 }
 
-function extractPhone(str) {
-    const regexp = /.*, \+7 \((\d{3})\) (\d{3})-(\d{2})-(\d{2}),*.*/;
-    const match = str.match(regexp);
-
-    return `${match[1]}${match[2]}${match[3]}${match[4]}`;
-}
-
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -53,38 +46,6 @@ function add(phone, name, email) {
     return true;
 }
 
-function isTypeOf(obj, type) {
-    return typeof obj === type;
-}
-
-function isString(obj) {
-    return isTypeOf(obj, 'string');
-}
-
-function getAllEntries() {
-    const phones = allPhones();
-
-    return phones.map((phone) => phoneBook[phone].toString());
-}
-
-function allPhones() {
-    return Object.keys(phoneBook);
-}
-
-function formatPhone(phone) {
-    if (!isString(phone)) {
-        return null;
-    }
-
-    const correctPhone = /^(\d{3})(\d{3})(\d{2})(\d{2})$/; // 5556667788
-    const match = phone.match(correctPhone);
-    if (!match) {
-        return null;
-    }
-
-    return `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`; // +7 (555) 666-77-88
-}
-
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -94,7 +55,8 @@ function formatPhone(phone) {
  */
 function update(phone, name, email) {
     const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!isNameCorrect(name) || !isEmailCorrect(email) || !correctPhone.test(phone)) {
+    if (!isNameCorrect(name) || !isEmailCorrect(email) ||
+        !isString(phone) || !correctPhone.test(phone)) {
         return false;
     }
 
@@ -107,16 +69,6 @@ function update(phone, name, email) {
     entry.email = email;
 
     return true;
-}
-
-function isNameCorrect(name) {
-    return isString(name) && name !== '';
-}
-
-function isEmailCorrect(email) {
-    return isTypeOf(email, 'undefined') || isString(email);
-    // «Электронную почту» можно стереть (не передав последний параметр)
-    // А пустой строкой можно стереть?? Проверить
 }
 
 /**
@@ -175,6 +127,51 @@ function importFromCsv(csv) {
 
 function addOrUpdate(phone, name, email) {
     return add(phone, name, email) || update(phone, name, email);
+}
+
+
+function isTypeOf(obj, type) {
+    return typeof obj === type;
+}
+
+function isString(obj) {
+    return isTypeOf(obj, 'string');
+}
+
+function formatPhone(phone) {
+    if (!isString(phone)) {
+        return null;
+    }
+
+    const correctPhone = /^(\d{3})(\d{3})(\d{2})(\d{2})$/; // 5556667788
+    const match = phone.match(correctPhone);
+    if (!match) {
+        return null;
+    }
+
+    return `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`; // +7 (555) 666-77-88
+}
+
+function isNameCorrect(name) {
+    return isString(name) && name !== '';
+}
+
+function isEmailCorrect(email) {
+    return isTypeOf(email, 'undefined') || isString(email);
+    // «Электронную почту» можно стереть (не передав последний параметр)
+    // А пустой строкой можно стереть?? Проверить
+    // Добавить регвыр .@.\..???
+}
+
+function getAllEntries() {
+    return Object.keys(phoneBook).map((phone) => phoneBook[phone].toString());
+}
+
+function extractPhone(str) {
+    const regexp = /.*, \+7 \((\d{3})\) (\d{3})-(\d{2})-(\d{2}),*.*/;
+    const match = str.match(regexp);
+
+    return `${match[1]}${match[2]}${match[3]}${match[4]}`;
 }
 
 module.exports = {
