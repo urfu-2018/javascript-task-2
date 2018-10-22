@@ -45,7 +45,7 @@ function checkPhone(phone) {
  */
 function update(phone, name, email) {
     if (!(phone in phoneBook)) {
-        return;
+        return false;
     }
     const person = phoneBook[phone];
     if (person !== null) {
