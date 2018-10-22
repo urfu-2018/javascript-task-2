@@ -61,10 +61,6 @@ function isString(obj) {
     return isTypeOf(obj, 'string');
 }
 
-function findByPhone(phone) {
-    return phoneBook[phone];
-}
-
 function getAllEntries() {
     const phones = allPhones();
 
@@ -99,11 +95,11 @@ function formatPhone(phone) {
  */
 function update(phone, name, email) {
     const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!isString(name) || !correctPhone.test(phone)) {
+    if (!isString(name) || name === '' || !correctPhone.test(phone)) {
         return false;
     }
 
-    let entry = findByPhone(phone);
+    let entry = phoneBook[phone];
     if (!entry) {
         return false;
     }
