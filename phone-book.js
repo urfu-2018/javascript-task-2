@@ -76,7 +76,7 @@ function findAndRemove(query) {
 }
 
 function getBaseFormatPhone(phone) {
-    return phone.replace('/[()- ]/g', '')
+    return phone.replace(/[() -]/g, '')
         .replace('+7', '');
 }
 
