@@ -88,7 +88,7 @@ function showArr(arr) {
 }
 function filtArr(arr, searchParam) {
     return arr.filter(function (item) {
-        return item.indexOf(searchParam) >= 0;
+        return item.indexOf(searchParam) !== -1 ;
     });
 
 }
@@ -114,7 +114,12 @@ function findAndRemove(query) {
 
         return 0;
     }
+    
+    if (query === ',') {
 
+        return 0;
+    }
+    
     if (query === '*') {
         var length = convertArrForSearch(phoneBook).length;
         phoneBook = {};
@@ -142,6 +147,10 @@ function findAndRemove(query) {
  */
 function find(query) {
     if (!query) {
+
+        return [];
+    }
+    if (query === ',') {
 
         return [];
     }
