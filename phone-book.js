@@ -52,8 +52,7 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     if (arrayOfType([phone, name], 'string') ||
         (email !== undefined && typeof email !== 'string') ||
-        name === undefined ||
-        !/^\d{10}$/.test(phone)) {
+        name === undefined || !/^\d{10}$/.test(phone)) {
         return false;
     }
 
@@ -96,8 +95,9 @@ function findAndRemove(query) {
     }
 
     let count = 0;
-    for (let phone in phoneBook) {
-        if (arrayIncludes(phoneBook[phone], query) || phone.includes(query)) {
+    for (let [phone, info] of Object.entries(phoneBook)) {
+        info.push(phone);
+        if (arrayIncludes(info, query)) {
             delete phoneBook.phone;
             count++;
         }
@@ -121,16 +121,16 @@ function find(query) {
     }
 
     let result = [];
-    for (let [p, value] of Object.entries(phoneBook)) {
-        value.push(p);
+    for (let [p, info] of Object.entries(phoneBook)) {
+        info.push(p);
         const formattedPhone =
             `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
 
-        let resultingString = value[0] + ', ' + formattedPhone;
-        if (value[1] !== undefined) {
-            resultingString += ', ' + value[1];
+        let resultingString = info[0] + ', ' + formattedPhone;
+        if (info[1] !== undefined) {
+            resultingString += ', ' + info[1];
         }
-        if (arrayIncludes(value, query)) {
+        if (arrayIncludes(info, query)) {
             result.push(resultingString);
         }
     }
