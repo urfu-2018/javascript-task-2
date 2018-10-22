@@ -29,10 +29,8 @@ function add(phone, name, email) {
         return true;
     }
 
-
     return false;
 }
-
 
 /**
  * Обновление записи в телефонной книге
@@ -74,7 +72,7 @@ function findAndRemove(query) {
         if (phoneBook.get(phone)[1] !== undefined) {
             email = phoneBook.get(phone)[1].toString();
         }
-        if (isIncludes([phone, name, email], query)) {
+        if (isInclude([phone, name, email], query)) {
             phoneBook.delete(phone);
             res ++;
         }
@@ -101,7 +99,7 @@ function find(query) {
         if (phoneBook.get(phone)[1] !== undefined) {
             email = phoneBook.get(phone)[1].toString();
         }
-        if (isIncludes([phone, name, email], query)) {
+        if (isInclude([phone, name, email], query)) {
             res.push(arrayToString([name, phone = formatingPhone(phone), email]));
         }
     }
@@ -132,7 +130,7 @@ function importFromCsv(csv) {
     return res;
 }
 
-function isIncludes(strings, includingString) {
+function isInclude(strings, includingString) {
     let res = false;
     for (let i = 0; i < strings.length; i++) {
         if (strings[i].includes(includingString)) {
@@ -151,7 +149,7 @@ function mapSort(map) {
         Array
             .from(map)
             .sort((a, b) => {
-                return a[0] - b[0];
+                return a[0].toLowerCase() - b[0].toLowerCase();
             })
     );
 
