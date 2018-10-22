@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+let phoneBook = new Map();
 
 class PhoneBookEntry {
     constructor(phone, name, email) {
@@ -37,11 +37,11 @@ class PhoneBookEntry {
  */
 function add(phone, name, email) {
     const correctPhone = formatPhone(phone);
-    if (!correctPhone || !isNameCorrect(name) || !isEmailCorrect(email) || phoneBook[phone]) {
+    if (!correctPhone || !isNameCorrect(name) || !isEmailCorrect(email) || phoneBook.has(phone)) {
         return false;
     }
 
-    phoneBook[phone] = new PhoneBookEntry(correctPhone, name, email);
+    phoneBook.set(phone, new PhoneBookEntry(correctPhone, name, email));
 
     return true;
 }
@@ -60,7 +60,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    let entry = phoneBook[phone];
+    let entry = phoneBook.get(phone);
     if (!entry) {
         return false;
     }
@@ -78,7 +78,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const found = find(query);
-    found.map(entry => delete phoneBook[extractPhone(entry)]);
+    found.map(entry => phoneBook.delete(extractPhone(entry)));
 
     return found.length;
 }
@@ -93,14 +93,13 @@ function find(query) {
         return [];
     }
 
-    let keys = Object.keys(phoneBook);
     let entries = getAllEntries();
     entries.sort();
     if (query === '*') {
         return entries;
     }
 
-    return entries.filter(entry => entry.includes(query) || keys.includes(query));
+    return entries.filter(entry => entry.includes(query));
 }
 
 /**
@@ -165,7 +164,7 @@ function isEmailCorrect(email) {
 }
 
 function getAllEntries() {
-    return Object.keys(phoneBook).map((phone) => phoneBook[phone].toString());
+    return Array.from(phoneBook.values()).map((entry) => entry.toString());
 }
 
 function extractPhone(str) {
