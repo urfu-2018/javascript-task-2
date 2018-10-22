@@ -12,14 +12,15 @@ const isStar = true;
 let phoneBook = new Map();
 
 class PhoneBookEntry {
-    constructor(phone, name, email) {
+    constructor(phone, name, email, queryPhone) {
         this.phone = phone; // +7 (555) 666-77-88
         this.name = name;
         this.email = email;
+        this.queryPhone = queryPhone; // 5556667788
     }
 
     toString() {
-        let str = `${this.name}, ${this.phone}`;
+        let str = `${this.queryPhone}, ${this.name}, ${this.phone}`;
         if (this.email) {
             str += `, ${this.email}`;
         }
@@ -96,10 +97,10 @@ function find(query) {
     let entries = getAllEntries();
     entries.sort();
     if (query === '*') {
-        return entries;
+        return entries.map(entry => entry.slice(11));
     }
 
-    return entries.filter(entry => entry.includes(query));
+    return entries.filter(entry => entry.includes(query)).map(entry => entry.slice(11));
 }
 
 /**
