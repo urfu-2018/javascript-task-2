@@ -28,9 +28,11 @@ console.info(phoneBook.find('555'));
 //   'Валерий, +7 (555) 333-00-33',
 //   'Григорий, +7 (555) 444-00-44, grisha@example.com'
 // ]
+phoneBook.findAndRemove('*');
 
 // Удаление записей, содержащих '@', вернется `3`
 phoneBook.findAndRemove('@');
+
 
 if (phoneBook.isStar) {
     const csv = [

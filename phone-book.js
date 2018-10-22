@@ -38,7 +38,7 @@ function contains(str, substr) {
 
 function findMap(query) {
     if (query === '*') {
-        return phoneBook;
+        return new Map(phoneBook);
     }
     if (query === '' || query === undefined) {
         return new Map();
