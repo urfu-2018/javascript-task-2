@@ -26,7 +26,7 @@ function isValidPhone(phone) {
 }
 
 /**
- * Возвращает строкове представление имени
+ * Проверка корректности значения, используемого в качестве имени
  * @param {String} name
  * @returns {Boolean}
  */
@@ -68,12 +68,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-
-    function argumentsAreValid() {
-        return isValidPhone(phone) && phoneBook.has(phone) && isValidName(name);
-    }
-
-    if (!argumentsAreValid()) {
+    if (!phoneBook.has(phone) || !isValidName(name)) {
         return false;
     }
     let entry = phoneBook.get(phone);
@@ -109,7 +104,7 @@ function findEntries(query) {
             if (!personalData.hasOwnProperty(key)) {
                 continue;
             }
-            if (personalData[key].indexOf(query) !== -1) {
+            if (personalData[key].includes(query)) {
                 result.push(personalData);
 
                 return;
@@ -142,8 +137,10 @@ function findAndRemove(query) {
 function getTextRepresentation(personalData) {
 
     function formatPhone(phone) {
-        return '+7 (' + phone.slice(0, 3) + ') ' + phone.substr(3, 3) + '-' +
-            phone.substr(6, 2) + '-' + phone.substr(8, 2);
+        const PHONE_PATTERN = /(\d{3})(\d{3})(\d{2})(\d{2})/;
+        const PHONE_FORMAT = '+7 ($1) $2-$3-$4';
+
+        return phone.replace(PHONE_PATTERN, PHONE_FORMAT);
     }
 
     const values = [];
@@ -175,9 +172,7 @@ function find(query) {
         return a.name.localeCompare(b.name);
     });
 
-    return entries.map(entry => {
-        return getTextRepresentation(entry);
-    });
+    return entries.map(getTextRepresentation);
 }
 
 /**
@@ -193,9 +188,9 @@ function importFromCsv(csv) {
     csv.split(NEW_LINE_PATTERN).forEach(line => {
         const values = line.split(FIELDS_DELIMITER);
         const entry = {
-            'name': values[0],
-            'phone': values[1],
-            'email': values[2]
+            name: values[0],
+            phone: values[1],
+            email: values[2]
         };
         const method = !phoneBook.has(entry.phone) ? add : update;
         successOperationsCount += method(entry.phone, entry.name, entry.email) ? 1 : 0;
