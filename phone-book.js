@@ -44,7 +44,8 @@ function extractPhone(str) {
  */
 function add(phone, name, email) {
     const correctPhone = formatPhone(phone);
-    if (!correctPhone || !isString(name) || name === '' || !isString(email) || phoneBook[phone]) {
+    if (!correctPhone || !isString(name) || name === '' || !isEmailCorrect(email) ||
+        phoneBook[phone]) {
         return false;
     }
 
@@ -71,7 +72,6 @@ function allPhones() {
     return Object.keys(phoneBook);
 }
 
-
 function formatPhone(phone) {
     if (!isString(phone)) {
         return null;
@@ -95,7 +95,8 @@ function formatPhone(phone) {
  */
 function update(phone, name, email) {
     const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!isString(name) || name === '' || !correctPhone.test(phone)) {
+    if (!isString(name) || name === '' || !isEmailCorrect(email) ||
+        !correctPhone.test(phone)) {
         return false;
     }
 
@@ -108,6 +109,12 @@ function update(phone, name, email) {
     entry.email = email;
 
     return true;
+}
+
+function isEmailCorrect(email) {
+    return isTypeOf(email, 'undefined') || isString(email);
+    // «Электронную почту» можно стереть (не передав последний параметр)
+    // А пустой строкой можно стереть?? Проверить
 }
 
 /**
