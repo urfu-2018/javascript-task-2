@@ -25,8 +25,6 @@ function add(phone, name, email) {
     if (phoneBook.get(phone) === undefined) {
         phoneBook.set(phone, [name, email]);
 
-        // console.info(phoneBook);
-
         return true;
     }
     phoneBook = mapSort(phoneBook);
@@ -43,11 +41,10 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (!checking(phone, name)) {
-        throw new TypeError();
+        return false;
     }
     if (phoneBook.get(phone) !== undefined) {
         phoneBook.set(phone, [name, email]);
-        // console.info(phoneBook);
 
         return true;
     }
@@ -113,11 +110,23 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    let temp;
+    let res = 0;
+    let person = [];
+    temp = csv.split('\n');
+    for (let i = 0; i < temp.length; i++) {
+        person = temp[i].split(';');
+        if (add(person[1], person[0], person[2])) {
+            res ++;
+        } else if (update(person[1], person[0], person[2])) {
+            res ++;
+        }
+    }
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').length;
+    return res;
 }
 
 function isIncludes(strings, includingString) {
