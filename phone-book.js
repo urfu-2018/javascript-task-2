@@ -44,8 +44,7 @@ function extractPhone(str) {
  */
 function add(phone, name, email) {
     const correctPhone = formatPhone(phone);
-    if (!correctPhone || !isString(name) || name === '' || !isEmailCorrect(email) ||
-        phoneBook[phone]) {
+    if (!correctPhone || !isNameCorrect(name) || !isEmailCorrect(email) || phoneBook[phone]) {
         return false;
     }
 
@@ -95,8 +94,7 @@ function formatPhone(phone) {
  */
 function update(phone, name, email) {
     const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!isString(name) || name === '' || !isEmailCorrect(email) ||
-        !correctPhone.test(phone)) {
+    if (!isNameCorrect(name) || !isEmailCorrect(email) || !correctPhone.test(phone)) {
         return false;
     }
 
@@ -109,6 +107,10 @@ function update(phone, name, email) {
     entry.email = email;
 
     return true;
+}
+
+function isNameCorrect(name) {
+    return isString(name) && name !== '';
 }
 
 function isEmailCorrect(email) {
