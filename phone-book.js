@@ -1,5 +1,5 @@
 'use strict';
-/*eslint-disable*/
+
 /**
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = {};
 
 /**
  * Проверяет, принадлежит ли каждый элемент массива типу type
@@ -121,19 +121,17 @@ function find(query) {
     }
 
     let result = [];
-    for (let p in phoneBook) {
-        let checkArray = phoneBook[p];
-        checkArray.push(p);
-
+    for (let [p, value] of Object.entries(phoneBook)) {
+        value.push(p);
         const formattedPhone =
             `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
 
-        if (arrayIncludes(checkArray, query)) {
-            if (phoneBook[p][1] === undefined) {
-                result.push(phoneBook[p][0] + ', ' + formattedPhone);
-            } else {
-                result.push(phoneBook[p][0] + ', ' + formattedPhone + ', ' + phoneBook[p][1]);
-            }
+        let resultingString = value[0] + ', ' + formattedPhone;
+        if (value[1] !== undefined) {
+            resultingString += ', ' + value[1];
+        }
+        if (arrayIncludes(value, query)) {
+            result.push(resultingString);
         }
     }
 
