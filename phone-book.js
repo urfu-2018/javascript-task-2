@@ -65,17 +65,15 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhone(phone)) {
+    const found = phoneBook
+        .filter(e => e.phone === phone);
+    if (!checkPhone(phone) || found.length === 0 || !(typeof name === 'string')) {
         return false;
     }
-    phoneBook
-        .filter(e => e.phone === phone)
-        .forEach(e => {
-            e.email = email;
-            if (typeof name === 'string') {
-                e.name = name;
-            }
-        });
+    found.forEach(e => {
+        e.email = email;
+        e.name = name;
+    });
 
     return true;
 }
@@ -86,21 +84,28 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!(typeof query === 'string')) {
-        return 0;
-    }
-
-    let founded = phoneBook.filter(e => e.phone.includes(query) || e.name.includes(query) ||
-        (typeof e.email === 'undefined' ? false : e.email.includes(query))
-    );
+    const found = search(query);
 
     for (let i = 0; i < phoneBook.length; i++) {
-        if (founded.includes(phoneBook[i])) {
+        if (found.includes(phoneBook[i])) {
             phoneBook.splice(i, 1);
         }
     }
 
-    return founded.length;
+    return found.length;
+}
+
+function search(query) {
+    if (query === '*') {
+        return phoneBook;
+    }
+    if (!(typeof query === 'string') || query.length === 0) {
+        return [];
+    }
+
+    return phoneBook.filter(e => e.phone.includes(query) ||
+            e.name.includes(query) ||
+            (typeof e.email === 'undefined' ? false : e.email.includes(query)));
 }
 
 /**
@@ -109,18 +114,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '*') {
-        return phoneBook
-            .sort(sortNamesLexicographical)
-            .map(_ => _.toString());
-    }
-    if (!(typeof query === 'string') || query.length === 0) {
-        return [];
-    }
-
-    return phoneBook
-        .filter(e => e.phone.includes(query) ||
-            e.name.includes(query) || e.email.includes(query))
+    return search(query)
         .sort(sortNamesLexicographical)
         .map(_ => _.toString());
 }
@@ -137,8 +131,8 @@ function importFromCsv(csv) {
     contacts.forEach(e => fields.push(e.split(';')));
     let count = 0;
     fields.forEach(e => {
-        if (!add(e[1], e[0], e[2])) {
-            if (update(e[1], e[0], e[2])) {
+        if (!update(e[1], e[0], e[2])) {
+            if (add(e[1], e[0], e[2])) {
                 count += 1;
             }
         } else {
