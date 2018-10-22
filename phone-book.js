@@ -10,7 +10,6 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = {};
-exports.phoneBook = phoneBook;
 
 function test(phone, name) {
     if (name !== '' && name !== undefined && typeof(name) === 'string') {
