@@ -58,6 +58,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (typeof query !== 'string') {
+        throw new TypeError();
+    }
     let res = 0;
     let iterator = phoneBook.keys();
     let size = phoneBook.size;
@@ -122,9 +125,6 @@ function importFromCsv(csv) {
             res ++;
         }
     }
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
 
     return res;
 }
