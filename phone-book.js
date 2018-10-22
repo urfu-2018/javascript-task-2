@@ -15,17 +15,27 @@ class PhoneBookEntry {
     constructor(phone, name, email, queryPhone) {
         this.phone = phone; // +7 (555) 666-77-88
         this.name = name;
-        this.email = email;
+        this.email = email || '';
         this.queryPhone = queryPhone; // 5556667788
     }
 
     toString() {
-        let str = `${this.queryPhone}, ${this.name}, ${this.phone}`;
+        let str = `${this.name}, ${this.phone}`;
         if (this.email) {
             str += `, ${this.email}`;
         }
 
         return str;
+    }
+
+    includes(query) {
+        return this.name.includes(query) || this.email.includes(query) ||
+            this.queryPhone.includes(query);
+    }
+
+    update(name, email) {
+        this.name = name;
+        this.email = email || '';
     }
 }
 
@@ -42,7 +52,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    phoneBook.set(phone, new PhoneBookEntry(correctPhone, name, email));
+    phoneBook.set(phone, new PhoneBookEntry(correctPhone, name, email, phone));
 
     return true;
 }
@@ -66,8 +76,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    entry.name = name;
-    entry.email = email;
+    entry.update(name, email);
 
     return true;
 }
@@ -94,14 +103,15 @@ function find(query) {
         return [];
     }
 
-    let entries = getAllEntries();
-    entries.sort();
+    let entries = Array.from(phoneBook.values());
+    entries.sort((el1, el2) => el1.name > el2.name);
     if (query === '*') {
-        return entries.map(entry => entry.slice(11));
+        return entries.map(entry => entry.toString());
     }
 
-    return entries.filter(entry => entry.includes(query)).map(entry => entry.slice(11));
+    return entries.filter(entry => entry.includes(query)).map(entry => entry.toString());
 }
+
 
 /**
  * Импорт записей из csv-формата
@@ -162,10 +172,6 @@ function isEmailCorrect(email) {
     // «Электронную почту» можно стереть (не передав последний параметр)
     // А пустой строкой можно стереть?? Проверить
     // Добавить регвыр .@.\..???
-}
-
-function getAllEntries() {
-    return Array.from(phoneBook.values()).map((entry) => entry.toString());
 }
 
 function extractPhone(str) {
