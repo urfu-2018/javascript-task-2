@@ -19,7 +19,10 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkNameFormat(name) && checkPhoneFormat(phone) && !(phone in phoneBook)) {
+    if (checkNameFormat(name) &&
+        checkPhoneFormat(phone) &&
+        checkEmailFormat(email) &&
+        !(phone in phoneBook)) {
         addNote(name, phone, email);
 
         return true;
@@ -29,7 +32,7 @@ function add(phone, name, email) {
 }
 
 function checkPhoneFormat(phone) {
-    return phone && (/^(\d){10}$/).test(phone);
+    return phone && isString(phone) && (/^(\d){10}$/).test(phone);
 }
 
 /**
@@ -42,6 +45,7 @@ function checkPhoneFormat(phone) {
 function update(phone, name, email) {
     if (checkNameFormat(name) &&
         checkPhoneFormat(phone) &&
+        checkEmailFormat(email) &&
         (phone in phoneBook)) {
         addNote(name, phone, email);
 
@@ -62,6 +66,10 @@ function addNote(name, phone, email) {
 }
 function checkNameFormat(name) {
     return name && isString(name);
+}
+
+function checkEmailFormat(email) {
+    return typeof email === 'string' || email === undefined;
 }
 
 /**
