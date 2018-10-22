@@ -61,11 +61,9 @@ function reformatPhone(formattedPhone) {
  */
 function findAndRemove(query) {
     const stringsToRemove = find(query);
-    if (stringsToRemove.length !== 0) {
-        for (let i = 0; i < stringsToRemove.length; i++) {
-            const firstChar = stringsToRemove[i].indexOf('+');
-            delete phoneBook[reformatPhone(stringsToRemove[i].slice(firstChar, firstChar + 18))];
-        }
+    for (let i = 0; i < stringsToRemove.length; i++) {
+        const firstChar = stringsToRemove[i].indexOf('+');
+        delete phoneBook[reformatPhone(stringsToRemove[i].slice(firstChar, firstChar + 18))];
     }
 
     return stringsToRemove.length;
@@ -85,6 +83,8 @@ function checkSpecialSymbols(query) {
     return query;
 }
 
+RegExp.quote = str => str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&');
+
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
@@ -94,7 +94,7 @@ function find(query) {
     const keys = Object.keys(phoneBook);
     let result = [];
     query = checkSpecialSymbols(query);
-    let re = new RegExp(query);
+    let re = new RegExp(RegExp.quote(query));
     for (let i = 0; i < keys.length; i++) {
         if (re.test(
             keys[i]) || re.test(phoneBook[keys[i]].name) || re.test(phoneBook[keys[i]].email
