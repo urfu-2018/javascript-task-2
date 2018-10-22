@@ -93,13 +93,14 @@ function find(query) {
         return [];
     }
 
+    let keys = Object.keys(phoneBook);
     let entries = getAllEntries();
     entries.sort();
     if (query === '*') {
         return entries;
     }
 
-    return entries.filter(entry => entry.includes(query));
+    return entries.filter(entry => entry.includes(query) || keys.includes(query));
 }
 
 /**
