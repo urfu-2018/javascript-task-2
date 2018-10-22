@@ -43,12 +43,12 @@ function extractPhone(str) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
-    if (!isString(name) || !correctPhone.test(phone) || phoneBook[phone]) {
+    const correctPhone = formatPhone(phone);
+    if (!correctPhone || !isString(name) || name === '' || phoneBook[phone]) {
         return false;
     }
 
-    phoneBook[phone] = new PhoneBookEntry(formatPhone(phone), name, email);
+    phoneBook[phone] = new PhoneBookEntry(correctPhone, name, email);
 
     return true;
 }
@@ -77,8 +77,15 @@ function allPhones() {
 
 
 function formatPhone(phone) {
+    if (!isString(phone)) {
+        return null;
+    }
+
     const correctPhone = /^(\d{3})(\d{3})(\d{2})(\d{2})$/; // 5556667788
     const match = phone.match(correctPhone);
+    if (!match) {
+        return null;
+    }
 
     return `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`; // +7 (555) 666-77-88
 }
