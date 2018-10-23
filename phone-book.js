@@ -61,21 +61,18 @@ function update(phone, name, email) {
     }
     phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
 
-    // 5551110011: { name: 'Алексей', email: 'noreplay@gmail.com' }
-    // phoneBook[phone] = { name: name, email: email };
-
     return true;
 }
 
 /**
- * Проверяет, является строка подстрокой любого элемента массива
+ * Проверяет, является строка подстрокой хотя бы одного элемента массива
  * @param {String[]} arr
  * @param {String} query
  * @returns {Boolean}
  */
 function arrayIncludes(arr, query) {
-    for (let i in arr) {
-        if (arr[i] !== undefined && arr[i].includes(query)) {
+    for (let str of arr) {
+        if (str !== undefined && str.includes(query)) {
             return true;
         }
     }
@@ -89,7 +86,7 @@ function arrayIncludes(arr, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query === undefined) {
+    if (!notEmptyString(query)) {
         return 0;
     }
 
@@ -104,7 +101,7 @@ function findAndRemove(query) {
     for (let [phone, info] of Object.entries(phoneBook)) {
         info.push(phone); // Вынести в промежуточный результат?
         if (arrayIncludes(info, query)) {
-            delete phoneBook.phone;
+            delete phoneBook[phone];
             count++;
         }
     }
@@ -151,11 +148,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (csv === undefined) {
-        return 0;
-    }
-
-    if (typeof csv !== 'string') {
+    if (!notEmptyString(csv) || csv === undefined) {
         return 0;
     }
 
