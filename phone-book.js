@@ -30,7 +30,7 @@ function add(phone, name, email) {
         return false;
     }
     checkArgs(phone, name, email);
-    if (!(/[0-9]{10}/.test(phone))) {
+    if (!(/^[0-9]{10}$/.test(phone))) {
         return false;
     } else if (phoneBook === undefined) {
         phoneBook = {};
@@ -124,11 +124,12 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-
-    return csv.split('\n').length;
+    return csv
+        .split('\n')
+        .map(e => e.split(';'))
+        .map(e => [e[1], e[0], e[2]])
+        .filter((args)=>(update(...args) || add(...args)))
+        .length;
 }
 
 module.exports = {
