@@ -74,13 +74,8 @@ function findAndRemove(query) {
         return 0;
     }
 
-    const foundEntries = find(query);
-    for (let entry of foundEntries) {
-        const phone = entry.split(',')[1].match(/\d(\d+)/g).join('');
-        delete phoneBook[phone];
-    }
-
-    return foundEntries.length;
+    return find(query).map(entry =>
+        delete phoneBook[entry.split(',')[1].match(/\d(\d+)/g).join('')]).length;
 }
 
 /**
