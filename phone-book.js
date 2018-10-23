@@ -162,10 +162,9 @@ function isEmailCorrect(email) {
 }
 
 function extractPhone(str) {
-    const regexp = /.*, \+7 \((\d{3})\) (\d{3})-(\d{2})-(\d{2}),*.*/;
-    const match = str.match(regexp);
+    let [, phone] = str.split(',');
 
-    return `${match[1]}${match[2]}${match[3]}${match[4]}`;
+    return phone.replace(/[+7|(|)|-|\s]/, '');
 }
 
 module.exports = {
