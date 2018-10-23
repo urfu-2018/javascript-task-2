@@ -25,12 +25,8 @@ function checkArgs(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!checkArgs(phone, name, email) || phoneBook[phone]) {
-        return false;
-    }
-    phoneBook[phone] = { name, email };
-
-    return true;
+    return ((checkArgs(phone, name, email) && !phoneBook[phone]) &&
+        (phoneBook[phone] = { name, email }));
 }
 
 /**
@@ -41,12 +37,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkArgs(phone, name, email) || !phoneBook[phone]) {
-        return false;
-    }
-    phoneBook[phone] = { name, email };
-
-    return true;
+    return ((checkArgs(phone, name, email) && phoneBook[phone]) &&
+        (phoneBook[phone] = { name, email }));
 }
 
 /**
