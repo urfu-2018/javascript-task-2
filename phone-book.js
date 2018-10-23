@@ -144,6 +144,4 @@ module.exports = {
     importFromCsv,
 
     isStar
-};
-
-let a;
+}
