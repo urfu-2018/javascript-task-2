@@ -12,7 +12,7 @@ const isStar = true;
 let phoneBook = {};
 
 function checkArgs(phone, name, email) {
-    return !(email !== undefined && typeof(email) !== 'string' ||
+    return !(email && typeof(email) !== 'string' ||
         typeof(name) !== 'string' || !name ||
         typeof(phone) !== 'string' || !(/^[0-9]{10}$/.test(phone)));
 }
@@ -55,8 +55,8 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return !query ? 0 : Object.keys(phoneBook)
-        .filter((record)=>[record].concat(Object.values(phoneBook[record]))
+    return !query || typeof(query) !== 'string' ? 0 : Object.keys(phoneBook)
+        .filter((record)=>[record, ...Object.values(phoneBook[record])]
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .filter((item)=>delete(phoneBook[item]))
         .length;
@@ -68,8 +68,8 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    return !query ? [] : Object.keys(phoneBook)
-        .filter((record)=>[record].concat(Object.values(phoneBook[record]))
+    return !query || typeof(query) !== 'string' ? [] : Object.keys(phoneBook)
+        .filter((record)=>[record, ...Object.values(phoneBook[record])]
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .sort((a, b)=>phoneBook[a].name >= phoneBook[b].name ? 1 : -1)
         .map((rec)=>[
