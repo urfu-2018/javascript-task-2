@@ -16,8 +16,36 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
+function isCorrectPhone(phone) {
+    if (phone !== undefined && typeof(phone) === 'string' && phone.length === 10) {
+        return true;
+    }
+
+    return false;
+}
+
+function isCorrectName(name) {
+    if (name !== undefined && typeof(name) === 'string') {
+        return true;
+    }
+
+    return false;
+}
+
+function isCorrectEmail(email) {
+    if (email === undefined) {
+        return true;
+    }
+
+    return true;
+}
+
+function isAllArgumentsCorrect(phone, name, email) {
+    return isCorrectPhone(phone) && isCorrectName(name) && isCorrectEmail(email);
+}
+
 function add(phone, name, email) {
-    if (arguments.length === 2) {
+    if (isAllArgumentsCorrect(phone, name, email)) {
         phoneBook.push({
             phone: phone,
             name: name,
@@ -26,14 +54,6 @@ function add(phone, name, email) {
 
         return true;
     }
-    if (phone.length !== 10 && arguments.length !== 3) {
-        return false;
-    }
-    phoneBook.push({
-        phone: phone,
-        name: name,
-        email: email
-    });
 
     return true;
 }
