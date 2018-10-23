@@ -12,7 +12,7 @@ const isStar = true;
 let phoneBook = {};
 
 function checkArgs(phone, name, email) {
-    return !(email && typeof(email) !== 'string' ||
+    return !(typeof(email) !== 'string' ||
         typeof(name) !== 'string' || !name ||
         typeof(phone) !== 'string' || !(/^[0-9]{10}$/.test(phone)));
 }
@@ -24,7 +24,7 @@ function checkArgs(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name = '', email = '') {
     if (!checkArgs(phone, name, email) || phone in phoneBook) {
         return false;
     }
@@ -40,7 +40,7 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone, name = '', email = '') {
     if (!checkArgs(phone, name, email) || !(phone in phoneBook)) {
         return false;
     }
@@ -76,7 +76,7 @@ function find(query) {
             phoneBook[rec].name,
             `+7 (${rec.slice(0, 3)}) ${rec.slice(3, 6)}-${rec.slice(6, 8)}-${rec.slice(8, 10)}`,
             phoneBook[rec].email]
-            .reduce((a, b)=>b === undefined ? `${a}` : `${a}, ${b}`));
+            .reduce((a, b)=>!b ? `${a}` : `${a}, ${b}`));
 }
 
 /**
