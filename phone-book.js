@@ -83,25 +83,14 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let removes = find(query);
-    if (removes.length === 0) {
-        return 0;
-    }
-    let records = [];
     for (let p of removes) {
         let str = p.split(', ');
         str[1] = str[1].substring(4, 7) + str[1].substring(9, 12) +
         str[1].substring(13, 15) + str[1].substring(16, 19);
-        records[str[1]] = [str[0], str[2]];
-    }
-    let count = 0;
-    for (let key of Object.keys(records)) {
-        if (typeof phoneBook[key] !== 'undefined') {
-            delete phoneBook[key];
-            count++;
-        }
+        delete phoneBook[str[1]];
     }
 
-    return count;
+    return removes.length;
 }
 
 /**
