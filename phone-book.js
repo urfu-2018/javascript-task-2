@@ -33,6 +33,10 @@ function add(phone, name, email) {
 }
 
 function checkPhone(phone) {
+    if (typeof (phone) !== 'string') {
+        return false;
+    }
+
     return phoneRe.test(phone);
 }
 
