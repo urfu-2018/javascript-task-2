@@ -20,7 +20,7 @@ let phoneBook = {};
  */
 function dataChecks(phone, name, email) {
     return !(!(notEmptyString(phone) && /^\d{10}$/.test(phone)) ||
-        !(notEmptyString(name)) ||
+        !notEmptyString(name) ||
         !(email === undefined || notEmptyString(email)));
 }
 
@@ -117,7 +117,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === undefined) {
+    if (!notEmptyString(query)) {
         return [];
     }
 
@@ -150,9 +150,6 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
     if (csv === undefined) {
         return 0;
     }
