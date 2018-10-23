@@ -102,7 +102,7 @@ function isFind(phone, query) {
 function find(query) {
     const arrFindPhones = [];
     if (typeof query !== 'string' && query === '') {
-        return [];
+        return arrFindPhones;
     }
     for (const phone in phoneBook) {
         if (query === '*') {
@@ -117,14 +117,7 @@ function find(query) {
 }
 
 function sortedPhonesByName(manA, manB) {
-    if (manA[0] > manB[0]) {
-        return 1;
-    }
-    if (manA[0] < manB[0]) {
-        return -1;
-    }
-
-    return 0;
+    return manA[0].localeCompare(manB[0]);
 }
 
 function getFormatString(contacts) {
@@ -145,7 +138,7 @@ function replacer() {
 function getConcatContact(contact) {
     let contactsInStr = contact[0];
     for (let i = 1; i < contact.length; i++) {
-        if (contact[i].length > 0) {
+        if (contact[i] !== '') {
             contactsInStr += ', ' + contact[i];
         }
     }
