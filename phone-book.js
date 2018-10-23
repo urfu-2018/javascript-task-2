@@ -164,7 +164,7 @@ function isEmailCorrect(email) {
 function extractPhone(str) {
     let [, phone] = str.split(',');
 
-    return phone.replace(/[+7|(|)|-|\s]/, '');
+    return phone.replace(/[^0-9]/g, '').slice(1);
 }
 
 module.exports = {
