@@ -24,24 +24,14 @@ const prettyPhonePattern = /\+7 \(([0-9]{3})\) ([0-9]{3})-([0-9]{2})-([0-9]{2})/
 /**
  * Проверка корректности аргументов
  * @param {String} phone
- * @param {String?} name
+ * @param {String} name
  * @returns {Boolean}
  */
 function isCorrect(phone, name) {
-    if (typeof phone !== 'string' ||
-        typeof name !== 'string') {
-        return false;
-    }
+    const isValidPhone = typeof phone === 'string' && phonePattern.test(phone);
+    const isValidName = typeof name === 'string' && name.trim() !== '';
 
-    if (!name || name.trim() === '') {
-        return false;
-    }
-
-    if (!phonePattern.test(phone)) {
-        return false;
-    }
-
-    return true;
+    return isValidPhone && isValidName;
 }
 
 /**
