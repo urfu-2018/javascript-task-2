@@ -11,6 +11,10 @@ const isStar = false;
  */
 let phoneBook = new Map();
 
+function isString(v) {
+    return typeof v === 'string';
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,7 +23,7 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^\d{10}$/.test(phone)) {
+    if (!isString(phone) || !/^\d{10}$/.test(phone)) {
         return false;
     }
     if (phoneBook.has(phone) || name === undefined) {
@@ -64,7 +68,6 @@ function findAndRemove(query) {
 }
 
 function recordToString(obj) {
-    console.info(typeof phone);
     const a = obj.phone.slice(0, 3);
     const b = obj.phone.slice(3, 6);
     const c = obj.phone.slice(6, 8);
@@ -78,6 +81,10 @@ function recordToString(obj) {
 }
 
 function findRecords(query) {
+    if (!isString(query) || query.length === 0) {
+        return [];
+    }
+
     return [...phoneBook.keys()]
         .map(k => ({ phone: k, name: phoneBook.get(k).name, email: phoneBook.get(k).email }))
         .sort((x, y) => x.name.localeCompare(y.name))
