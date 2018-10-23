@@ -78,7 +78,7 @@ function find(query) {
     return !query ? [] : Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
-        .sort((a, b)=>phoneBook[a].name > phoneBook[b].name ? 1 : -1)
+        .sort((a, b)=>phoneBook[a].name >= phoneBook[b].name ? 1 : -1)
         .map((record)=>[phoneBook[record].name, formatPhone(record), phoneBook[record].email]
             .reduce((a, b)=>b === undefined ? `${a}` : `${a}, ${b}`));
 }
