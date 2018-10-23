@@ -93,21 +93,14 @@ function update(phone, name, email) {
 }
 
 function checkQuery(query) {
-    return typeof query === 'string' || query !== '';
+    return typeof query === 'string' && query !== '';
 }
 
 function entryContainsQuery(entry, query) {
     const values = Object.values(entry);
     const pattern = query === '*' ? /.*/ : new RegExp(query);
 
-    const match = values
-        .find(value => value !== undefined && pattern.test(value));
-
-    if (match) {
-        return true;
-    }
-
-    return false;
+    return values.some(value => value !== undefined && pattern.test(value));
 }
 
 /**
