@@ -161,6 +161,10 @@ function checkContactToQuery(contact, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (typeof query !== 'string' || query.length === 0) {
+        return 0;
+    }
+
     var remainingContacts = [];
     var deletedCount = 0;
     for (var i = 0; i < phoneBook.length; i++) {
