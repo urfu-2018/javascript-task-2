@@ -14,7 +14,7 @@ let phoneBook = [];
 function validatePhone(phone) {
     const PHONE_PATTERN = /^\d{10}$/;
 
-    if (typeof phone !== 'string' || phone === '') {
+    if (typeof phone !== 'string') {
         return false;
     }
 
@@ -43,16 +43,6 @@ function checkArgs(phone, name, email) {
         validateEmail(email);
 }
 
-function contains(phone) {
-    const alreadyExistedPhone = phoneBook.find(element => element.phone === phone);
-
-    if (alreadyExistedPhone !== undefined) {
-        return true;
-    }
-
-    return false;
-}
-
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -65,7 +55,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (contains(phone)) {
+    if (phoneBook.some(element => element.phone === phone)) {
         return false;
     }
 
@@ -92,10 +82,14 @@ function update(phone, name, email) {
 
     const match = phoneBook.find(element => element.phone === phone);
 
-    match.name = name;
-    match.email = email;
+    if (match) {
+        match.name = name;
+        match.email = email;
 
-    return true;
+        return true;
+    }
+
+    return false;
 }
 
 function checkQuery(query) {
@@ -109,7 +103,7 @@ function entryContainsQuery(entry, query) {
     const match = values
         .find(value => value !== undefined && pattern.test(value));
 
-    if (match !== undefined) {
+    if (match) {
         return true;
     }
 
