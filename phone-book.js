@@ -21,20 +21,15 @@ let phoneBook;
 function add(phone, name, email) {
     if (name === undefined) {
         return false;
-    }
-    if (email !== undefined && typeof(email) !== 'string') {
+    } else if (email !== undefined && typeof(email) !== 'string') {
         throw new TypeError('');
-    }
-    if ([phone, name].some(e=>typeof(e) !== 'string')) {
+    } else if ([phone, name].some(e=>typeof(e) !== 'string')) {
         throw new TypeError('');
-    }
-    if (!(/[0-9]{10}/.test(phone))) {
+    } else if (!(/[0-9]{10}/.test(phone))) {
         return false;
-    }
-    if (phoneBook === undefined) {
+    } else if (phoneBook === undefined) {
         phoneBook = {};
-    }
-    if (phoneBook[phone]) {
+    } else if (phoneBook[phone]) {
         return false;
     }
     phoneBook[phone] = { 'name': name, 'email': email };
@@ -52,20 +47,15 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     if (name === undefined) {
         return false;
-    }
-    if (email !== undefined && typeof(email) !== 'string') {
+    } else if (email !== undefined && typeof(email) !== 'string') {
         return new TypeError('');
-    }
-    if ([phone, name].some(e=>typeof(e) !== 'string')) {
+    } else if ([phone, name].some(e=>typeof(e) !== 'string')) {
         throw new TypeError('');
-    }
-    if (!(/[0-9]{10}/.test(phone))) {
+    } else if (!(/[0-9]{10}/.test(phone))) {
         return false;
-    }
-    if (phoneBook === undefined) {
-        phoneBook = {}
-    }
-    if (phoneBook[phone] === undefined) {
+    } else if (phoneBook === undefined) {
+        phoneBook = {};
+    }else if (phoneBook[phone] === undefined) {
         return false;
     }
     phoneBook[phone] = { 'name': name, 'email': email };
