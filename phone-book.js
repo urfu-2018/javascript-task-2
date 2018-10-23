@@ -54,21 +54,15 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(phone in phoneBook)) {
+    if (!(phone in phoneBook) || !isString(name) || isEmptyString(name)) {
         return false;
     }
     const person = phoneBook[phone];
 
-    if (person !== undefined) {
-        person.email = email;
-        if (isString(name) && !isEmptyString(name)) {
-            person.name = name;
-        }
+    person.email = email;
+    person.name = name;
 
-        return true;
-    }
-
-    return false;
+    return true;
 }
 
 /**
