@@ -57,7 +57,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!dataChecks(phone, name, email) || find(phone).length === 0) {
+    if (!dataChecks(phone, name, email)) {
         return false;
     }
     phoneBook[phone] = [name, email];
