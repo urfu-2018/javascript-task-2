@@ -154,18 +154,14 @@ function importFromCsv(csv) {
     if (typeof csv !== 'string' || csv.length === 0) {
         return count;
     }
-    let str = csv.split('\n');
-    let preResult = [];
-    let phone;
-    let name;
-    let email;
-    for (let p = 0; p < str.length; p++) {
-        preResult[p] = str[p].split(';');
-        phone = preResult[p][1];
-        name = preResult[p][0];
-        email = preResult[p][2];
+    let strs = csv.split('\n');
+    strs.forEach(item => {
+        let str = item.split(';');
+        let phone = str[1];
+        let name = str[0];
+        let email = str[2];
         count += addOrUpdateBook(phone, name, email);
-    }
+    });
 
     return count;
 }
