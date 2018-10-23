@@ -23,17 +23,14 @@ function add(phone, name, email) {
     if (name === undefined || !checkPhone(phone) || phone in phoneBook) {
         return false;
     }
-    const person = {
-        'name': name,
-        'email': email
-    };
+    const person = { name, email };
     phoneBook[phone] = person;
 
     return true;
 }
 
 function checkPhone(phone) {
-    if (typeof (phone) !== 'string') {
+    if (typeof phone !== 'string') {
         return false;
     }
 
@@ -52,9 +49,10 @@ function update(phone, name, email) {
         return false;
     }
     const person = phoneBook[phone];
-    if (person !== null) {
+
+    if (person !== undefined) {
         person.email = email;
-        if (name !== null) {
+        if (name !== undefined) {
             person.name = name;
         }
 
