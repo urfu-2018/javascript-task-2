@@ -137,7 +137,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!csv) {
+    if (typeof csv !== 'string') {
         return 0;
     }
 
