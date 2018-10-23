@@ -78,8 +78,8 @@ function findAndRemove(query) {
     if (typeof(query) !== 'string') {return;}
     let finded = find(query);
     for (let i = 0; i < finded.length; i++) {
-        const splited = finded[i].split(', ');
-        const phoneNote
+        let splited = finded[i].split(', ');
+        let phoneNote;
         if (splited.length === 2) {
             phoneNote = {mPhone:splited[0], mName:splited[1], mEmail: undefined};
         }
