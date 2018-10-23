@@ -23,7 +23,7 @@ function add(phone, name, email) {
         return false;
     }
     if (email !== undefined && typeof(email) !== 'string') {
-        return new TypeError('');
+        throw new TypeError('');
     }
     if ([phone, name].some(e=>typeof(e) !== 'string')) {
         throw new TypeError('');
@@ -37,7 +37,7 @@ function add(phone, name, email) {
     if (phoneBook[phone]) {
         return false;
     }
-    phoneBook[phone] = {'name': name, 'email': email}
+    phoneBook[phone] = { 'name': name, 'email': email };
 
     return true;
 }
@@ -68,7 +68,7 @@ function update(phone, name, email) {
     if (phoneBook[phone] === undefined) {
         return false;
     }
-    phoneBook[phone] = {'name': name, 'email': email}
+    phoneBook[phone] = { 'name': name, 'email': email };
 
     return true;
 }
@@ -91,7 +91,8 @@ function findAndRemove(query) {
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
             .some((rec)=>searchStr.test(rec)));
     allRecords
-        .forEach((item)=>delete(phoneBook[item]))
+        .forEach((item)=>delete(phoneBook[item]));
+
     return allRecords.length;
 }
 
@@ -114,7 +115,7 @@ function find(query) {
     let searchStr = /.?/;
     if (query !== '*') {
         searchStr = new RegExp(query);
-}
+    }
     allRecords = Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
             .some((rec)=>searchStr.test(rec)));
