@@ -11,6 +11,12 @@ const isStar = true;
  */
 let phoneBook;
 
+function checkArgs(phone, name, email) {
+    if (email !== undefined && typeof(email) !== 'string' ||
+        [phone, name].some(e=>typeof(e) !== 'string')) {
+        throw new TypeError('');
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -21,11 +27,9 @@ let phoneBook;
 function add(phone, name, email) {
     if (name === undefined) {
         return false;
-    } else if (email !== undefined && typeof(email) !== 'string') {
-        throw new TypeError('');
-    } else if ([phone, name].some(e=>typeof(e) !== 'string')) {
-        throw new TypeError('');
-    } else if (!(/[0-9]{10}/.test(phone))) {
+    }
+    checkArgs(phone, name, email);
+    if (!(/[0-9]{10}/.test(phone))) {
         return false;
     } else if (phoneBook === undefined) {
         phoneBook = {};
@@ -47,15 +51,11 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     if (name === undefined) {
         return false;
-    } else if (email !== undefined && typeof(email) !== 'string') {
-        return new TypeError('');
-    } else if ([phone, name].some(e=>typeof(e) !== 'string')) {
-        throw new TypeError('');
-    } else if (!(/[0-9]{10}/.test(phone))) {
-        return false;
-    } else if (phoneBook === undefined) {
+    }
+    checkArgs(phone, name, email);
+    if (phoneBook === undefined) {
         phoneBook = {};
-    }else if (phoneBook[phone] === undefined) {
+    } else if (!(/[0-9]{10}/.test(phone)) || phoneBook[phone] === undefined) {
         return false;
     }
     phoneBook[phone] = { 'name': name, 'email': email };
