@@ -42,10 +42,10 @@ function isCorrectedName(name) {
  * @param {String?} email
  * @returns {Boolean}
  */
-// Можно ли так проверять на undefined?
+
 function add(phone, name, email) {
-    if (!isCorrectedName(name) || !isCorrectedPhone(phone) || phoneBook[phone] !== undefined ||
-    arguments.length === 1) {
+    if (!isCorrectedName(name) || !isCorrectedPhone(phone) ||
+    typeof phoneBook[phone] !== 'undefined' || arguments.length === 1) {
         return false;
     }
     if (arguments.length === 2) {
@@ -64,8 +64,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrectedName(name) || !isCorrectedPhone(phone) || phoneBook[phone] === undefined ||
-    arguments.length === 1) {
+    if (!isCorrectedName(name) || !isCorrectedPhone(phone) ||
+    typeof phoneBook[phone] === 'undefined' || arguments.length === 1) {
         return false;
     }
     if (arguments.length === 2) {
@@ -95,8 +95,8 @@ function findAndRemove(query) {
     }
     let count = 0;
     for (let key of Object.keys(records)) {
-        if (phoneBook[key] !== undefined) {
-            phoneBook[key] = undefined;
+        if (typeof phoneBook[key] !== 'undefined') {
+            delete phoneBook[key];
             count++;
         }
     }
@@ -145,7 +145,9 @@ function give(records) {
         if (records[key][1].length === 0) {
             record = record.slice(0, record.length - 2);
         }
-        result.push(record);
+        if (record.length !== 0) {
+            result.push(record);
+        }
     }
     result.sort();
 
