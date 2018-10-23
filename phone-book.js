@@ -25,18 +25,17 @@ class Contact {
         number.push(this.phone.slice(6, 8));
         number.push(this.phone.slice(8, 10));
         const phone = `+7 (${number[0]}) ${number[1]}-${number[2]}-${number[3]}`;
-        const email = ((typeof this.email === 'undefined') ||
-            this.email === '') ? '' : `, ${this.email}`;
+        const email = ((typeof this.email === 'undefined') ? '' : `, ${this.email}`);
 
         return `${this.name}, ${phone}${email}`;
     }
 }
 
-const sortNamesLexicographical = (l, r) => {
+function sortNamesLexicographical(l, r) {
     return l.name.localeCompare(r.name);
-};
+}
 
-function checkPhone(phone) {
+function checkPhoneIsCorrect(phone) {
     return (typeof phone === 'string') && /^\d{10}$/.test(phone);
 }
 
@@ -48,16 +47,26 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!(typeof name === 'string') ||
-        (name.length === 0) || !checkPhone(phone)) {
-        return false;
+    if (typeof name === 'string' && name !== '' && checkPhoneIsCorrect(phone) &&
+        !phoneBook.some(e => e.phone === phone)) {
+        phoneBook.push(new Contact(phone, name, email));
+
+        return true;
     }
-    if (phoneBook.some(e => e.phone === phone)) {
-        return false;
-    }
-    phoneBook.push(new Contact(phone, name, email));
+
+    return false;
+}
+
+function safeUpdate(found, name, email) {
+    found.name = name;
+    found.email = ((email === '') ? undefined : email);
 
     return true;
+}
+
+function checkParametersAreCorrect(phone, name) {
+    return checkPhoneIsCorrect(phone) &&
+        typeof name === 'string' && name !== '';
 }
 
 /**
@@ -68,23 +77,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhone(phone) || !(typeof name === 'string') || name.length === 0) {
-        return false;
-    }
-    const found = phoneBook.filter(e => e.phone === phone);
-    if (found.length === 0) {
-        return false;
-    }
-    found.forEach(e => {
-        if (typeof email === 'string' && email.length === 0) {
-            e.email = undefined;
-        } else {
-            e.email = email;
-        }
-        e.name = name;
-    });
+    if (checkParametersAreCorrect(phone, name)) {
+        const found = phoneBook.find(e => e.phone === phone);
 
-    return true;
+        return ((typeof found === 'undefined') ? false
+            : safeUpdate(found, name, email));
+    }
+
+    return false;
 }
 
 /**
@@ -93,30 +93,25 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!(typeof query === 'string') || query.length === 0) {
-        return 0;
-    }
     const found = search(query);
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (found.includes(phoneBook[i])) {
-            phoneBook.splice(i, 1);
-        }
+    for (let i = 0; i < found.length; i++) {
+        phoneBook.splice(phoneBook.findIndex(e => e === found[i]), 1);
     }
 
     return found.length;
 }
 
 function search(query) {
+    if (typeof query !== 'string' || query === '') {
+        return [];
+    }
     if (query === '*') {
         return phoneBook.slice();
-    }
-    if (!(typeof query === 'string') || (query.length === 0)) {
-        return [];
     }
 
     return phoneBook.filter(e => e.phone.includes(query) ||
             e.name.includes(query) ||
-            (typeof e.email === 'undefined' ? false : e.email.includes(query)));
+            ((typeof e.email === 'undefined') ? false : e.email.includes(query)));
 }
 
 /**
@@ -125,10 +120,6 @@ function search(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!(typeof query === 'string') || query.length === 0) {
-        return [];
-    }
-
     return search(query)
         .sort(sortNamesLexicographical)
         .map(_ => _.toString());
@@ -141,12 +132,11 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!(typeof csv === 'string') || csv.length === 0) {
+    if (typeof csv !== 'string' || csv === '') {
         return 0;
     }
-    const contacts = csv.split('\n');
     const fields = [];
-    contacts.forEach(e => fields.push(e.split(';')));
+    csv.split('\n').forEach(e => fields.push(e.split(';')));
     let count = 0;
     fields.forEach(e => {
         if (update(e[1], e[0], e[2]) || add(e[1], e[0], e[2])) {
