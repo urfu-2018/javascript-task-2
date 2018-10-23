@@ -64,13 +64,17 @@ function update(phone, name, email) {
     return true;
 }
 
+function queryChecks(query) {
+    return query === undefined || !notEmptyString(query);
+}
+
 /**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!notEmptyString(query)) {
+    if (queryChecks(query)) {
         return 0;
     }
 
@@ -105,7 +109,7 @@ function arrayIncludes(arr, query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!notEmptyString(query)) {
+    if (queryChecks(query)) {
         return [];
     }
 
