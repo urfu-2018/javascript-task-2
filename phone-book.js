@@ -117,10 +117,10 @@ function find(query) {
 }
 
 function sortedPhonesByName(manA, manB) {
-    if (manA[0].toLowerCase() > manB[0].toLowerCase()) {
+    if (manA[0] > manB[0]) {
         return 1;
     }
-    if (manA[0].toLowerCase() < manB[0].toLowerCase()) {
+    if (manA[0] < manB[0]) {
         return -1;
     }
 
