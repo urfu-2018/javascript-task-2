@@ -67,10 +67,10 @@ function update(phone, name, email) {
     }
     if (phoneBook[phone] === undefined) {
         return false;
-    } else {
-        phoneBook[phone] = {'name': name, 'email': email}
-        return true;
     }
+    phoneBook[phone] = {'name': name, 'email': email}
+    
+    return true;
 }
 
 /**
@@ -81,21 +81,21 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     let formatPhone = (phone)=>
         `+7 (${phone
-                .slice(0, 3)}) ${phone
-                        .slice(3, 6)}-${phone
-                                .slice(6, 8)}-${phone
-                                        .slice(8, 10)}`
+            .slice(0, 3)}) ${phone
+            .slice(3, 6)}-${phone
+            .slice(6, 8)}-${phone
+            .slice(8, 10)}`;
     let allRecords;
     if (typeof(query) !== 'string') {
         throw new TypeError('');
     }
-    let searchStr = /.?/
+    let searchStr = /.?/;
     if (query !== '*') {
-        searchStr = new RegExp(query)
+        searchStr = new RegExp(query);
     }
     allRecords = Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
-            .some((record)=>searchStr.test(record)))
+            .some((record)=>searchStr.test(record)));
     allRecords
         .forEach((item, i, arr)=>delete(phoneBook[item]))
     return allRecords.length;
@@ -109,21 +109,22 @@ function findAndRemove(query) {
 function find(query) {
     let formatPhone = (phone)=>
         `+7 (${phone
-                .slice(0, 3)}) ${phone
-                        .slice(3, 6)}-${phone
-                                .slice(6, 8)}-${phone
-                                        .slice(8, 10)}`
+            .slice(0, 3)}) ${phone
+            .slice(3, 6)}-${phone
+            .slice(6, 8)}-${phone
+            .slice(8, 10)}`;
     let allRecords;
     if (typeof(query) !== 'string') {
         throw new TypeError('');
     }
-    let searchStr = /.?/
+    let searchStr = /.?/;
     if (query !== '*') {
-        searchStr = new RegExp(query)
+        searchStr = new RegExp(query);
 }
     allRecords = Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
-            .some((record)=>searchStr.test(record)))
+            .some((record)=>searchStr.test(record)));
+
     return allRecords
         .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
         .map((record)=>[phoneBook[record].name, formatPhone(record), phoneBook[record].email]
