@@ -1,4 +1,4 @@
-'use strict';
+    'use strict';
 
 /**
  * Сделано задание на звездочку
@@ -34,14 +34,17 @@ function isUndefined(field) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name = '', email = '') {
+function add(phone, name, email) {
+    if (isUndefined(email)) {
+        email = '';
+    }
     if (!isString(phone, name, email)) {
         return false;
     }
     if (!isUndefined(phoneBook[phone])) {
         return false;
     }
-    if (/^[0-9]{10}$/.test(phone) && name.length !== 0) {
+    if (/^[0-9]{10}$/.test(phone)) {
         phoneBook[phone] = [name, email];
 
         return true;
@@ -57,14 +60,17 @@ function add(phone, name = '', email = '') {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name = '', email = '') {
+function update(phone, name, email) {
+    if (isUndefined(email)) {
+        email = '';
+    }
     if (!isString(phone, name, email)) {
         return false;
     }
     if (isUndefined(phoneBook[phone])) {
         return false;
     }
-    if (!/^[0-9]{10}$/.test(phone) || name.length === 0) {
+    if (!/^[0-9]{10}$/.test(phone)) {
         return false;
     }
 
