@@ -12,6 +12,21 @@ const isStar = true;
 let phoneBook = {};
 
 /**
+ * Добавление записи в телефонную книгу
+ * @param {String} phone
+ * @param {String?} name
+ * @param {String?} email
+ * @returns {Boolean}
+ */
+function add(phone, name, email) {
+    if (find(phone).length > 0) {
+        return false;
+    }
+
+    return update(phone, name, email);
+}
+
+/**
  * Проверяет, является ли аргумент не пустой строкой.
  * @param {Object} str
  * @returns {Boolean}
@@ -34,21 +49,6 @@ function dataChecks(phone, name, email) {
 }
 
 /**
- * Добавление записи в телефонную книгу
- * @param {String} phone
- * @param {String?} name
- * @param {String?} email
- * @returns {Boolean}
- */
-function add(phone, name, email) {
-    if (find(phone).length > 0) {
-        return false;
-    }
-
-    return update(phone, name, email);
-}
-
-/**
  * Обновление записи в телефонной книге
  * @param {String} phone
  * @param {String?} name
@@ -65,6 +65,25 @@ function update(phone, name, email) {
 }
 
 /**
+ * Удаление записей по запросу из телефонной книги
+ * @param {String} query
+ * @returns {Number}
+ */
+function findAndRemove(query) {
+    if (!notEmptyString(query)) {
+        return 0;
+    }
+
+    const foundEntries = find(query);
+    for (let entry of foundEntries) {
+        const phone = entry.split(',')[1];
+        delete phoneBook[phone];
+    }
+
+    return foundEntries.length;
+}
+
+/**
  * Проверяет, является строка подстрокой хотя бы одного элемента массива
  * @param {String[]} arr
  * @param {String} query
@@ -78,35 +97,6 @@ function arrayIncludes(arr, query) {
     }
 
     return false;
-}
-
-/**
- * Удаление записей по запросу из телефонной книги
- * @param {String} query
- * @returns {Number}
- */
-function findAndRemove(query) {
-    if (!notEmptyString(query)) {
-        return 0;
-    }
-
-    if (query === '*') {
-        const count = Object.keys(phoneBook).length;
-        phoneBook = {};
-
-        return count;
-    }
-
-    let count = 0;
-    for (let [phone, info] of Object.entries(phoneBook)) {
-        const searchStrings = info.concat(phone);
-        if (arrayIncludes(searchStrings, query)) {
-            delete phoneBook[phone];
-            count++;
-        }
-    }
-
-    return count;
 }
 
 /**
@@ -138,7 +128,7 @@ function find(query) {
         }
     }
 
-    return result.sort((a, b) => a.split(',')[0].localeCompare(b.split(',')[0]));
+    return result.sort();
 }
 
 /**
@@ -154,14 +144,17 @@ function importFromCsv(csv) {
         parsed.push(i.split(';'));
     }
 
-    let count = 0;
-    for (let i in parsed) {
-        if (update(parsed[i][1], parsed[i][0], parsed[i][2])) {
-            count++;
+    let successCount = 0;
+    for (let e of parsed) {
+        if (e[2] === '') {
+            e[2] = undefined;
+        }
+        if (update(e[1], e[0], e[2])) {
+            successCount++;
         }
     }
 
-    return count;
+    return successCount;
 }
 
 module.exports = {
