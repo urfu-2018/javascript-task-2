@@ -71,7 +71,7 @@ function find(query) {
     return query === '' || typeof(query) !== 'string' ? [] : Object.keys(phoneBook)
         .filter((record)=>[record, ...Object.values(phoneBook[record])]
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
-        .sort((a, b)=>phoneBook[a].name >= phoneBook[b].name ? 1 : -1)
+        .sort((a, b)=>phoneBook[a].name.localeCompare(phoneBook[b].name))
         .map((rec)=>[
             phoneBook[rec].name,
             `+7 (${rec.slice(0, 3)}) ${rec.slice(3, 6)}-${rec.slice(6, 8)}-${rec.slice(8, 10)}`,
