@@ -19,7 +19,27 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-
+    if (name === undefined) {
+        return false;
+    }
+    if (email !== undefined && typeof(email) !== 'string') {
+        return new TypeError('');
+    }
+    if ([phone, name].some(e=>typeof(e) !== 'string')) {
+        throw new TypeError('');
+    }
+    if (!(/[0-9]{10}/.test(phone))) {
+        return false;
+    }
+    if (phoneBook === undefined) {
+        phoneBook = {}
+    }
+    if (phoneBook[phone]) {
+        return false;
+    } else {
+        phoneBook[phone] = {'name': name, 'email': email}
+        return true;
+    }
 }
 
 /**
@@ -30,7 +50,27 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-
+    if (name === undefined) {
+        return false;
+    }
+    if (email !== undefined && typeof(email) !== 'string') {
+        return new TypeError('');
+    }
+    if ([phone, name].some(e=>typeof(e) !== 'string')) {
+        throw new TypeError('');
+    }
+    if (!(/[0-9]{10}/.test(phone))) {
+        return false;
+    }
+    if (phoneBook === undefined) {
+        phoneBook = {}
+    }
+    if (phoneBook[phone] === undefined) {
+        return false;
+    } else {
+        phoneBook[phone] = {'name': name, 'email': email}
+        return true;
+    }
 }
 
 /**
@@ -39,7 +79,26 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
+    let formatPhone = (phone)=>
+        `+7 (${phone
+                .slice(0, 3)}) ${phone
+                        .slice(3, 6)}-${phone
+                                .slice(6, 8)}-${phone
+                                        .slice(8, 10)}`
+    let allRecords;
+    if (typeof(query) !== 'string') {
+        throw new TypeError('');
+    }
+    let searchStr = /.?/
+    if (query !== '*') {
+        searchStr = new RegExp(query)
+    }
+    allRecords = Object.keys(phoneBook)
+        .filter((record)=>[record].concat(Object.values(phoneBook[record]))
+            .some((record)=>searchStr.test(record)))
+    allRecords
+        .forEach((item, i, arr)=>delete(phoneBook[item]))
+    return allRecords.length;
 }
 
 /**
@@ -48,7 +107,27 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-
+    let formatPhone = (phone)=>
+        `+7 (${phone
+                .slice(0, 3)}) ${phone
+                        .slice(3, 6)}-${phone
+                                .slice(6, 8)}-${phone
+                                        .slice(8, 10)}`
+    let allRecords;
+    if (typeof(query) !== 'string') {
+        throw new TypeError('');
+    }
+    let searchStr = /.?/
+    if (query !== '*') {
+        searchStr = new RegExp(query)
+}
+    allRecords = Object.keys(phoneBook)
+        .filter((record)=>[record].concat(Object.values(phoneBook[record]))
+            .some((record)=>searchStr.test(record)))
+    return allRecords
+        .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
+        .map((record)=>[phoneBook[record].name, formatPhone(record), phoneBook[record].email]
+            .reduce((a, b)=>b === undefined ? `${a}` : `${a} ${b}`));
 }
 
 /**
