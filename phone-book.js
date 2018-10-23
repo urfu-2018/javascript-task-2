@@ -72,7 +72,7 @@ function update(phone, name, email) {
  */
 function arrayIncludes(arr, query) {
     for (let str of arr) {
-        if (str.includes(query)) {
+        if (str !== undefined && str.includes(query)) {
             return true;
         }
     }
@@ -138,7 +138,7 @@ function find(query) {
         }
     }
 
-    return result.sort();
+    return result.sort((a, b) => a.split(',')[0].localeCompare(b.split(',')[0]));
 }
 
 /**
