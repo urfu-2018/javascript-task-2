@@ -62,8 +62,8 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string') {
-        throw new TypeError();
+    if (query === '*') {
+        query = '';
     }
     let res = 0;
     let iterator = phoneBook.keys();
