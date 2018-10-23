@@ -178,8 +178,8 @@ function formatingPhone(phone) {
 function checking(phone, name) {
     const phoneRegexp = new RegExp('^[0-9]{10}$');
 
-    return ((typeof phone && typeof name) === 'string' && name.length !== 0 && name !== undefined &&
-        phoneRegexp.test(phone));
+    return ((typeof phone && typeof name) === 'string' && name.length !== 0 && (typeof phone &&
+        typeof name) !== undefined && phoneRegexp.test(phone));
 }
 
 module.exports = {
