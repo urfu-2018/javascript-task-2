@@ -25,7 +25,8 @@ class Contact {
         number.push(this.phone.slice(6, 8));
         number.push(this.phone.slice(8, 10));
         const phone = `+7 (${number[0]}) ${number[1]}-${number[2]}-${number[3]}`;
-        const email = typeof this.email === 'undefined' ? '' : `, ${this.email}`;
+        const email = ((typeof this.email === 'undefined') ||
+            this.email === '') ? '' : `, ${this.email}`;
 
         return `${this.name}, ${phone}${email}`;
     }
@@ -75,7 +76,11 @@ function update(phone, name, email) {
         return false;
     }
     found.forEach(e => {
-        e.email = email;
+        if (typeof email === 'string' && email.length === 0) {
+            e.email = undefined;
+        } else {
+            e.email = email;
+        }
         e.name = name;
     });
 
