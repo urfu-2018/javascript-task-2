@@ -72,7 +72,7 @@ function update(phone, name, email) {
  */
 function arrayIncludes(arr, query) {
     for (let str of arr) {
-        if (str !== undefined && str.includes(query)) {
+        if (str.includes(query)) {
             return true;
         }
     }
@@ -148,10 +148,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    let elements = csv.split('\n');
-    if (elements.length === 1) {
-        elements = csv.split('\n\r');
-    }
+    const elements = csv.split('\n');
     const parsed = [];
     for (let i of elements) {
         parsed.push(i.split(';'));
