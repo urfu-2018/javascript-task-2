@@ -134,13 +134,9 @@ function importFromCsv(csv) {
 }
 
 function isInclude(strings, includingString) {
-    let res = false;
     for (let i = 0; i < strings.length; i++) {
         if (strings[i].includes(includingString)) {
-            res = true;
-        }
-        if (res) {
-            return res;
+            return true;
         }
     }
 
@@ -182,7 +178,7 @@ function formatingPhone(phone) {
 function checking(phone, name) {
     const phoneRegexp = new RegExp('^[0-9]{10}$');
 
-    return ((typeof phone && typeof name) === 'string' && name.length !== 0 &&
+    return ((typeof phone && typeof name) === 'string' && name.length !== 0 && name !== undefined &&
         phoneRegexp.test(phone));
 }
 
