@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = {};
 
 /**
  * Проврека на корректность номера
@@ -21,29 +21,17 @@ function isCorrectPhone(phone) {
 }
 
 /**
- * Индекс номера в phoneBook
- * @param {String} phone
- * @returns {Number}
- */
-function getIndexOfPhone(phone) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-/**
  * Перевод из общей версии номера в Российский
  * @param {String} phone
  * @returns {String}
  */
-function fromGlobToRus(phone) {
-    return ('+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) + '-' +
-        phone.slice(6, 8) + '-' + phone.slice(8, 10));
+function formatPhoneToRus(phone) {
+    const a = phone.slice(0, 3);
+    const b = phone.slice(3, 6);
+    const c = phone.slice(6, 8);
+    const d = phone.slice(8, 10);
+
+    return `+7 (${a}) ${b}-${c}-${d}`;
 }
 
 /**
@@ -54,22 +42,7 @@ function fromGlobToRus(phone) {
  */
 function isCorrectInput(phone, name) {
 
-    return isCorrectPhone(phone) && typeof(name) !== 'undefined' && name !== '';
-}
-
-/**
- * Создание объекта контакта
- * @param {String} phone
- * @param {String} name
- * @param {String?} email
- * @returns {person}
- */
-function createPerson(phone, name, email) {
-    return {
-        phone,
-        name,
-        email: (typeof(email) !== 'undefined') ? email : ''
-    };
+    return Boolean(name) && isCorrectPhone(phone);
 }
 
 /**
@@ -80,12 +53,11 @@ function createPerson(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    // если индекс телефона -1, то его нет в списке
-    if (!isCorrectInput(phone, name) || getIndexOfPhone(phone) !== -1) {
+    if (!isCorrectInput(phone, name) || phone in phoneBook) {
 
         return false;
     }
-    phoneBook.push(createPerson(phone, name, email));
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -98,14 +70,25 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const index = getIndexOfPhone(phone);
-    if (!isCorrectInput(phone, name) || index === -1) {
+    if (!isCorrectInput(phone, name) || !(phone in phoneBook)) {
 
         return false;
     }
-    phoneBook[index] = createPerson(phone, name, email);
+    phoneBook[phone] = { name, email };
 
     return true;
+}
+
+/**
+ * собирает все подходящие записи в массив
+ * @param {String} query
+ * @returns {Array}
+ */
+function getPhonesByQuery(query) {
+    return Object.keys(phoneBook)
+        .filter(phone => phone.includes(query) || phoneBook[phone].name.includes(query) ||
+            (phoneBook[phone].email && phoneBook[phone].email.includes(query)))
+        .sort((phoneA, phoneB) => phoneBook[phoneA].name.localeCompare(phoneBook[phoneB].name));
 }
 
 /**
@@ -117,18 +100,15 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    if (query === '*') { // т.к. * это все записи, то можно вернуть длину массива, а его обнулить
-        const deletions = phoneBook.length;
-        phoneBook = [];
+    if (query === '*') {
+        // т.к. * это все записи, то можно вернуть длину массива ключей и вернуть пустой объект
+        const deletions = phoneBook.keys.length;
+        phoneBook = {};
 
         return deletions;
     }
-    // если хоть где-то индекс подстроки не -1, то добавить этот элемент в массив для удалений
-    const toDelete = phoneBook.filter((person) => (person.phone.indexOf(query) !== -1 ||
-        person.name.indexOf(query) !== -1 ||
-        (person.email !== undefined && person.email.indexOf(query) !== -1)));
-    // удалить каждый toDelete из phoneBook
-    toDelete.forEach(person => phoneBook.splice(getIndexOfPhone(person.phone), 1));
+    const toDelete = getPhonesByQuery(query);
+    toDelete.forEach(phone => delete phoneBook[phone]);
 
     return toDelete.length;
 }
@@ -145,16 +125,13 @@ function find(query) {
     if (query === '*') {
         query = ''; // пустая строка везде найдется
     }
+    let result = getPhonesByQuery(query);
 
-    return phoneBook
-        .filter((person) => (person.phone.indexOf(query) !== -1 ||
-            person.name.indexOf(query) !== -1 || (person.email.indexOf(query) !== -1)))
-        .sort((person, nextPers) => person.name.localeCompare(nextPers.name))
-        .map(person => {
-            return (person.email !== '')
-                ? [person.name, fromGlobToRus(person.phone), person.email].join(', ')
-                : [person.name, fromGlobToRus(person.phone)].join(', ');
-        });
+    return result
+        .map(phone => (phoneBook[phone].email)
+            ? [phoneBook[phone].name, formatPhoneToRus(phone), phoneBook[phone].email].join(', ')
+            : [phoneBook[phone].name, formatPhoneToRus(phone)].join(', '));
+
 }
 
 /**
@@ -171,7 +148,7 @@ function importFromCsv(csv) {
         const name = contact[0];
         const phone = contact[1];
         const email = contact[2];
-        if (getIndexOfPhone(phone) !== -1) {
+        if (phoneBook[phone]) {
             if (update(phone, name, email)) {
                 updated++;
             }
