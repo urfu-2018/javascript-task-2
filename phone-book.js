@@ -32,7 +32,7 @@ function add(phone, name, email) {
 }
 
 function isCorrectPhoneNumber(phone) {
-    return typeof(phone) === 'string' && /^\d{10}$/.test(phone);
+    return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
 }
 
 function isCorrectName(name) {
@@ -47,7 +47,7 @@ function isCorrectName(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (Object.keys(phoneBook).includes(phone) && isCorrectPhoneNumber && isCorrectName) {
+    if (Object.keys(phoneBook).includes(phone) && isCorrectName) {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -81,7 +81,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    return findKeysToRemove(query).sort(compareNames)
+    const foundKeys = findKeysToRemove(query);
+
+    return foundKeys.sort(compareNames)
         .map(formatRecord);
 }
 
