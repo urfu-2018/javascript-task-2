@@ -32,14 +32,14 @@ function add(phone, name, email) {
         return false;
     }
     if (phoneBook === undefined) {
-        phoneBook = {}
+        phoneBook = {};
     }
     if (phoneBook[phone]) {
         return false;
-    } else {
-        phoneBook[phone] = {'name': name, 'email': email}
-        return true;
     }
+    phoneBook[phone] = {'name': name, 'email': email}
+
+    return true;
 }
 
 /**
@@ -69,7 +69,7 @@ function update(phone, name, email) {
         return false;
     }
     phoneBook[phone] = {'name': name, 'email': email}
-    
+
     return true;
 }
 
@@ -79,12 +79,6 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let formatPhone = (phone)=>
-        `+7 (${phone
-            .slice(0, 3)}) ${phone
-            .slice(3, 6)}-${phone
-            .slice(6, 8)}-${phone
-            .slice(8, 10)}`;
     let allRecords;
     if (typeof(query) !== 'string') {
         throw new TypeError('');
@@ -95,9 +89,9 @@ function findAndRemove(query) {
     }
     allRecords = Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
-            .some((record)=>searchStr.test(record)));
+            .some((rec)=>searchStr.test(rec)));
     allRecords
-        .forEach((item, i, arr)=>delete(phoneBook[item]))
+        .forEach((item)=>delete(phoneBook[item]))
     return allRecords.length;
 }
 
@@ -123,7 +117,7 @@ function find(query) {
 }
     allRecords = Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
-            .some((record)=>searchStr.test(record)));
+            .some((rec)=>searchStr.test(rec)));
 
     return allRecords
         .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
