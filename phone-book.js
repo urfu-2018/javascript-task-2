@@ -4,27 +4,35 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
  */
 let phoneBook = [];
 
+function isString(phone, name, email) {
+    if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
+        return false;
+    }
+
+    return true;
+}
+
 function isCorrectedName(name) {
-    if (typeof name === 'string' && name.length !== 0) {
+    if (!isUndefined(name) && name.length !== 0) {
         return true;
     }
 
     return false;
 }
 
-function isCorrectedPhone(phone) {
-    if (typeof phone === 'string' && /^[0-9]{10}$/.test(phone)) {
-        return true;
+function isUndefined(field) {
+    if (field !== undefined) {
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 /**
@@ -35,19 +43,19 @@ function isCorrectedPhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isCorrectedPhone(phone) || !isCorrectedName(name)) {
+    if (isUndefined(email)) {
+        email = '';
+    }
+    if (!isString(phone, name, email) || !isUndefined(phoneBook[phone]) || !isCorrectedName(name)) {
         return false;
     }
-    if (typeof email !== 'undefined' && typeof email !== 'string') {
-        // Можно ли принимать email = ''?
-        return false;
-    }
-    if (typeof phoneBook[phone] !== 'undefined') {
-        return false;
-    }
-    phoneBook[phone] = [name, email];
+    if (/^[0-9]{10}$/.test(phone)) {
+        phoneBook[phone] = [name, email];
 
-    return true;
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -58,15 +66,16 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrectedName(name) || !isCorrectedPhone(phone)) {
+    if (isUndefined(email)) {
+        email = '';
+    }
+    if (!isString(phone, name, email) || isUndefined(phoneBook[phone]) || !isCorrectedName(name)) {
         return false;
     }
-    if (typeof email !== 'undefined' && typeof email !== 'string') {
+    if (!/^[0-9]{10}$/.test(phone)) {
         return false;
     }
-    if (typeof phoneBook[phone] === 'undefined') {
-        return false;
-    }
+
     phoneBook[phone] = [name, email];
 
     return true;
@@ -86,7 +95,7 @@ function findAndRemove(query) {
     for (let p of removes) {
         let str = p.split(', ');
         str[1] = str[1].substring(4, 7) + str[1].substring(9, 12) +
-            str[1].substring(13, 15) + str[1].substring(16, 19);
+        str[1].substring(13, 15) + str[1].substring(16, 19);
         records[str[1]] = [str[0], str[2]];
     }
     let count = 0;
@@ -123,11 +132,8 @@ function find(query) {
 function existInBook(query) {
     let result = [];
     for (let key of Object.keys(phoneBook)) {
-        if (key.indexOf(query) !== -1 || phoneBook[key][0].indexOf(query) !== -1) {
-            result[key] = [phoneBook[key][0], phoneBook[key][1]];
-            continue;
-        }
-        if (typeof phoneBook[key][1] !== 'undefined' && phoneBook[key][1].indexOf(query !== -1)) {
+        if (key.indexOf(query) !== -1 || phoneBook[key][0].indexOf(query) !== -1 ||
+            phoneBook[key][1].indexOf(query) !== -1) {
             result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
@@ -141,8 +147,8 @@ function give(records) {
     for (let key of Object.keys(records)) {
         let record = records[key][0] + ', +7 (' + key.substring(0, 3) + ') ' + key.substring(3, 6) +
         '-' + key.substring(6, 8) + '-' + key.substring(8, 10) + ', ' + records[key][1];
-        if (typeof records[key][1] === 'undefined') {
-            record = record.slice(0, record.length - 11);
+        if (records[key][1].length === 0) {
+            record = record.slice(0, record.length - 2);
         }
         result.push(record);
     }
