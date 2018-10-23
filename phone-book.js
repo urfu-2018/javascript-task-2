@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,10 +19,14 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isCorrectPhoneNumber(phone) || !isCorrectName(name) || isAlreadyExist(phone)) {
+    if (!isCorrectPhoneNumber(phone) || !isCorrectName(name) ||
+    Object.keys(phoneBook).includes(phone)) {
         return false;
     }
-    phoneBook.push({ phone: phone, name: name, email: email || '' });
+    phoneBook[phone] = {
+        name: name,
+        email: email
+    };
 
     return true;
 }
@@ -35,16 +39,6 @@ function isCorrectName(name) {
     return typeof(name) === 'string' && name !== '';
 }
 
-function isAlreadyExist(phone) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -53,32 +47,16 @@ function isAlreadyExist(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrectPhoneNumber || !isCorrectName) {
-        return false;
-    }
-    var index = getIndex(phone);
-    if (index !== -1) {
-        phoneBook[index].name = name;
-        if (email === undefined) {
-            phoneBook[index].email = '';
-        } else {
-            phoneBook[index].email = email;
-        }
+    if (Object.keys(phoneBook).includes(phone) && isCorrectPhoneNumber && isCorrectName) {
+        phoneBook[phone] = {
+            name: name,
+            email: email
+        };
 
         return true;
     }
 
     return false;
-}
-
-function getIndex(phone) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return i;
-        }
-    }
-
-    return -1;
 }
 
 /**
@@ -87,19 +65,14 @@ function getIndex(phone) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    var foundRecords = find(query);
+    var foundRecordKeys = find(query);
 
 
-    foundRecords.forEach(record => {
-        var phone = reformatPhoneNumber(record.split(', ')[1]);
-        phoneBook.forEach(element => {
-            if (element.phone === phone) {
-                phoneBook.pop(element);
-            }
-        });
-    });
+    for (let key of foundRecordKeys) {
+        phoneBook.delete(key);
+    }
 
-    return foundRecords.length;
+    return foundRecordKeys.length;
 }
 
 /**
@@ -108,29 +81,19 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '*') {
-        return phoneBook.sort(compareRecordNames).map(formatRecord);
-    }
-    if (query === '' || query === undefined) {
-        return [];
-    }
-
-    return phoneook.sort(compareRecordNames)
-        .filter(record =>
-            record.name.includes(query) || record.phone.includes(query) ||
-            record.email.includes(query))
+    return findKeysToRemove(query).sort(compareNames)
         .map(formatRecord);
 }
 
-function compareRecordNames(a, b) {
-    return a.name.localeCompare(b.name);
+function compareNames(a, b) {
+    return phoneBook[a].name.localeCompare(phoneBook[b].name);
 }
 
-function formatRecord(record) {
-    var number = formatPhoneNumber(record.phone);
-    var output = [record.name, number];
-    if (record.email !== '') {
-        output.push(record.email);
+function formatRecord(phone) {
+    var number = formatPhoneNumber(phone);
+    var output = [phoneBook[phone].name, number];
+    if (phoneBook[phone].email !== undefined) {
+        output.push(phoneBook[phone].email);
     }
 
     return output.join(', ');
@@ -147,10 +110,19 @@ function formatPhoneNumber(phone) {
     return `+7 (${p1}) ${p2}-${p3}-${p4}`;
 }
 
-function reformatPhoneNumber(phone) {
-    // return format: 5553330033
+function findKeysToRemove(query) {
+    if (query === '*') {
+        return Object.keys(phoneBook);
+    }
+    if (query === '' || query === undefined) {
+        return [];
+    }
 
-    return `${phone.slice(4, 7)}${phone.slice(9, 12)}${phone.slice(13, 15)}${phone.slice(16, 18)}`;
+    return Object.keys(phoneBook)
+        .filter(phone =>
+            phone.includes(query) ||
+            phoneBook[phone].name.includes(query) ||
+            (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)));
 }
 
 /**
