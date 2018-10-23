@@ -32,7 +32,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function notEmptyString(str) {
-    return typeof str === 'string' && str.length > 0;
+    return typeof str === 'string' && str !== '';
 }
 
 /**
@@ -43,7 +43,7 @@ function notEmptyString(str) {
  * @returns {boolean}
  */
 function dataChecks(phone, name, email) {
-    return notEmptyString(phone) && /^\d{10}$/.test(phone) &&
+    return typeof phone === 'string' && /^\d{10}$/.test(phone) &&
         notEmptyString(name) &&
         (email === undefined || notEmptyString(email));
 }
@@ -146,9 +146,6 @@ function importFromCsv(csv) {
 
     let successCount = 0;
     for (let e of parsed) {
-        if (e[2] === '') {
-            e[2] = undefined;
-        }
         if (update(e[1], e[0], e[2])) {
             successCount++;
         }
