@@ -151,30 +151,18 @@ function give(records) {
  */
 function importFromCsv(csv) {
     let count = 0;
-    if (typeof csv !== 'string' || csv.length === 0) {
-        return count;
-    }
     let strs = csv.split('\n');
     strs.forEach(item => {
         let str = item.split(';');
         let phone = str[1];
         let name = str[0];
         let email = str[2];
-        count += addOrUpdateBook(phone, name, email);
+        if (update(phone, name, email) || add(phone, name, email)) {
+            count++;
+        }
     });
 
     return count;
-}
-//  Попытки обновить запись или же добавить с подсчётом успешных операций
-function addOrUpdateBook(phone, name, email) {
-    if (update(phone, name, email)) {
-        return 1;
-    }
-    if (add(phone, name, email)) {
-        return 1;
-    }
-
-    return 0;
 }
 
 module.exports = {
