@@ -27,8 +27,7 @@ function createEntry(name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/\d{10}$/.test(phone) || !name || !checkString(phone) || !checkString(name)
-        || !checkString(email) || phoneBook[phone]) {
+    if (!/\d{10}$/.test(phone) || !name || phoneBook[phone]) {
         return false;
     }
     phoneBook[phone] = createEntry(name, email);
@@ -48,8 +47,7 @@ function checkString(input) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!/\d{10}$/.test(phone) || !name || !checkString(phone) || !checkString(name)
-        || !checkString(email) || phoneBook[phone]) {
+    if (!name || phoneBook[phone]) {
         return false;
     }
     phoneBook[phone] = createEntry(name, email);
@@ -114,8 +112,8 @@ function getCorrectPhone(phone) {
     return `+7 (${phone1}) ${phone2}-${phone3}-${phone4}`;
 }
 
-function findByAllFields(entry, query) {
-    return entry.filter(entry => {
+function findByAllFields(entries, query) {
+    return entries.filter(entry => {
         return entry.name.includes(query) ||
             entry.phone.includes(query) ||
             (entry.email && entry.email.includes(query));
