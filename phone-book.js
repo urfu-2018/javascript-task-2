@@ -19,7 +19,11 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function phoneValidation(phone) {
-    return /^\d{10}$/.test(phone);
+    return isString(phone) && /^\d{10}$/.test(phone);
+}
+
+function isString(parameter) {
+    return typeof parameter === 'string';
 }
 
 function checkDoubles(personPhone) {
@@ -27,7 +31,7 @@ function checkDoubles(personPhone) {
 }
 
 function add(phone, name, email) {
-    if (phoneValidation(phone) && !(checkDoubles(phone) + 1) && name) {
+    if (phoneValidation(phone) && !(checkDoubles(phone) + 1) && name && isString(name)) {
         phoneBook.push({ phone, name, email: email || '' });
 
         return true;
@@ -46,7 +50,7 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const index = checkDoubles(phone);
 
-    if (index !== -1 && name) {
+    if (index !== -1 && name && isString(name)) {
         phoneBook[index] = { phone, name, email: email || '' };
 
         return true;
@@ -68,7 +72,7 @@ function findAndRemove(query) {
 
         return initialLength;
     }
-    if (query !== undefined && query !== '') {
+    if (query !== undefined && query !== '' && isString(query)) {
         phoneBook = phoneBook.filter(({ name, phone, email }) => !(
             name.search(query) + 1 ||
             phone.search(query) + 1 ||
@@ -98,7 +102,7 @@ function find(query) {
     if (query === '*') {
         return clonePhoneBook.map(person => transformItem(person)).sort();
     }
-    if (query !== undefined || query !== '') {
+    if (query !== undefined && query !== '' && isString(query)) {
         return clonePhoneBook
             .filter(({ name, phone, email }) =>
                 name.search(query) + 1 ||
