@@ -132,11 +132,14 @@ function importFromCsv(csv) {
 
 module.exports = {
     add,
+    
     update,
+    
     findAndRemove,
+    
     find,
+
     importFromCsv,
 
     isStar
 };
-
