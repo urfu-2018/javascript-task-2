@@ -89,8 +89,10 @@ function findAndRemove(query) {
     }
     let count = 0;
     for (let key of Object.keys(records)) {
-        phoneBook[key] = undefined;
-        count++;
+        if (phoneBook[key] !== undefined) {
+            phoneBook[key] = undefined;
+            count++;
+        }
     }
 
     return count;
@@ -105,7 +107,7 @@ function findAndRemove(query) {
 function find(query) {
     let bookRecords = [];
     if (typeof query !== 'string' || query.length === 0) {
-        return;
+        return [];
     }
     if (query === '*') {
         return give(phoneBook);
