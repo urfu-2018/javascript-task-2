@@ -41,7 +41,7 @@ function add(phone, name, email) {
     if (!isString(phone, name, email)) {
         return false;
     }
-    if (!isUndefined(phoneBook[phone])) {
+    if (!isUndefined(phoneBook[phone]) || isUndefined(name)) {
         return false;
     }
     if (/^[0-9]{10}$/.test(phone)) {
@@ -67,7 +67,7 @@ function update(phone, name, email) {
     if (!isString(phone, name, email)) {
         return false;
     }
-    if (isUndefined(phoneBook[phone])) {
+    if (isUndefined(phoneBook[phone]) || isUndefined(name)) {
         return false;
     }
     if (!/^[0-9]{10}$/.test(phone)) {
@@ -86,6 +86,9 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let removes = find(query);
+    if (removes.length === 0) {
+        return 0;
+    }
     let records = [];
     for (let p of removes) {
         let str = p.split(', ');
