@@ -83,13 +83,13 @@ function arrayIncludes(arr, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query === null) {
+    if (query === undefined) {
         return null;
     }
 
     if (query === '*') {
-        const count = phoneBook.size;
-        phoneBook.clear();
+        const count = Object.keys(phoneBook).length;
+        phoneBook = {};
 
         return count;
     }
