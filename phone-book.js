@@ -76,7 +76,7 @@ function findAndRemove(query) {
 
     const foundEntries = find(query);
     for (let entry of foundEntries) {
-        const phone = entry.split(',')[1];
+        const phone = entry.split(',')[1].match(/\d(\d+)/g).join('');
         delete phoneBook[phone];
     }
 
