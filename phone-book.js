@@ -19,15 +19,12 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const correctPhone = /^\d{10}$/.test(phone);
-    if (!correctPhone || phoneBook.hasOwnProperty(phone) ||
+    const isPhoneCorrect = /^\d{10}$/.test(phone);
+    if (!isPhoneCorrect || phoneBook.hasOwnProperty(phone) ||
     !name) {
         return false;
     }
-    phoneBook[phone] = {
-        name: name,
-        email: email
-    };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -58,13 +55,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const res = findKeys(query);
+    const matchingKeys = findKeys(query);
 
-    for (let i of res) {
-        delete phoneBook[i];
+    for (let key of matchingKeys) {
+        delete phoneBook[key];
     }
 
-    return res.length;
+    return matchingKeys.length;
 }
 
 /**
@@ -73,13 +70,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const res = findKeys(query);
+    const matchingKeys = findKeys(query);
 
-    return res.map(
-        phone =>
-            phoneBook[phone].email
-                ? `${phoneBook[phone].name}, ${getPhone(phone)}, ${phoneBook[phone].email}`
-                : `${phoneBook[phone].name}, ${getPhone(phone)}`);
+    return matchingKeys.map(formatContact);
 }
 
 /**
@@ -94,17 +87,14 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
     const lines = csv.split('\n');
 
-    let count = 0;
-    for (let i of lines) {
+    return lines.map(i => {
         const parts = i.split(';');
         if (phoneBook[parts[1]]) {
-            count += update(parts[1], parts[0], parts[2]) ? 1 : 0;
-        } else {
-            count += add(parts[1], parts[0], parts[2]) ? 1 : 0;
+            return update(parts[1], parts[0], parts[2]);
         }
-    }
 
-    return count;
+        return add(parts[1], parts[0], parts[2]);
+    }).filter(success => success).length;
 }
 
 function findKeys(query) {
@@ -124,13 +114,21 @@ function findKeys(query) {
         .sort((a, b) => phoneBook[a].name > phoneBook[b].name);
 }
 
-function getPhone(phone) {
+function formatPhone(phone) {
     const part1 = phone.substring(0, 3);
     const part2 = phone.substring(3, 6);
     const part3 = phone.substring(6, 8);
     const part4 = phone.substring(8, 10);
 
     return `+7 (${part1}) ${part2}-${part3}-${part4}`;
+}
+
+function formatContact(phone) {
+    if (phoneBook[phone].email) {
+        return `${phoneBook[phone].name}, ${formatPhone(phone)}, ${phoneBook[phone].email}`;
+    }
+
+    return `${phoneBook[phone].name}, ${formatPhone(phone)}`;
 }
 
 module.exports = {
