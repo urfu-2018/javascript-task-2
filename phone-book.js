@@ -17,11 +17,6 @@ const phoneBook = new Map();
 const phonePattern = /^[0-9]{10}$/;
 
 /**
- *  Шаблон отформатированного номера с группами
- */
-const prettyPhonePattern = /\+7 \(([0-9]{3})\) ([0-9]{3})-([0-9]{2})-([0-9]{2})/;
-
-/**
  * Проверка корректности аргументов
  * @param {String} phone
  * @param {String} name
@@ -44,32 +39,61 @@ function prettifyPhone(phone) {
 }
 
 /**
- * Вырезать обычный номер (ключ) из форматированной строки
- * @param {String} prettyEntry
- * @returns {String}
+ * Поиск в сырых данных по запросу
+ * @param {String} query
+ * @returns {Array<Array<String, Object>>}
  */
-function getPhone(prettyEntry) {
-    return prettyEntry.match(prettyPhonePattern)
-        .slice(1)
-        .join('');
+function search(query) {
+    if (typeof query !== 'string' || !query) {
+        return [];
+    }
+
+    const entries = Array.from(phoneBook);
+
+    return (query === '*') ? entries : entries
+        .filter(pair => {
+            const [phone, entry] = pair;
+
+            return phone.includes(query) ||
+                Object.values(entry).some(value => value.includes(query));
+        });
 }
 
 /**
  * Отформатировать строку для вывода find
- * @param {Any[]} phoneBookEntry
+ * @param {Array<String, Object>} phoneBookEntry
  * @returns {String}
  */
 function prettifyEntry(phoneBookEntry) {
     const [phone, entry] = phoneBookEntry;
+    const result = [entry.name, prettifyPhone(phone)];
 
-    return (entry.email) ? [
-        entry.name,
-        prettifyPhone(phone),
-        entry.email
-    ].join(', ') : [
-        entry.name,
-        prettifyPhone(phone)
-    ].join(', ');
+    if (entry.email) {
+        result.push(entry.email);
+    }
+
+    return result.join(', ');
+}
+
+/**
+ * Добавление записи в телефонную книгу, если выполнено условие для номера телефона
+ * @param {Function<String, Boolean>} condition
+ * @param {String} phone
+ * @param {String} name
+ * @param {String} email
+ * @returns {Boolean}
+ */
+function setEntry(condition, phone, name, email) {
+    if (!isCorrect(phone, name) || condition()) {
+        return false;
+    }
+
+    phoneBook.set(phone, {
+        name,
+        email
+    });
+
+    return true;
 }
 
 /**
@@ -79,22 +103,8 @@ function prettifyEntry(phoneBookEntry) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
-    if (!isCorrect(phone, name)) {
-        return false;
-    }
-
-    if (phoneBook.has(phone)) {
-        return false;
-    }
-
-    email = typeof email === 'string' && email ? email : '';
-    phoneBook.set(phone, {
-        name,
-        email
-    });
-
-    return true;
+function add(phone, name = '', email = '') {
+    return setEntry(() => phoneBook.has(phone), phone, name, email);
 }
 
 /**
@@ -104,22 +114,8 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-    if (!isCorrect(phone, name)) {
-        return false;
-    }
-
-    if (!phoneBook.has(phone)) {
-        return false;
-    }
-
-    email = typeof email === 'string' && email ? email : '';
-    phoneBook.set(phone, {
-        name,
-        email
-    });
-
-    return true;
+function update(phone, name = '', email = '') {
+    return setEntry(() => !phoneBook.has(phone), phone, name, email);
 }
 
 /**
@@ -128,17 +124,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query === '*') {
-        const length = phoneBook.size;
-        phoneBook.clear();
+    const entries = search(query);
+    entries.forEach(entry => {
+        const phone = entry[1];
+        phoneBook.delete(phone);
+    });
 
-        return length;
-    }
-
-    const records = find(query);
-    records.forEach(prettyEntry => phoneBook.delete(getPhone(prettyEntry)));
-
-    return records.length;
+    return entries.length;
 }
 
 /**
@@ -147,23 +139,14 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string' || !query) {
-        return [];
-    }
+    const goodEntries = search(query);
 
-    const prettyEntries = Array.from(phoneBook, entry => prettifyEntry(entry)).sort();
+    return goodEntries.sort((firstPair, secondPair) => {
+        const firstName = firstPair[1].name;
+        const secondName = secondPair[1].name;
 
-    return (query === '*') ? prettyEntries : prettyEntries
-        .filter(v => {
-            const [name, prettyPhone, email] = v.split(',');
-            const phone = getPhone(prettyPhone);
-
-            if (email) {
-                return name.includes(query) || phone.includes(query) || email.includes(query);
-            }
-
-            return name.includes(query) || phone.includes(query);
-        });
+        return firstName.localeCompare(secondName);
+    }).map(prettifyEntry);
 }
 
 /**
