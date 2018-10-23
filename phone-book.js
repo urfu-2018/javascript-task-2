@@ -20,8 +20,8 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (name === undefined || !checkPhone(phone) ||
-        phone in phoneBook || typeof name !== 'string') {
+    if (isEmptyString(name) || !checkPhone(phone) ||
+        phone in phoneBook || !isString(name)) {
         return false;
     }
     const person = { name, email };
@@ -30,8 +30,16 @@ function add(phone, name, email) {
     return true;
 }
 
+function isString(obj) {
+    return typeof obj === 'string';
+}
+
+function isEmptyString(str) {
+    return str === undefined || str === '';
+}
+
 function checkPhone(phone) {
-    if (typeof phone !== 'string') {
+    if (!isString(phone)) {
         return false;
     }
 
@@ -123,7 +131,7 @@ function dataToString(x) {
     return res;
 }
 function findByQuery(query) {
-    if (query === '' || query === undefined || typeof query !== 'string') {
+    if (isEmptyString(query) || !isString(query)) {
         return new Array(0);
     }
     let results;
@@ -149,7 +157,7 @@ function checkPersonAndUpdate(x, query, results, key) {
 }
 
 function checkPerson(x, query, key) {
-    return (x.email !== undefined && x.email.includes(query)) ||
+    return (!isEmptyString(x.email) && x.email.includes(query)) ||
         key.includes(query) ||
         x.name.includes(query);
 }
