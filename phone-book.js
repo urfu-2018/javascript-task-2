@@ -73,8 +73,8 @@ function update(phone, name, email) {
         return false;
     }
     found.forEach(e => {
-        e.email = (email.length === 0) ? undefined : email;
-        e.name = (name.length === 0) ? e.name : name;
+        e.email = email;
+        e.name = name;
     });
 
     return true;
@@ -99,7 +99,7 @@ function findAndRemove(query) {
 
 function search(query) {
     if (query === '*') {
-        return phoneBook;
+        return new Array(phoneBook);
     }
     if (!(typeof query === 'string') || (query.length === 0)) {
         return [];
@@ -128,6 +128,9 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (!(typeof csv === 'string' && csv.length > 0)) {
+        return 0;
+    }
     const contacts = csv.split('\n');
     const fields = [];
     contacts.forEach(e => fields.push(e.split(';')));
