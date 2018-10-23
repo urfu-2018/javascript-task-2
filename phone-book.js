@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,33 +19,24 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || phoneBookHasPhone(phone)) {
+    if (isInvalidNote(phone, name) || phoneBook.has(phone)) {
         return false;
     }
-    phoneBook.push({ phone: phone, name: name, email: email });
+    phoneBook.set(phone, { phone: phone, name: name, email: email });
 
     return true;
 }
 
-function isNameCorrect(name) {
-    return isString(name) && name.length !== 0;
+function isInvalidNote(phone, name) {
+    return !isStringLineCorrect(name) || !isPhoneCorrect(phone);
 }
 
-function phoneBookHasPhone(phone) {
-    return phoneBook.some(note => note.phone === phone);
+function isStringLineCorrect(name) {
+    return typeof name === 'string' && name.length !== 0;
 }
 
 function isPhoneCorrect(phone) {
-    if (!isString(phone)) {
-        return false;
-    }
-    let correctPhone = /^[0-9]{10}$/;
-
-    return correctPhone.test(phone);
-}
-
-function isString(input) {
-    return typeof input === 'string';
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
 /**
@@ -56,16 +47,12 @@ function isString(input) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone)) {
+    if (isInvalidNote(phone, name) || !phoneBook.has(phone)) {
         return false;
     }
-    let notesForUpdate = phoneBook.filter(note => note.phone === phone);
-    notesForUpdate.forEach(note => {
-        note.name = name;
-        note.email = email;
-    });
+    phoneBook.set(phone, { phone, name, email });
 
-    return notesForUpdate.length !== 0;
+    return true;
 }
 
 /**
@@ -74,17 +61,14 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isString(query) || query.length === 0) {
-        return 0;
-    }
     let removedNotes = getNotesFromPhoneBookByQuery(query);
-    removedNotes.forEach(deleteNote);
+    removedNotes.forEach(deleteNoteFromPhoneBook);
 
     return removedNotes.length;
 }
 
-function deleteNote(note) {
-    phoneBook.splice(phoneBook.indexOf(note), 1);
+function deleteNoteFromPhoneBook(note) {
+    phoneBook.delete(note.phone);
 }
 
 /**
@@ -93,37 +77,40 @@ function deleteNote(note) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query) || query.length === 0) {
-        return [];
-    }
     let result = getNotesFromPhoneBookByQuery(query);
 
     return result
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map(getFormatedNote);
+        .map(noteToString);
 }
 
 function getNotesFromPhoneBookByQuery(query) {
+    if (!isStringLineCorrect(query)) {
+        return [];
+    }
     if (query === '*') {
-        return phoneBook.slice(0);
+        return Array.from(phoneBook.values());
     }
 
-    return phoneBook.filter(note => noteHasQuery(note, query));
+    return Array.from(phoneBook.values()).filter(note => hasNoteQuery(note, query));
 }
 
-function noteHasQuery(note, query) {
+function hasNoteQuery(note, query) {
     return note.phone.includes(query) || note.name.includes(query) ||
-        note.email !== undefined && note.email.includes(query);
+        note.email !== undefined && note.email !== null && note.email.includes(query);
 }
 
-function getFormatedNote(note) {
-    let result = `${note.name}, +7 (${note.phone.slice(0, 3)}) `;
-    result += `${note.phone.slice(3, 6)}-${note.phone.slice(6, 8)}-${note.phone.slice(8, 10)}`;
-    if (note.email !== undefined) {
-        result += `, ${note.email}`;
+function noteToString(note) {
+    let townCode = `${note.phone.slice(0, 3)}`;
+    let phone = `${note.phone.slice(3, 6)}-${note.phone.slice(6, 8)}-${note.phone.slice(8, 10)}`;
+    const stringPhone = `+7 (${townCode}) ${phone}`;
+    const result = [note.name, stringPhone];
+
+    if (note.email) {
+        result.push(note.email);
     }
 
-    return result;
+    return result.join(', ');
 }
 
 /**
