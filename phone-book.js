@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,10 +19,10 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || phoneBookHasPhone(phone)) {
+    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || phoneBook.has(phone)) {
         return false;
     }
-    phoneBook.push({ phone: phone, name: name, email: email });
+    phoneBook.set(phone, { phone, name, email });
 
     return true;
 }
@@ -31,15 +31,11 @@ function isNameCorrect(name) {
     return isString(name) && name.length !== 0;
 }
 
-function phoneBookHasPhone(phone) {
-    return phoneBook.some(note => note.phone === phone);
-}
-
 function isPhoneCorrect(phone) {
     if (!isString(phone)) {
         return false;
     }
-    let correctPhone = /^[0-9]{10}$/;
+    let correctPhone = /^\d{10}$/;
 
     return correctPhone.test(phone);
 }
@@ -56,16 +52,12 @@ function isString(input) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone)) {
+    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || !phoneBook.has(phone)) {
         return false;
     }
-    let notesForUpdate = phoneBook.filter(note => note.phone === phone);
-    notesForUpdate.forEach(note => {
-        note.name = name;
-        note.email = email;
-    });
+    phoneBook.set(phone, { phone, name, email });
 
-    return notesForUpdate.length !== 0;
+    return true;
 }
 
 /**
@@ -76,7 +68,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     let removedNotes = getNotesFromPhoneBookByQuery(query);
     for (let i = 0; i < removedNotes.length; i++) {
-        phoneBook.splice(phoneBook.indexOf(removedNotes[i]), 1);
+        phoneBook.delete(removedNotes.phone);
     }
 
     return removedNotes.length;
@@ -101,10 +93,10 @@ function find(query) {
 
 function getNotesFromPhoneBookByQuery(query) {
     if (query === '*') {
-        return phoneBook.slice(0);
+        return Array.from(phoneBook.values());
     }
 
-    return phoneBook.filter(note => noteHasQuery(note, query));
+    return Array.from(phoneBook.values()).filter(note => noteHasQuery(note, query));
 }
 
 function noteHasQuery(note, query) {
