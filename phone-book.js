@@ -80,6 +80,8 @@ function findAndRemove(query) {
 
         return initialLength - phoneBook.length;
     }
+
+    return 0;
 }
 
 function transformItem(item) {
@@ -111,6 +113,8 @@ function find(query) {
             .map(person => transformItem(person))
             .sort();
     }
+
+    return [];
 }
 
 /**
@@ -121,17 +125,10 @@ function find(query) {
  */
 function importFromCsv(csv) {
     let counter = 0;
-    const formattedCSVData = csv.split('\n')
-        .map(person => {
-            const [name, phone, email] = person.split(';');
 
-            return { phone, name, email };
-        });
-
-    formattedCSVData.forEach(({ phone, name, email }) => {
-        if (add(phone, name, email)) {
-            counter += 1;
-        } else if (update(phone, name, email)) {
+    csv.split('\n').forEach(person => {
+        const [name, phone, email] = person.split(';');
+        if (add(phone, name, email) || update(phone, name, email)) {
             counter += 1;
         }
     });
