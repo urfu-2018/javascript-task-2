@@ -90,13 +90,7 @@ function findAndRemove(query) {
  * @returns {Boolean}
  */
 function arrayIncludes(arr, query) {
-    for (let str of arr) {
-        if (str !== undefined && str.includes(query)) {
-            return true;
-        }
-    }
-
-    return false;
+    return arr.map(str => str !== undefined && str.includes(query)).reduce((a, b) => a || b);
 }
 
 /**
@@ -134,15 +128,9 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    const parsed = csv.split('\n').map(a => a.split(';'));
-    let successCount = 0;
-    for (let e of parsed) {
-        if (update(e[1], e[0], e[2])) {
-            successCount++;
-        }
-    }
-
-    return successCount;
+    return csv.split('\n').map(a => a.split(';'))
+        .map(e => update(e[1], e[0], e[2]))
+        .filter(a => a).length;
 }
 
 module.exports = {
