@@ -99,8 +99,8 @@ function findAndRemove(query) {
 
     let count = 0;
     for (let [phone, info] of Object.entries(phoneBook)) {
-        info.push(phone); // Вынести в промежуточный результат?
-        if (arrayIncludes(info, query)) {
+        const searchStrings = info.concat(phone);
+        if (arrayIncludes(searchStrings, query)) {
             delete phoneBook[phone];
             count++;
         }
@@ -119,13 +119,13 @@ function find(query) {
         return [];
     }
 
-    if (query === '*') {
+    if (query === '*') { // Пустая строка содержится везде.
         query = '';
     }
 
     let result = [];
     for (let [p, info] of Object.entries(phoneBook)) {
-        info.push(p);
+        const searchStrings = info.concat(p);
         const formattedPhone =
             `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
 
@@ -133,7 +133,7 @@ function find(query) {
         if (info[1] !== undefined) { // Если почта существует, добавляем ее.
             resultingString += ', ' + info[1];
         }
-        if (arrayIncludes(info, query)) {
+        if (arrayIncludes(searchStrings, query)) {
             result.push(resultingString);
         }
     }
