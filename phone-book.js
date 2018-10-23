@@ -40,7 +40,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (name === null) {
+    if (!name || name.trim() === '') {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
