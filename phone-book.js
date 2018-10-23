@@ -139,3 +139,4 @@ module.exports = {
 
     isStar
 };
+
