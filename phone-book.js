@@ -126,7 +126,7 @@ function find(query) {
     if (typeof query !== 'string') {
         return [];
     }
-    
+
     return entriesToStringArray(search(query));
 }
 
