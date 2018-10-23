@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = new Map();
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,10 +19,10 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || phoneBook.has(phone)) {
+    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || phoneBookHasPhone(phone)) {
         return false;
     }
-    phoneBook.set(phone, { phone, name, email });
+    phoneBook.push({ phone: phone, name: name, email: email });
 
     return true;
 }
@@ -31,11 +31,15 @@ function isNameCorrect(name) {
     return isString(name) && name.length !== 0;
 }
 
+function phoneBookHasPhone(phone) {
+    return phoneBook.some(note => note.phone === phone);
+}
+
 function isPhoneCorrect(phone) {
     if (!isString(phone)) {
         return false;
     }
-    let correctPhone = /^\d{10}$/;
+    let correctPhone = /^[0-9]{10}$/;
 
     return correctPhone.test(phone);
 }
@@ -52,12 +56,16 @@ function isString(input) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || !phoneBook.has(phone)) {
+    if (!isNameCorrect(name) || !isPhoneCorrect(phone)) {
         return false;
     }
-    phoneBook.set(phone, { phone, name, email });
+    let notesForUpdate = phoneBook.filter(note => note.phone === phone);
+    notesForUpdate.forEach(note => {
+        note.name = name;
+        note.email = email;
+    });
 
-    return true;
+    return notesForUpdate.length !== 0;
 }
 
 /**
@@ -66,9 +74,12 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!isString(query) || query.length === 0) {
+        return 0;
+    }
     let removedNotes = getNotesFromPhoneBookByQuery(query);
     for (let i = 0; i < removedNotes.length; i++) {
-        phoneBook.delete(removedNotes.phone);
+        phoneBook.splice(phoneBook.indexOf(removedNotes[i]), 1);
     }
 
     return removedNotes.length;
@@ -93,10 +104,10 @@ function find(query) {
 
 function getNotesFromPhoneBookByQuery(query) {
     if (query === '*') {
-        return Array.from(phoneBook.values());
+        return phoneBook;
     }
 
-    return Array.from(phoneBook.values()).filter(note => noteHasQuery(note, query));
+    return phoneBook.filter(note => noteHasQuery(note, query));
 }
 
 function noteHasQuery(note, query) {
@@ -121,10 +132,6 @@ function getFormatedNote(note) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!isString(csv)) {
-        return 0;
-    }
-
     return csv
         .split('\n')
         .map(line => line.split(';'))
