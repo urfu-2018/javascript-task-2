@@ -30,6 +30,9 @@ function test(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    // if (email !== undefined && typeof(email) !== 'string') {
+    //     return tre;
+    // }
     if (test(phone, name) && !(phone in phoneBook)) {
         phoneBook[phone] = (email === undefined) ? [phone, name] : [phone, name, email];
 
@@ -84,11 +87,9 @@ function search(dictionary, query) {
     if (query === '*') {
         return dictionary;
     }
-    for (let element in dictionary) {
-        if (dictionary[element].includes(query)) {
-
-            return dictionary;
-        }
+    if (dictionary[0].indexOf(query) !== -1 || dictionary[1].indexOf(query) !== -1 ||
+     (dictionary[2] && dictionary[2].indexOf(query) !== -1)) {
+        return dictionary;
     }
 }
 
@@ -99,6 +100,9 @@ function formatPhone(phone) {
 function sorts(intermediateList) {
     let finalStrings = [];
     for (let entry of intermediateList) {
+        if (entry === undefined) {
+            return [];
+        }
         if (entry[2] !== undefined) {
             finalStrings.push(entry[1] + ', ' + formatPhone(entry[0]) + ', ' + entry[2]);
         } else {
@@ -123,7 +127,9 @@ function find(query) {
     let intermediateList = [];
     for (let phone of Object.keys(phoneBook)) {
         value = search(phoneBook[phone], query);
-        intermediateList.push(value);
+        if (value !== undefined) {
+            intermediateList.push(value);
+        }
     }
     let finalList = sorts(intermediateList);
 
