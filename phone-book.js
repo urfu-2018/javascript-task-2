@@ -9,7 +9,27 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+const phoneBook = new Map();
+
+function isValidContact(param) {
+    return param && typeof(param) === 'string';
+}
+
+function isValidPhone(phone) {
+    return isValidContact(phone) && /^\d{10}$/.test(phone);
+}
+
+function hasPartialMatch(query, phone, name, email) {
+    return phone.indexOf(query) >= 0 || email && email.indexOf(query) >= 0 ||
+     name.indexOf(query) >= 0;
+}
+
+function toPhoneFormat(phone) {
+    const splited = phone.split(/(...)(...)(..)(..)/)
+        .slice(1, 6);
+
+    return `+7 (${splited[0]}) ${splited[1]}-${splited[2]}-${splited[3]}`;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +39,15 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!isValidPhone(phone) || !isValidContact(name) || phoneBook.has(phone)) {
+        return false;
+    }
+    phoneBook.set(phone, {
+        name,
+        email
+    });
 
+    return true;
 }
 
 /**
@@ -30,7 +58,16 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!isValidContact(name) || !isValidPhone(phone) || !phoneBook.has(phone)) {
+        return false;
+    }
 
+    phoneBook.set(phone, {
+        name,
+        email
+    });
+
+    return true;
 }
 
 /**
@@ -39,7 +76,17 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let wereDeleted = 0;
 
+    phoneBook.forEach((contacts, phone) => {
+        const email = contacts.email;
+        const name = contacts.name;
+        if (query === '*' || hasPartialMatch(query, phone, name, email)) {
+            wereDeleted += phoneBook.delete(phone);
+        }
+    });
+
+    return wereDeleted;
 }
 
 /**
@@ -48,7 +95,27 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (!isValidContact(query)) {
+        return [];
+    }
+    const data = [];
 
+    phoneBook.forEach((contacts, phone) => {
+        const email = contacts.email;
+        const name = contacts.name;
+        if (query === '*' || hasPartialMatch(query, phone, name, email)) {
+            data.push({
+                name,
+                phone: toPhoneFormat(phone),
+                email
+            });
+        }
+    });
+
+    return data
+        .sort((firstContact, secondContact) => firstContact.name > secondContact.name)
+        .map(contacts =>
+            `${contacts.name}, ${contacts.phone}${contacts.email ? ', ' + contacts.email : ''}`);
 }
 
 /**
@@ -58,11 +125,23 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    let data = csv.split('\n');
+    let wereUpdatedOrAdded = 0;
 
-    return csv.split('\n').length;
+    data.forEach(line => {
+        const splitedLine = line.split(';');
+        const name = splitedLine[0];
+        const phone = splitedLine[1];
+        const email = splitedLine[2];
+
+        if (!update(phone, name, email)) {
+            wereUpdatedOrAdded += add(phone, name, email);
+        } else {
+            wereUpdatedOrAdded += 1;
+        }
+    });
+
+    return wereUpdatedOrAdded;
 }
 
 module.exports = {
@@ -71,6 +150,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-
     isStar
 };
