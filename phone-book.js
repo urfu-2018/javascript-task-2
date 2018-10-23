@@ -26,7 +26,7 @@ function validPhone(phone) {
 }
 
 function validString(string) {
-    return typeof string === 'string' && string !== 0;
+    return typeof string === 'string' && string.length !== 0;
 }
 
 function validDate(phone, name) {
@@ -108,7 +108,7 @@ function findAndRemove(query) {
 
         return countContact;
     }
-    processed = phoneBook.filter(contact => findQueryInContact(contact, query) !== true);
+    processed = phoneBook.filter(contact => findQueryInContact(contact, query) === false);
     phoneBook = processed;
 
     return countContact - processed.length;
@@ -130,7 +130,7 @@ function find(query) {
         processed = phoneBook.filter(contact => findQueryInContact(contact, query) === true);
     }
 
-    return processed.sort(function f(contact1, contact2) {
+    return processed.sort(function (contact1, contact2) {
         const name1 = contact1.name;
         const name2 = contact2.name;
         if (name1 > name2) {
@@ -165,11 +165,10 @@ function importFromCsv(csv) {
     let counter = 0;
     for (let entry of entries) {
         const contact = entry.split(';');
-        const length = contact.length;
         const name = contact[0];
         const phone = contact[1];
         const email = contact[2];
-        if (length < 4 && (add(phone, name, email) || update(phone, name, email))) {
+        if (add(phone, name, email) || update(phone, name, email)) {
             counter ++;
         }
     }
