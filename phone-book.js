@@ -55,7 +55,7 @@ function add(phone, name, email) {
         return true;
     }
 
-    return true;
+    return false;
 }
 
 /**
