@@ -4,12 +4,12 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,12 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!isCorrectArgs(phone, name) || phoneBook.has(phone)) {
+        return false;
+    }
+    phoneBook.set(phone, { name, email });
 
+    return true;
 }
 
 /**
@@ -30,7 +35,12 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!isCorrectArgs(phone, name) || !phoneBook.has(phone)) {
+        return false;
+    }
+    phoneBook.set(phone, { name, email });
 
+    return true;
 }
 
 /**
@@ -39,7 +49,14 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    const initialPhoneBookLen = phoneBook.size;
+    phoneBook.forEach(({ name, email }, key) => {
+        if (key.includes(query) || name.includes(query) || email && email.includes(query)) {
+            phoneBook.delete(key);
+        }
+    });
 
+    return initialPhoneBookLen - phoneBook.size;
 }
 
 /**
@@ -48,7 +65,18 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    const result = [];
+    phoneBook.forEach(({ name, email }, key) => {
+        if (query === '*' || key.includes(query) || name.includes(query) ||
+            email.includes(query)) {
+            const phone =
+                `+7 (${key.substr(0, 3)}) ${key.substr(3, 3)}-` +
+                `${key.substr(6, 2)}-${key.substr(8, 2)}`;
+            result.push(`${name}, ${phone}` + (email ? `, ${email}` : ''));
+        }
+    });
 
+    return result.sort();
 }
 
 /**
@@ -63,6 +91,17 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
 
     return csv.split('\n').length;
+}
+
+/**
+ * Проверка на то что все агрументы правильные
+ * @param {String} phone
+ * @param {String?} name
+ * @param {String?} email
+ * @returns {Boolean}
+ */
+function isCorrectArgs(phone, name) {
+    return /^\d{10}$/.test(phone) && typeof name === 'string' && name;
 }
 
 module.exports = {
