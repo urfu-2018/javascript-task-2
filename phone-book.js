@@ -65,6 +65,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!query) {
+        return 0;
+    }
+
     const neededEntries = search(query);
     neededEntries.forEach(entry => {
         phoneBook.delete(entry[1]);
@@ -137,10 +141,6 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (typeof csv !== 'string') {
-        return 0;
-    }
-
     const entriesArray = csv.split('\n');
     let counter = 0;
     entriesArray.forEach(entry => {
