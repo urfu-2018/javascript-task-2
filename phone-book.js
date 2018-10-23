@@ -157,7 +157,11 @@ function importFromCsv(csv) {
         let phone = str[1];
         let name = str[0];
         let email = str[2];
-        if (update(phone, name, email) || add(phone, name, email)) {
+        if (typeof phoneBook[phone] !== 'undefined') {
+            if (update(phone, name, email)) {
+                count++;
+            }
+        } else if (add(phone, name, email)) {
             count++;
         }
     });
