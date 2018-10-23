@@ -27,7 +27,7 @@ function createEntry(name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/\d{10}$/.test(phone) || !name || phoneBook[phone]) {
+    if (!/^\d{10}$/.test(phone) || !name || phoneBook[phone]) {
         return false;
     }
     phoneBook[phone] = createEntry(name, email);
@@ -47,7 +47,7 @@ function checkString(input) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!name || phoneBook[phone]) {
+    if (!name || !phoneBook[phone]) {
         return false;
     }
     phoneBook[phone] = createEntry(name, email);
