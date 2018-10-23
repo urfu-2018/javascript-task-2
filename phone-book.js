@@ -100,13 +100,13 @@ function findAndRemove(query) {
  */
 
 function find(query) {
-    let bookRecords = [];
-    if (typeof query !== 'string' || query.length === 0) {
+    if (query === '') {
         return [];
     }
     if (query === '*') {
         return give(phoneBook);
     }
+    let bookRecords = [];
     bookRecords = existInBook(query);
 
     return give(bookRecords);
