@@ -115,7 +115,6 @@ function find(query) {
 
     let result = [];
     for (let [p, info] of Object.entries(phoneBook)) {
-        const searchStrings = info.concat(p);
         const formattedPhone =
             `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
 
@@ -123,7 +122,7 @@ function find(query) {
         if (info[1] !== undefined) { // Если почта существует, добавляем ее.
             resultingString += ', ' + info[1];
         }
-        if (arrayIncludes(searchStrings, query)) {
+        if (arrayIncludes(info.concat(p), query)) {
             result.push(resultingString);
         }
     }
@@ -138,12 +137,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    const elements = csv.split('\n');
-    const parsed = [];
-    for (let i of elements) {
-        parsed.push(i.split(';'));
-    }
-
+    const parsed = csv.split('\n').map(a => a.split(';'));
     let successCount = 0;
     for (let e of parsed) {
         if (update(e[1], e[0], e[2])) {
