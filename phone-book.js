@@ -37,10 +37,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    this.forEach(element => {
-        //if (this[element].substring(0,10) === phone && name !== null) {
-        //    element = phone + ';' + name + ';' + email;
-        //    return true;
+    phoneBook.forEach(element => {
+        if (phoneBook[element].substring(0,10) === phone && name !== null) {
+            element = phone + ';' + name + ';' + email;
+            return true;
+        }
         return false;
         }
     );
@@ -55,13 +56,13 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let count = 0;
-    this.forEach(element => {
-        //if (element.indexOf(query) !== -1) {
-        //    this.splice(this.indexOf(element), 1);
-        //    count++;
-        //}
+    phoneBook.forEach(element => {
+        if (element.indexOf(query) !== -1) {
+            phoneBook.splice(phoneBook.indexOf(element), 1);
+            count++;
+        }
     });
-    this.sort();
+    
     
     return count;
 }
@@ -74,13 +75,13 @@ function findAndRemove(query) {
 function find(query) {
     let notes = [];
     if (query === '*') {
-        return this;
+        return phoneBook;
     }
     if (arguments.length === 0) {
         return;
     }
     if (arguments.length !== 0) {
-        this.forEach(element => {
+        phoneBook.forEach(element => {
             if (element.indexOf(query) !== -1) {
                 notes.push(element);
             }
