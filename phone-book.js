@@ -46,7 +46,7 @@ function update(phone, name, email) {
     if (!isString(phone) || !isString(name) || !/^\d{10}$/.test(phone)) {
         return false;
     }
-    if (!phoneBook.has(phone) || name.trim().length === 0) {
+    if (/* !phoneBook.has(phone) || */ name.trim().length === 0) {
         return false;
     }
 
