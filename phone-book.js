@@ -114,7 +114,7 @@ function find(query) {
     return allRecords
         .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
         .map((record)=>[phoneBook[record].name, formatPhone(record), phoneBook[record].email]
-            .reduce((a, b)=>b === undefined ? `${a}` : `${a} ${b}`));
+            .reduce((a, b)=>b === undefined ? `${a}` : `${a}, ${b}`));
 }
 
 /**
