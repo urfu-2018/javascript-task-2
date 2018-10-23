@@ -35,10 +35,6 @@ function add(phone, name, email) {
     return true;
 }
 
-function checkString(input) {
-    return typeof input === 'string';
-}
-
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
