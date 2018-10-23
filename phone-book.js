@@ -32,7 +32,7 @@ function add(phone, name, email) {
 }
 
 function isCorrectPhoneNumber(phone) {
-    return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
+    return typeof(phone) === 'string' && /^\d{10}$/.test(phone);
 }
 
 function isCorrectName(name) {
