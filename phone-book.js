@@ -25,8 +25,12 @@ function checkArgs(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    return !((!checkArgs(phone, name, email) || !phoneBook[phone]) &&
-        !(phoneBook[phone] = { name, email }));
+    if (!checkArgs(phone, name, email) || phoneBook[phone]) {
+        return false;
+    }
+    phoneBook[phone] = { name, email };
+
+    return true;
 }
 
 /**
@@ -37,8 +41,12 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    return !((!checkArgs(phone, name, email) || phoneBook[phone]) &&
-        !(phoneBook[phone] = { name, email }));
+    if (!checkArgs(phone, name, email) || !phoneBook[phone]) {
+        return false;
+    }
+    phoneBook[phone] = { name, email };
+
+    return true;
 }
 
 /**
@@ -47,7 +55,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return query === '' ? 0 : Object.keys(phoneBook)
+    return !query ? 0 : Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .filter((item)=>delete(phoneBook[item]))
@@ -67,10 +75,10 @@ function find(query) {
             .slice(6, 8)}-${phone
             .slice(8, 10)}`;
 
-    return query === '' ? [] : Object.keys(phoneBook)
+    return !query ? [] : Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
-        .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
+        .sort((a, b)=>phoneBook[a].name > phoneBook[b].name ? 1 : -1)
         .map((record)=>[phoneBook[record].name, formatPhone(record), phoneBook[record].email]
             .reduce((a, b)=>b === undefined ? `${a}` : `${a}, ${b}`));
 }
