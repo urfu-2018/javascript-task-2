@@ -12,7 +12,7 @@ const isStar = true;
 let phoneBook = [];
 
 function containsPhone(phone) {
-    return phoneBook.filter(contacts => contacts.phone === phone).length > 0;
+    return phoneBook.filter(contact => contact.phone === phone).length > 0;
 }
 
 function checkParamters(phone, name) {
@@ -32,7 +32,11 @@ function add(phone, name, email) {
         return false;
     }
 
-    phoneBook.push({ phone, name, email });
+    if (typeof email === 'undefined') {
+        phoneBook.push({ phone, name });
+    } else {
+        phoneBook.push({ phone, name, email });
+    }
 
     return true;
 }
@@ -50,14 +54,9 @@ function update(phone, name, email) {
     }
 
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone && typeof email !== 'undefined') {
+        if (phoneBook[i].phone === phone) {
             phoneBook[i].name = name;
             phoneBook[i].email = email;
-
-            return true;
-        } else if (phoneBook[i].phone === phone) {
-            phoneBook[i].name = name;
-            delete phoneBook[i].email;
 
             return true;
         }
