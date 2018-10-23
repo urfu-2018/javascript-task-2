@@ -126,7 +126,7 @@ function find(query) {
  */
 function importFromCsv(csv) {
     let data = csv.split('\n');
-    let wereUpdatedOrAdded = 0;
+    let countUpdatedOrAdded = 0;
 
     data.forEach(line => {
         const splitedLine = line.split(';');
@@ -134,14 +134,10 @@ function importFromCsv(csv) {
         const phone = splitedLine[1];
         const email = splitedLine[2];
 
-        if (!update(phone, name, email)) {
-            wereUpdatedOrAdded += add(phone, name, email);
-        } else {
-            wereUpdatedOrAdded += 1;
-        }
+        countUpdatedOrAdded += add(phone, name, email) || update(phone, name, email);
     });
 
-    return wereUpdatedOrAdded;
+    return countUpdatedOrAdded;
 }
 
 module.exports = {
