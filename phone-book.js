@@ -32,7 +32,7 @@ function checkDoubles(personPhone) {
 
 function add(phone, name, email) {
     if (phoneValidation(phone) && !(checkDoubles(phone) + 1) && name && isString(name)) {
-        phoneBook.push({ phone, name, email: email || '' });
+        phoneBook.push({ phone, name, email: email });
 
         return true;
     }
@@ -51,7 +51,7 @@ function update(phone, name, email) {
     const index = checkDoubles(phone);
 
     if (index !== -1 && name && isString(name)) {
-        phoneBook[index] = { phone, name, email: email || '' };
+        phoneBook[index] = { phone, name, email };
 
         return true;
     }
@@ -76,7 +76,7 @@ function findAndRemove(query) {
         phoneBook = phoneBook.filter(({ name, phone, email }) => !(
             name.search(query) + 1 ||
             phone.search(query) + 1 ||
-            email.search(query) + 1));
+            (email ? email.search(query) + 1 : false)));
 
         return initialLength - phoneBook.length;
     }
@@ -107,7 +107,7 @@ function find(query) {
             .filter(({ name, phone, email }) =>
                 name.search(query) + 1 ||
                 phone.search(query) + 1 ||
-                email.search(query) + 1)
+                (email ? email.search(query) + 1 : false))
             .map(person => transformItem(person))
             .sort();
     }
