@@ -19,9 +19,9 @@ let phoneBook = {};
  * @returns {boolean}
  */
 function dataChecks(phone, name, email) {
-    return !(!(notEmptyString(phone) && /^\d{10}$/.test(phone)) ||
-        !notEmptyString(name) ||
-        !(email === undefined || notEmptyString(email)));
+    return notEmptyString(phone) && /^\d{10}$/.test(phone) &&
+        notEmptyString(name) &&
+        (email === undefined || notEmptyString(email));
 }
 
 /**
@@ -41,10 +41,9 @@ function notEmptyString(str) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!dataChecks(phone, name, email)) {
+    if (!dataChecks(phone, name, email) || find(phone).length > 0) {
         return false;
     }
-
     phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
 
     // 5551110011: { name: 'Алексей', email: 'noreplay@gmail.com' }
@@ -64,7 +63,7 @@ function update(phone, name, email) {
     if (!dataChecks(phone, name, email)) {
         return false;
     }
-    phoneBook[phone] = [name, email];
+    phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
 
     return true;
 }
