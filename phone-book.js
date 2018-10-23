@@ -140,13 +140,8 @@ function addOrUpdate(phone, name, email) {
     return add(phone, name, email) || update(phone, name, email);
 }
 
-
-function isTypeOf(obj, type) {
-    return typeof obj === type;
-}
-
 function isString(obj) {
-    return isTypeOf(obj, 'string');
+    return typeof obj === 'string';
 }
 
 function formatPhone(phone) {
@@ -168,10 +163,7 @@ function isNameCorrect(name) {
 }
 
 function isEmailCorrect(email) {
-    return isTypeOf(email, 'undefined') || isString(email);
-    // «Электронную почту» можно стереть (не передав последний параметр)
-    // А пустой строкой можно стереть?? Проверить
-    // Добавить регвыр .@.\..???
+    return typeof email === 'undefined' || isString(email);
 }
 
 function extractPhone(str) {
