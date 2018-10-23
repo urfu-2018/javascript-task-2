@@ -38,6 +38,14 @@ function checkQuery(query) {
     return (query === '' || query === undefined);
 }
 
+function justAdd(phone, name, email) {
+    if (email === undefined) {
+        phoneBook.set(phone, [name]);
+    } else {
+        phoneBook.set(phone, [name, email]);
+    }
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -49,8 +57,7 @@ function add(phone, name, email) {
     if (!checkPhoneFormat(phone) || phoneBook.has(phone) || !checkNameFormat(name)) {
         return false;
     }
-    email = (email === undefined) ? '' : email;
-    phoneBook.set(phone, [name, email]);
+    justAdd(phone, name, email);
 
     return true;
 }
@@ -66,8 +73,7 @@ function update(phone, name, email) {
     if (!phoneBook.has(phone) || !checkNameFormat(name)) {
         return false;
     }
-    email = (email === undefined) ? '' : email;
-    phoneBook.set(phone, [name, email]);
+    justAdd(phone, name, email);
 
     return true;
 }
@@ -86,8 +92,9 @@ function findAndRemove(query) {
     }
     let i = 0;
     for (var phone of phoneBook.keys()) {
-        let name = phoneBook.get(phone)[0].toString();
-        let email = phoneBook.get(phone)[1].toString();
+        let name = phoneBook.get(phone)[0];
+        let email = (phoneBook.get(phone)[1])
+            ? phoneBook.get(phone)[1] : '';
         if (isInclude(phone, name, email, query)) {
             phoneBook.delete(phone);
             i++;
@@ -112,8 +119,9 @@ function find(query) {
         query = '';
     }
     for (var phone of phoneBook.keys()) {
-        let name = phoneBook.get(phone)[0].toString();
-        let email = phoneBook.get(phone)[1].toString();
+        let name = phoneBook.get(phone)[0];
+        let email = (phoneBook.get(phone)[1])
+            ? phoneBook.get(phone)[1] : '';
         phone = convertPhone(phone);
         if (isInclude(phone, name, email, query)) {
             array[i] = leadStr(phone, name, email);
