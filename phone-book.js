@@ -65,18 +65,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
+    const correctPhone = /^\d{10}$/;
     if (!isNameCorrect(name) || !isEmailCorrect(email) ||
-        !isString(phone) || !correctPhone.test(phone)) {
+        !isString(phone) || !correctPhone.test(phone) || !phoneBook.has(phone)) {
         return false;
     }
 
-    let entry = phoneBook.get(phone);
-    if (!entry) {
-        return false;
-    }
-
-    entry.update(name, email);
+    phoneBook.get(phone).update(name, email);
 
     return true;
 }
@@ -127,7 +122,7 @@ function importFromCsv(csv) {
     let split = csv.split('\n');
     let total = 0;
     split.forEach(line => {
-        let [name, phone, email] = line.split(';');
+        const [name, phone, email] = line.split(';');
         if (addOrUpdate(phone, name, email)) {
             total++;
         }
@@ -140,13 +135,8 @@ function addOrUpdate(phone, name, email) {
     return add(phone, name, email) || update(phone, name, email);
 }
 
-
-function isTypeOf(obj, type) {
-    return typeof obj === type;
-}
-
 function isString(obj) {
-    return isTypeOf(obj, 'string');
+    return typeof obj === 'string';
 }
 
 function formatPhone(phone) {
@@ -168,17 +158,13 @@ function isNameCorrect(name) {
 }
 
 function isEmailCorrect(email) {
-    return isTypeOf(email, 'undefined') || isString(email);
-    // «Электронную почту» можно стереть (не передав последний параметр)
-    // А пустой строкой можно стереть?? Проверить
-    // Добавить регвыр .@.\..???
+    return typeof email === 'undefined' || isString(email);
 }
 
 function extractPhone(str) {
-    const regexp = /.*, \+7 \((\d{3})\) (\d{3})-(\d{2})-(\d{2}),*.*/;
-    const match = str.match(regexp);
+    let [, phone] = str.split(',');
 
-    return `${match[1]}${match[2]}${match[3]}${match[4]}`;
+    return phone.replace(/[+7|(|)|-]/, '');
 }
 
 module.exports = {
