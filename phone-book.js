@@ -112,8 +112,8 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === null) {
-        return null;
+    if (query === undefined) {
+        return [];
     }
 
     if (query === '*') {
