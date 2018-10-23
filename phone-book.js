@@ -19,11 +19,11 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!checking(phone, name)) {
+    if (!validatePhoneAndEmail(phone, name)) {
         return false;
     }
-    if (phoneBook.get(phone) === undefined) {
-        phoneBook.set(phone, [name, email]);
+    if (!phoneBook.get(phone)) {
+        phoneBook.set(phone.trim(), [name.trim(), email || undefined]);
         phoneBook = mapSort(phoneBook);
 
         return true;
@@ -40,15 +40,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checking(phone, name)) {
+    if (!validatePhoneAndEmail(phone, name)) {
         return false;
     }
-    if (phoneBook.get(phone) !== undefined) {
-        if (email === undefined || email.length === 0) {
-            phoneBook.set(phone, [name, undefined]);
-        } else {
-            phoneBook.set(phone, [name, email]);
-        }
+    if (phoneBook.get(phone)) {
+        phoneBook.set(phone.trim(), [name.trim(), email || undefined]);
 
         return true;
     }
@@ -62,24 +58,23 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (queryChecking(query)) {
+    if (validateQuery(query)) {
         return 0;
     }
     if (query === '*') {
         query = '';
     }
-    let iterator = phoneBook.keys();
     let size = phoneBook.size;
-    for (let i = 0; i < size; i++) {
-        let phone = iterator.next().value.toString();
+    phoneBook.forEach(function (key, value) {
+        let phone = value;
         let email = '';
-        if (phoneBook.get(phone)[1] !== undefined) {
-            email = phoneBook.get(phone)[1].toString();
+        if (key[1]) {
+            email = key[1];
         }
-        if (isInclude([phone, phoneBook.get(phone)[0].toString(), email], query)) {
+        if (isInclude(phone, key[0], email, query)) {
             phoneBook.delete(phone);
         }
-    }
+    });
 
     return size - phoneBook.size;
 }
@@ -90,25 +85,23 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (queryChecking(query)) {
+    if (validateQuery(query)) {
         return [];
     }
     if (query === '*') {
         query = '';
     }
     let res = [];
-    let iterator = phoneBook.keys();
-    for (let i = 0; i < phoneBook.size; i++) {
-        let phone = iterator.next().value.toString();
-        let name = phoneBook.get(phone)[0].toString();
+    phoneBook.forEach(function (key, value) {
+        let phone = value;
         let email = '';
-        if (phoneBook.get(phone)[1] !== undefined) {
-            email = phoneBook.get(phone)[1].toString();
+        if (key[1]) {
+            email = key[1];
         }
-        if (isInclude([phone, name, email], query)) {
-            res.push(arrayToString([name, phone = formatingPhone(phone), email]));
+        if (isInclude(phone, key[0], email, query)) {
+            res.push(arrayToString([key[0], formattingPhone(phone), email]));
         }
-    }
+    });
 
     return res;
 }
@@ -126,9 +119,7 @@ function importFromCsv(csv) {
     temp = csv.split('\n');
     for (let i = 0; i < temp.length; i++) {
         person = temp[i].split(';');
-        if (add(person[1], person[0], person[2])) {
-            res ++;
-        } else if (update(person[1], person[0], person[2])) {
+        if (add(person[1], person[0], person[2]) || update(person[1], person[0], person[2])) {
             res ++;
         }
     }
@@ -136,14 +127,8 @@ function importFromCsv(csv) {
     return res;
 }
 
-function isInclude(strings, includingString) {
-    for (let i = 0; i < strings.length; i++) {
-        if (strings[i].includes(includingString)) {
-            return true;
-        }
-    }
-
-    return false;
+function isInclude(phone, name, email, query) {
+    return phone.includes(query) || name.includes(query) || email.includes(query);
 }
 
 function mapSort(map) {
@@ -159,18 +144,11 @@ function mapSort(map) {
 }
 
 function arrayToString(array) {
-    let res = '';
-    for (let i = 0; i < array.length; i++) {
-        if (array[i].length !== 0) {
-            res += array[i] + ', ';
-        }
-    }
-    res = res.substr(0, res.length - 2);
 
-    return res;
+    return array.filter(Boolean).join(', ');
 }
 
-function formatingPhone(phone) {
+function formattingPhone(phone) {
     phone = '+7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) + '-' + phone.substr(6, 2) +
         '-' + phone.substr(8, 2);
 
@@ -178,14 +156,16 @@ function formatingPhone(phone) {
 
 }
 
-function checking(phone, name) {
+function validatePhoneAndEmail(phone, name) {
     const phoneRegexp = new RegExp('^[0-9]{10}$');
 
-    return ((typeof phone && typeof name) === 'string' && name.length !== 0 && (typeof phone &&
-        typeof name) !== undefined && phoneRegexp.test(phone));
+    return (typeof phone === 'string' && typeof name === 'string' && name.length !== 0 &&
+        typeof phone !== undefined && typeof name !== undefined && phoneRegexp.test(phone));
 }
 
-function queryChecking(query) {
+console.info(typeof 0 === 'string' && typeof 'foo' === 'string');
+
+function validateQuery(query) {
 
     return query === '' || query === undefined;
 }
