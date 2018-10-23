@@ -47,10 +47,11 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const isEntryInPhoneBook = phoneBook
-        .some(e => e.phone === phone);
-    if (!((typeof name === 'string') && checkPhone(phone) &&
-        (name.length > 0)) || isEntryInPhoneBook) {
+    if (!((typeof name === 'string') &&
+        (name.length > 0) && checkPhone(phone))) {
+        return false;
+    }
+    if (phoneBook.some(e => e.phone === phone)) {
         return false;
     }
     phoneBook.push(new Contact(phone, name, email));
@@ -66,10 +67,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const found = phoneBook
-        .filter(e => e.phone === phone);
-    if (!checkPhone(phone) || (found.length === 0) ||
-        !((typeof name === 'string') && name.length > 0)) {
+    if (!checkPhone(phone) || !((typeof name === 'string') && name.length > 0)) {
+        return false;
+    }
+    const found = phoneBook.filter(e => e.phone === phone);
+    if ((found.length === 0)) {
         return false;
     }
     found.forEach(e => {
@@ -86,8 +88,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!((typeof query === 'string') && query.length > 0)) {
+        return 0;
+    }
     const found = search(query);
-
     for (let i = 0; i < phoneBook.length; i++) {
         if (found.includes(phoneBook[i])) {
             phoneBook.splice(i, 1);
@@ -116,6 +120,10 @@ function search(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (!((typeof query === 'string') && query.length > 0)) {
+        return [];
+    }
+
     return search(query)
         .sort(sortNamesLexicographical)
         .map(_ => _.toString());
