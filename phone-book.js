@@ -39,7 +39,7 @@ function prettifyPhone(phone) {
 }
 
 /**
- * Поиск в сырых данных по запросу
+ * Поиск по запросу
  * @param {String} query
  * @returns {Array<Array<String, Object>>}
  */
@@ -77,14 +77,14 @@ function prettifyEntry(phoneBookEntry) {
 
 /**
  * Добавление записи в телефонную книгу, если выполнено условие для номера телефона
- * @param {Function<String, Boolean>} condition
+ * @param {Function<String, Boolean>} validate
  * @param {String} phone
  * @param {String} name
  * @param {String} email
  * @returns {Boolean}
  */
-function setEntry(condition, phone, name, email) {
-    if (!isCorrect(phone, name) || condition()) {
+function setEntry(validate, phone, name, email) {
+    if (!isCorrect(phone, name) || validate()) {
         return false;
     }
 
@@ -125,10 +125,7 @@ function update(phone, name = '', email = '') {
  */
 function findAndRemove(query) {
     const entries = search(query);
-    entries.forEach(entry => {
-        const phone = entry[0];
-        phoneBook.delete(phone);
-    });
+    entries.forEach(([phone]) => phoneBook.delete(phone));
 
     return entries.length;
 }
