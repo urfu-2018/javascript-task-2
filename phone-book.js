@@ -65,18 +65,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const correctPhone = /^\d{3}\d{3}\d{2}\d{2}$/g;
+    const correctPhone = /^\d{10}$/;
     if (!isNameCorrect(name) || !isEmailCorrect(email) ||
-        !isString(phone) || !correctPhone.test(phone)) {
+        !isString(phone) || !correctPhone.test(phone) || !phoneBook.has(phone)) {
         return false;
     }
 
-    let entry = phoneBook.get(phone);
-    if (!entry) {
-        return false;
-    }
-
-    entry.update(name, email);
+    phoneBook.get(phone).update(name, email);
 
     return true;
 }
