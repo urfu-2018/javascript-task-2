@@ -9,7 +9,7 @@ const isStar = false;
 /**
  * Телефонная книга
  */
-let phoneBook = new Map();
+const phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -53,11 +53,15 @@ function findAndRemove(query) {
         return 0;
     }
     const initialPhoneBookLen = phoneBook.size;
+    const keys = [];
     phoneBook.forEach(({ name, email }, key) => {
         if (key.includes(query) || name.includes(query) || (email && email.includes(query))) {
-            phoneBook.delete(key);
+            keys.push(key);
         }
     });
+    for (const key of keys) {
+        phoneBook.delete(key);
+    }
 
     return initialPhoneBookLen - phoneBook.size;
 }
@@ -115,6 +119,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-
     isStar
 };
