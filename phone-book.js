@@ -41,7 +41,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkArgs(phone, name, email) || !phoneBook[phone]) {
+    if (!checkArgs(phone, name, email)) {
         return false;
     }
     phoneBook[phone] = { name, email };
