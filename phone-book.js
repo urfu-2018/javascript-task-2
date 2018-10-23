@@ -151,9 +151,6 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
     let newRecords = csv.split('\n');
 
     let count = 0;
@@ -164,7 +161,7 @@ function importFromCsv(csv) {
         } else {
             count += add(r[1], r[0], r[2]);
         }
-    })
+    });
 
     return count;
 }
