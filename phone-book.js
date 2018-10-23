@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
@@ -72,7 +72,7 @@ function update(phone, name, email) {
         return false;
     }
     const found = phoneBook.filter(e => e.phone === phone);
-    if ((found.length === 0)) {
+    if (found.length === 0) {
         return false;
     }
     found.forEach(e => {
