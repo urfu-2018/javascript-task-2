@@ -32,7 +32,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function notEmptyString(str) {
-    return typeof str === 'string' && str !== '';
+    return typeof str === 'string' && str.length > 0;
 }
 
 /**
@@ -59,7 +59,7 @@ function update(phone, name, email) {
     if (!dataChecks(phone, name, email)) {
         return false;
     }
-    phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
+    phoneBook[phone] = { name: name, email: email };
 
     return true;
 }
@@ -108,21 +108,18 @@ function find(query) {
     if (!notEmptyString(query)) {
         return [];
     }
-
     if (query === '*') { // Пустая строка содержится везде.
         query = '';
     }
-
     let result = [];
     for (let [p, info] of Object.entries(phoneBook)) {
         const formattedPhone =
             `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
-
-        let resultingString = info[0] + ', ' + formattedPhone;
-        if (info[1] !== undefined) { // Если почта существует, добавляем ее.
-            resultingString += ', ' + info[1];
+        let resultingString = info.name + ', ' + formattedPhone;
+        if (info.email !== undefined) {
+            resultingString += ', ' + info.email;
         }
-        if (arrayIncludes(info.concat(p), query)) {
+        if (arrayIncludes([info.name, info.email, p], query)) {
             result.push(resultingString);
         }
     }
