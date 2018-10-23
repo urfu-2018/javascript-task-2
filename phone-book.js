@@ -130,9 +130,9 @@ function give(records) {
     let result = [];
     for (let key of Object.keys(records)) {
         let record = records[key][0] + ', +7 (' + key.substring(0, 3) + ') ' + key.substring(3, 6) +
-        '-' + key.substring(6, 8) + '-' + key.substring(8, 10) + ', ' + records[key][1];
-        if (records[key][1].length === 0) {
-            record = record.slice(0, record.length - 2);
+        '-' + key.substring(6, 8) + '-' + key.substring(8, 10);
+        if (records[key][1].length !== 0) {
+            record = record + ', ' + records[key][1];
         }
         if (record.length !== 0) {
             result.push(record);
