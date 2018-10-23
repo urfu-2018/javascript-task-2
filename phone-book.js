@@ -123,7 +123,7 @@ function transformPhone(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string') {
+    if (!query) {
         return [];
     }
 
