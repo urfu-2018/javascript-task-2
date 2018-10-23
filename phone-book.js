@@ -13,7 +13,7 @@ let phoneBook = {};
 
 function checkArgs(phone, name, email) {
     return !(email !== undefined && typeof(email) !== 'string' ||
-        typeof(name) !== 'string' ||
+        typeof(name) !== 'string' || !name ||
         typeof(phone) !== 'string' || !(/^[0-9]{10}$/.test(phone)));
 }
 
@@ -28,7 +28,7 @@ function add(phone, name, email) {
     if (!checkArgs(phone, name, email) || phoneBook[phone]) {
         return false;
     }
-    phoneBook[phone] = { 'name': name, 'email': email };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -41,10 +41,10 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkArgs(phone, name, email) || phoneBook[phone] === undefined) {
+    if (!checkArgs(phone, name, email) || !phoneBook[phone]) {
         return false;
     }
-    phoneBook[phone] = { 'name': name, 'email': email };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
