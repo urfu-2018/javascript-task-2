@@ -23,7 +23,7 @@ function isString(v) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isString(phone) || !/^\d{10}$/.test(phone)) {
+    if (!isString(phone) || !isString(name) || !/^\d{10}$/.test(phone)) {
         return false;
     }
     if (phoneBook.has(phone) || name === undefined) {
@@ -43,7 +43,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!/^\d{10}$/.test(phone)) {
+    if (!isString(phone) || !isString(name) || !/^\d{10}$/.test(phone)) {
         return false;
     }
     if (!phoneBook.has(phone) || name === undefined) {
