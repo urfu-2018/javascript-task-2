@@ -15,6 +15,11 @@ function containsPhone(phone) {
     return phoneBook.filter(contacts => contacts.phone === phone).length > 0;
 }
 
+function checkParamters(phone, name) {
+    return !/^\d{10}$/.test(phone) || typeof name !== 'string' ||
+        typeof phone !== 'string' || name === '';
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -23,7 +28,7 @@ function containsPhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^\d{10}$/.test(phone) || typeof name === 'undefined' || containsPhone(phone)) {
+    if (checkParamters(phone, name) || containsPhone(phone)) {
         return false;
     }
 
@@ -40,7 +45,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!containsPhone(phone)) {
+    if (checkParamters(phone, name)) {
         return false;
     }
 
@@ -67,6 +72,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (typeof query !== 'string') {
+        return 0;
+    }
+
     const contacts = find(query);
 
     if (contacts.length !== 0) {
@@ -124,11 +133,10 @@ function findElement(query) {
  */
 function find(query) {
     if (query === '*') {
-
         return returnAllBook();
     }
 
-    if (query === '') {
+    if (query === '' || typeof query !== 'string') {
         return [];
     }
 
@@ -145,6 +153,10 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    if (typeof csv !== 'string') {
+        return 0;
+    }
+
     const contact = csv.replace(/;/g, ' ').split('\n');
     let count = 0;
 
