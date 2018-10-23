@@ -101,7 +101,7 @@ function find(query) {
 
 function getNotesFromPhoneBookByQuery(query) {
     if (query === '*') {
-        return phoneBook;
+        return phoneBook.slice(0);
     }
 
     return phoneBook.filter(note => noteHasQuery(note, query));
