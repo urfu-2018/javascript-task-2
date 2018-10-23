@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -22,7 +22,7 @@ function add(phone, name, email) {
     if (checkNameFormat(name) &&
         checkPhoneFormat(phone) &&
         checkEmailFormat(email) &&
-        !(phone in phoneBook)) {
+        !phoneBook.has(phone)) {
         addNote(name, phone, email);
 
         return true;
@@ -46,7 +46,7 @@ function update(phone, name, email) {
     if (checkNameFormat(name) &&
         checkPhoneFormat(phone) &&
         checkEmailFormat(email) &&
-        (phone in phoneBook)) {
+        phoneBook.has(phone)) {
         addNote(name, phone, email);
 
         return true;
@@ -56,12 +56,9 @@ function update(phone, name, email) {
 }
 
 function addNote(name, phone, email) {
-    phoneBook[phone] = {
-        name: name,
-        phone: phone
-    };
+    phoneBook.set(phone, { name: name, phone: phone });
     if (email) {
-        phoneBook[phone].email = email;
+        phoneBook.set(phone, { name: name, phone: phone, email: email });
     }
 }
 function checkNameFormat(name) {
@@ -82,14 +79,14 @@ function findAndRemove(query) {
         return 0;
     }
     if (query === '*') {
-        let count = Object.keys(phoneBook).length;
-        phoneBook = {};
+        let count = phoneBook.size;
+        phoneBook.clear();
 
         return count;
     }
     let found = findQueryInSorted(query);
     for (let i = 0; i < found.length; i++) {
-        delete(phoneBook[backToBadPhoneFormat(found[i].phone)]);
+        phoneBook.delete(found[i].phone);
     }
 
     return found.length;
@@ -105,11 +102,12 @@ function find(query) {
         return [];
     }
     if (query === '*') {
-        return sortedBook().map(formatForOutput);
+        return sortedBook()
+            .map(x=> formatForOutput(x));
     }
 
     return findQueryInSorted(query)
-        .map(formatForOutput);
+        .map(x=>formatForOutput(x));
 
 }
 
@@ -118,41 +116,25 @@ function isString(query) {
 }
 
 function findQueryInSorted(query) {
-    return sortedBook()
-        .filter(x => {
-            return x.name.indexOf(query) + 1 ||
-                x.phone.indexOf(query) + 1 ||
-                (x.email && x.email.indexOf(query) + 1);
-        });
+    return sortedBook().filter(x => {
+        return x.name.indexOf(query) + 1 ||
+            x.phone.indexOf(query) + 1 ||
+            (x.email && x.email.indexOf(query) + 1);
+    });
 }
 
 function formatForOutput(note) {
     if (!note.email) {
-        return note.name + ', ' + note.phone;
+        return note.name + ', ' + rightFormatForPhone(note.phone);
     }
 
-    return note.name + ', ' + note.phone + ', ' + note.email;
+    return note.name + ', ' + rightFormatForPhone(note.phone) + ', ' + note.email;
 }
 function sortedBook() {
-    let sorted = Object
-        .keys(phoneBook)
-        .map(x => phoneBook[x])
-        .sort(function (a, b) {
+    return [...phoneBook.values()]
+        .sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
-
-    return sorted
-        .map(x => {
-            return !x.email ? {
-                name: x.name,
-                phone: rightFormatForPhone(x.phone)
-            } : {
-                name: x.name,
-                phone: rightFormatForPhone(x.phone),
-                email: x.email
-            };
-        }
-        );
 }
 
 function rightFormatForPhone(phone) {
@@ -160,10 +142,6 @@ function rightFormatForPhone(phone) {
         ') ' + phone.slice(3, 6) + '-' +
         phone.slice(6, 8) +
         '-' + phone.slice(8, 10);
-}
-
-function backToBadPhoneFormat(phone) {
-    return phone.slice(4, 7) + phone.slice(9, 12) + phone.slice(13, 16) + phone.slice(17, 20);
 }
 
 /**
@@ -181,7 +159,7 @@ function importFromCsv(csv) {
         .map(x=>x.split(';'));
     let count = 0;
     for (let i = 0; i < notes.length; i++) {
-        if (notes[i][1] in phoneBook) {
+        if (phoneBook.has(notes[i][1])) {
             count = update(notes[i][1], notes[i][0], notes[i][2]) ? count + 1 : count;
         } else {
             count = add(notes[i][1], notes[i][0], notes[i][2]) ? count + 1 : count;
