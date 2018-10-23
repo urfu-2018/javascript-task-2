@@ -9,7 +9,49 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
+
+function validatePhone(phone) {
+    const PHONE_PATTERN = /^\d{10}$/;
+
+    if (typeof phone !== 'string' || phone === '') {
+        return false;
+    }
+
+    return PHONE_PATTERN.test(phone);
+}
+
+function validateName(name) {
+    if (typeof name !== 'string' || name === '') {
+        return false;
+    }
+
+    return true;
+}
+
+function validateEmail(email) {
+    if (email === undefined) {
+        return true;
+    }
+
+    return typeof email === 'string' && email !== '';
+}
+
+function checkArgs(phone, name, email) {
+    return validatePhone(phone) &&
+        validateName(name) &&
+        validateEmail(email);
+}
+
+function contains(phone) {
+    const alreadyExistedPhone = phoneBook.find(element => element.phone === phone);
+
+    if (alreadyExistedPhone !== undefined) {
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +61,21 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!checkArgs(phone, name, email)) {
+        return false;
+    }
 
+    if (contains(phone)) {
+        return false;
+    }
+
+    phoneBook.push({
+        name: name,
+        phone: phone,
+        email: email
+    });
+
+    return true;
 }
 
 /**
@@ -30,7 +86,34 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!checkArgs(phone, name, email)) {
+        return false;
+    }
 
+    const match = phoneBook.find(element => element.phone === phone);
+
+    match.name = name;
+    match.email = email;
+
+    return true;
+}
+
+function checkQuery(query) {
+    return typeof query === 'string' || query !== '';
+}
+
+function entryContainsQuery(entry, query) {
+    const values = Object.values(entry);
+    const pattern = query === '*' ? /.*/ : new RegExp(query);
+
+    const match = values
+        .find(value => value !== undefined && pattern.test(value));
+
+    if (match !== undefined) {
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -39,7 +122,30 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!checkQuery(query)) {
+        return 0;
+    }
 
+    let removedCount = 0;
+
+    phoneBook = phoneBook.filter(element => {
+        if (entryContainsQuery(element, query)) {
+            removedCount++;
+
+            return true;
+        }
+
+        return false;
+    });
+
+    return removedCount;
+}
+
+function formatPhoneString(phone) {
+    const formattedPhone = `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}-` +
+        `${phone.substring(6, 8)}-${phone.substring(8, 10)}`;
+
+    return formattedPhone;
 }
 
 /**
@@ -48,7 +154,28 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (!checkQuery(query)) {
+        return [];
+    }
 
+    const result = phoneBook
+        .reduce((acc, entry) => {
+            if (entryContainsQuery(entry, query)) {
+                const formattedPhone = formatPhoneString(entry.phone);
+
+                if (entry.email !== undefined) {
+                    acc.push(`${entry.name}, ${formattedPhone}, ${entry.email}`);
+                } else {
+                    acc.push(`${entry.name}, ${formattedPhone}`);
+                }
+            }
+
+            return acc;
+        }, [])
+
+        .sort();
+
+    return result;
 }
 
 /**
@@ -58,11 +185,29 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    let addedCount = 0;
 
-    return csv.split('\n').length;
+    csv.split('\n').forEach(element => {
+        const tokens = element.split(';');
+
+        const name = tokens[0];
+        const phone = tokens[1];
+        const email = tokens[2];
+
+        let success = false;
+
+        success = add(phone, name, email);
+
+        if (!success) {
+            success = update(phone, name, email);
+        }
+
+        if (success) {
+            addedCount++;
+        }
+    });
+
+    return addedCount;
 }
 
 module.exports = {
