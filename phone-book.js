@@ -84,7 +84,7 @@ function arrayIncludes(arr, query) {
  */
 function findAndRemove(query) {
     if (query === undefined) {
-        return null;
+        return [];
     }
 
     if (query === '*') {
