@@ -15,7 +15,7 @@ function checkArgs(phone, name, email) {
     if (email !== undefined && typeof(email) !== 'string' ||
         [phone, name].some(e=>typeof(e) !== 'string')) {
         throw new TypeError('');
-	}
+    }
 }
 
 /**
