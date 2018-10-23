@@ -26,16 +26,8 @@ function add(phone, name, email) {
     return update(phone, name, email);
 }
 
-function phoneIsCorrect(phone) {
-    return typeof phone === 'string' && phone.length > 0 && /^\d{10}$/.test(phone);
-}
-
-function nameIsCorrect(name) {
-    return typeof name === 'string' && name.length > 0;
-}
-
-function emailIsCorrect(email) {
-    return email === undefined || (typeof email === 'string' && email.length > 0);
+function notEmptyString(str) {
+    return typeof str === 'string' && str.length > 0;
 }
 
 /**
@@ -46,7 +38,9 @@ function emailIsCorrect(email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneIsCorrect(phone) || !nameIsCorrect(name) || !emailIsCorrect(email)) {
+    if (!(notEmptyString(phone) && /^\d{10}$/.test(phone)) ||
+        !(notEmptyString(name)) ||
+        !(email === undefined || notEmptyString(email))) {
         return false;
     }
 
