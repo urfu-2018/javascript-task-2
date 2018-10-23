@@ -55,9 +55,9 @@ function update(phone, name, email) {
 }
 
 function filterBook(query) {
-    return x => query === '*' || x.phone.includes(query) ||
+    return x => query !== '' && (query === '*' || x.phone.includes(query) ||
         x.name.includes(query) ||
-        x.email !== undefined && x.email.includes(query);
+        x.email !== undefined && x.email.includes(query));
 }
 
 /**
