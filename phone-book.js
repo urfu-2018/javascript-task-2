@@ -108,7 +108,7 @@ function importFromCsv(csv) {
         const strings = lines[i].split(';');
         let email = strings[2].trim() === '' ? undefined : strings[2].trim();
         let phone = strings[1];
-        let name = strings[0].trim() === '' ? undefined : strings[2].trim();
+        let name = strings[0];
         if (!add(phone, name, email) &&
             !update(phone, name, email)) {
             continue;
