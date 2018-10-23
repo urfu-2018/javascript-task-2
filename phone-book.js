@@ -65,9 +65,6 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!checkString(query) || !query) {
-        return false;
-    }
     if (query === '*') {
         const keys = Object.keys(phoneBook);
         phoneBook = {};
@@ -75,13 +72,13 @@ function findAndRemove(query) {
         return keys.length;
     }
 
-    var result = findByAllFields(takeAllEntries(), query);
+    var results = findByAllFields(takeAllEntries(), query);
 
-    result.forEach(x => {
-        delete phoneBook[x.phone];
+    results.forEach(result => {
+        delete phoneBook[result.phone];
     });
 
-    return result.length;
+    return results.length;
 }
 
 var compareEntry = function (a, b) {
