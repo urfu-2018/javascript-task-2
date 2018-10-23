@@ -9,7 +9,15 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
+
+function createEntry(name, email) {
+    let entry = {};
+    entry.name = name;
+    entry.email = email;
+
+    return entry;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +27,17 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!/\d{10}$/.test(phone) || !name || !checkString(phone) || !checkString(name)
+        || !checkString(email) || phoneBook[phone]) {
+        return false;
+    }
+    phoneBook[phone] = createEntry(name, email);
 
+    return true;
+}
+
+function checkString(input) {
+    return typeof input === 'string';
 }
 
 /**
@@ -30,7 +48,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!/\d{10}$/.test(phone) || !name || !checkString(phone) || !checkString(name)
+        || !checkString(email) || phoneBook[phone]) {
+        return false;
+    }
+    phoneBook[phone] = createEntry(name, email);
 
+    return true;
 }
 
 /**
@@ -39,7 +63,74 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!checkString(query) || !query) {
+        return false;
+    }
+    if (query === '*') {
+        const keys = Object.keys(phoneBook);
+        phoneBook = {};
 
+        return keys.length;
+    }
+
+    var result = findByAllFields(takeAllEntries(), query);
+
+    result.forEach(x => {
+        delete phoneBook[x.phone];
+    });
+
+    return result.length;
+}
+
+var compareEntry = function (a, b) {
+    return a.name > b.name;
+};
+
+function createFindResult(array) {
+    return array.sort(compareEntry).map(x => {
+        let correctPhone = getCorrectPhone(x.phone);
+
+        return x.email
+            ? `${x.name}, ${correctPhone}, ${x.email}`
+            : `${x.name}, ${correctPhone}`;
+    });
+}
+
+function createFindEntry(phone, name, email) {
+    let entry = {};
+    entry.name = name;
+    entry.email = email;
+    entry.phone = phone;
+
+    return entry;
+}
+
+function getCorrectPhone(phone) {
+    var phone1 = phone.substring(0, 3);
+    var phone2 = phone.substring(3, 6);
+    var phone3 = phone.substring(6, 8);
+    var phone4 = phone.substring(8, 10);
+
+    return `+7 (${phone1}) ${phone2}-${phone3}-${phone4}`;
+}
+
+function findByAllFields(entry, query) {
+    return entry.filter(entry => {
+        return entry.name.includes(query) ||
+            entry.phone.includes(query) ||
+            (entry.email && entry.email.includes(query));
+    });
+}
+
+function takeAllEntries() {
+    var entries = [];
+    let keys = Object.keys(phoneBook);
+    keys.forEach(key => {
+        let value = phoneBook[key];
+        entries.push(createFindEntry(key, value.name, value.email));
+    });
+
+    return entries;
 }
 
 /**
@@ -48,7 +139,13 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    var entries = takeAllEntries();
 
+    if (query === '*') {
+        return createFindResult(entries);
+    }
+
+    return createFindResult(findByAllFields(entries, query));
 }
 
 /**
@@ -58,11 +155,19 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    let newEntries = csv.split('\n');
 
-    return csv.split('\n').length;
+    let count = 0;
+    newEntries.forEach(entry => {
+        let r = entry.split(';');
+        if (phoneBook[r[1]]) {
+            count += update(r[1], r[0], r[2]);
+        } else {
+            count += add(r[1], r[0], r[2]);
+        }
+    });
+
+    return count;
 }
 
 module.exports = {
