@@ -78,6 +78,7 @@ function findAndRemove(query) {
     for (const phone in phoneBook) {
         if (query === '*') {
             delete phoneBook[phone];
+            countDeleted++;
         } else if (isFind(phone, query)) {
             delete phoneBook[phone];
             countDeleted++;
