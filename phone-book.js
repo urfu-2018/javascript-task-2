@@ -20,7 +20,7 @@ let phoneBook = {};
  */
 function add(phone, name, email) {
     const correctPhone = /^\d{10}$/.test(phone);
-    if (!correctPhone || Object.keys(phoneBook).includes(phone) ||
+    if (!correctPhone || phoneBook.hasOwnProperty(phone) ||
     name === undefined || name === '') {
         return false;
     }
