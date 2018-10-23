@@ -46,7 +46,7 @@ function update(phone, name, email) {
     if (!isString(phone) || !isString(name) || !/^\d{10}$/.test(phone)) {
         return false;
     }
-    if (/* !phoneBook.has(phone) || */ name.trim().length === 0) {
+    if (!phoneBook.has(phone) || name.trim().length === 0) {
         return false;
     }
 
@@ -62,7 +62,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const foundRecords = findRecords(query);
-    foundRecords.forEach(v => phoneBook.set(v.phone, undefined));
+    foundRecords.forEach(v => phoneBook.delete(v.phone));
 
     return foundRecords.length;
 }
