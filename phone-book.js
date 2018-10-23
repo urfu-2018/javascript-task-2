@@ -12,12 +12,12 @@ const isStar = true;
 let phoneBook;
 
 function areTypesCorrect(phone, name, email) {
-    const phonePattern = '^(\\d{3})(\\d{3})(\\d{2})(\\d{2})$';
-    const a = typeof phone === 'string' && phone.match(phonePattern) !== null;
-    const b = typeof name === 'string' && name !== '';
-    const c = (email !== undefined) ? typeof email === 'string' : true;
+    const phonePattern = new RegExp('^\\d{10}$');
+    const isPhoneValid = typeof phone === 'string' && phonePattern.test(phone);
+    const isNameValid = typeof name === 'string' && name !== '';
+    const isEmailValid = (email !== undefined) ? typeof email === 'string' : true;
 
-    return a && b && c;
+    return isPhoneValid && isNameValid && isEmailValid;
 }
 
 /**
