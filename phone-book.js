@@ -145,3 +145,5 @@ module.exports = {
 
     isStar
 };
+
+let a;
