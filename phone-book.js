@@ -11,6 +11,13 @@ const isStar = true;
  */
 let phoneBook;
 
+function checkArgs(phone, name, email) {
+    if (email !== undefined && typeof(email) !== 'string' ||
+        [phone, name].some(e=>typeof(e) !== 'string')) {
+        throw new TypeError('');
+	}
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,12 +26,6 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    function checkArgs(phone, name, email) {
-        if (email !== undefined && typeof(email) !== 'string' ||
-            [phone, name].some(e=>typeof(e) !== 'string')) {
-            throw new TypeError('');
-    }
-
     if (name === undefined) {
         return false;
     }
@@ -49,12 +50,6 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    function checkArgs(phone, name, email) {
-        if (email !== undefined && typeof(email) !== 'string' ||
-            [phone, name].some(e=>typeof(e) !== 'string')) {
-            throw new TypeError('');
-    }
-
     if (name === undefined) {
         return false;
     }
@@ -144,4 +139,4 @@ module.exports = {
     importFromCsv,
 
     isStar
-}
+};
