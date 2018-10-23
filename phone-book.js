@@ -12,22 +12,6 @@ const isStar = true;
 let phoneBook = {};
 
 /**
- * Проверяет, принадлежит ли каждый элемент массива типу type
- * @param {[]} arr
- * @param {String} type
- * @returns {Boolean}
- */
-function arrayOfType(arr, type) {
-    for (let i in arr) {
-        if (arr[i] !== type) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
  * Добавление записи в телефонную книгу
  * @param {String} phone
  * @param {String?} name
@@ -42,6 +26,18 @@ function add(phone, name, email) {
     return update(phone, name, email);
 }
 
+function phoneIsCorrect(phone) {
+    return typeof phone === 'string' && phone.length > 0 && /^\d{10}$/.test(phone);
+}
+
+function nameIsCorrect(name) {
+    return typeof name === 'string' && name.length > 0;
+}
+
+function emailIsCorrect(email) {
+    return email === undefined || (typeof email === 'string' && email.length > 0);
+}
+
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -50,9 +46,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (arrayOfType([phone, name], 'string') ||
-        (email !== undefined && typeof email !== 'string') ||
-        name === undefined || !/^\d{10}$/.test(phone)) {
+    if (!phoneIsCorrect(phone) || !nameIsCorrect(name) || !emailIsCorrect(email)) {
         return false;
     }
 
