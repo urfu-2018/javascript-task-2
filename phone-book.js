@@ -35,7 +35,7 @@ function arrayOfType(arr, type) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook[phone] !== undefined) {
+    if (!phoneBook[phone]) {
         return false;
     }
 
@@ -51,8 +51,8 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (arrayOfType([phone, name], 'string') ||
-        (email !== undefined && typeof email !== 'string') ||
-        name === undefined || !/^\d{10}$/.test(phone)) {
+        (email && typeof email !== 'string') ||
+        !name || !/^\d{10}$/.test(phone)) {
         return false;
     }
 
@@ -69,7 +69,7 @@ function update(phone, name, email) {
  */
 function arrayIncludes(arr, query) {
     for (let i in arr) {
-        if (arr[i] !== undefined && arr[i].includes(query)) {
+        if (!arr[i] && arr[i].includes(query)) {
             return true;
         }
     }
@@ -83,7 +83,7 @@ function arrayIncludes(arr, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query === undefined) {
+    if (!query) {
         return [];
     }
 
