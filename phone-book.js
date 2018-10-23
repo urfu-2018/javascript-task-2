@@ -20,7 +20,8 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (name === undefined || !checkPhone(phone) || phone in phoneBook) {
+    if (name === undefined || !checkPhone(phone) ||
+        phone in phoneBook || typeof name !== 'string') {
         return false;
     }
     const person = { name, email };
@@ -122,7 +123,7 @@ function dataToString(x) {
     return res;
 }
 function findByQuery(query) {
-    if (query === '' || query === null) {
+    if (query === '' || query === undefined || typeof query !== 'string') {
         return new Array(0);
     }
     let results;
