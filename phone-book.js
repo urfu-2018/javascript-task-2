@@ -30,6 +30,10 @@ function isInclude(t1, t2, t3, query) {
     return (t1.includes(query) || t2.includes(query) || t3.includes(query));
 }
 
+function leadStr(phone, name, email) {
+    return (email === '') ? name + ', ' + phone : name + ', ' + phone + ', ' + email;
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -105,7 +109,7 @@ function find(query) {
         let email = phoneBook.get(phone)[1].toString();
         phone = convertPhone(phone);
         if (isInclude(phone, name, email, query)) {
-            array[i] = name + ', ' + phone + ', ' + email;
+            array[i] = leadStr(phone, name, email);
             i++;
         }
     }
