@@ -3,7 +3,7 @@
 const phoneBook = require('./phone-book');
 
 // Эти записи добавятся, вернется `true`
-phoneBook.add('5554440044', 'Григорий', 'grisha@example.com');
+phoneBook.add('555444004a', 'Григорий', 'grisha@example.com');
 phoneBook.add('5552220022', 'Борис', 'boris@example.com');
 phoneBook.add('5551110011', 'Алекс');
 phoneBook.add('5553330033', 'Валерий', 'valera@example.com');
