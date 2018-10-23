@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
@@ -55,7 +55,7 @@ function update(phone, name = '', email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return query === '' || typeof(query) !== 'string' ? 0 : Object.keys(phoneBook)
+    return !query || typeof(query) !== 'string' ? 0 : Object.keys(phoneBook)
         .filter((record)=>[record, ...Object.values(phoneBook[record])]
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .filter((item)=>delete(phoneBook[item]))
@@ -68,7 +68,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    return query === '' || typeof(query) !== 'string' ? [] : Object.keys(phoneBook)
+    return !query || typeof(query) !== 'string' ? [] : Object.keys(phoneBook)
         .filter((record)=>[record, ...Object.values(phoneBook[record])]
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .sort((a, b)=>phoneBook[a].name.localeCompare(phoneBook[b].name))
