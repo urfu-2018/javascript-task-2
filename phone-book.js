@@ -20,7 +20,7 @@ function isValidPhone(phone) {
 }
 
 function hasPartialMatch(query, phone, name, email) {
-    return phone.indexOf(query) >= 0 || email && email.indexOf(query) >= 0 ||
+    return phone.indexOf(query) >= 0 || email.indexOf(query) >= 0 ||
      name.indexOf(query) >= 0;
 }
 
@@ -44,7 +44,7 @@ function add(phone, name, email) {
     }
     phoneBook.set(phone, {
         name,
-        email
+        email: email ? email : ''
     });
 
     return true;
@@ -64,7 +64,7 @@ function update(phone, name, email) {
 
     phoneBook.set(phone, {
         name,
-        email
+        email: email ? email : ''
     });
 
     return true;
@@ -125,7 +125,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    let data = csv.split('\n');
+    const data = csv.split('\n');
     let countUpdatedOrAdded = 0;
 
     data.forEach(line => {
