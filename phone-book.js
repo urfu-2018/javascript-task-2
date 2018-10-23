@@ -72,7 +72,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     if (typeof query !== 'string' || query === '') {
-        return;
+        return [];
     }
     let countDeleted = 0;
     for (const phone in phoneBook) {
