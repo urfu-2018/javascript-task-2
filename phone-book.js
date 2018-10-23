@@ -74,14 +74,18 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let removedNotes = find(query);
-    for (let i = 0; i < removedNotes.length; i++) {
-        phoneBook.splice(phoneBook.indexOf(removedNotes[i]), 1);
+    if (!isString(query) || query.length === 0) {
+        return 0;
     }
+    let removedNotes = getNotesFromPhoneBookByQuery(query);
+    removedNotes.forEach(deleteNote);
 
     return removedNotes.length;
 }
 
+function deleteNote(note) {
+    phoneBook.splice(phoneBook.indexOf(note), 1);
+}
 
 /**
  * Поиск записей по запросу в телефонной книге
@@ -101,7 +105,7 @@ function find(query) {
 
 function getNotesFromPhoneBookByQuery(query) {
     if (query === '*') {
-        return phoneBook;
+        return phoneBook.slice(0);
     }
 
     return phoneBook.filter(note => noteHasQuery(note, query));
