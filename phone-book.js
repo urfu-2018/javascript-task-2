@@ -49,7 +49,8 @@ function checkPhone(phone) {
 function add(phone, name, email) {
     const isEntryInPhoneBook = phoneBook
         .some(e => e.phone === phone);
-    if (!(typeof name === 'string' && checkPhone(phone)) || isEntryInPhoneBook) {
+    if (!((typeof name === 'string') && checkPhone(phone) &&
+        (name.length > 0)) || isEntryInPhoneBook) {
         return false;
     }
     phoneBook.push(new Contact(phone, name, email));
@@ -67,7 +68,8 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const found = phoneBook
         .filter(e => e.phone === phone);
-    if (!checkPhone(phone) || found.length === 0 || !(typeof name === 'string')) {
+    if (!checkPhone(phone) || (found.length === 0) ||
+        !((typeof name === 'string') && name.length > 0)) {
         return false;
     }
     found.forEach(e => {
@@ -99,7 +101,7 @@ function search(query) {
     if (query === '*') {
         return phoneBook;
     }
-    if (!(typeof query === 'string') || query.length === 0) {
+    if (!(typeof query === 'string') || (query.length === 0)) {
         return [];
     }
 
@@ -131,11 +133,7 @@ function importFromCsv(csv) {
     contacts.forEach(e => fields.push(e.split(';')));
     let count = 0;
     fields.forEach(e => {
-        if (!update(e[1], e[0], e[2])) {
-            if (add(e[1], e[0], e[2])) {
-                count += 1;
-            }
-        } else {
+        if (update(e[1], e[0], e[2]) || add(e[1], e[0], e[2])) {
             count += 1;
         }
     });
