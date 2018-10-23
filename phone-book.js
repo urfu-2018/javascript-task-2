@@ -111,6 +111,10 @@ function getNicePhone(phone) {
     return `+7 (${part1}) ${part2}-${part3}-${part4}`;
 }
 function findByAllFields(records, query) {
+    if (query === undefined || query === '') {
+        return [];
+    }
+
     return records.filter(record => {
         return record.name.includes(query) ||
             record.phone.includes(query) ||
