@@ -126,10 +126,10 @@ function findAndRemove(query) {
         if (entryContainsQuery(element, query)) {
             removedCount++;
 
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     });
 
     return removedCount;
