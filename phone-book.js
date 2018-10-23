@@ -18,14 +18,22 @@ let phoneBook;
  */
 function add(phone, name, email) {
     if (arguments.length === 2) {
-        phoneBook.push(phone + ';' + name);
+        phoneBook.push({
+            phone: phone,
+            name: name,
+            email: email
+        });
 
         return true;
     }
     if (phone.length !== 10 && arguments.length !== 3) {
         return false;
     }
-    phoneBook.push(phone + ';' + name + ';' + email);
+    phoneBook.push({
+        phone: phone,
+        name: name,
+        email: email
+    });
 
     return true;
 }
