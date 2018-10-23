@@ -55,7 +55,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return query === '' ? [] : Object.keys(phoneBook)
+    return query === '' ? 0 : Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .filter((item)=>delete(phoneBook[item]))
