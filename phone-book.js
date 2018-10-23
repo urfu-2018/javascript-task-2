@@ -9,13 +9,12 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
 
 function checkArgs(phone, name, email) {
-    if (email !== undefined && typeof(email) !== 'string' ||
-        [phone, name].some(e=>typeof(e) !== 'string')) {
-        throw new TypeError('');
-    }
+    return !(email !== undefined && typeof(email) !== 'string' ||
+        typeof(name) !== 'string' ||
+        typeof(phone) !== 'string' || !(/^[0-9]{10}$/.test(phone)));
 }
 
 /**
@@ -26,15 +25,7 @@ function checkArgs(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (name === undefined) {
-        return false;
-    }
-    checkArgs(phone, name, email);
-    if (!(/^[0-9]{10}$/.test(phone))) {
-        return false;
-    } else if (phoneBook === undefined) {
-        phoneBook = {};
-    } else if (phoneBook[phone]) {
+    if (!checkArgs(phone, name, email) || phoneBook[phone]) {
         return false;
     }
     phoneBook[phone] = { 'name': name, 'email': email };
@@ -50,13 +41,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (name === undefined) {
-        return false;
-    }
-    checkArgs(phone, name, email);
-    if (phoneBook === undefined) {
-        phoneBook = {};
-    } else if (!(/[0-9]{10}/.test(phone)) || phoneBook[phone] === undefined) {
+    if (!checkArgs(phone, name, email) || phoneBook[phone] === undefined) {
         return false;
     }
     phoneBook[phone] = { 'name': name, 'email': email };
@@ -70,21 +55,11 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let allRecords;
-    if (typeof(query) !== 'string') {
-        throw new TypeError('');
-    }
-    let searchStr = /.?/;
-    if (query !== '*') {
-        searchStr = new RegExp(query);
-    }
-    allRecords = Object.keys(phoneBook)
+    return query === '' ? [] : Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
-            .some((rec)=>searchStr.test(rec)));
-    allRecords
-        .forEach((item)=>delete(phoneBook[item]));
-
-    return allRecords.length;
+            .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
+        .filter((item)=>delete(phoneBook[item]))
+        .length;
 }
 
 /**
@@ -99,21 +74,10 @@ function find(query) {
             .slice(3, 6)}-${phone
             .slice(6, 8)}-${phone
             .slice(8, 10)}`;
-    let allRecords;
-    if (typeof(query) !== 'string') {
-        throw new TypeError('');
-    }
-    let searchStr = /.?/;
-    if (query === '') {
-        return [];
-    } else if (query !== '*') {
-        searchStr = new RegExp(query);
-    }
-    allRecords = Object.keys(phoneBook)
-        .filter((record)=>[record].concat(Object.values(phoneBook[record]))
-            .some((rec)=>searchStr.test(rec)));
 
-    return allRecords
+    return query === '' ? [] : Object.keys(phoneBook)
+        .filter((record)=>[record].concat(Object.values(phoneBook[record]))
+            .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
         .map((record)=>[phoneBook[record].name, formatPhone(record), phoneBook[record].email]
             .reduce((a, b)=>b === undefined ? `${a}` : `${a}, ${b}`));
