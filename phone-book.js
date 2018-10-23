@@ -36,7 +36,7 @@ const sortNamesLexicographical = (l, r) => {
 };
 
 function checkPhone(phone) {
-    return typeof phone === 'string' && /^\d{10}$/.test(phone);
+    return (typeof phone === 'string') && /^\d{10}$/.test(phone);
 }
 
 /**
@@ -73,8 +73,8 @@ function update(phone, name, email) {
         return false;
     }
     found.forEach(e => {
-        e.email = email;
-        e.name = name;
+        e.email = (email.length === 0) ? undefined : email;
+        e.name = (name.length === 0) ? e.name : name;
     });
 
     return true;
