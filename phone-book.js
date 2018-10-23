@@ -12,7 +12,7 @@ const isStar = true;
 const phoneBook = new Map();
 
 function isValidContact(param) {
-    return param && typeof(param) === 'string' && param !== '';
+    return param && typeof(param) === 'string';
 }
 
 function isValidPhone(phone) {
@@ -44,7 +44,7 @@ function add(phone, name, email) {
     }
     phoneBook.set(phone, {
         name,
-        email: isValidContact(email) ? email : ''
+        email: email ? email : ''
     });
 
     return true;
@@ -64,7 +64,7 @@ function update(phone, name, email) {
 
     phoneBook.set(phone, {
         name,
-        email: isValidContact(email) ? email : ''
+        email: email ? email : ''
     });
 
     return true;
@@ -76,6 +76,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!isValidContact(query)) {
+        return 0;
+    }
     let wereDeleted = 0;
 
     phoneBook.forEach((contacts, phone) => {
@@ -133,7 +136,6 @@ function importFromCsv(csv) {
         const name = splitedLine[0];
         const phone = splitedLine[1];
         const email = splitedLine[2];
-
         countUpdatedOrAdded += add(phone, name, email) || update(phone, name, email);
     });
 
