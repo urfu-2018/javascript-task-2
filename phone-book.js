@@ -62,26 +62,26 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (queryChecking(query)) {
+        return 0;
+    }
     if (query === '*') {
         query = '';
     }
-    let res = 0;
     let iterator = phoneBook.keys();
     let size = phoneBook.size;
     for (let i = 0; i < size; i++) {
         let phone = iterator.next().value.toString();
-        let name = phoneBook.get(phone)[0].toString();
         let email = '';
         if (phoneBook.get(phone)[1] !== undefined) {
             email = phoneBook.get(phone)[1].toString();
         }
-        if (isInclude([phone, name, email], query)) {
+        if (isInclude([phone, phoneBook.get(phone)[0].toString(), email], query)) {
             phoneBook.delete(phone);
-            res ++;
         }
     }
 
-    return res;
+    return size - phoneBook.size;
 }
 
 /**
@@ -90,6 +90,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (queryChecking(query)) {
+        return [];
+    }
     if (query === '*') {
         query = '';
     }
@@ -180,6 +183,11 @@ function checking(phone, name) {
 
     return ((typeof phone && typeof name) === 'string' && name.length !== 0 && (typeof phone &&
         typeof name) !== undefined && phoneRegexp.test(phone));
+}
+
+function queryChecking(query) {
+
+    return query === '' || query === undefined;
 }
 
 module.exports = {
