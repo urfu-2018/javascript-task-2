@@ -48,8 +48,8 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!((typeof name === 'string') &&
-        (name.length > 0) && checkPhone(phone))) {
+    if (!(typeof name === 'string') ||
+        (name.length === 0) || !checkPhone(phone)) {
         return false;
     }
     if (phoneBook.some(e => e.phone === phone)) {
@@ -68,7 +68,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhone(phone)) {
+    if (!checkPhone(phone) || !(typeof name === 'string') || name.length === 0) {
         return false;
     }
     const found = phoneBook.filter(e => e.phone === phone);
@@ -81,9 +81,7 @@ function update(phone, name, email) {
         } else {
             e.email = email;
         }
-        if ((typeof name === 'string') && name.length > 0) {
-            e.name = name;
-        }
+        e.name = name;
     });
 
     return true;
@@ -95,7 +93,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!((typeof query === 'string') && query.length > 0)) {
+    if (!(typeof query === 'string') || query.length === 0) {
         return 0;
     }
     const found = search(query);
@@ -127,7 +125,7 @@ function search(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!((typeof query === 'string') && query.length > 0)) {
+    if (!(typeof query === 'string') || query.length === 0) {
         return [];
     }
 
@@ -143,7 +141,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!(typeof csv === 'string' && csv.length > 0)) {
+    if (!(typeof csv === 'string') || csv.length === 0) {
         return 0;
     }
     const contacts = csv.split('\n');
