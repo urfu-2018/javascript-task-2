@@ -39,7 +39,7 @@ function checkQuery(query) {
 }
 
 function justAdd(phone, name, email) {
-    if (email === undefined) {
+    if (email === undefined || email === ' ') {
         phoneBook.set(phone, [name]);
     } else {
         phoneBook.set(phone, [name, email]);
