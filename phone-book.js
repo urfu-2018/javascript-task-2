@@ -12,7 +12,7 @@ const isStar = true;
 const phoneBook = new Map();
 
 function isValidContact(param) {
-    return param && typeof(param) === 'string';
+    return param && typeof(param) === 'string' && param !== '';
 }
 
 function isValidPhone(phone) {
