@@ -54,8 +54,8 @@ function update(phone, name, email) {
     return false;
 }
 
-function filterBook(query) {
-    return x => query !== '' && (query === '*' || x.phone.includes(query) ||
+function filterBook(x, query) {
+    return query !== '' && (query === '*' || x.phone.includes(query) ||
         x.name.includes(query) ||
         x.email !== undefined && x.email.includes(query));
 }
@@ -66,12 +66,15 @@ function filterBook(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const result = phoneBook.filter(filterBook(query)).map((x, i) => i);
+    let startCount = phoneBook.length;
+    const result = phoneBook.map((x, i) => {
+        return { line: x, index: i };
+    }).filter(x=>filterBook(x.line, query));
     for (let i = 0; i < result.length; i++) {
-        phoneBook.splice(i, 1);
+        phoneBook.splice(result[i].index - i, 1);
     }
 
-    return result.length;
+    return startCount - phoneBook.length;
 }
 
 /**
@@ -80,7 +83,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const result = phoneBook.filter(filterBook(query))
+    const result = phoneBook.filter(x=>filterBook(x, query))
         .map(x => {
             const phone = `+7 (${x.phone.slice(0, 3)}) ${x.phone.slice(3, 6)}-` +
                 `${x.phone.slice(6, 8)}-${x.phone.slice(8, 10)}`;
