@@ -113,6 +113,10 @@ function getCorrectPhone(phone) {
 }
 
 function findByAllFields(entries, query) {
+    if (query === undefined || query === '') {
+        return [];
+    }
+
     return entries.filter(entry => {
         return entry.name.includes(query) ||
             entry.phone.includes(query) ||
