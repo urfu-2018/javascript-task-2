@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,8 +18,22 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function phoneValidation(phone) {
+    return /^\d{10}$/.test(phone);
+}
 
+function checkDoubles(personPhone) {
+    return phoneBook.findIndex(({ phone }) => phone === personPhone);
+}
+
+function add(phone, name, email) {
+    if (phoneValidation(phone) && !(checkDoubles(phone) + 1) && name) {
+        phoneBook.push({ phone, name, email: email || '' });
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -30,7 +44,15 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    const index = checkDoubles(phone);
 
+    if (index !== -1 && name) {
+        phoneBook[index] = { phone, name, email: email || '' };
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -39,7 +61,30 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    const initialLength = phoneBook.length;
 
+    if (query === '*') {
+        phoneBook.splice(0);
+
+        return initialLength;
+    }
+    if (query !== undefined && query !== '') {
+        phoneBook = phoneBook.filter(({ name, phone, email }) => !(
+            name.search(query) + 1 ||
+            phone.search(query) + 1 ||
+            email.search(query) + 1));
+
+        return initialLength - phoneBook.length;
+    }
+}
+
+function transformItem(item) {
+    const { phone, name, email } = item;
+
+    return `${name}, ` +
+        `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
+        `${phone.slice(6, 8)}-${phone.slice(8, 10)}` +
+        `${email ? ', ' + email : ''}`;
 }
 
 /**
@@ -48,7 +93,20 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    const clonePhoneBook = phoneBook.slice(0);
 
+    if (query === '*') {
+        return clonePhoneBook.map(person => transformItem(person)).sort();
+    }
+    if (query !== undefined || query !== '') {
+        return clonePhoneBook
+            .filter(({ name, phone, email }) =>
+                name.search(query) + 1 ||
+                phone.search(query) + 1 ||
+                email.search(query) + 1)
+            .map(person => transformItem(person))
+            .sort();
+    }
 }
 
 /**
@@ -58,11 +116,23 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    let counter = 0;
+    const formattedCSVData = csv.split('\n')
+        .map(person => {
+            const [name, phone, email] = person.split(';');
 
-    return csv.split('\n').length;
+            return { phone, name, email };
+        });
+
+    formattedCSVData.forEach(({ phone, name, email }) => {
+        if (add(phone, name, email)) {
+            counter += 1;
+        } else if (update(phone, name, email)) {
+            counter += 1;
+        }
+    });
+
+    return counter;
 }
 
 module.exports = {
