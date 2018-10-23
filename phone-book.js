@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -25,12 +25,8 @@ function checkArgs(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name = '', email = '') {
-    if (!checkArgs(phone, name, email) || phone in phoneBook) {
-        return false;
-    }
-    phoneBook[phone] = { name, email };
-
-    return true;
+    return !(!checkArgs(phone, name, email) || phone in phoneBook ||
+        !(phoneBook[phone] = { name, email }));
 }
 
 /**
@@ -41,12 +37,8 @@ function add(phone, name = '', email = '') {
  * @returns {Boolean}
  */
 function update(phone, name = '', email = '') {
-    if (!checkArgs(phone, name, email) || !(phone in phoneBook)) {
-        return false;
-    }
-    phoneBook[phone] = { name, email };
-
-    return true;
+    return !(!checkArgs(phone, name, email) || !(phone in phoneBook) ||
+        !(phoneBook[phone] = { name, email }));
 }
 
 /**
