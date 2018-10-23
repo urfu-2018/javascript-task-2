@@ -49,9 +49,12 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!query) {
+        return 0;
+    }
     const initialPhoneBookLen = phoneBook.size;
     phoneBook.forEach(({ name, email }, key) => {
-        if (key.includes(query) || name.includes(query) || email && email.includes(query)) {
+        if (key.includes(query) || name.includes(query) || (email && email.includes(query))) {
             phoneBook.delete(key);
         }
     });
@@ -65,10 +68,12 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (!query) {
+        return [];
+    }
     const result = [];
     phoneBook.forEach(({ name, email }, key) => {
-        if (query === '*' || key.includes(query) || name.includes(query) ||
-            email.includes(query)) {
+        if (query === '*' || key.includes(query) || name.includes(query) || email.includes(query)) {
             const phone =
                 `+7 (${key.substr(0, 3)}) ${key.substr(3, 3)}-` +
                 `${key.substr(6, 2)}-${key.substr(8, 2)}`;
