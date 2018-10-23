@@ -12,6 +12,28 @@ const isStar = true;
 let phoneBook = {};
 
 /**
+ * Проводит необходимые для add и update проверки.
+ * @param {String} phone
+ * @param {String} name
+ * @param {String} email
+ * @returns {boolean}
+ */
+function dataChecks(phone, name, email) {
+    return !(!(notEmptyString(phone) && /^\d{10}$/.test(phone)) ||
+        !(notEmptyString(name)) ||
+        !(email === undefined || notEmptyString(email)));
+}
+
+/**
+ * Проверяет, является ли аргумент не пустой строкой.
+ * @param {Object} str
+ * @returns {Boolean}
+ */
+function notEmptyString(str) {
+    return typeof str === 'string' && str.length > 0;
+}
+
+/**
  * Добавление записи в телефонную книгу
  * @param {String} phone
  * @param {String?} name
@@ -19,15 +41,12 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook[phone] !== undefined) {
+    if (!dataChecks(phone, name, email) || phoneBook[phone] !== undefined) {
         return false;
     }
+    phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
 
-    return update(phone, name, email);
-}
-
-function notEmptyString(str) {
-    return typeof str === 'string' && str.length > 0;
+    return true;
 }
 
 /**
@@ -38,12 +57,9 @@ function notEmptyString(str) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(notEmptyString(phone) && /^\d{10}$/.test(phone)) ||
-        !(notEmptyString(name)) ||
-        !(email === undefined || notEmptyString(email))) {
+    if (!dataChecks(phone, name, email) || phoneBook[phone] === undefined) {
         return false;
     }
-
     phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
 
     return true;
@@ -84,7 +100,7 @@ function findAndRemove(query) {
 
     let count = 0;
     for (let [phone, info] of Object.entries(phoneBook)) {
-        info.push(phone);
+        info.push(phone); // Вынести в промежуточный результат?
         if (arrayIncludes(info, query)) {
             delete phoneBook.phone;
             count++;
@@ -115,7 +131,7 @@ function find(query) {
             `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
 
         let resultingString = info[0] + ', ' + formattedPhone;
-        if (info[1] !== undefined) {
+        if (info[1] !== undefined) { // Если почта существует, добавляем ее.
             resultingString += ', ' + info[1];
         }
         if (arrayIncludes(info, query)) {
