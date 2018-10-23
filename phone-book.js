@@ -19,6 +19,14 @@ function isString(phone, name, email) {
     return true;
 }
 
+function isCorrectedName(name) {
+    if (!isUndefined(name) && name.length !== 0) {
+        return true;
+    }
+
+    return false;
+}
+
 function isUndefined(field) {
     if (field !== undefined) {
         return false;
@@ -38,10 +46,7 @@ function add(phone, name, email) {
     if (isUndefined(email)) {
         email = '';
     }
-    if (!isString(phone, name, email)) {
-        return false;
-    }
-    if (!isUndefined(phoneBook[phone]) || isUndefined(name)) {
+    if (!isString(phone, name, email) || !isUndefined(phoneBook[phone]) || !isCorrectedName(name)) {
         return false;
     }
     if (/^[0-9]{10}$/.test(phone)) {
@@ -64,10 +69,7 @@ function update(phone, name, email) {
     if (isUndefined(email)) {
         email = '';
     }
-    if (!isString(phone, name, email)) {
-        return false;
-    }
-    if (isUndefined(phoneBook[phone]) || isUndefined(name)) {
+    if (!isString(phone, name, email) || isUndefined(phoneBook[phone]) || !isCorrectedName(name)) {
         return false;
     }
     if (!/^[0-9]{10}$/.test(phone)) {
