@@ -104,7 +104,9 @@ function find(query) {
         throw new TypeError('');
     }
     let searchStr = /.?/;
-    if (query !== '*') {
+    if (query === '') {
+        return [];
+    } else if (query !== '*') {
         searchStr = new RegExp(query);
     }
     allRecords = Object.keys(phoneBook)
