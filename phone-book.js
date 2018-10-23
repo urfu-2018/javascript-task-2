@@ -12,6 +12,15 @@ const isStar = true;
 let phoneBook = {};
 
 /**
+ * Проверяет, является ли аргумент не пустой строкой.
+ * @param {Object} str
+ * @returns {Boolean}
+ */
+function notEmptyString(str) {
+    return typeof str === 'string' && str.length > 0;
+}
+
+/**
  * Проводит необходимые для add и update проверки.
  * @param {String} phone
  * @param {String} name
@@ -25,15 +34,6 @@ function dataChecks(phone, name, email) {
 }
 
 /**
- * Проверяет, является ли аргумент не пустой строкой.
- * @param {Object} str
- * @returns {Boolean}
- */
-function notEmptyString(str) {
-    return typeof str === 'string' && str.length > 0;
-}
-
-/**
  * Добавление записи в телефонную книгу
  * @param {String} phone
  * @param {String?} name
@@ -41,15 +41,11 @@ function notEmptyString(str) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!dataChecks(phone, name, email) || find(phone).length > 0) {
+    if (find(phone).length > 0) {
         return false;
     }
-    phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
 
-    // 5551110011: { name: 'Алексей', email: 'noreplay@gmail.com' }
-    // phoneBook[phone] = { name: name, email: email };
-
-    return true;
+    return update(phone, name, email);
 }
 
 /**
@@ -64,6 +60,9 @@ function update(phone, name, email) {
         return false;
     }
     phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
+
+    // 5551110011: { name: 'Алексей', email: 'noreplay@gmail.com' }
+    // phoneBook[phone] = { name: name, email: email };
 
     return true;
 }
