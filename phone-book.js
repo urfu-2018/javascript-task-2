@@ -53,8 +53,7 @@ function update(phone, name, email) {
     name = getEmptyIfNotString(name);
     email = getEmptyIfNotString(email);
     if (phoneBook[phone] !== undefined &&
-        name !== '' &&
-        email !== '') {
+        name !== '') {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -103,7 +102,7 @@ function isFind(phone, query) {
 function find(query) {
     const arrFindPhones = [];
     if (typeof query !== 'string' && query === '') {
-        return;
+        return [];
     }
     for (const phone in phoneBook) {
         if (query === '*') {
