@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+const phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -70,7 +70,7 @@ function tryAddOrUpdate(phone, name, email) {
  */
 function findAndRemove(query) {
     const removingValues = findRecordsByQuery(query)
-        .map(x => x.phone);
+        .map(record => record.phone);
     removingValues.forEach(phone => delete phoneBook[phone]);
 
     return removingValues.length;
@@ -83,16 +83,18 @@ function findAndRemove(query) {
  */
 function find(query) {
     return findRecordsByQuery(query)
-        .map(x => x.stringValue);
+        .map(asStringValue);
 }
 
 function formatPhone(phone) {
-    const p1 = phone.slice(0, 3);
-    const p2 = phone.slice(3, 6);
-    const p3 = phone.slice(6, 8);
-    const p4 = phone.slice(8, 10);
+    const phoneSegments = [
+        phone.slice(0, 3),
+        phone.slice(3, 6),
+        phone.slice(6, 8),
+        phone.slice(8, 10)
+    ];
 
-    return `+7 (${p1}) ${p2}-${p3}-${p4}`;
+    return `+7 (${phoneSegments[0]}) ${phoneSegments[1]}-${phoneSegments[2]}-${phoneSegments[3]}`;
 }
 
 function findRecordsByQuery(query) {
@@ -101,9 +103,8 @@ function findRecordsByQuery(query) {
     }
 
     return Object.values(phoneBook)
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .filter(x => checkIfMatchQuery(x, query))
-        .map(toPhoneAndStringValue);
+        .sort((record1, record2) => record1.name.localeCompare(record2.name))
+        .filter(entity => checkIfMatchQuery(entity, query));
 }
 
 function checkIfMatchQuery(entity, query) {
@@ -112,19 +113,16 @@ function checkIfMatchQuery(entity, query) {
     }
 
     return Object.values(entity)
-        .filter(x => x !== undefined)
-        .some(x => x.includes(query));
+        .some(field => field && field.includes(query));
 }
 
-function toPhoneAndStringValue(phoneRecord) {
+function asStringValue(phoneRecord) {
     const phone = formatPhone(phoneRecord.phone);
-    const name = phoneRecord.name;
-    const email = phoneRecord.email;
-    const stringValue = [name, phone, email]
-        .filter(x => x !== undefined)
-        .join(', ');
+    const { name, email } = phoneRecord;
 
-    return { phone: phoneRecord.phone, stringValue };
+    return [name, phone, email]
+        .filter(field => field !== undefined)
+        .join(', ');
 }
 
 /**
@@ -135,9 +133,9 @@ function toPhoneAndStringValue(phoneRecord) {
  */
 function importFromCsv(csv) {
     return csv.split('\n')
-        .map(x => x.split(';'))
-        .reduce((accumulator, x) => {
-            const [name, phone, email] = x;
+        .map(string => string.split(';'))
+        .reduce((accumulator, fields) => {
+            const [name, phone, email] = fields;
 
             return tryAddOrUpdate(phone, name, email)
                 ? accumulator + 1
