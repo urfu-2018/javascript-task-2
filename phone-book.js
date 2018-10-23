@@ -11,28 +11,28 @@ const isStar = true;
  */
 let phoneBook = [];
 
-function isString(phone, name, email) {
-    if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
-        return false;
-    }
-
-    return true;
-}
-
-function isCorrectedName(name) {
-    if (!isUndefined(name) && name.length !== 0) {
+function isString(field) {
+    if (typeof field === 'string') {
         return true;
     }
 
     return false;
 }
 
-function isUndefined(field) {
-    if (field !== undefined) {
-        return false;
+function isCorrectedPhone(phone) {
+    if (isString(phone) && /^[0-9]{10}$/.test(phone)) {
+        return true;
     }
 
-    return true;
+    return false;
+}
+
+function isCorrectedName(name) {
+    if (isString(name) && name !== '') {
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -42,20 +42,18 @@ function isUndefined(field) {
  * @param {String?} email
  * @returns {Boolean}
  */
+// Можно ли так проверять на undefined?
 function add(phone, name, email) {
-    if (isUndefined(email)) {
-        email = '';
-    }
-    if (!isString(phone, name, email) || !isUndefined(phoneBook[phone]) || !isCorrectedName(name)) {
+    if (!isCorrectedName(name) || !isCorrectedPhone(phone) || phoneBook[phone] !== undefined ||
+    arguments.length === 1) {
         return false;
     }
-    if (/^[0-9]{10}$/.test(phone)) {
-        phoneBook[phone] = [name, email];
-
-        return true;
+    if (arguments.length === 2) {
+        email = '';
     }
+    phoneBook[phone] = [name, email];
 
-    return false;
+    return true;
 }
 
 /**
@@ -66,16 +64,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isUndefined(email)) {
+    if (!isCorrectedName(name) || !isCorrectedPhone(phone) || phoneBook[phone] === undefined ||
+    arguments.length === 1) {
+        return false;
+    }
+    if (arguments.length === 2) {
         email = '';
     }
-    if (!isString(phone, name, email) || isUndefined(phoneBook[phone]) || !isCorrectedName(name)) {
-        return false;
-    }
-    if (!/^[0-9]{10}$/.test(phone)) {
-        return false;
-    }
-
     phoneBook[phone] = [name, email];
 
     return true;
