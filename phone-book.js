@@ -19,6 +19,7 @@ let phoneBook;
 function add(phone, name, email) {
     if (arguments.length === 2) {
         phoneBook.push(phone + ';' + name);
+        
         return true;
     }
     if (phone.length !== 10 && arguments.length !== 3) {
@@ -38,12 +39,14 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     phoneBook.forEach(element => {
-        if (phoneBook[element].substring(0,10) === phone && name !== null) {
+        if (phoneBook[element].substring(0, 10) === phone && name !== null) {
             element = phone + ';' + name + ';' + email;
+            
             return true;
         }
+        
         return false;
-        }
+    }
     );
     
     return false;
@@ -58,11 +61,10 @@ function findAndRemove(query) {
     let count = 0;
     phoneBook.forEach(element => {
         if (element.indexOf(query) !== -1) {
-            phoneBook.splice(phoneBook.indexOf(element), 1);
-            count++;
-        }
+        phoneBook.splice(phoneBook.indexOf(element), 1);
+        count++;
+    }
     });
-    
     
     return count;
 }
