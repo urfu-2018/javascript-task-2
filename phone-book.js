@@ -126,7 +126,7 @@ function update(phone, name = '', email = '') {
 function findAndRemove(query) {
     const entries = search(query);
     entries.forEach(entry => {
-        const phone = entry[1];
+        const phone = entry[0];
         phoneBook.delete(phone);
     });
 
@@ -139,9 +139,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const goodEntries = search(query);
+    const entries = search(query);
 
-    return goodEntries.sort((firstPair, secondPair) => {
+    return entries.sort((firstPair, secondPair) => {
         const firstName = firstPair[1].name;
         const secondName = secondPair[1].name;
 
