@@ -11,7 +11,7 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = [];
-let phoneTest = /^\d{10}$/;
+const phoneTest = /^\d{10}$/;
 
 /**
  * Добавление записи в телефонную книгу
@@ -67,7 +67,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    let necessaryContact = findPhone(phone);
+    const necessaryContact = findPhone(phone);
     if (!validDate(phone, name) || necessaryContact === -1) {
 
         return false;
@@ -101,7 +101,7 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    let countContact = phoneBook.length;
+    const countContact = phoneBook.length;
     let processed;
     if (query === '*') {
         phoneBook = [];
@@ -139,7 +139,8 @@ function find(query) {
 
         return name1 < name2 ? -1 : 0;
     }).map(function (contact) {
-        let formattedPhone = contact.phone.replace(/(.{3})(.{3})(.{2})(.{2})/, '+7 ($1) $2-$3-$4');
+        const formattedPhone = contact.phone.replace(/(.{3})(.{3})(.{2})(.{2})/,
+            '+7 ($1) $2-$3-$4');
         let result = contact.name + ', ' + formattedPhone;
         if (contact.email) {
             result += ', ' + contact.email;
@@ -160,10 +161,10 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    let entries = csv.split('\n');
+    const entries = csv.split('\n');
     let counter = 0;
     for (let entry of entries) {
-        let contact = entry.split(';');
+        const contact = entry.split(';');
         const name = contact[0];
         const phone = contact[1];
         const email = contact[2];
