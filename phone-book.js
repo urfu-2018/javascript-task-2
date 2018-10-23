@@ -41,10 +41,14 @@ function notEmptyString(str) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!dataChecks(phone, name, email) || find(phone).length > 0) {
+    if (!dataChecks(phone, name, email)) {
         return false;
     }
+
     phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
+
+    // 5551110011: { name: 'Алексей', email: 'noreplay@gmail.com' }
+    // phoneBook[phone] = { name: name, email: email };
 
     return true;
 }
