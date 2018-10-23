@@ -4,12 +4,22 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
+
+function createRecord(name, email) {
+    let record = {};
+    record.name = name;
+    record.email = email;
+
+    return record;
+}
+
+var regexGoodPhone = /^\d{10}$/;
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +29,12 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!name || phoneBook[phone] || !regexGoodPhone.test(phone)) {
+        return false;
+    }
+    phoneBook[phone] = createRecord(name, email);
 
+    return true;
 }
 
 /**
@@ -30,7 +45,16 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!phoneBook[phone]) {
+        return false;
+    }
+    if (!name) {
+        phoneBook[phone] = createRecord(phoneBook[phone].name, email);
+    } else {
+        phoneBook[phone] = createRecord(name, email);
+    }
 
+    return true;
 }
 
 /**
@@ -39,7 +63,70 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (query === '*') {
+        let keys = Object.keys(phoneBook);
+        phoneBook = {};
 
+        return keys.length;
+    }
+
+    var result = findByAllFields(takeAllRecords(), query);
+
+    result.forEach(x => {
+        delete phoneBook[x.phone];
+    });
+
+    return result.length;
+}
+
+var compareRecord = function (a, b) {
+    return a.name > b.name;
+};
+
+function createFindResult(array) {
+    return array.sort(compareRecord).map(x => {
+        let nicePhone = getNicePhone(x.phone);
+
+        return x.email
+            ? `${x.name}, ${nicePhone}, ${x.email}`
+            : `${x.name}, ${nicePhone}`;
+    });
+}
+
+function createFindRecord(phone, name, email) {
+    let record = {};
+    record.name = name;
+    record.email = email;
+    record.phone = phone;
+
+    return record;
+}
+
+function getNicePhone(phone) {
+    var part1 = phone.substring(0, 3);
+    var part2 = phone.substring(3, 6);
+    var part3 = phone.substring(6, 8);
+    var part4 = phone.substring(8, 10);
+
+    return `+7 (${part1}) ${part2}-${part3}-${part4}`;
+}
+function findByAllFields(records, query) {
+    return records.filter(record => {
+        return record.name.includes(query) ||
+            record.phone.includes(query) ||
+            (record.email && record.email.includes(query));
+    });
+}
+
+function takeAllRecords() {
+    var records = [];
+    let keys = Object.keys(phoneBook);
+    for (let i = 0; i < keys.length; i++) {
+        let value = phoneBook[keys[i]];
+        records.push(createFindRecord(keys[i], value.name, value.email));
+    }
+
+    return records;
 }
 
 /**
@@ -48,7 +135,13 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    var records = takeAllRecords();
 
+    if (query === '*') {
+        return createFindResult(records);
+    }
+
+    return createFindResult(findByAllFields(records, query));
 }
 
 /**
