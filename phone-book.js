@@ -57,10 +57,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!dataChecks(phone, name, email) || phoneBook[phone] === undefined) {
+    if (!dataChecks(phone, name, email)) {
         return false;
     }
-    phoneBook[phone] = [name, email]; // { 5551110011: ['Алексей', 'noreply@gmail.com'] }
+
+    phoneBook[phone] = [name, email];
 
     return true;
 }
