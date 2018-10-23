@@ -99,7 +99,7 @@ function findAndRemove(query) {
 
 function search(query) {
     if (query === '*') {
-        return new Array(phoneBook);
+        return phoneBook.slice();
     }
     if (!(typeof query === 'string') || (query.length === 0)) {
         return [];
