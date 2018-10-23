@@ -45,6 +45,7 @@ function getUsers(query) {
  */
 function add(phone, name, email) {
     const hasName = typeof name !== 'undefined' && name !== '';
+    email = email === '' ? undefined : email;
     if (isPhoneValid(phone) && hasName && !phoneBook.has(phone)) {
         phoneBook.set(phone, { name: name, email: email });
 
@@ -63,10 +64,10 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     const person = phoneBook.get(phone);
-    if (typeof person === 'undefined') {
+    if (typeof person === 'undefined' || typeof name === 'undefined') {
         return false;
     }
-    person.name = (typeof name === 'undefined') || (name === '') ? person.name : name;
+    person.name = (name === '') ? person.name : name;
     person.email = email === '' ? undefined : email;
 
     return true;
