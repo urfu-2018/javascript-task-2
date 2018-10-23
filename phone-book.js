@@ -44,8 +44,11 @@ function update(phone, name, email) {
         return false;
     }
     if (phoneBook.get(phone) !== undefined) {
-        phoneBook.set(phone, [name, email]);
-        phoneBook = mapSort(phoneBook);
+        if (email === undefined || email.length === 0) {
+            phoneBook.set(phone, [name, undefined]);
+        } else {
+            phoneBook.set(phone, [name, email]);
+        }
 
         return true;
     }
