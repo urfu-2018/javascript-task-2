@@ -162,18 +162,18 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
 
     const entries = csv.split('\n');
-    let counter = 0;
+    let count = null;
     for (let entry of entries) {
         const contact = entry.split(';');
         const name = contact[0];
         const phone = contact[1];
         const email = contact[2];
         if (add(phone, name, email) || update(phone, name, email)) {
-            counter ++;
+            count ++;
         }
     }
 
-    return counter;
+    return count;
 }
 
 module.exports = {
