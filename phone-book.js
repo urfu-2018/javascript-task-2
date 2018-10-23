@@ -148,10 +148,6 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!notEmptyString(csv) || csv === undefined) {
-        return 0;
-    }
-
     const elements = csv.split('\n');
     const parsed = [];
     for (let i of elements) {
