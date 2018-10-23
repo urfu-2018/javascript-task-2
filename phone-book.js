@@ -68,18 +68,14 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let formatPhone = (phone)=>
-        `+7 (${phone
-            .slice(0, 3)}) ${phone
-            .slice(3, 6)}-${phone
-            .slice(6, 8)}-${phone
-            .slice(8, 10)}`;
-
     return !query ? [] : Object.keys(phoneBook)
         .filter((record)=>[record].concat(Object.values(phoneBook[record]))
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
         .sort((a, b)=>phoneBook[a].name >= phoneBook[b].name ? 1 : -1)
-        .map((record)=>[phoneBook[record].name, formatPhone(record), phoneBook[record].email]
+        .map((rec)=>[
+            phoneBook[rec].name,
+            `+7 (${rec.slice(0, 3)}) ${rec.slice(3, 6)}-${rec.slice(6, 8)}-${rec.slice(8, 10)}`,
+            phoneBook[rec].email]
             .reduce((a, b)=>b === undefined ? `${a}` : `${a}, ${b}`));
 }
 
