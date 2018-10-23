@@ -1,8 +1,6 @@
 'use strict';
 
 /**
- * Сделано задание на звездочку
- * Реализован метод importFromCsv
  */
 const isStar = true;
 
@@ -21,18 +19,15 @@ let phoneBook;
 function add(phone, name, email) {
     if (arguments.length === 2) {
         phoneBook.push(phone + ';' + name);
-        
         return true;
     }
     if (phone.length !== 10 && arguments.length !== 3) {
         return false;
     }
     phoneBook.push(phone + ';' + name + ';' + email);
-    
+
     return true;
 }
-
-
 
 /**
  * Обновление записи в телефонной книге
@@ -43,11 +38,12 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     this.forEach(element => {
-        if (this[element].substring(0,10) === phone && name !== null) {
-            element = phone + ';' + name + ';' + email;
-            return true;
+        //if (this[element].substring(0,10) === phone && name !== null) {
+        //    element = phone + ';' + name + ';' + email;
+        //    return true;
+        return false;
         }
-    });
+    );
     
     return false;
 }
@@ -60,10 +56,10 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     let count = 0;
     this.forEach(element => {
-        if (element.indexOf(query) !==-1){
-            this.splice(this.indexOf(element), 1);
-            count++;
-        }
+        //if (element.indexOf(query) !== -1) {
+        //    this.splice(this.indexOf(element), 1);
+        //    count++;
+        //}
     });
     this.sort();
     
@@ -80,16 +76,17 @@ function find(query) {
     if (query === '*') {
         return this;
     }
-    if (arguments.length === 0){
+    if (arguments.length === 0) {
         return;
     }
     if (arguments.length !== 0) {
         this.forEach(element => {
-            if(element.indexOf(query) !== -1) {
+            if (element.indexOf(query) !== -1) {
                 notes.push(element);
-            };
+            }
         });
         notes.sort();
+
         return notes;
     }
 }
