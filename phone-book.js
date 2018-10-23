@@ -136,5 +136,6 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
+
     isStar
 };
