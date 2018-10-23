@@ -45,7 +45,7 @@ function notEmptyString(str) {
 function dataChecks(phone, name, email) {
     return typeof phone === 'string' && /^\d{10}$/.test(phone) &&
         notEmptyString(name) &&
-        (email === undefined || notEmptyString(email));
+        (email === undefined || email.length > 0);
 }
 
 /**
@@ -64,17 +64,13 @@ function update(phone, name, email) {
     return true;
 }
 
-function queryChecks(query) {
-    return query === undefined || !notEmptyString(query);
-}
-
 /**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (queryChecks(query)) {
+    if (!notEmptyString(query)) {
         return 0;
     }
 
@@ -109,7 +105,7 @@ function arrayIncludes(arr, query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (queryChecks(query)) {
+    if (!notEmptyString(query)) {
         return [];
     }
 
