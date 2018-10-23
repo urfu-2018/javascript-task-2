@@ -50,9 +50,13 @@ function update(phone, name, email) {
     if (!name || !phoneBook[phone]) {
         return false;
     }
-    phoneBook[phone] = createEntry(name, email);
+    if (name !== undefined && name !== '') {
+        phoneBook[phone] = createEntry(name, email);
 
-    return true;
+        return true;
+    }
+
+    return false;
 }
 
 /**
