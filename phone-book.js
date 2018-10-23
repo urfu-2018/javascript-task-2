@@ -88,7 +88,12 @@ function showArr(arr) {
 }
 function filtArr(arr, searchParam) {
     return arr.filter(function (item) {
-        return item.indexOf(searchParam) !== -1 ;
+        let data = item.split(', ');
+        const whenOk = data[0].indexOf(searchParam) !== -1 ||
+        data[1].indexOf(searchParam) !== -1 ||
+        data[2].indexOf(searchParam) !== -1;
+
+        return whenOk;
     });
 
 }
@@ -114,12 +119,7 @@ function findAndRemove(query) {
 
         return 0;
     }
-    
-    if (query === ',') {
 
-        return 0;
-    }
-    
     if (query === '*') {
         var length = convertArrForSearch(phoneBook).length;
         phoneBook = {};
@@ -129,9 +129,12 @@ function findAndRemove(query) {
     let countOfDeletedItems = 0;
     let arr = convertArrForSearch(phoneBook);
     arr.forEach(function (item) {
-        if (item.indexOf(query) !== -1) {
+        let data = item.split(', ');
+        const ok = data[0].indexOf(query) !== -1 ||
+        data[1].indexOf(query) !== -1 ||
+        data[2].indexOf(query) !== -1;
+        if (ok) {
             countOfDeletedItems ++;
-            let data = item.split(', ');
             let phone = data[1];
             delete phoneBook[phone];
         }
@@ -150,10 +153,7 @@ function find(query) {
 
         return [];
     }
-    if (query === ',') {
 
-        return [];
-    }
     if (query === '*') {
 
         return compare(showArr(convertArrForSearch(phoneBook)));
