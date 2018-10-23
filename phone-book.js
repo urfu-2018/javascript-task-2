@@ -169,7 +169,7 @@ function importFromCsv(csv) {
         const name = contact[0];
         const phone = contact[1];
         const email = contact[2];
-        if (length < 4 || add(phone, name, email) || update(phone, name, email)) {
+        if (length < 4 && (add(phone, name, email) || update(phone, name, email))) {
             counter ++;
         }
     }
