@@ -61,7 +61,7 @@ function update(phone, name, email) {
 
     if (person !== undefined) {
         person.email = email;
-        if (name !== undefined) {
+        if (isString(name) && !isEmptyString(name)) {
             person.name = name;
         }
 
