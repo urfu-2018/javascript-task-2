@@ -53,7 +53,8 @@ function update(phone, name, email) {
     name = getEmptyIfNotString(name);
     email = getEmptyIfNotString(email);
     if (phoneBook[phone] !== undefined &&
-        name !== '') {
+        name !== '' &&
+        email !== '') {
         phoneBook[phone] = {
             name: name,
             email: email
