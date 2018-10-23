@@ -14,51 +14,49 @@ let phoneBook = new Map();
 const phoneRegex = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
 function isValidPhoneAndName(phone, name) {
-    if (!isValidType(phone) || !isValidType(name)) {
+    if (!isTypeOfString(phone) || !isTypeOfString(name) || !phoneRegex.test(phone)) {
         return false;
     }
 
-    if (!phoneRegex.test(phone)) {
-        return false;
-    }
-
-    return isEmptySting(name);
+    return isNotEmptySting(name);
 }
 
-function isEmptySting(str) {
-    return str.trim();
+function isNotEmptySting(str) {
+    return Boolean(str.trim());
 }
 
-function isValidType(obj, type = 'string') {
-    return typeof obj === type;
+function isTypeOfString(obj) {
+    return typeof obj === 'string';
 }
 
 function findContacts(query) {
-    if (!isValidType(query) || !isEmptySting(query)) {
+    if (!isTypeOfString(query) || !isNotEmptySting(query)) {
         return [];
     }
 
     const returnEverything = query === '*';
-    const searchResult = [];
 
-    for (let contact of getAllContacts()) {
-        if (returnEverything ||
-            `${contact.name};${contact.phone};${contact.email}`.indexOf(query) !== -1) {
-            searchResult.push(contact);
-        }
-    }
-
-    return searchResult;
+    return getAllContacts()
+        .filter(({ name, phone, email }) =>
+            returnEverything || (name + phone + email).includes(query));
 }
 
 function getAllContacts() {
-    const result = [];
-    for (let key of Object.keys(phoneBook)) {
-        let { name, email } = phoneBook[key];
-        result.push({ phone: key, name, email });
-    }
+    return [...phoneBook.keys()]
+        .map(key => ({
+            phone: key,
+            name: phoneBook.get(key).name,
+            email: phoneBook.get(key).email
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+}
 
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+function formatContact(contact) {
+    const match = contact.phone.match(phoneRegex);
+    const phone = `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`;
+    const email = contact.email ? `, ${contact.email}` : '';
+
+    return `${contact.name}, ${phone}${email}`;
 }
 
 /**
@@ -69,15 +67,11 @@ function getAllContacts() {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isValidPhoneAndName(phone, name)) {
+    if (!isValidPhoneAndName(phone, name) || phoneBook.has(phone)) {
         return false;
     }
 
-    if (phone in phoneBook) {
-        return false;
-    }
-
-    phoneBook[phone] = { name, email };
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -89,16 +83,12 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email = null) {
-    if (!isValidPhoneAndName(phone, name)) {
+function update(phone, name, email) {
+    if (!isValidPhoneAndName(phone, name) || !phoneBook.has(phone)) {
         return false;
     }
 
-    if (!(phone in phoneBook)) {
-        return false;
-    }
-
-    phoneBook[phone] = { name, email };
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -109,16 +99,9 @@ function update(phone, name, email = null) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let removedCount = 0;
-
-    for (let contact of findContacts(query)) {
-        if (contact.phone in phoneBook) {
-            delete phoneBook[contact.phone];
-            removedCount++;
-        }
-    }
-
-    return removedCount;
+    return findContacts(query)
+        .filter(contact => phoneBook.delete(contact.phone))
+        .length;
 }
 
 /**
@@ -127,16 +110,8 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const searchResult = [];
-
-    for (let contact of findContacts(query)) {
-        const match = contact.phone.match(phoneRegex);
-        const phone = `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`;
-        const email = contact.email ? `, ${contact.email}` : '';
-        searchResult.push(`${contact.name}, ${phone}${email}`);
-    }
-
-    return searchResult;
+    return findContacts(query)
+        .map(contact => formatContact(contact));
 }
 
 /**
@@ -146,18 +121,14 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    const records = csv.split('\n');
+    return csv.split('\n')
+        .map(record => {
+            let [name, phone, email] = record.split(';');
 
-    let newContacts = 0;
-    for (let i = 0; i < records.length; i++) {
-        let [name, phone, email] = records[i].split(';');
-
-        if (update(phone, name, email) || add(phone, name, email)) {
-            newContacts++;
-        }
-    }
-
-    return newContacts;
+            return { phone, name, email };
+        })
+        .filter(x => update(x.phone, x.name, x.email) || add(x.phone, x.name, x.email))
+        .length;
 }
 
 module.exports = {
