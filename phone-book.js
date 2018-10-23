@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (name === undefined || !/^[0-9]{10}$/.test(phone)) {
+    if (!name || name.trim() === '' || !/^[0-9]{10}$/.test(phone)) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
