@@ -74,10 +74,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isString(query) || query.length === 0) {
-        return 0;
-    }
-    let removedNotes = getNotesFromPhoneBookByQuery(query);
+    let removedNotes = find(query);
     for (let i = 0; i < removedNotes.length; i++) {
         phoneBook.splice(phoneBook.indexOf(removedNotes[i]), 1);
     }
