@@ -22,10 +22,10 @@ function add(phone, name, email) {
     if (email === undefined) {
         email = '';
     }
+
     if (!dataIsCorrect(phone, name, email) || phoneBook.has(phone)) {
         return false;
     }
-
     phoneBook.set(phone, { 'name': name, 'email': email });
 
     return true;
@@ -42,10 +42,10 @@ function update(phone, name, email) {
     if (email === undefined) {
         email = '';
     }
+
     if (!dataIsCorrect(phone, name, email)) {
         return false;
     }
-
     phoneBook.set(phone, { 'name': name, 'email': email });
 
     return true;
@@ -73,7 +73,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     if (query === undefined || query === '') {
-        return [];
+        return null;
     }
     if (query === '*') {
         return correctOutput(new Map(phoneBook));
@@ -109,6 +109,8 @@ function importFromCsv(csv) {
 
     records.forEach(record => {
         let [name, phone, email] = record;
+        email = email || '';
+        email = email.trim();
 
         if (add(phone, name, email) || update(phone, name, email)) {
             importRecord++;
@@ -123,8 +125,7 @@ function dataIsCorrect(phone, name, email) {
 
     if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
         return false;
-    }
-    if (!name) {
+    } else if (!name) {
         return false;
     }
 
