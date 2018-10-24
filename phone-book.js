@@ -125,7 +125,8 @@ function dataIsCorrect(phone, name, email) {
 
     if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
         return false;
-    } else if (!name) {
+    }
+    if (!name) {
         return false;
     }
 
