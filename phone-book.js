@@ -13,17 +13,47 @@ const phoneBook = {};
 const PHONE_RE = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
 
-function isValidContact(phone, name) {
-    return name && PHONE_RE.test(phone);
+class Contact {
+    constructor(phone, name, email) {
+        this.phone = phone;
+        this.name = name;
+        this.email = email;
+    }
+
+    static fromStr(str) {
+        const parts = str.split(';');
+
+        return new Contact(parts[1], parts[0], parts[2]);
+    }
+
+    isValid() {
+        return this.name && PHONE_RE.test(this.phone);
+    }
+
+    isMatch(query) {
+        return this.phone.includes(query) || this.name.includes(query) ||
+            (this.email && this.email.includes(query));
+    }
+
+    get formattedPhone() {
+        const phoneParts = PHONE_RE.exec(this.phone);
+
+        return `+7 (${phoneParts[1]}) ${phoneParts.slice(2)
+            .join('-')}`;
+    }
+
+    toString() {
+        return `${this.name}, ${this.formattedPhone}${this.email ? ', ' + this.email : ''}`;
+    }
 }
 
 
-function addToContactByPredicate(phone, name, email, predicate) {
-    if (!predicate(phone, name, email)) {
+function addToContactsByPredicate(contact, predicate) {
+    if (!predicate()) {
         return false;
     }
 
-    phoneBook[phone] = { name, email };
+    phoneBook[contact.phone] = contact;
 
     return true;
 }
@@ -36,8 +66,10 @@ function addToContactByPredicate(phone, name, email, predicate) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    return addToContactByPredicate(phone, name, email,
-        (p, n) => isValidContact(p, n) && !phoneBook.hasOwnProperty(p));
+    const contact = new Contact(phone, name, email);
+
+    return addToContactsByPredicate(contact,
+        () => contact.isValid() && !phoneBook.hasOwnProperty(contact.phone));
 }
 
 /**
@@ -48,23 +80,10 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    return addToContactByPredicate(phone, name, email,
-        (p, n) => n && phoneBook.hasOwnProperty(p));
-}
+    const contact = new Contact(phone, name, email);
 
-function isMatch(contact, query) {
-    return contact.phone.includes(query) ||
-        contact.name.includes(query) ||
-        (contact.email && contact.email.includes(query));
-}
-
-function getAllContacts() {
-    return Object.entries(phoneBook)
-        .map(e => ({
-            phone: e[0],
-            name: e[1].name,
-            email: e[1].email
-        }));
+    return addToContactsByPredicate(contact,
+        () => name && phoneBook.hasOwnProperty(contact.phone));
 }
 
 function findContacts(query) {
@@ -72,8 +91,9 @@ function findContacts(query) {
         return [];
     }
 
-    return getAllContacts()
-        .filter(c => query === '*' || isMatch(c, query));
+    return Object.entries(phoneBook)
+        .map(e => e[1])
+        .filter(c => query === '*' || c.isMatch(query));
 }
 
 /**
@@ -82,10 +102,9 @@ function findContacts(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const matchedContacts = findContacts(query);
-    matchedContacts.forEach(e => delete phoneBook[e.phone]);
-
-    return matchedContacts.length;
+    return findContacts(query)
+        .filter(e => delete phoneBook[e.phone])
+        .length;
 }
 
 /**
@@ -96,17 +115,7 @@ function findAndRemove(query) {
 function find(query) {
     return findContacts(query)
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map(e => {
-            const phoneParts = PHONE_RE.exec(e.phone);
-            const formattedPhone = `+7 (${phoneParts[1]}) ${phoneParts.slice(2)
-                .join('-')}`;
-            let result = `${e.name}, ${formattedPhone}`;
-            if (e.email) {
-                result += `, ${e.email}`;
-            }
-
-            return result;
-        });
+        .map(e => e.toString());
 }
 
 /**
@@ -117,12 +126,8 @@ function find(query) {
  */
 function importFromCsv(csv) {
     return csv.split('\n')
-        .map(l => {
-            const parts = l.split(';');
-
-            return [parts[1], parts[0], parts[2]];
-        })
-        .filter(e => addToContactByPredicate(...e, isValidContact))
+        .map(Contact.fromStr)
+        .filter(e => addToContactsByPredicate(e, () => e.isValid()))
         .length;
 }
 
