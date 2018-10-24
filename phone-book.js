@@ -32,14 +32,14 @@ function isCorrectName(name) {
     return false;
 }
 
-function recordNotExists(phone) {
+function recordExists(phone) {
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].phone === phone) {
-            return false;
+            return true;
         }
     }
 
-    return true;
+    return false;
 }
 
 function isAllArgumentsCorrect(phone, name) {
@@ -47,9 +47,8 @@ function isAllArgumentsCorrect(phone, name) {
 }
 
 function add(phone, name, email) {
-    if (isAllArgumentsCorrect(phone, name) && recordNotExists(phone)) {
+    if (isAllArgumentsCorrect(phone, name) && !recordExists(phone)) {
         phoneBook.push({
-            phone: phone,
             name: name,
             email: email
         });
@@ -68,18 +67,17 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    phoneBook.forEach(element => {
-        if (phoneBook[element].substring(0, 10) === phone && name !== null) {
-            element = phone + ';' + name + ';' + email;
-
-            return true;
+    if (isAllArgumentsCorrect(phone,name) && recordExists(phone)){
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i].phone === phone) {
+            phoneBook[i] = {
+                phone: phone,
+                name: name,
+                email: email
+            }
         }
-
-        return false;
     }
-    );
-
-    return false;
+}
 }
 
 /**
