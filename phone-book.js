@@ -89,7 +89,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!typeof query === 'string' || query === '') {
+    if (!(typeof query === 'string') || query === '') {
         return [];
     }
     const persons = Array.from(phoneBook.values());
@@ -117,7 +117,6 @@ function importFromCsv(csv) {
     return csv.split('\n').length;
 }
 function isEmail(email) {
-
     return typeof email === 'string' || typeof email === 'undefined';
 }
 function tryConvertPhoneNumber(phone) {
@@ -135,7 +134,6 @@ function tryConvertPhoneNumber(phone) {
     return `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`; // +7 (555) 666-77-88
 }
 function isName(name) {
-
     return typeof name === 'string' && name !== '';
 }
 module.exports = {
