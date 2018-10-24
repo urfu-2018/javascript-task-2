@@ -101,22 +101,31 @@ function find(query) {
 }
 
 function getIndexes(query) {
-    const phoneSelection = createSelection('phone');
+    // const phoneSelection = createSelection('phone');
+    var indexes = [];
+    const phoneSelection = Object.keys(phoneBook);
 
     if (query === '*') {
         return [selectAllIndexes(), phoneSelection];
     }
-    const nameSelection = createSelection('name');
-    const emailSelection = createSelection('email');
 
-    const resultIndexes = findIndex(phoneSelection, query).concat(findIndex(nameSelection, query),
-        findIndex(emailSelection, query));
-
-    function onlyUnique(value, index, self) {
-        return self.indexOf(value) === index;
+    for (var i in phoneBook) {
+        if (checkAllFields(query, i)) {
+            indexes.push(phoneSelection.indexOf(i));
+        }
     }
 
-    return [resultIndexes.filter(onlyUnique), phoneSelection];
+    return [indexes, phoneSelection];
+}
+
+function checkAllFields(query, i) {
+    const isContainingInPhone = i.indexOf(query) !== -1;
+    const isContainingInName = phoneBook[i].name.indexOf(query) !== -1;
+    const isContainigInEmail = (phoneBook[i].email !== undefined)
+        ? phoneBook[i].email.indexOf(query) !== -1 : false;
+
+
+    return isContainigInEmail || isContainingInName || isContainingInPhone;
 }
 
 function selectAllIndexes() {
@@ -127,6 +136,7 @@ function selectAllIndexes() {
 
     return result;
 }
+
 function sortSelection(selection) {
     var result = [];
     const keys = Object.keys(selection);
@@ -161,7 +171,6 @@ function formatPhone(phone) {
         phone.slice(6, 8) + '-' + phone.slice(8, 10);
 }
 
-
 function extractMemos(indexes, phoneIndexes) {
     var result = {};
     for (var i = 0; i < indexes.length; i++) {
@@ -172,47 +181,6 @@ function extractMemos(indexes, phoneIndexes) {
     return result;
 }
 
-
-function findIndex(selection, query) {
-    var result = [];
-    for (var i = 0; i < selection.length; i++) {
-        if (selection[i] !== undefined && selection[i].indexOf(query) !== -1) {
-            result.push(i);
-        }
-    }
-
-    return result;
-
-}
-
-function createSelection(query) {
-    var selection = [];
-    switch (query) {
-        case 'phone':
-            selection = Object.keys(phoneBook);
-            break;
-        case 'name':
-            selection = extractData('name');
-            break;
-        case 'email':
-            selection = extractData('email');
-            break;
-        default:
-            break;
-    }
-
-    return selection;
-}
-
-function extractData(field) {
-    var selection = [];
-    const keys = Object.keys(phoneBook);
-    for (var i = 0; i < keys.length; i++) {
-        selection.push(phoneBook[keys[i]][field]);
-    }
-
-    return selection;
-}
 
 /**
  * Импорт записей из csv-формата
