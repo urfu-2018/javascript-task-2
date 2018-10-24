@@ -86,7 +86,7 @@ function find(query) {
 }
 
 function compareNames(a, b) { //
-    return phoneBook[a].name.localeCompare(phoneBook[b].name);
+    return phoneBook[a].name > phoneBook[b].name;
 }
 
 function formatRecord(phone) {
