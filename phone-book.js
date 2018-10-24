@@ -19,16 +19,6 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    // const phoneCheck = (acc) => {
-    //     const phonePattern1 = '1{3}|2{3}|3{3}|4{3}|5{3}|6{3}|7{3}|8{3}|9{3}|0{3}';
-    //     const phonePattern2 = '1{2}|2{2}|3{2}|4{2}|5{2}|6{2}|7{2}|8{2}|9{2}|0{2}';
-    //     const phoneRegexp = new RegExp(
-    //         '^(' + phonePattern1 + '){2}(' +
-    //         phonePattern2 + '){2}$'
-    //     );
-
-    //     return phoneRegexp.test(acc);
-    // };
     const phoneCheck = /^(\d{3}){2}(\d{2}){2}$/.test(phone);
     const nameCheck = typeof name !== 'undefined';
     let nameInPhoneBookCheck = phoneBook.filter(acc => acc.phone === phone);
@@ -39,6 +29,9 @@ function add(phone, name, email) {
             name: name,
             email: email
         });
+        if (!email) {
+            delete phoneBook[phoneBook.length - 1].email;
+        }
 
         return true;
     }
@@ -97,7 +90,7 @@ function findAndRemove(query) {
         const phoneCheck = acc.phone.includes(query);
         const nameCheck = acc.name.includes(query);
         if (!acc.email) {
-            return phoneCheck && nameCheck;
+            return phoneCheck || nameCheck;
         }
         const emailCheck = acc.email.includes(query);
 
@@ -144,7 +137,7 @@ function find(query) {
         const phoneCheck = acc.phone.includes(query);
         const nameCheck = acc.name.includes(query);
         if (!acc.email) {
-            return phoneCheck && nameCheck;
+            return phoneCheck || nameCheck;
         }
         const emailCheck = acc.email.includes(query);
 
