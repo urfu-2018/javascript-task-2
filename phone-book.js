@@ -6,12 +6,8 @@
  */
 const isStar = true;
 
-function isType(object, typeName) {
-    return typeof(object) === typeName;
-}
-
 function isNonEmptyString(string) {
-    return isType(string, 'string') && string.length > 0;
+    return typeof(string) === 'string' && string.length > 0;
 }
 
 class Contact {
@@ -28,10 +24,11 @@ class Contact {
     }
 
     matches(query) {
-        return isNonEmptyString(query) && (query === '*' ||
-            this.name.includes(query) ||
-            this.phone.includes(query) ||
-            (isType(this.email, 'string') && this.email.includes(query)));
+        return isNonEmptyString(query) &&
+            (query === '*' ||
+                this.name.includes(query) ||
+                this.phone.includes(query) ||
+                (typeof(this.email) === 'string' && this.email.includes(query)));
     }
 
     toString() {
@@ -42,12 +39,10 @@ class Contact {
 /**
  * Телефонная книга
  */
-let phoneBook = [];
-
-const phonePattern = /^\d{10}$/;
+let phoneBook = new Map();
 
 function isPhoneNumber(phone) {
-    return isType(phone, 'string') && phonePattern.test(phone);
+    return typeof(phone) === 'string' && /^\d{10}$/.test(phone);
 }
 
 /**
@@ -58,35 +53,16 @@ function isPhoneNumber(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isPhoneNumber(phone)) {
+    if (!isPhoneNumber(phone) ||
+        !isNonEmptyString(name) ||
+        phoneBook.get(phone) ||
+        (typeof(email) !== 'string' && typeof(email) !== 'undefined')) {
         return false;
     }
 
-    if (!isNonEmptyString(name)) {
-        return false;
-    }
-
-    if (findByPhone(phone)) {
-        return false;
-    }
-
-    if (!(isType(email, 'string') || isType(email, 'undefined'))) {
-        return false;
-    }
-
-    phoneBook.push(new Contact(phone, name, email));
+    phoneBook.set(phone, new Contact(phone, name, email));
 
     return true;
-}
-
-function findByPhone(phone) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phone === phoneBook[i].phone) {
-            return phoneBook[i];
-        }
-    }
-
-    return null;
 }
 
 /**
@@ -97,15 +73,10 @@ function findByPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const contact = findByPhone(phone);
-    if (contact === null) {
-        return false;
-    }
-    if (!isNonEmptyString(name)) {
-        return false;
-    }
-
-    if (!(isType(email, 'string') || isType(email, 'undefined'))) {
+    const contact = phoneBook.get(phone);
+    if (!contact ||
+        !isNonEmptyString(name) ||
+        (typeof(email) !== 'string' && typeof(email) !== 'undefined')) {
         return false;
     }
 
@@ -121,20 +92,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isNonEmptyString(query)) {
-        return 0;
+    const matchingContacts = findContacts(query);
+
+    for (let i = 0; i < matchingContacts.length; i++) {
+        phoneBook.delete(matchingContacts[i].phone);
     }
 
-    let deleted = 0;
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].matches(query)) {
-            phoneBook.splice(i, 1);
-            i--;
-            deleted++;
-        }
-    }
-
-    return deleted;
+    return matchingContacts.length;
 }
 
 /**
@@ -143,27 +107,24 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    return findContacts(query).map(contact => contact.toString());
+}
+
+function findContacts(query) {
     if (!isNonEmptyString(query)) {
         return [];
     }
 
     let entries = [];
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].matches(query)) {
-            entries.push(phoneBook[i].toString());
+    for (let contact of phoneBook.values()) {
+        if (contact.matches(query)) {
+            entries.push(contact);
         }
     }
-    entries.sort();
+
+    entries.sort((a, b) => a.name.localeCompare(b.name));
 
     return entries;
-}
-
-function addOrUpdate(phone, name, email) {
-    if (findByPhone(phone)) {
-        return update(phone, name, email);
-    }
-
-    return add(phone, name, email);
 }
 
 /**
@@ -183,7 +144,11 @@ function importFromCsv(csv) {
     let addedEntries = 0;
     csv.split('\n').forEach(function (entry) {
         const entrySplit = entry.split(';');
-        if (addOrUpdate(entrySplit[1], entrySplit[0], entrySplit[2])) {
+        const phone = entrySplit[1];
+        const name = entrySplit[0];
+        const email = entrySplit[2];
+
+        if (update(phone, name, email) || add(phone, name, email)) {
             addedEntries++;
         }
     });
