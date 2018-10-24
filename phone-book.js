@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isUndefined(phone) || isUndefined(name)) {
+    if (!(isString(phone) && isString(name))) {
         return false;
     }
     if (!(/^\d{10}$/g.test(phone) && findContact(phone) === -1)) {
@@ -29,7 +29,7 @@ function add(phone, name, email) {
         phone: phone,
         name: name
     };
-    if (!isUndefined(email)) {
+    if (isString(email)) {
         phoneContact.email = email;
     }
     phoneBook.push(phoneContact);
@@ -45,7 +45,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isUndefined(phone) || isUndefined(name)) {
+    if (!(isString(phone) && isString(name))) {
         return false;
     }
     let index = findContact(phone);
@@ -53,7 +53,7 @@ function update(phone, name, email) {
         return false;
     }
     phoneBook[index].name = name;
-    if (isUndefined(email)) {
+    if (!isString(email)) {
         delete phoneBook[index].email;
     } else {
         phoneBook[index].email = email;
@@ -86,17 +86,17 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!query) {
-        return null;
+    if (!isString(query)) {
+        return [];
     }
+    let result;
     if (query === '*') {
-        return phoneBook
-            .sort(shortContacts)
-            .map(renderContact);
+        result = phoneBook;
+    } else {
+        result = phoneBook.filter((contact) => {
+            return objectIncludes(contact, query);
+        });
     }
-    let result = phoneBook.filter((contact) => {
-        return objectIncludes(contact, query);
-    });
 
     return result
         .sort(shortContacts)
@@ -119,8 +119,8 @@ function findContact(phone) {
 /*
 * Проверка на undefined
 */
-function isUndefined(value) {
-    return typeof value === 'undefined';
+function isString(value) {
+    return typeof value === 'string';
 }
 
 /*
