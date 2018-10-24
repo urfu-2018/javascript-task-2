@@ -48,7 +48,7 @@ function update(phone, name = '', email = '') {
 function findAndRemove(query) {
     return !query || typeof(query) !== 'string' ? 0 : Object.keys(phoneBook)
         .filter((record)=>[record, ...Object.values(phoneBook[record])]
-            .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
+            .some((rec)=>(query === '*' || rec.indexOf(query) >= 0)))
         .filter((item)=>delete(phoneBook[item]))
         .length;
 }
@@ -61,7 +61,7 @@ function findAndRemove(query) {
 function find(query) {
     return !query || typeof(query) !== 'string' ? [] : Object.keys(phoneBook)
         .filter((record)=>[record, ...Object.values(phoneBook[record])]
-            .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
+            .some((rec)=>(query === '*' || rec.indexOf(query) >= 0)))
         .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
         .map((rec)=>[
             phoneBook[rec].name,
