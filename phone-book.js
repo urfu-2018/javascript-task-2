@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
@@ -12,7 +12,7 @@ const isStar = true;
 let phoneBook = [];
 
 function containsPhone(phone) {
-    return phoneBook.filter(contact => contact.phone === phone).length > 0;
+    return phoneBook.find(contact => contact.phone === phone);
 }
 
 function checkParameters(phone, name) {
@@ -72,7 +72,7 @@ function findElement(query, sortBook) {
 }
 
 function sort() {
-    const temp = Array.from(phoneBook);
+    const temp = phoneBook.slice();
 
     return temp.sort((contact, anotherContact) => contact.name > anotherContact.name);
 }
@@ -123,12 +123,33 @@ function update(phone, name, email) {
 }
 
 /**
+ * Поиск записей по запросу в телефонной книге
+ * @param {String} query
+ * @returns {String[]}
+ */
+function find(query) {
+    let sortBook = [];
+
+    if (query === '' || typeof query !== 'string') {
+        return sortBook;
+    }
+
+    sortBook = sort();
+
+    if (query === '*') {
+        return returnAllBook(sortBook);
+    }
+
+    return findElement(query, sortBook);
+}
+
+/**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string') {
+    if (typeof query !== 'string' || query === '') {
         return 0;
     }
 
@@ -144,28 +165,6 @@ function findAndRemove(query) {
     }
 
     return contacts.length;
-}
-
-/**
- * Поиск записей по запросу в телефонной книге
- * @param {String} query
- * @returns {String[]}
- */
-function find(query) {
-    let sortBook = [];
-
-    if (query === '' || typeof query !== 'string') {
-        return sortBook;
-    }
-
-    sortBook = sort();
-
-    if (query === '*') {
-
-        return returnAllBook(sortBook);
-    }
-
-    return findElement(query, sortBook);
 }
 
 /**
