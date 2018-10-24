@@ -170,7 +170,7 @@ function importFromCsv(csv) {
         return counter;
     }
 
-    let stringsFromCsv = csv.split('\n');
+    let stringsFromCsv = csv.split(/[\r\n]+/);
     stringsFromCsv.forEach((record) => {
         let values = record.split(';');
         let name = values[0];
