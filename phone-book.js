@@ -58,7 +58,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isNameValid(name) || !isPhoneValid(phone)) {
+    if (!isNameValid(name) || !isPhoneValid(phone) || !phoneBook[phone]) {
         return false;
     }
 
@@ -81,17 +81,15 @@ function hasPhoneByQuery(phoneNumber, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let foundRows = Object.keys(phoneBook)
+    return Object.keys(phoneBook)
         .filter(function (phoneNumber) {
             return hasPhoneByQuery(phoneNumber, query);
-        });
-    for (let phoneNumber in foundRows) {
-        if (phoneBook.hasOwnProperty(phoneNumber)) {
-            delete phoneBook[phoneNumber];
-        }
-    }
+        })
+        .reduce((accumulator, currentValue) => {
+            delete phoneBook[currentValue];
 
-    return foundRows.length;
+            return accumulator + 1;
+        }, 0);
 }
 
 /**
