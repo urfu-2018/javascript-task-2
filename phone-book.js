@@ -4,12 +4,12 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,25 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (phoneBook.has(phone) || !isValidRecord(phone, name)) {
+        return false;
+    }
 
+    if (!email) {
+        phoneBook.set(phone, { name: name, phone: phone, email: '' });
+    } else {
+        phoneBook.set(phone, { name: name, phone: phone, email: email });
+    }
+
+    return true;
+}
+
+function isValidRecord(phone, name) {
+    return phone && /^[0-9]{10}$/.test(phone) && isValidName(name);
+}
+
+function isValidName(name) {
+    return name && typeof name === 'string' && name.length !== 0;
 }
 
 /**
@@ -30,7 +48,17 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!phoneBook.has(phone) && !isValidName(name)) {
+        return false;
+    }
 
+    if (!email) {
+        phoneBook.set(phone, { name: name, phone: phone, email: '' });
+    } else {
+        phoneBook.set(phone, { name: name, phone: phone, email: email });
+    }
+
+    return true;
 }
 
 /**
@@ -40,6 +68,18 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
 
+    if (!query) {
+        return 0;
+    }
+
+    if (query === '*') {
+        phoneBook.clear();
+    }
+
+    const res = Array.from(phoneBook.values()).filter(r => hasRecord(r, query));
+    Array.from(res.map(p => p.phone)).forEach(p => phoneBook.delete(p));
+
+    return res.length;
 }
 
 /**
@@ -48,7 +88,38 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (!query) {
+        return [];
+    }
 
+    if (query === '*') {
+        return Array.from(phoneBook.values())
+            .map(r => formatRecord(r))
+            .sort();
+    }
+
+    const result = Array.from(phoneBook.values()).filter(r => hasRecord(r, query));
+
+    return result.map(r => formatRecord(r)).sort();
+}
+
+function hasRecord(record, query) {
+    return record.name.includes(query) || record.phone.includes(query) ||
+    record.email.includes(query);
+}
+
+function formatRecord(record) {
+    if (!record.email) {
+        return `${record.name}, ${formatNumber(record.phone)}`;
+    }
+
+    return `${record.name}, ${formatNumber(record.phone)}, ${record.email}`;
+}
+
+function formatNumber(phone) {
+    const phoneNumber = `${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+
+    return `+7 (${phone.slice(0, 3)})-${phoneNumber}`;
 }
 
 /**
