@@ -12,7 +12,7 @@ const isStar = true;
 let phoneBook = new Map();
 
 function isNameCorrect(name) {
-    if (typeof (name) !== 'string' || name.length < 1) {
+    if (typeof (name) !== 'string' || name === '') {
         return false;
     }
 
@@ -20,7 +20,7 @@ function isNameCorrect(name) {
 }
 
 function isPhoneCorrect(phone) {
-    if (typeof (phone) !== 'string') {
+    if (typeof (phone) !== 'string' || phone === '') {
         return false;
     }
     const phonePattern = new RegExp(/^\d{10}$/);
@@ -95,7 +95,6 @@ function convertPhoneToNormalFormat(phone) {
  */
 function search(query) {
     const resultBook = [];
-
 
     phoneBook.forEach((value, phone) => {
         if (query === '*' ||
