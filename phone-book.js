@@ -46,7 +46,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof phone !== 'string' || !/[0-9]{10}/.test(phone)) {
+    if (typeof phone !== 'string' || !/[0-9]{10}/.test(phone) || phoneBook[phone] === undefined) {
         return false;
     }
     if (isBadString(name)) {
