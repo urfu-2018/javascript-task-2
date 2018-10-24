@@ -19,8 +19,6 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    [phone, name, email] = trimData(phone, name, email);
-
     if (email === undefined) {
         email = '';
     }
@@ -41,8 +39,6 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    [phone, name, email] = trimData(phone, name, email);
-
     if (email === undefined) {
         email = '';
     }
@@ -61,13 +57,27 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const deletedMap = find(query);
+    let deletedMap = new Map();
+
+    if (query === undefined || query === '') {
+        deletedMap = new Map();
+    }
+    if (query === '*') {
+        deletedMap = new Map(phoneBook);
+    }
+
+    phoneBook.forEach((value, key) => {
+        if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
+                value.email.indexOf(query) !== -1) {
+            deletedMap.set(key, value);
+        }
+    });
 
     deletedMap.forEach(key => {
         phoneBook.delete(key);
     });
 
-    return deletedMap.length;
+    return deletedMap.size;
 }
 
 /**
@@ -157,19 +167,6 @@ function correctOutput(record) {
 
 function correctPhone(phone) {
     return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
-}
-
-function trimData(phone, name, email) {
-    phone = phone || '';
-    phone = phone.trim();
-
-    name = name || '';
-    name = name.trim();
-
-    email = email || '';
-    email = email.trim();
-
-    return [phone, name, email];
 }
 
 module.exports = {
