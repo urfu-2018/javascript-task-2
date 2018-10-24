@@ -63,12 +63,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    var foundRecordKeys = find(query);
-    for (let key of foundRecordKeys) {
-        phoneBook.delete(key);
+    const keys = findKeysToRemove(query);
+
+    for (let key of keys) {
+        delete phoneBook[key];
     }
 
-    return foundRecordKeys.length;
+    return keys.length;
 }
 
 /**
@@ -79,7 +80,8 @@ function findAndRemove(query) {
 function find(query) {
     const foundKeys = findKeysToRemove(query);
 
-    return foundKeys.map(formatRecord);
+    return foundKeys.sort(compareNames)
+        .map(formatRecord);
 }
 
 function compareNames(a, b) {
@@ -87,11 +89,13 @@ function compareNames(a, b) {
 }
 
 function formatRecord(phone) {
-    if (phoneBook[phone].email) {
-        return `${phoneBook[phone].name}, ${formatPhoneNumber(phone)}, ${phoneBook[phone].email}`;
+    var number = formatPhoneNumber(phone);
+    var output = [phoneBook[phone].name, number];
+    if (phoneBook[phone].email !== undefined) {
+        output.push(phoneBook[phone].email);
     }
 
-    return `${phoneBook[phone].name}, ${formatPhoneNumber(phone)}`;
+    return output.join(', ');
 }
 
 function formatPhoneNumber(phone) {
@@ -106,20 +110,18 @@ function formatPhoneNumber(phone) {
 }
 
 function findKeysToRemove(query) {
-    if (query === undefined || query === '') {
+    if (query === '*') {
+        return Object.keys(phoneBook);
+    }
+    if (query === '' || query === undefined) {
         return [];
     }
 
-    if (query === '*') {
-        return Object.keys(phoneBook)
-            .sort(compareNames);
-    }
-
     return Object.keys(phoneBook)
-        .filter(phone => phone.includes(query) ||
-        phoneBook[phone].name.includes(query) ||
-        (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)))
-        .sort(compareNames);
+        .filter(phone =>
+            phone.includes(query) ||
+            phoneBook[phone].name.includes(query) ||
+            (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)));
 }
 
 /**
