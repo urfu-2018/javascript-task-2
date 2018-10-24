@@ -57,7 +57,7 @@ function isCorrect(phone, name) {
     if (phone.length !== 10 || name === undefined || name === '') {
         return false;
     }
-    if (typeof(name) !== 'string' || phone.match(/^\d{10}$/ig) === null) {
+    if (typeof(name) !== 'string') {
         return false;
     }
 
