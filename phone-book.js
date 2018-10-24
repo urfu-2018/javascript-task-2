@@ -12,15 +12,13 @@ const isStar = false;
 let phoneBook = new Map();
 
 
-const isParamsCorrect = (phone, name, email) => {
+const isParamsCorrect = (phone, name) => {
     if (typeof phone !== 'string' || typeof name !== 'string') {
         return false;
     }
     let isPhoneCorrect = /^\d{10}$/.test(phone);
-    let isEmailFormatCorrect =
-        /^[0-9a-z]+@[a-z0-9]+\.[a-z0-9]+$/i.test(email) || email === undefined;
 
-    return isPhoneCorrect && isEmailFormatCorrect;
+    return isPhoneCorrect;
 };
 
 const convertAnswer = userInf => {
@@ -50,7 +48,7 @@ const getContacts = () => {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isParamsCorrect(phone, name, email) || phoneBook.has(phone)) {
+    if (!isParamsCorrect(phone, name) || phoneBook.has(phone)) {
         return false;
     }
 
@@ -67,7 +65,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(phoneBook.has(phone)) && !isParamsCorrect(phone, name, email)) {
+    if (!(phoneBook.has(phone)) && !isParamsCorrect(phone, name)) {
         return false;
     }
 
@@ -83,7 +81,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     if (typeof query !== 'string' || query === '') {
-        return [];
+        return 0;
     }
 
     let contactsToDelete = [];
