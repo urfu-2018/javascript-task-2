@@ -43,7 +43,7 @@ function update(phone, name, email) {
         email = '';
     }
 
-    if (!dataIsCorrect(phone, name, email)) {
+    if (!dataIsCorrect(phone, name, email) || !phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, { 'name': name, 'email': email });
