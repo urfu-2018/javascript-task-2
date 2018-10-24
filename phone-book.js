@@ -45,12 +45,8 @@ function add(phone, name, email) {
     if (!isCorrectPhoneAndName(phone, name)) {
         return false;
     }
-    let phoneNote;
-    if (email !== undefined) {
-        phoneNote = { mPhone: phone, mName: name, mEmail: email };
-    } else {
-        phoneNote = { mPhone: phone, mName: name, mEmail: '' };
-    }
+    let phoneNote = { mPhone: phone, mName: name, mEmail: email };
+
     if (checkContain(phoneNote)) {
         return false;
     }
@@ -70,12 +66,8 @@ function update(phone, name, email) {
     if (!isCorrectPhoneAndName(phone, name)) {
         return false;
     }
-    let newPhoneNote;
-    if (email !== undefined) {
-        newPhoneNote = { mPhone: phone, mName: name, mEmail: email };
-    } else {
-        newPhoneNote = { mPhone: phone, mName: name, mEmail: '' };
-    }
+    let newPhoneNote = { mPhone: phone, mName: name, mEmail: email };
+
     if (!checkContain(newPhoneNote)) {
         return false;
     }
@@ -100,18 +92,14 @@ function update(phone, name, email) {
 * Возвращает число удаленных записей
 */
 function findAndRemove(query) {
-    if (typeof(query) !== 'string') {
+    if (typeof(query) !== 'string' && query) {
         return;
     }
     let finded = find(query);
     for (let i = 0; i < finded.length; i++) {
         let splited = finded[i].split(', ');
-        let phoneNote;
-        if (splited.length === 2) {
-            phoneNote = { mPhone: splited[0], mName: splited[1], mEmail: '' };
-        } else {
-            phoneNote = { mPhone: splited[0], mName: splited[1], mEmail: splited[2] };
-        }
+        let phoneNote = { mPhone: splited[0], mName: splited[1], mEmail: undefined };
+
         phoneBook.splice(phoneBook.indexOf(phoneNote), 1);
     }
 
@@ -131,18 +119,10 @@ function concatPhone(phone) {
 
 function concatNote(phone, name, email) {
     let result;
-    if (email !== '') {
-        result = ''
-            .concat(name)
-            .concat(', ')
-            .concat(phone)
-            .concat(', ')
-            .concat(email);
+    if (email !== undefined) {
+        result = [name, phone, email].join(', ');
     } else {
-        result = ''
-            .concat(name)
-            .concat(', ')
-            .concat(phone);
+        result = [name, phone].join(', ');
     }
 
     return result;
@@ -161,7 +141,7 @@ function isFinded(query, note) {
  */
 function find(query) {
     let result = [];
-    if (typeof(query) !== 'string') {
+    if (typeof(query) !== 'string' && query) {
         return;
     }
     if (query === '*') {
