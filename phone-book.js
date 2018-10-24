@@ -35,7 +35,7 @@ function leadStr(phone, name, email) {
 }
 
 function checkQuery(query) {
-    return (query === '' || query === undefined);
+    return (query === '' || String(query) !== query);
 }
 
 function justAdd(phone, name, email) {
