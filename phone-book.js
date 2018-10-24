@@ -67,17 +67,20 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isAllArgumentsCorrect(phone,name) && recordExists(phone)){
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
+    if (isAllArgumentsCorrect(phone, name) && recordExists(phone)) {
+        for (let i = 0; i < phoneBook.length; i++) { if (phoneBook[i].phone === phone) {
             phoneBook[i] = {
                 phone: phone,
                 name: name,
                 email: email
-            }
+            };
+            
+            return true;
         }
     }
 }
+
+return false;
 }
 
 /**
