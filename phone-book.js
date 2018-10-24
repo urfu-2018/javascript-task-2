@@ -23,6 +23,12 @@ function contains(phone, name, email, query) {
         email && email.indexOf(query) !== -1);
 }
 
+function revertPhoneFormat(record) {
+    const phone = record.split(', ')[1];
+
+    return phone.slice(4, 7) + phone.slice(9, 12) + phone.slice(13, 15) + phone.slice(16, 18);
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -31,20 +37,10 @@ function contains(phone, name, email, query) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^\d{10}$/.test(phone)) {
+    if (!/^\d{10}$/.test(phone) || phoneBook.hasOwnProperty(phone) || !name) {
         return false;
     }
-    if (phoneBook.hasOwnProperty(phone)) {
-        return false;
-    }
-    if (!name) {
-        return false;
-    }
-    if (email) {
-        phoneBook[phone] = { name, email };
-    } else {
-        phoneBook[phone] = { name };
-    }
+    phoneBook[phone] = email ? { name, email } : { name };
 
     return true;
 }
@@ -57,20 +53,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!/\d{10}/.test(phone)) {
-        return false;
-    }
     if (!name) {
         return false;
     }
     if (!phoneBook.hasOwnProperty(phone)) {
         return false;
     }
-    if (email) {
-        phoneBook[phone] = { name, email };
-    } else {
-        phoneBook[phone] = { name };
-    }
+    phoneBook[phone] = email ? { name, email } : { name };
 
     return true;
 }
@@ -83,7 +72,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     const found = find(query);
     for (let i = 0; i < found.length; ++i) {
-        let phone = found[i].phone;
+        let phone = revertPhoneFormat(found[i]);
         delete phoneBook[phone];
     }
 
@@ -124,7 +113,6 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-
     return csv
         .split('\n')
         .map(function (record) {
