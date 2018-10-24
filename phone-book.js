@@ -19,11 +19,12 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (find(phone).length > 0) {
+    if (!dataChecks(phone, name, email) || find(phone).length > 0) {
         return false;
     }
+    phoneBook[phone] = { name: name, email: email };
 
-    return update(phone, name, email);
+    return true;
 }
 
 /**
@@ -56,7 +57,7 @@ function dataChecks(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!dataChecks(phone, name, email)) {
+    if (!dataChecks(phone, name, email) || phoneBook[phone] === undefined) {
         return false;
     }
     phoneBook[phone] = { name: name, email: email };
@@ -85,7 +86,8 @@ function findAndRemove(query) {
  * @returns {Boolean}
  */
 function arrayIncludes(arr, query) {
-    return arr.map(str => str !== undefined && str.includes(query)).reduce((a, b) => a || b);
+    return arr.map(str => str !== undefined && str.includes(query))
+        .reduce((a, b) => a || b);
 }
 
 /**
@@ -124,8 +126,8 @@ function find(query) {
  */
 function importFromCsv(csv) {
     return csv.split('\n').map(a => a.split(';'))
-        .map(e => update(e[1], e[0], e[2]))
-        .filter(a => a).length;
+        .map(e => add(e[1], e[0], e[2]) || update(e[1], e[0], e[2]))
+        .filter(a => a).length; // Фильтруем все true
 }
 
 module.exports = {
