@@ -20,7 +20,7 @@ let phoneBook = new Map();
  */
 function add(phone, name, email) {
     if (!isCorrectPhoneNumber(phone) || !isCorrectName(name) ||
-    Object.keys(phoneBook).includes(phone)) {
+    phoneBook.has(phone)) {
         return false;
     }
     phoneBook[phone] = {
@@ -148,7 +148,9 @@ function importFromCsv(csv) {
         var name = data[0];
         var phone = data[1];
         var email = data[2];
-        if (add(phone, name, email) || update(phone, name, email)) {
+        if (add(phone, name, email) ||) {
+            count++;
+        } else if (update(phone, name, email)) {
             count++;
         }
     });
