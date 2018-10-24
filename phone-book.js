@@ -60,7 +60,7 @@ function isCorrect(phone, name) {
     if (phone.length !== 10 || name === undefined || name === '') {
         return false;
     }
-    if (typeof(name) !== 'string' || !/^\d{10}$/.test(phone)) {
+    if (typeof(name) !== 'string') {
         return false;
     }
 
@@ -116,7 +116,7 @@ function updatePhoneOrEmail(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (phoneBook.sizePhoneBook === 0) {
+    if (checkQuery(query)) {
 
         return 0;
     }
@@ -142,7 +142,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (phoneBook.sizePhoneBook === 0) {
+    if (checkQuery(query)) {
 
         return [];
     }
@@ -185,6 +185,9 @@ function makeArray(con, result, query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (!Array.isArray(cvs) || cvs.length === 0) {
+        return 0;
+    }
     var tempContact = csv.split('\n');
     var count = 0;
     for (var i = 0; i < tempContact.length; i++) {
@@ -204,20 +207,29 @@ function isContainsPhoneOrEmail(query) {
     var result = -1;
     for (var cont in phoneBook.contact) {
         if (phoneBook.contact.hasOwnProperty(cont)) {
-            result = checkQuery(cont, query, result);
+            result = fiendQuery(cont, query, result);
         }
     }
 
     return result;
 }
 
-function checkQuery(cont, query, result) {
+function fiendQuery(cont, query, result) {
     var tmp = phoneBook.contact[cont].indexOf(query);
     if (tmp !== -1) {
         result = cont;
     }
 
     return result;
+}
+
+function checkQuery(query) {
+    if (phoneBook.sizePhoneBook === 0 || query === undefined || query === '') {
+
+        return true;
+    }
+
+    return false;
 }
 
 module.exports = {
