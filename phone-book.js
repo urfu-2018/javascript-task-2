@@ -75,38 +75,38 @@ function add(phone, name, email) {
     return true;
 }
 
-// /**
-//  * Обновление записи в телефонной книге
-//  * @param {String} phone
-//  * @param {String?} name
-//  * @param {String?} email
-//  * @returns {Boolean}
-//  */
-// function update(phone, name, email) {
-//     let result = replaceBadTypes(phone, name, email);
-//     phone = result[0];
-//     name = result[1];
-//     email = result[2];
-//     if (!areArgsCorrect(phone, name, email)) {
-//         return false;
-//     }
-//     if (!telInPhoneBook(phone)) {
-//         return false;
-//     }
-//     updatePhoneBook(phone, name, email);
+/**
+ * Обновление записи в телефонной книге
+ * @param {String} phone
+ * @param {String?} name
+ * @param {String?} email
+ * @returns {Boolean}
+ */
+function update(phone, name, email) {
+    let result = replaceBadTypes(phone, name, email);
+    phone = result[0];
+    name = result[1];
+    email = result[2];
+    if (!areArgsCorrect(phone, name, email)) {
+        return false;
+    }
+    if (!telInPhoneBook(phone)) {
+        return false;
+    }
+    updatePhoneBook(phone, name, email);
 
-//     return true;
-// }
+    return true;
+}
 
-// function updatePhoneBook(phone, name, email) {
-//     for (let element of phoneBook) {
-//         if (element.slice(0, 10) === phone) {
-//             phoneBook.delete(element);
-//             phoneBook.add(`${phone}|${name}|${email}`);
-//             break;
-//         }
-//     }
-// }
+function updatePhoneBook(phone, name, email) {
+    for (let element of phoneBook) {
+        if (element.slice(0, 10) === phone) {
+            phoneBook.delete(element);
+            phoneBook.add(`${phone}|${name}|${email}`);
+            break;
+        }
+    }
+}
 
 // /**
 //  * Удаление записей по запросу из телефонной книги
@@ -151,7 +151,7 @@ function add(phone, name, email) {
 
 module.exports = {
     add,
-    // update,
+    update,
     // findAndRemove,
     // find,
     // importFromCsv,
