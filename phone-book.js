@@ -58,7 +58,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isNameValid(name) || !isPhoneValid(phone) || !phoneBook[phone]) {
+    if (!isNameValid(name) || !isPhoneValid(phone)) {
         return false;
     }
 
