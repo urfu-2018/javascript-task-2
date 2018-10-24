@@ -115,25 +115,28 @@ function toFullPhoneForm(phone) {
  */
 
 function search(query) {
-    let findedRecords = phoneBook.filter(element => element.phone.includes(query) ||
-     element.name.includes(query) || ((element.email === 'undefined')
-        ? false : element.email.includes(query)));
-
-    return findedRecords;
-}
-
-function find(query) {
     let findedRecords = [];
     if (query === '*') {
-        return phoneBook.filter(element => element.name + ', ' +
+        findedRecords = phoneBook.map(element => element.name + ', ' +
          toFullPhoneForm(element.phone) + ', ' + element.email);
+
+        return findedRecords.sort();
     }
     if (arguments.length === 0) {
         return [];
     }
-    findedRecords = search(query);
 
-    return findedRecords;
+    findedRecords = phoneBook.filter(element => element.phone.includes(query) ||
+     element.name.includes(query) || ((typeof element.email === 'undefined')
+        ? false : element.email.includes(query)));
+
+    return findedRecords.map(element => element.name + ', ' +
+         toFullPhoneForm(element.phone) + ', ' + element.email).sort();
+
+}
+
+function find(query) {
+    return search(query);
 }
 
 /**
