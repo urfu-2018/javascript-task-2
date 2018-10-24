@@ -100,7 +100,7 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    if (typeof csv !== 'string' || csv.length === 0) {
+    if (typeof csv !== 'string' || !csv) {
         return 0;
     }
 
@@ -108,9 +108,7 @@ function importFromCsv(csv) {
     let importRecord = 0;
 
     records.forEach(record => {
-        let [name, phone, email] = record;
-        email = email || '';
-        email = email.trim();
+        const [name, phone, email] = record;
 
         if (add(phone, name, email) || update(phone, name, email)) {
             importRecord++;
@@ -129,8 +127,11 @@ function dataIsCorrect(phone, name, email) {
     if (!name) {
         return false;
     }
+    if (!regexp.test(phone)) {
+        return false;
+    }
 
-    return regexp.test(phone);
+    return true;
 }
 
 function correctOutput(record) {
