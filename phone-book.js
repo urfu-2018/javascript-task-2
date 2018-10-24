@@ -72,7 +72,8 @@ function findContacts(query) {
         return [];
     }
 
-    return getAllContacts().filter(c => query === '*' || isMatch(c, query));
+    return getAllContacts()
+        .filter(c => query === '*' || isMatch(c, query));
 }
 
 /**
@@ -81,9 +82,10 @@ function findContacts(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return findContacts(query)
-        .filter(k => delete phoneBook[k])
-        .length;
+    const matchedContacts = findContacts(query);
+    matchedContacts.forEach(e => delete phoneBook[e.phone]);
+
+    return matchedContacts.length;
 }
 
 /**
@@ -96,10 +98,14 @@ function find(query) {
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(e => {
             const phoneParts = PHONE_RE.exec(e.phone);
-            const formattedPhone = `+7 (${phoneParts[1]}) ${phoneParts.slice(2, 5)
+            const formattedPhone = `+7 (${phoneParts[1]}) ${phoneParts.slice(2)
                 .join('-')}`;
+            let result = `${e.name}, ${formattedPhone}`;
+            if (e.email) {
+                result += `, ${e.email}`;
+            }
 
-            return `${e.name}, ${formattedPhone}${e.email ? ', ' + e.email : ''}`;
+            return result;
         });
 }
 
