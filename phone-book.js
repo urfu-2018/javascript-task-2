@@ -22,8 +22,7 @@ function add(phone, name, email) {
     if (typeof phone !== 'string' || !/^[0-9]{10}$/.test(phone)) {
         return false;
     }
-
-    if (typeof name !== 'string' || name === undefined || name === '') {
+    if (isBadString(name)) {
         return false;
     }
 
@@ -50,8 +49,7 @@ function update(phone, name, email) {
     if (typeof phone !== 'string' || !/[0-9]{10}/.test(phone)) {
         return false;
     }
-
-    if (typeof name !== 'string' || name === undefined || name === '') {
+    if (isBadString(name)) {
         return false;
     }
 
@@ -91,6 +89,9 @@ function find(query) {
     return entries;
 }
 
+function isBadString(string) {
+    return typeof string !== 'string' || string === undefined || string === '';
+}
 function findMatchingEntryPhones(query) {
     let phones = [];
 
