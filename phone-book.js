@@ -131,17 +131,11 @@ function searchByQuery(query) {
 function putIntoStr(Book) {
     const array = [];
     for (let key of Object.keys(Book)) {
-        let str;
+        let str = Book[key][0] + ', ' +
+            '+7 (' + key.substring(0, 3) + ') ' +
+            key.substring(3, 6) + '-' + key.substring(6, 8) + '-' + key.substring(8, 10);
         if (Book[key][1].length !== 0) {
-            str = Book[key][0] + ', ' +
-                '+7 (' + key.substring(0, 3) + ') ' +
-                key.substring(3, 6) + '-' + key.substring(6, 8) + '-' + key.substring(8, 10) +
-                ', ' + Book[key][1];
-
-        } else {
-            str = Book[key][0] + ', ' +
-                '+7 (' + key.substring(0, 3) + ') ' +
-                key.substring(3, 6) + '-' + key.substring(6, 8) + '-' + key.substring(8, 10);
+            str = str + ', ' + Book[key][1];
         }
         array.push(str);
     }
