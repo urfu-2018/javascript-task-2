@@ -44,7 +44,7 @@ function add(phone, name, email) {
     }
     phoneBook.set(phone, {
         name,
-        email: email ? email : ''
+        email: isValidContact(email) ? email : ''
     });
 
     return true;
@@ -64,7 +64,7 @@ function update(phone, name, email) {
 
     phoneBook.set(phone, {
         name,
-        email: email ? email : ''
+        email: isValidContact(email) ? email : ''
     });
 
     return true;
