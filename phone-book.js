@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,24 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!/^[0-9]{10}$/.test(phone)) {
+        return false;
+    }
 
+    if (name === undefined) {
+        return false;
+    }
+
+    if (phoneBook[phone] !== undefined) {
+        return false;
+    }
+    phoneBook[phone] = {
+        phone: phone,
+        name: name,
+        email: email
+    };
+
+    return true;
 }
 
 /**
@@ -30,7 +47,18 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!/[0-9]{10}/.test(phone)) {
+        return false;
+    }
 
+    if (name === undefined) {
+        return false;
+    }
+
+    phoneBook[phone].name = name;
+    phoneBook[phone].email = email;
+
+    return true;
 }
 
 /**
@@ -39,7 +67,15 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let matchingEntryPhones = findMatchingEntryPhones(query);
 
+    function removeEntryByPhone(phone) {
+        phoneBook[phone] = undefined;
+    }
+
+    matchingEntryPhones.forEach(removeEntryByPhone);
+
+    return matchingEntryPhones.length;
 }
 
 /**
@@ -48,7 +84,39 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let entries = findMatchingEntryPhones(query)
+        .map(phone => entryToString(phoneBook[phone]));
+    entries.sort();
 
+    return entries;
+}
+
+function findMatchingEntryPhones(query) {
+    let phones = [];
+
+    if (query === '') {
+        return phones;
+    }
+
+    return Object.keys(phoneBook).filter(phone => doesMatch(phoneBook[phone], query));
+}
+
+function doesMatch(entry, query) {
+    return query === '*' ||
+        entry.name.includes(query) ||
+        entry.phone.includes(query) ||
+        (entry.email !== undefined && entry.email.includes(query));
+}
+
+function entryToString(entry) {
+    let phone = entry.phone;
+    let phoneString =
+        `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
+    if (entry.email === undefined) {
+        return `${entry.name}, ${phoneString}`;
+    }
+
+    return `${entry.name}, ${phoneString}, ${entry.email}`;
 }
 
 /**
@@ -61,8 +129,22 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    let importedCount = 0;
+    let rows = csv.split('\n');
+    for (let i = 0; i < rows.length; i++) {
+        let entryAsArray = rows[i].split(';');
+        let name = entryAsArray[0];
+        let phone = entryAsArray[1];
+        let email = entryAsArray[2];
+        if (phoneBook[phone] === undefined) {
+            importedCount += add(phone, name, email);
+        } else {
+            importedCount += update(phone, name, email);
+        }
 
-    return csv.split('\n').length;
+    }
+
+    return importedCount;
 }
 
 module.exports = {
