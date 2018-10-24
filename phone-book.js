@@ -114,7 +114,7 @@ function search(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof(query) !== 'string' || query === '') {
+    if (typeof (query) !== 'string' || query === '') {
         return 0;
     }
 
@@ -138,7 +138,7 @@ function find(query) {
 
     const foundRecords = search(query);
     foundRecords.sort((firstElement, secondElement) => {
-        return firstElement[0] > secondElement[0];
+        return firstElement[0].localeCompare(secondElement[0]);
     });
 
     return foundRecords.map(record => {
@@ -157,6 +157,9 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (!csv) {
+        return 0;
+    }
     const parsedCsv = parseCsv(csv);
 
     return parsedCsv.reduce((acc, record) => {
