@@ -73,6 +73,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!query) {
+        return 0;
+    }
+
     return Object.keys(phoneBook)
         .filter(function (phoneNumber) {
             return hasPhoneByQuery(phoneNumber, query);
