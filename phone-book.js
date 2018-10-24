@@ -187,11 +187,10 @@ function importFromCsv(csv) {
             ? add(phone, name, email)
             : update(phone, name, email);
 
-        if (result) {
-            counter++;
+        if (result === true) {
+            counter = counter + 1;
         }
     });
-
 
     return counter;
 }
