@@ -19,10 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isString(phone) || !isString(name)) {
-        return false;
-    }
-    if (!(/^\d{10}$/g.test(phone) && findContact(phone) === -1)) {
+    if (!isString(name) || !isPhone(phone) || findContact(phone) > 0) {
         return false;
     }
     let phoneContact = {
@@ -45,13 +42,10 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(isString(phone) && isString(name))) {
+    if (!isString(phone) || !isString(name) || findContact(phone) < 0) {
         return false;
     }
     let index = findContact(phone);
-    if (index === -1) {
-        return false;
-    }
     phoneBook[index].name = name;
     if (!isString(email)) {
         delete phoneBook[index].email;
@@ -74,8 +68,7 @@ function findAndRemove(query) {
     let count = 0;
     for (let i = 0; i < phoneBook.length; i++) {
         if (objectIncludes(phoneBook[i], query)) {
-            phoneBook.splice(i, 1);
-            i--;
+            phoneBook.splice(i--, 1);
             count++;
         }
     }
@@ -102,8 +95,14 @@ function find(query) {
     }
 
     return result
-        .sort(shortContacts)
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map(renderContact);
+}
+
+function isPhone(phone) {
+    let phoneMask = /^\d{10}$/;
+
+    return isString(phone) && phoneMask.test(phone);
 }
 
 /*
@@ -137,17 +136,6 @@ function objectIncludes(contact, query) {
     }
 
     return false;
-}
-
-/*
-* Сортировка контактов
-*/
-function shortContacts(a, b) {
-    if (a.name !== b.name) {
-        return a.name > b.name ? 1 : -1;
-    }
-
-    return a.phone.localeCompare(b.phone);
 }
 
 /*
@@ -186,11 +174,9 @@ function importFromCsv(csv) {
     let contacts = csv.split('\n');
     for (let i = 0; i < contacts.length; i++) {
         let contact = contacts[i].split(';');
-
-        if (findContact(contact[1]) === -1) {
-            countAdded += add(contact[1], contact[0], contact[2]) ? 1 : 0;
-        } else {
-            countAdded += update(contact[1], contact[0], contact[2]) ? 1 : 0;
+        if (add(contact[1], contact[0], contact[2]) ||
+            update(contact[1], contact[0], contact[2])) {
+            countAdded++;
         }
     }
 
