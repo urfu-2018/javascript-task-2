@@ -118,7 +118,8 @@ function search(query) {
     let findedRecords = [];
     if (query === '*') {
         findedRecords = phoneBook.map(element => element.name + ', ' +
-         toFullPhoneForm(element.phone) + ', ' + element.email);
+         toFullPhoneForm(element.phone) + ((typeof element.email === 'undefined')
+            ? '' : ', ' + element.email));
 
         return findedRecords.sort();
     }
