@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
@@ -19,7 +19,23 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-
+    if (typeof(phone) !== 'string') {
+        throw new TypeError();
+    }
+    if (phone.search("^/d{10}$") === -1) {
+        return false;
+    }
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i].phone === phone) {
+            return false;
+        }
+    }
+    if (typeof(name) !== 'string') {
+        return false;
+    }
+    phoneBook.push({phone: phone, name: name, email: email});
+    
+    return true;
 }
 
 /**
@@ -30,7 +46,24 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (typeof(phone) !== 'string') {
+        throw new TypeError();
+    }
+    if (phone.search("^/d{10}$") === -1) {
+        return false;
+    }
+    if (typeof(name) !== 'string') {
+        return false;
+    }
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i].phone == phone) {
+            phoneBook.name = name;
+            phoneBook.email = email;
+            return true;
+        }
+    }
 
+    return false;
 }
 
 /**
@@ -39,7 +72,23 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
+    let rez;
+    let removed
+    if (query === '*') {
+        removed = phoneBook.length;
+        phoneBook = rez;
+        return removed;
+    }
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (!(phoneBook[i].phone.includes(query) ||
+            phoneBook[i].name.includes(query) ||
+            phoneBook[i].email.includes(query))) {
+            rez.push(phoneBook[i]);
+            }
+    }
+    removed = phoneBook.length - rez.length;
+    phoneBook = rez;
+    return removed;
 }
 
 /**
@@ -48,7 +97,19 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let rez;
+    if (query === '*') {
+        return phoneBook.sort(a, b => a.name.localCompare(b.name));
+    }
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i].phone.includes(query) ||
+            phoneBook[i].name.includes(query) ||
+            phoneBook[i].email.includes(query)) {
+            rez.push(phoneBook[i]);
+            }
+    }
 
+    return rez.sort(a, b => a.name.localCompare(b.name));
 }
 
 /**
