@@ -60,7 +60,7 @@ function isCorrect(phone, name) {
     if (phone.length !== 10 || name === undefined || name === '') {
         return false;
     }
-    if (typeof(name) !== 'string') {
+    if (typeof(name) !== 'string' || !/^\d{10}$/.test(phone)) {
         return false;
     }
 
@@ -75,7 +75,7 @@ function isCorrect(phone, name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phone.length !== 10 || name === undefined || name === '') {
+    if (!isCorrect(phone, name)) {
         return false;
     }
     if (phoneBook.isContainsContact(name)) {

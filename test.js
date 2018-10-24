@@ -36,7 +36,7 @@ if (phoneBook.isStar) {
         'Борис;5552220022;boris@example.com',
         'Григорий;5554440044;grisha@example.com',
         'Алексей;5551110011;alex@example.com',
-        'Валерий;5553330033;valera@example.com',
+        'Валерий;5553330033',
         'Неизвестный;3330033;unknown@example.com'
     ].join('\n');
 
