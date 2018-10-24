@@ -20,13 +20,10 @@ let phoneBook = new Map();
  */
 function add(phone, name, email) {
     if (!isCorrectPhoneNumber(phone) || !isCorrectName(name) ||
-    phoneBook.has(phone)) {
+    Object.keys(phoneBook).includes(phone)) {
         return false;
     }
-    phoneBook[phone] = {
-        name: name,
-        email: email
-    };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
