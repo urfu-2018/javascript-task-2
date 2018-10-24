@@ -109,18 +109,20 @@ function formatPhoneNumber(phone) {
 }
 
 function findKeysToRemove(query) {
-    if (query === '*') {
-        return Object.keys(phoneBook);
-    }
-    if (query === '' || query === undefined) {
+    if (query === undefined || query === '') {
         return [];
     }
 
+    if (query === '*') {
+        return Object.keys(phoneBook)
+            .sort(compareNames);
+    }
+
     return Object.keys(phoneBook)
-        .filter(phone =>
-            phone.includes(query) ||
-            phoneBook[phone].name.includes(query) ||
-            (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)));
+        .filter(phone => phone.includes(query) ||
+        phoneBook[phone].name.includes(query) ||
+        (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)))
+        .sort(compareNames);
 }
 
 /**
