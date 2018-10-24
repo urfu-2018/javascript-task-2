@@ -27,7 +27,7 @@ function isString(parameter) {
 }
 
 function isCorrect(parameter) {
-    return isString(parameter) && parameter.trim();
+    return isString(parameter) && parameter.length > 0;
 }
 
 function checkDoubles(personPhone) {
@@ -35,8 +35,13 @@ function checkDoubles(personPhone) {
 }
 
 function add(phone, name, email) {
-    if (phoneValidation(phone) && checkDoubles(phone) < 0 && isString(name)) {
-        phoneBook.push({ phone, name, email: email });
+    if (phoneValidation(phone) && checkDoubles(phone) < 0 && isCorrect(name)) {
+        const person = { phone, name };
+
+        if (isCorrect(email)) {
+            person.email = email;
+        }
+        phoneBook.push(person);
 
         return true;
     }
@@ -55,7 +60,12 @@ function update(phone, name, email) {
     const index = checkDoubles(phone);
 
     if (index !== -1 && isCorrect(name)) {
-        phoneBook[index] = { phone, name, email: email };
+        const person = { phone, name };
+
+        if (isCorrect(email)) {
+            person.email = email;
+        }
+        phoneBook[index] = person;
 
         return true;
     }
@@ -138,11 +148,12 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    return csv.split('\n')
+    return csv
+        .split('\n')
         .map(person => {
             const [name, phone, email] = person.split(';');
 
-            return (add(phone, name, email) || update(phone, name, email));
+            return add(phone, name, email) || update(phone, name, email);
         })
         .filter(x => x).length;
 }
