@@ -26,18 +26,6 @@ function addToPhoneBookSafely(phone, name, email) {
     };
 }
 
-function comparator(a, b) {
-    if (a.name < b.name) {
-        return -1;
-    }
-
-    if (a.name > b.name) {
-        return 1;
-    }
-
-    return 0;
-}
-
 function convertPhoneNumber(phone) {
     const regionPart = `+7 (${phone.substr(0, 3)}) `;
     const personalPhonePart = `${phone.substr(3, 3)}-${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
@@ -122,7 +110,7 @@ function find(query) {
         .filter(function (phoneNumber) {
             return hasPhoneByQuery(phoneNumber, query);
         })
-        .sort(comparator)
+        .sort((a, b) => phoneBook[a].name > phoneBook[b].name)
         .map(function (phoneNumber) {
             const name = phoneBook[phoneNumber].name;
             const mail = phoneBook[phoneNumber].email;
@@ -131,6 +119,26 @@ function find(query) {
                 ? `${name}, ${convertPhoneNumber(phoneNumber)}, ${mail}`
                 : `${name}, ${convertPhoneNumber(phoneNumber)}`;
         });
+}
+
+function reduceAddedOrUpdatedNumbers(accumulator, currentValue) {
+    const phoneBookElements = currentValue.split(';');
+
+    const name = phoneBookElements[0];
+    const phoneNumber = phoneBookElements[1];
+    let email;
+
+    if (phoneBookElements.length > 2) {
+        email = phoneBookElements[0];
+    }
+
+    if (add(phoneNumber, name, email)) {
+        return accumulator + 1;
+    } else if (update(phoneNumber, name, email)) {
+        return accumulator + 1;
+    }
+
+    return accumulator;
 }
 
 /**
@@ -144,7 +152,7 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').length;
+    return csv.split('\n').reduce(reduceAddedOrUpdatedNumbers, 0);
 }
 
 module.exports = {
