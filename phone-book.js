@@ -158,6 +158,7 @@ function find(query) {
  */
 function importFromCsv(csv) {
     if (!csv) {
+
         return 0;
     }
     const parsedCsv = parseCsv(csv);
