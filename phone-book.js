@@ -95,7 +95,7 @@ function findAndRemove(query) {
     if (!isCorrectQuery(query)) {
         return [];
     }
-    let finded = find(query);
+    let finded = find(query).reverse();
     for (let i = 0; i < finded.length; i++) {
         let splited = finded[i].split(', ');
         let phoneNote = { mPhone: splited[0], mName: splited[1], mEmail: splited[2] };
