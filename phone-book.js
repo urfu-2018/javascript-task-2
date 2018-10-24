@@ -90,9 +90,9 @@ function findAndRemove(query) {
         phoneBook = phoneBook.filter(
             ({ name, phone, email }) =>
                 !(
-                    name.search(query) + 1 ||
-                    phone.search(query) + 1 ||
-                    (email ? email.search(query) + 1 : false)
+                    name.includes(query) ||
+                    phone.includes(query) ||
+                    (email ? email.includes(query) : false)
                 )
         );
 
@@ -130,9 +130,9 @@ function find(query) {
         return clonePhoneBook
             .filter(
                 ({ name, phone, email }) =>
-                    name.search(query) + 1 ||
-                    phone.search(query) + 1 ||
-                    (email ? email.search(query) + 1 : false)
+                    name.includes(query) ||
+                    phone.includes(query) ||
+                    (email ? email.includes(query) : false)
             )
             .sort(({ name }, { name: _name }) => name.localeCompare(_name))
             .map(person => transformItem(person));
