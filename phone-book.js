@@ -103,14 +103,9 @@ function update(phone, name, email) {
     }
 
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone && typeof email !== 'undefined') {
+        if (phoneBook[i].phone === phone) {
             phoneBook[i].name = name;
             phoneBook[i].email = email;
-
-            return true;
-        } else if (phoneBook[i].phone === phone) {
-            phoneBook[i].name = name;
-            delete phoneBook[i].email;
 
             return true;
         }
