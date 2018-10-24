@@ -79,7 +79,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const found = find(query);
-    found.map(person => phoneBook.delete(person.phone));
+    found.map(person => phoneBook.delete(person.standartPhone));
 
     return found.length;
 }
