@@ -20,9 +20,17 @@ function checkParameters(phone, name) {
         typeof phone !== 'string' || name.length === 0;
 }
 
-function toFormat(phone) {
+function toNewFormatPhone(phone) {
     return `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 8)}` +
         `-${phone.substring(8)}`;
+}
+
+function toFormat(phone, name, email) {
+    if (typeof email === 'undefined') {
+        return `${phone} ${name}`;
+    }
+
+    return `${phone} ${name} ${email}`
 }
 
 function toDefaultFormat(phone) {
@@ -34,7 +42,7 @@ function returnAllBook(sortBook) {
     const res = [];
 
     for (let i = 0; i < sortBook.length; i++) {
-        const newPhone = toFormat(sortBook[i].phone);
+        const newPhone = toNewFormatPhone(sortBook[i].phone);
 
         if (typeof sortBook[i].email === 'undefined') {
             res.push(`${sortBook[i].name}, ${newPhone}`);
@@ -50,8 +58,8 @@ function findElement(query, sortBook) {
     const res = [];
 
     for (let i = 0; i < sortBook.length; i++) {
-        const newPhone = toFormat(sortBook[i].phone);
-        const contact = `${sortBook[i].phone} ${sortBook[i].name} ${sortBook[i].email}`;
+        const newPhone = toNewFormatPhone(sortBook[i].phone);
+        const contact = toFormat(sortBook[i].phone, sortBook[i].name, sortBook[i].email);
 
         if (contact.indexOf(query) > -1 && typeof sortBook[i].email !== 'undefined') {
             res.push(`${sortBook[i].name}, ${newPhone}, ${sortBook[i].email}`);
