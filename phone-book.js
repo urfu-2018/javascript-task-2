@@ -19,6 +19,8 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    [phone, name, email] = trimData(phone, name, email);
+
     if (email === undefined) {
         email = '';
     }
@@ -39,6 +41,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    [phone, name, email] = trimData(phone, name, email);
+
     if (email === undefined) {
         email = '';
     }
@@ -100,7 +104,7 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    if (typeof csv !== 'string' || !csv) {
+    if (typeof csv !== 'string' || csv.length === 0) {
         return 0;
     }
 
@@ -153,6 +157,19 @@ function correctOutput(record) {
 
 function correctPhone(phone) {
     return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
+}
+
+function trimData(phone, name, email) {
+    phone = phone || '';
+    phone = phone.trim();
+
+    name = name || '';
+    name = name.trim();
+
+    email = email || '';
+    email = email.trim();
+
+    return [phone, name, email];
 }
 
 module.exports = {
