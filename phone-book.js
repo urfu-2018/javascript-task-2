@@ -27,7 +27,7 @@ function isString(parameter) {
 }
 
 function isCorrect(parameter) {
-    return isString(parameter) && parameter;
+    return isString(parameter) && parameter.trim();
 }
 
 function checkDoubles(personPhone) {
@@ -35,7 +35,7 @@ function checkDoubles(personPhone) {
 }
 
 function add(phone, name, email) {
-    if (phoneValidation(phone) && !(checkDoubles(phone) + 1) && isCorrect(name)) {
+    if (phoneValidation(phone) && checkDoubles(phone) < 0 && isCorrect(name)) {
         phoneBook.push({ phone, name, email: isCorrect(email) || undefined });
 
         return true;
@@ -76,7 +76,7 @@ function findAndRemove(query) {
 
         return initialLength;
     }
-    if (query !== undefined && query !== '' && isString(query)) {
+    if (isCorrect(query)) {
         phoneBook = phoneBook.filter(
             ({ name, phone, email }) =>
                 !(
@@ -116,7 +116,7 @@ function find(query) {
             .sort(({ name }, { name: _name }) => name.localeCompare(_name))
             .map(person => transformItem(person));
     }
-    if (query !== undefined && query !== '' && isString(query)) {
+    if (isCorrect(query)) {
         return clonePhoneBook
             .filter(
                 ({ name, phone, email }) =>
