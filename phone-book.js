@@ -30,7 +30,7 @@ function toFormat(phone, name, email) {
         return `${phone} ${name}`;
     }
 
-    return `${phone} ${name} ${email}`
+    return `${phone} ${name} ${email}`;
 }
 
 function toDefaultFormat(phone) {
