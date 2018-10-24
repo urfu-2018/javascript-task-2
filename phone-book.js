@@ -22,7 +22,7 @@ function add(phone, name, email) {
     if (typeof(phone) !== 'string') {
         throw new TypeError();
     }
-    if (phone.search('^/d{10}$') === -1) {
+    if (phone.search('^\\d{10}$') === -1) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
@@ -49,7 +49,7 @@ function update(phone, name, email) {
     if (typeof(phone) !== 'string') {
         throw new TypeError();
     }
-    if (phone.search('^/d{10}$') === -1) {
+    if (phone.search('^\\d{10}$') === -1) {
         return false;
     }
     if (typeof(name) !== 'string') {
