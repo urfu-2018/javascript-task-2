@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = new Map();
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -66,7 +66,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const foundRecordKeys = find(query);
+    var foundRecordKeys = find(query);
     for (let key of foundRecordKeys) {
         phoneBook.delete(key);
     }
