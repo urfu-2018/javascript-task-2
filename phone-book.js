@@ -39,8 +39,20 @@ function formatLine(line) {
     return (`${line.name}, ${formatNumber(line.phone)}${line.email ? `, ${line.email}` : ''}`);
 }
 
+function phoneIsCorrect(phone) {
+    return phone && typeof phone === 'string' && /^[0-9]{10}$/.test(phone); // delete
+}
+
 function nameIsCorrect(name) {
-    return name && typeof name === 'string'; // delete
+    return name && typeof name === 'string' && name.length > 0; // delete
+}
+
+function emailIsCorrect(email){
+    return email && typeof email === 'string' && email.length > 0;
+}
+
+function correctData(phone, name, email) {
+    return nameIsCorrect(name) && phoneIsCorrect(phone) && (!email || emailIsCorrect(email)); // delete
 }
 
 /**
@@ -51,7 +63,8 @@ function nameIsCorrect(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (nameIsCorrect(name) && /^[0-9]{10}$/.test(phone) && name && phoneBook.has(phone)) {
+    correctData(phone, name, email);
+    if (correctData(phone, name, email) && phoneBook.has(phone)) {
         phoneBook.set(phone, { name: name, phone: phone, email: email });
 
         return true;
@@ -92,7 +105,7 @@ function findInLine(line, query) {
  */
 function find(query) {
     if (typeof query !== 'string' || !query) {
-        return 0;
+        return [];
     }
     const res = [];
     for (var value of phoneBook.values()) {
