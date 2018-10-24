@@ -67,14 +67,6 @@ function update(phone, name, email) {
     return true;
 }
 
-function hasPhoneByQuery(phoneNumber, query) {
-    return query === '*' ||
-        phoneNumber.indexOf(query) !== -1 ||
-        phoneBook[phoneNumber].name.indexOf(query) !== -1 ||
-        (phoneBook[phoneNumber].email &&
-            phoneBook[phoneNumber].email.indexOf(query) !== -1);
-}
-
 /**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
@@ -90,6 +82,24 @@ function findAndRemove(query) {
 
             return accumulator + 1;
         }, 0);
+}
+
+
+function hasPhoneByQuery(phoneNumber, query) {
+    return query === '*' ||
+        phoneNumber.indexOf(query) !== -1 ||
+        phoneBook[phoneNumber].name.indexOf(query) !== -1 ||
+        (phoneBook[phoneNumber].email &&
+            phoneBook[phoneNumber].email.indexOf(query) !== -1);
+}
+
+function mapFindResult(phoneNumber) {
+    const name = phoneBook[phoneNumber].name;
+    const mail = phoneBook[phoneNumber].email;
+
+    return phoneBook[phoneNumber].email
+        ? `${name}, ${convertPhoneNumber(phoneNumber)}, ${mail}`
+        : `${name}, ${convertPhoneNumber(phoneNumber)}`;
 }
 
 /**
@@ -108,15 +118,8 @@ function find(query) {
         .filter(function (phoneNumber) {
             return hasPhoneByQuery(phoneNumber, query);
         })
-        .sort((a, b) => phoneBook[a].name > phoneBook[b].name)
-        .map(function (phoneNumber) {
-            const name = phoneBook[phoneNumber].name;
-            const mail = phoneBook[phoneNumber].email;
-
-            return phoneBook[phoneNumber].email
-                ? `${name}, ${convertPhoneNumber(phoneNumber)}, ${mail}`
-                : `${name}, ${convertPhoneNumber(phoneNumber)}`;
-        });
+        .sort((a, b) => phoneBook[a].name.localeCompare(phoneBook[b].name))
+        .map(mapFindResult);
 }
 
 function reduceAddedOrUpdatedNumbers(accumulator, currentValue) {
