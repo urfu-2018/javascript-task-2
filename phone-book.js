@@ -1,5 +1,24 @@
 'use strict';
 
+class Person{
+    constructor(name, phone, email) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email || '';
+    }
+    
+    toString() {
+        let result = this.name + ', ' + this.phone;
+        if (this.email != '') {
+            result += ', ' + this.email;
+        }
+        return result;
+    }
+
+    contains(query) {
+        return this.name.includes(query) || this.phone.includes(query) || this.email.includes(query);
+    }
+}
 /**
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
@@ -22,8 +41,8 @@ let phoneBook = new Map();
 function add(phone, name, email) {
     const convertedPhone = tryConvertPhoneNumber(phone);
     if (isName(name) && convertedPhone && isEmail(email) && !phoneBook.has(convertedPhone)) {
-        phoneBook.set(convertedPhone, [name, convertedPhone, email]);
-        console.log([name, convertedPhone, email]);
+        phoneBook.set(convertedPhone, new Person(name, convertedPhone, email));
+
         return true;
     }
 
@@ -40,7 +59,8 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const convertedPhone = tryConvertPhoneNumber(phone);
     if (isName(name) && convertedPhone && isEmail(email) && phoneBook.has(convertedPhone)) {
-        phoneBook.set(convertedPhone, (name, email));
+        phoneBook.delete(convertedPhone);
+        phoneBook.set(convertedPhone, new Person(name, convertedPhone, email));
 
         return true;
     }
@@ -54,8 +74,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    const found = find(query);
+    found.map(person => phoneBook.delete(person.phone));
 
-    return query && false;
+    return found.length;
 }
 
 /**
@@ -65,14 +87,16 @@ function findAndRemove(query) {
  */
 function find(query) {
     if (!typeof query === 'string' || query === '') {
-        return '';
+        return [];
     }
-    const lines = Array.from(phoneBook.values());
+    const persons = Array.from(phoneBook.values());
+    persons.sort((per1, per2) => per1.name > per2.name);
     if (query === '*') {
 
-        return lines;
+        return persons.map(person => person.toString());
     }
-    return ['a'];
+
+    return persons.filter((person) => person.toString().includes(query));
 }
 
 /**
