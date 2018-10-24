@@ -27,7 +27,11 @@ function isCorrectPhoneAndName(phone, name) {
     return isCorrectPhone(phone) && isCorrectName(name);
 }
 
-function checkContain(phoneNote) {
+function checkQueryContains(field, query) {
+    return query === '*' || field !== undefined && field.includes(query);
+}
+
+function checkContains(phoneNote) {
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneNote.mPhone === phoneBook[i].mPhone) {
             return true;
@@ -50,7 +54,7 @@ function add(phone, name, email) {
     }
     const phoneNote = { mPhone: phone, mName: name, mEmail: email };
 
-    if (checkContain(phoneNote)) {
+    if (checkContains(phoneNote)) {
         return false;
     }
 
@@ -70,7 +74,7 @@ function update(phone, name, email) {
     }
     let newPhoneNote = { mPhone: phone, mName: name, mEmail: email };
 
-    if (!checkContain(newPhoneNote)) {
+    if (!checkContains(newPhoneNote)) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
@@ -124,12 +128,6 @@ function concatNote(phone, name, email) {
     return result;
 }
 
-function isFinded(query, note) {
-    return note.mPhone.indexOf(query) !== -1 ||
-    note.mName.indexOf(query) !== -1 ||
-    note.mEmail !== undefined && note.mEmail.indexOf(query) !== -1;
-}
-
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
@@ -140,15 +138,10 @@ function find(query) {
     if (!isCorrectQuery(query)) {
         return [];
     }
-    if (query === '*') {
-        for (let i = 0; i < phoneBook.length; i++) {
-            let newPhone = concatPhone(phoneBook[i].mPhone);
-            result.push(concatNote(newPhone, phoneBook[i].mName, phoneBook[i].mEmail));
-        }
-    }
     for (let i = 0; i < phoneBook.length; i++) {
         let newPhone = concatPhone(phoneBook[i].mPhone);
-        if (isFinded(query, phoneBook[i])) {
+        if ([phoneBook[i].mPhone, phoneBook[i].mName, phoneBook[i].mEmail]
+            .some(field => checkQueryContains(field, query))) {
             result.push(concatNote(newPhone, phoneBook[i].mName, phoneBook[i].mEmail));
         }
     }
