@@ -20,25 +20,10 @@ function getPhoneBookRecord(phone, name, email) {
     };
 }
 
-function isNullOrUndefined(variable) {
-
-    return variable === null || variable === undefined;
-}
-
 function findIndexOfPhone(phone) {
 
     return phoneBook
         .findIndex(record => record.phone === phone);
-}
-
-function isValidPhone(phone) {
-    if (isNullOrUndefined(phone)) {
-
-        return false;
-    }
-    const PHONE_REGEX = /^\d{10}$/;
-
-    return PHONE_REGEX.test(phone);
 }
 
 function isQueryContainsInRecordFields(query, record) {
@@ -52,7 +37,7 @@ function isQueryContainsInRecordFields(query, record) {
 
 function isBadNameOrPhone(phone, name) {
 
-    return isNullOrUndefined(name) || !isValidPhone(phone);
+    return isNullOrUndefinedOrEmptyString(name) || !isValidPhone(phone);
 }
 
 function isNullOrUndefinedOrEmptyString(query) {
@@ -60,6 +45,22 @@ function isNullOrUndefinedOrEmptyString(query) {
         typeof query === 'string' &&
         query === '';
 }
+
+function isValidPhone(phone) {
+    if (isNullOrUndefined(phone)) {
+
+        return false;
+    }
+    const PHONE_REGEX = /^\d{10}$/;
+
+    return PHONE_REGEX.test(phone);
+}
+
+function isNullOrUndefined(variable) {
+
+    return variable === null || variable === undefined;
+}
+
 
 /**
  * Добавление записи в телефонную книгу
@@ -174,9 +175,8 @@ function importFromCsv(csv) {
         let phone = values[1];
         let email = values[2];
 
-        let result = findIndexOfPhone(phone) === -1
-            ? add(phone, name, email)
-            : update(phone, name, email);
+        let result = add(phone, name, email) ||
+            update(phone, name, email);
 
         if (result) {
             counter++;
