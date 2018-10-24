@@ -12,20 +12,16 @@ const isStar = true;
 let phoneBook = new Map();
 const checkPhone = (phone) => typeof phone === 'string' && /^\d{10}$/.test(phone);
 const checkName = (name) => typeof name === 'string' && /^[a-zA-Zа-яА-ЯёЁ]+$/.test(name);
-const transformePhoneBack = (phone) => phone.replace(/\+7 \(|\) |-/g, '');
-
-// function getContactData(contact) {
-//     let res = [];
-//     Object.keys(contact).forEach((key) => res.push(contact[key]));
-//     res[1] = transformPhone(res[1]);
-
-//     return res;
-// }
-
 function transformPhone(phone) {
     return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
         `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 }
+const getAllRecords = () => Array.from(phoneBook.values());
+const getRecordsByQuery = (query) => Array.from(phoneBook.values())
+    .filter((contact) => contact.name.indexOf(query) !== -1 ||
+            contact.phone.indexOf(query) !== -1 ||
+            (contact.email !== undefined && contact.email.indexOf(query) !== -1));
+const getRecords = (query) => query === '*' ? getAllRecords() : getRecordsByQuery(query);
 
 
 /**
@@ -86,11 +82,11 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let finded = find(query).map((contact) => contact.split(', '));
+    let finded = getRecords(query);
     let count = 0;
     finded.forEach(
         (contact) => {
-            if (phoneBook.delete(transformePhoneBack(contact[1]))) {
+            if (phoneBook.delete(contact.phone)) {
                 count++;
             }
         });
@@ -108,19 +104,7 @@ function find(query) {
     if (typeof query !== 'string') {
         return [];
     }
-    let result;
-    if (query === '*') {
-        result = Array.from(phoneBook.values())
-            .sort((first, second) => first.name > second.name);
-    } else {
-        result = Array.from(phoneBook.values())
-            .filter((contact) =>
-                contact.phone.indexOf(query) !== -1 ||
-                contact.name.indexOf(query) !== -1 ||
-                (contact.email !== undefined &&
-                    contact.email.indexOf(query) !== -1))
-            .sort((first, second) => first.name > second.name);
-    }
+    let result = getRecords(query).sort((first, second) => first.name > second.name);
 
     return result.map((contact) => contact.email !== undefined
         ? `${contact.name}, ${transformPhone(contact.phone)}, ${contact.email}`
