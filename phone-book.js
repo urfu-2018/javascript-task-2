@@ -10,21 +10,22 @@ const isStar = false;
  * Телефонная книга
  */
 let phoneBook = [];
+const phoneRegExp = /^\d{10}$/;
 
 function isCorrectPhone(phone) {
-    return typeof phone === 'string' && /^\d{10}$/.test(phone);
+    return typeof phone === 'string' && phoneRegExp.test(phone);
 }
 
 function isCorrectName(name) {
-    return (typeof name === 'string' || name instanceof String) && name;
+    return (typeof name === 'string' || name instanceof String) && name.trim() !== '';
 }
 
 function isCorrectQuery(query) {
     return typeof(query) === 'string' && query;
 }
 
-function isCorrectPhoneAndName(phone, name) {
-    return isCorrectPhone(phone) && isCorrectName(name);
+function isCorrectPhoneAndNameAndEmail(phone, name, email) {
+    return isCorrectPhone(phone) && isCorrectName(name) && typeof email === 'string';
 }
 
 function checkQueryContains(field, query) {
@@ -49,7 +50,7 @@ function checkContains(phoneNote) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isCorrectPhoneAndName(phone, name)) {
+    if (!isCorrectPhoneAndNameAndEmail(phone, name, email)) {
         return false;
     }
     const phoneNote = { mPhone: phone, mName: name, mEmail: email };
@@ -70,7 +71,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrectPhoneAndName(phone, name)) {
+    if (!isCorrectPhoneAndNameAndEmail(phone, name, email)) {
         return false;
     }
     let newPhoneNote = { mPhone: phone, mName: name, mEmail: email };
