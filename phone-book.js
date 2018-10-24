@@ -36,8 +36,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.some(x => x.phone === phone) || phoneBook.some(e => e.name === name &&
-        e.phone === phone && e.email === email)) {
+    if (!phoneBook.some(x => x.phone === phone)) {
         return false;
     }
 
