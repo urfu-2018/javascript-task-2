@@ -60,7 +60,7 @@ function findAndRemove(query) {
     let deletedMap = new Map();
 
     if (query === undefined || query === '') {
-        deletedMap = new Map();
+        return 0;
     }
     if (query === '*') {
         deletedMap = new Map(phoneBook);
