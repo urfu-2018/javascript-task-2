@@ -166,29 +166,20 @@ function find(query) {
  */
 function importFromCsv(csv) {
     let counter = 0;
-    if (isNullOrUndefinedOrEmptyString(csv)) {
-        return counter;
-    }
 
     let stringsFromCsv = csv.split(/[\r\n]+/);
-    stringsFromCsv.forEach((record) => {
+    stringsFromCsv.forEach(record => {
         let values = record.split(';');
         let name = values[0];
         let phone = values[1];
         let email = values[2];
 
-        if (isBadNameOrPhone(phone, name)) {
-            return;
-        }
-
-        let indexOfRecord = findIndexOfPhone(phone);
-
-        let result = indexOfRecord === -1
+        let result = findIndexOfPhone(phone) === -1
             ? add(phone, name, email)
             : update(phone, name, email);
 
-        if (result === true) {
-            counter = counter + 1;
+        if (result) {
+            counter++;
         }
     });
 
