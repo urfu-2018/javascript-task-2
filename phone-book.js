@@ -37,26 +37,15 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const notOk = !phoneBook.hasOwnProperty(phone) || !name;
-    if (notOk) {
-
+    const canAdd = !phoneBook.hasOwnProperty(phone) || !name;
+    if (canAdd) {
         return false;
     }
     phoneBook[phone] = [name, email];
 
     return true;
 }
-// В обоих случаях вывод будет следующий
-// [
-//   'Алексей, +7 (555) 111-00-11, alex@example.com',
-//   'Борис, +7 (555) 222-00-22, boris@example.com',
-//   'Валерий, +7 (555) 333-00-33',
-//   'Григорий, +7 (555) 444-00-44, grisha@example.com'
-// ]
-// { '5554440044': [ 'Григорий', 'grisha@example.com' ],
-//   '5552220022': [ 'Борис', 'boris@example.com' ],
-//   '5551110011': [ 'Алексей', 'alex@example.com' ],
-//   '5553330033': [ 'Валерий', undefined ] }
+
 function convertPhoneNumber(number) {
     const convertedNumber = `+7 (${number.slice(0, 3)})` +
     ` ${number.slice(3, 6)}` +
@@ -66,46 +55,40 @@ function convertPhoneNumber(number) {
     return convertedNumber;
 }
 
-function convertArrForSearch(obj) {
-    let arr = Object.entries(obj);
+function objToArrForSearch(obj) {
+    const arrforSearch = Object.entries(obj);
 
-    return arr.map(function (item) {
-        let phone = item[0];
-        let name = item[1][0];
-        let email = item[1][1];
+    return arrforSearch.map(function (item) {
+        const [phone, name, email] = [item[0], item[1][0], item[1][1]];
 
         return [name, phone, email].join(', ');
     });
 }
 
-function showArr(arr) {
-    return arr.map(function (item) {
+function consvertForShow(arrforSearch) {
+    return arrforSearch.map(function (item) {
         let [name, phone, email] = item.split(', ');
         phone = convertPhoneNumber(phone);
 
         return [name, phone, email].join(', ').replace(/,\s*$/, '');
     });
 }
-function filtArr(arr, searchParam) {
-    return arr.filter(function (item) {
-        let data = item.split(', ');
-        const whenOk = data[0].indexOf(searchParam) !== -1 ||
+function removeFromSearch(arrforSearch, searchParam) {
+    return arrforSearch.filter(function (item) {
+        const data = item.split(', ');
+        const CanBeSearchedConditions = data[0].indexOf(searchParam) !== -1 ||
         data[1].indexOf(searchParam) !== -1 ||
         data[2].indexOf(searchParam) !== -1;
 
-        return whenOk;
+        return CanBeSearchedConditions;
     });
 
 }
-function compare(array) {
-    array.sort(function (a, b) {
-        var a1 = a.slice(0, a.indexOf(',')).toLowerCase();
-        var b1 = b.slice(0, b.indexOf(',')).toLowerCase();
+function sortАlphabetically(a, b) {
+    const a1 = a.slice(0, a.indexOf(',')).toLowerCase();
+    const b1 = b.slice(0, b.indexOf(',')).toLowerCase();
 
-        return a1.localeCompare(b1);
-    });
-
-    return array;
+    return a1.localeCompare(b1);
 }
 
 /**
@@ -114,28 +97,26 @@ function compare(array) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
     if (!query) {
-
         return 0;
     }
 
     if (query === '*') {
-        var length = convertArrForSearch(phoneBook).length;
+        const allsCount = objToArrForSearch(phoneBook).length;
         phoneBook = {};
 
-        return length;
+        return allsCount;
     }
     let countOfDeletedItems = 0;
-    let arr = convertArrForSearch(phoneBook);
-    arr.forEach(function (item) {
-        let data = item.split(', ');
-        const ok = data[0].indexOf(query) !== -1 ||
+    const arrforSearch = objToArrForSearch(phoneBook);
+    arrforSearch.forEach(function (item) {
+        const data = item.split(', ');
+        const CanBeDeleted = data[0].indexOf(query) !== -1 ||
         data[1].indexOf(query) !== -1 ||
         data[2].indexOf(query) !== -1;
-        if (ok) {
+        if (CanBeDeleted) {
             countOfDeletedItems ++;
-            let phone = data[1];
+            const phone = data[1];
             delete phoneBook[phone];
         }
     });
@@ -150,16 +131,17 @@ function findAndRemove(query) {
  */
 function find(query) {
     if (!query) {
-
         return [];
     }
 
     if (query === '*') {
+        const unsortedResult = consvertForShow(objToArrForSearch(phoneBook));
 
-        return compare(showArr(convertArrForSearch(phoneBook)));
+        return unsortedResult.sort(sortАlphabetically);
     }
+    const unsortedResult = consvertForShow(removeFromSearch(objToArrForSearch(phoneBook), query));
 
-    return compare(showArr(filtArr(convertArrForSearch(phoneBook), query)));
+    return unsortedResult.sort(sortАlphabetically);
 }
 
 /**
