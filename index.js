@@ -41,5 +41,5 @@ if (phoneBook.isStar) {
     ].join('\n');
 
     // Импорт записей из csv, вернется `4`
-    phoneBook.importFromCsv(csv);
+    console.info(phoneBook.importFromCsv(csv));
 }

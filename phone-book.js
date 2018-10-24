@@ -142,20 +142,12 @@ function find(query) {
  */
 function importFromCsv(csv) {
     const entriesArray = csv.split('\n');
-    let counter = 0;
-    entriesArray.forEach(entry => {
-        const parametrsArray = entry.split(';');
-        if (isCurrectName(parametrsArray[0]) && isCurrectPhone(parametrsArray[1])) {
-            if (phoneBook.has(parametrsArray[1])) {
-                update(parametrsArray[1], parametrsArray[0], parametrsArray[2]);
-            } else {
-                add(parametrsArray[1], parametrsArray[0], parametrsArray[2]);
-            }
-            counter++;
+    return entriesArray.reduce((acc, entry) => {
+        const [name, phone, email] = entry.split(';');
+        if (update(phone, name, email) || add(phone, name, email)) {
+            acc++;
         }
-    });
-
-    return counter;
+    }, 0);
 }
 
 module.exports = {
