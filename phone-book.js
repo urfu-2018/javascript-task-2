@@ -73,11 +73,11 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let dataToDelete = find(query);
-    for (const data of dataToDelete) {
+    for (let data of dataToDelete) {
         let phone = data.split(', ')[1];
         // приведём номер к простому виду и избавимся в начале строки от 7
         phone = phone.replace(/[- +()]/g, '').slice(1);
-        phoneBook[phone] = undefined;
+        delete phoneBook[phone];
     }
 
     return dataToDelete.length;
@@ -101,16 +101,11 @@ function everythingFrom(array) {
 function getAllBy(element) {
     let result = [];
     for (const key of Object.keys(phoneBook)) {
-        if (key.search(element) !== -1 || phoneBook[key][0].search(element) !== -1 ||
+        if (phoneBook[key][0].search(element) !== -1 || key.search(element) !== -1 ||
         phoneBook[key][1].search(element) !== -1) {
-            let phone = `+7 (${key.slice(0, 3)}) ` +
-            `${key.slice(3, 6)}-${key.slice(6, 8)}-${key.slice(8, 10)}`;
-            let res = `${phoneBook[key][0]}, ${phone}`;
-            res = phoneBook[key][1] === '' ? res : res + ', ' + phoneBook[key][1];
-            result.push(res);
+            result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
-    result.sort();
 
     return result;
 }
@@ -128,7 +123,7 @@ function find(query) {
         return everythingFrom(phoneBook);
     }
 
-    return getAllBy(query);
+    return everythingFrom(getAllBy(query));
 }
 
 /**
