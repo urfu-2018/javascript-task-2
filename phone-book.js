@@ -99,7 +99,6 @@ function findAndRemove(query) {
     for (let i = 0; i < finded.length; i++) {
         let splited = finded[i].split(', ');
         let phoneNote = { mPhone: splited[0], mName: splited[1], mEmail: splited[2] };
-
         phoneBook.splice(phoneBook.indexOf(phoneNote), 1);
     }
 
@@ -119,7 +118,7 @@ function concatPhone(phone) {
 
 function concatNote(phone, name, email) {
     let result;
-    if (email !== undefined) {
+    if (email) {
         result = [name, phone, email].join(', ');
     } else {
         result = [name, phone].join(', ');
