@@ -27,7 +27,6 @@ function isContainsContact(phone) {
     }
 
     return Object.keys(phoneBook).includes(phone);
-    // return phoneBook[phone] !== undefined;
 }
 
 
@@ -55,7 +54,8 @@ function add(phone, name, email) {
 }
 
 function isCorrect(phone, name) {
-    if (phone.length !== 10 || typeof(name) !== 'string' || name === '') {
+    if (phone.length !== 10 || !/^\d{10}$/.test(phone) ||
+    typeof(name) !== 'string' || name === '') {
         return false;
     }
 
@@ -70,7 +70,7 @@ function isCorrect(phone, name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrect(phone, name)) {
+    if (name === undefined || name === '') {
         return false;
     }
     if (isContainsContact(phone)) {
