@@ -110,20 +110,24 @@ function formatData(person) {
     person.phone.slice(8, 10) + ', ' + person.email;
 }
 
+function isSuitable(person, query) {
+
+    return person.phone.includes(query) ||
+    person.name.includes(query) ||
+    person.email.includes(query);
+}
+
 function find(query) {
     let rez = [];
     if (query === '*') {
         for (let i = 0; i < phoneBook.length; i++) {
             rez.add(formatData(phoneBook[i]));
         }
+        return rez.sort();
     }
-    else {
-        for (let i = 0; i < phoneBook.length; i++) {
-            if (phoneBook[i].phone.includes(query) ||
-                phoneBook[i].name.includes(query) ||
-                phoneBook[i].email.includes(query)) {
-                rez.add(formatData(phoneBook[i]));
-            }
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (isSuitable(phoneBook[i], query)) {
+            rez.push(formatData(phoneBook[i]));
         }
     }
 
