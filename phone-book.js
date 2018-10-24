@@ -63,7 +63,6 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const convertedPhone = tryConvertPhoneNumber(phone);
     if (isName(name) && convertedPhone && isEmail(email) && phoneBook.has(phone)) {
-        phoneBook.delete(phone);
         phoneBook.set(phone, new Person(name, phone, email));
 
         return true;
@@ -90,7 +89,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!(typeof query === 'string') || query === '') {
+    if (typeof query !== 'string' || query === '') {
         return [];
     }
     let persons = Array.from(phoneBook.values());
@@ -121,7 +120,7 @@ function isEmail(email) {
     return typeof email === 'string' || typeof email === 'undefined';
 }
 function tryConvertPhoneNumber(phone) {
-    if (!(typeof phone === 'string') || phone.length !== 10) {
+    if (typeof phone !== 'string' || phone.length !== 10) {
         return false;
     }
 
