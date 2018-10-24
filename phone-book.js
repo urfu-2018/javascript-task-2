@@ -15,11 +15,6 @@ function containsPhone(phone) {
     return phoneBook.find(contact => contact.phone === phone);
 }
 
-/* function checkParameters(phone, name) {
-    return !/^(\d){10}$/.test(phone) || typeof name !== 'string' ||
-        typeof phone !== 'string' || name.length === 0;
-}*/
-
 function validName(name) {
     return name !== '' && typeof name === 'string';
 }
