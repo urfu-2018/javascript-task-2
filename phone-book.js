@@ -22,7 +22,7 @@ const phoneTest = /^\d{10}$/;
  */
 
 function validPhone(phone) {
-    return phone.length === 10 && phoneTest.test(phone);
+    return phone.length === 10 && phoneTest.test(phone) && !isNaN(Number(phone));
 }
 
 function validString(string) {
@@ -45,7 +45,6 @@ function findPhone(phone) {
 
 function add(phone, name, email) {
     if (!validDate(phone, name) || findPhone(phone) !== -1) {
-
         return false;
     }
     let contact = {};
@@ -69,16 +68,14 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const necessaryContact = findPhone(phone);
     if (!validDate(phone, name) || necessaryContact === -1) {
-
         return false;
     }
-    let contact = {};
     if (validString(email)) {
-        contact.email = email;
+        phoneBook[necessaryContact].email = email;
+    } else {
+        delete phoneBook[necessaryContact].email;
     }
-    contact.name = name;
-    contact.phone = phone;
-    phoneBook[necessaryContact] = contact;
+    phoneBook[necessaryContact].name = name;
 
     return true;
 }
