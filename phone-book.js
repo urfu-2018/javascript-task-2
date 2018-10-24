@@ -22,9 +22,12 @@ function toString(phone) {
     const p3 = phone.slice(6, 8);
     const p4 = phone.slice(8, 10);
     const p = `+7 (${p1}) ${p2}-${p3}-${p4}`;
+    const hasEmail = (phoneBook[phone].email !== undefined);
+    if (hasEmail) {
+        return phoneBook[phone].name + ', ' + p + ', ' + phoneBook[phone].email;
+    }
 
-    return phoneBook[phone].name + ', ' + p +
-    (phoneBook[phone].email !== undefined ? ', ' + phoneBook[phone].email : '');
+    return phoneBook[phone].name + ', ' + p;
 }
 
 function isContainsContact(phone) {
