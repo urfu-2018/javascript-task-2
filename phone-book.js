@@ -48,7 +48,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    return addToContactByPredicate(phone, name, email, p => name && phoneBook.hasOwnProperty(p));
+    return addToContactByPredicate(phone, name, email, (p, n) => n && phoneBook.hasOwnProperty(p));
 }
 
 function findContacts(query) {
@@ -79,7 +79,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     return findContacts(query)
-        .sort((a, b) => a[0] > b[0])
+        .sort((a, b) => a[1].localeCompare(b[1]))
         .map(e => {
             const [phone, name, email] = e;
             const phoneParts = PHONE_RE.exec(phone);
