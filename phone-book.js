@@ -84,7 +84,7 @@ function findAndRemove(query) {
 function find(query) {
     let entries = findMatchingEntryPhones(query)
         .map(phone => entryToString(phoneBook[phone]));
-    entries.sort();
+    entries.sort((a, b) => a.localeCompare(b));
 
     return entries;
 }
