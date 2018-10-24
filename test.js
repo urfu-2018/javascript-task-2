@@ -19,7 +19,7 @@ console.info(phoneBook.update('5553330033', 'Валерий'));
 
 // В следующих примерах вернутся все записи
 console.info(phoneBook.find('*'));
-console.info(phoneBook.find('1'));
+console.info(phoneBook.find('555'));
 // В обоих случаях вывод будет следующий
 // [
 //   'Алексей, +7 (555) 111-00-11, alex@example.com',
@@ -29,8 +29,8 @@ console.info(phoneBook.find('1'));
 // ]
 
 // Удаление записей, содержащих '@', вернется `3`
-console.info(phoneBook.findAndRemove('*'));
-console.info(phoneBook.find('*'));
+console.info(phoneBook.findAndRemove('@'));
+
 if (phoneBook.isStar) {
     const csv = [
         'Борис;5552220022;boris@example.com',

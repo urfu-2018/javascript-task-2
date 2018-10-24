@@ -120,14 +120,16 @@ function find(query) {
 
         return [];
     }
-
-    if (query === '*') {
-        query = '';
-    }
     var result = [];
-    for (var contact in phoneBook) {
-        if (phoneBook.hasOwnProperty(contact)) {
-            result = makeArray(contact, result, query);
+    if (query === '*') {
+        for (var contact in phoneBook) {
+            result = makeArrayAll(contact, result);
+        }
+    } else {
+        for (var contact in phoneBook) {
+            if (phoneBook.hasOwnProperty(contact)) {
+                result = makeArray(contact, result, query);
+            }
         }
     }
 
@@ -148,6 +150,17 @@ function makeArray(contact, result, query) {
         str[1].slice(6, 8) + '-' + str[1].slice(8, 10) + checkEmail;
         result[result.length] = tel;
     }
+
+    return result;
+}
+
+function makeArrayAll(contact, result) {
+    var tmpStr = toString(contact);
+    var str = tmpStr.split(', ');
+    var checkEmail = str[2] === 'undefined' ? '' : ', ' + str[2];
+    var tel = str[0] + ', +7 (' + str[1].slice(0, 3) + ') ' + str[1].slice(3, 6) + '-' +
+    str[1].slice(6, 8) + '-' + str[1].slice(8, 10) + checkEmail;
+    result[result.length] = tel;
 
     return result;
 }
