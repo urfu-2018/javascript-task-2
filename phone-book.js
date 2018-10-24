@@ -133,8 +133,6 @@ function importFromCsv(csv) {
 }
 
 function dataIsCorrect(phone, name, email) {
-    const regexp = /^[0-9]{10}$/;
-
     if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
         return false;
     }
@@ -142,14 +140,15 @@ function dataIsCorrect(phone, name, email) {
         return false;
     }
 
-    return regexp.test(phone);
+    return /^[0-9]{10}$/.test(phone);
 }
 
 function correctOutput(record) {
     const resultOutput = [];
 
     record.forEach((value, key) => {
-        const phone = correctPhone(key);
+        const phone =
+            `+7 (${key.slice(0, 3)}) ${key.slice(3, 6)}-${key.slice(6, 8)}-${key.slice(8)}`;
         let correct = value.name + ', ' + phone;
 
         if (value.email !== '') {
@@ -160,10 +159,6 @@ function correctOutput(record) {
     });
 
     return resultOutput.sort();
-}
-
-function correctPhone(phone) {
-    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
 }
 
 module.exports = {
