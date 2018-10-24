@@ -115,7 +115,7 @@ function updatePhoneBook(phone, name, email) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query)) {
+    if (!isString(query) || query === '' || typeof query === 'undefined' || query === null) {
         return new Set(); // как будто пустой запрос
     }
     if (query === '*') {
@@ -149,14 +149,19 @@ function handleRecords(records) {
     return Array.from(result).sort();
 }
 
-// /**
-//  * Удаление записей по запросу из телефонной книги
-//  * @param {String} query
-//  * @returns {Number}
-//  */
-// function findAndRemove(query) {
+/**
+ * Удаление записей по запросу из телефонной книги
+ * @param {String} query
+ * @returns {Number}
+ */
+function findAndRemove(query) {
+    var findResult = find(query);
+    for (var element of findResult) {
+        phoneBook.delete(element);
+    }
 
-// }
+    return findResult.length;
+}
 
 
 // /**
@@ -181,7 +186,7 @@ function handleRecords(records) {
 module.exports = {
     add,
     update,
-    // findAndRemove,
+    findAndRemove,
     find,
     // importFromCsv,
 
