@@ -14,19 +14,16 @@ let phoneBook = new Set();
 
 const phoneReg = /^\d{10}$/;
 const isString = arg => typeof(arg) === 'string';
+const phoneIsSuitable = phone => phoneReg.test(phone);
+const hasWrongValue = arg => arg === '' || typeof arg === 'undefined' || arg === null;
+const argsTypesAreCorrect = (phone, name, email) =>
+    isString(phone) && isString(name) && isString(email);
+
 function replaceBadTypes(phone, name, email) {
     var args = [phone, name, email];
 
     return args.map((arg) => arg || '').map((arg) => arg.trim());
-    // phone = phone || '';
-    // name = name || '';
-    // email = email || '';
-
-    // return [phone.trim(), name.trim(), email.trim()];
 }
-const argsTypesAreCorrect = (phone, name, email) =>
-    isString(phone) && isString(name) && isString(email);
-const phoneIsSuitable = phone => phoneReg.test(phone);
 
 function telInPhoneBook(phone) {
     for (let element of phoneBook) {
@@ -42,7 +39,7 @@ function areArgsCorrect(phone, name, email) {
     if (!argsTypesAreCorrect(phone, name, email)) {
         return false;
     }
-    if (typeof name === 'undefined' || name === '' || name === null) {
+    if (hasWrongValue(name)) {
         return false;
     }
     if (!phoneIsSuitable(phone)) {
@@ -115,7 +112,7 @@ function updatePhoneBook(phone, name, email) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query) || query === '' || typeof query === 'undefined' || query === null) {
+    if (!isString(query) || hasWrongValue(query)) {
         return new Set(); // как будто пустой запрос
     }
     if (query === '*') {
@@ -164,31 +161,37 @@ function findAndRemove(query) {
 }
 
 
-// /**
-//  * Импорт записей из csv-формата
-//  * @star
-//  * @param {String} csv
-//  * @returns {Number} – количество добавленных и обновленных записей
-//  */
-// function importFromCsv(csv) {
-//     // Парсим csv
-//     // Добавляем в телефонную книгу
-//     // Либо обновляем, если запись с таким телефоном уже существует
+/**
+ * Импорт записей из csv-формата
+ * @star
+ * @param {String} csv
+ * @returns {Number} – количество добавленных и обновленных записей
+ */
+function importFromCsv(csv) {
+    if (!isString(csv) || hasWrongValue(csv)) {
+        return 0;
+    }
+    csv = csv.split('\n');
+    var addedRecordsCount = 0;
+    for (var record of csv) {
+        var splittedRecord = record.split(';');
+        var name = splittedRecord[0];
+        var phone = splittedRecord[1];
+        var email = splittedRecord[2];
+        if (add(phone, name, email) || update(phone, name, email)) {
+            addedRecordsCount++;
+        }
+    }
 
-//     return csv.split('\n').length;
-// }
-// add('5554440044', 'Григорий', 'grisha@example.com');
-// add('5552220022', 'Борис', 'boris@example.com');
-// add('5551110011', 'Алекс');
-// add('5551110011', 'Алекс');
-// update('5551110011', 'Алексей', 'alex@example.com');
+    return addedRecordsCount;
+}
 
 module.exports = {
     add,
     update,
     findAndRemove,
     find,
-    // importFromCsv,
+    importFromCsv,
 
     isStar
 };
