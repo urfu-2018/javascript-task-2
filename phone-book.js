@@ -27,9 +27,6 @@ function add(phone, name, email) {
             return false;
         }
     }
-    if (typeof name === 'undefined') {
-        return false;
-    }
     let notation = { phone: phone, name: name, email: email };
     phoneBook.push(notation);
 
