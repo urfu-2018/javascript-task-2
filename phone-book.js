@@ -40,7 +40,7 @@ function formatLine(line) {
 }
 
 function nameIsCorrect(name) {
-    return name && typeof name === 'string';
+    return name && typeof name === 'string'; // delete
 }
 
 /**
@@ -66,8 +66,8 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string') {
-        throw new TypeError();
+    if (typeof query !== 'string' || !query) {
+        return 0;
     }
     let count = 0;
     for (var [key, value] of phoneBook.entries()) {
@@ -91,8 +91,8 @@ function findInLine(line, query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string') {
-        throw new TypeError();
+    if (typeof query !== 'string' || !query) {
+        return 0;
     }
     const res = [];
     for (var value of phoneBook.values()) {
