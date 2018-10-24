@@ -121,11 +121,11 @@ function find(query) {
     let rez = [];
     if (query === '*') {
         for (let i = 0; i < phoneBook.length; i++) {
-            rez.add(formatData(phoneBook[i]));
+            rez.push(formatData(phoneBook[i]));
         }
 
         return rez.sort();
-    }
+    } 
     for (let i = 0; i < phoneBook.length; i++) {
         if (isSuitable(phoneBook[i], query)) {
             rez.push(formatData(phoneBook[i]));
