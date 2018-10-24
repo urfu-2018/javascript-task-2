@@ -96,6 +96,7 @@ function convertPhoneToNormalFormat(phone) {
 function search(query) {
     const resultBook = [];
 
+
     phoneBook.forEach((value, phone) => {
         if (query === '*' ||
             value.name.includes(query) ||
@@ -114,19 +115,16 @@ function search(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let counter = 0;
-    if (typeof (query) !== 'string' || query.length === 0) {
-        return counter;
+    if (typeof(query) !== 'string' || query === '') {
+        return 0;
     }
 
     const foundRecords = search(query);
     foundRecords.forEach(record => {
-        let phone = record[1];
-        phoneBook.delete(phone);
-        counter++;
+        phoneBook.delete(record[1]);
     });
 
-    return counter;
+    return foundRecords.length;
 }
 
 /**
@@ -161,14 +159,14 @@ function find(query) {
  */
 function importFromCsv(csv) {
     const parsedCsv = parseCsv(csv);
-    let counter = 0;
-    parsedCsv.forEach(record => {
-        if (update(record[0], record[1], record[2]) || add(record[0], record[1], record[2])) {
-            counter++;
-        }
-    });
 
-    return counter;
+    return parsedCsv.reduce((acc, record) => {
+        if (update(record[0], record[1], record[2]) || add(record[0], record[1], record[2])) {
+            acc++;
+        }
+
+        return acc;
+    }, 0);
 }
 
 module.exports = {
