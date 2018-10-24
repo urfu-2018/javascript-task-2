@@ -55,7 +55,7 @@ function isAllArgumentsCorrect(phone, name, email) {
 }
 
 function add(phone, name, email) {
-    if (isAllArgumentsCorrect(phone, name, email) && recordNotExists(phone)) {
+    if (isAllArgumentsCorrect(phone, name, email)) {
         phoneBook.push({
             phone: phone,
             name: name,
