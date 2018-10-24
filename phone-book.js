@@ -64,14 +64,14 @@ function findAndRemove(query) {
     }
     if (query === '*') {
         deletedMap = new Map(phoneBook);
+    } else {
+        phoneBook.forEach((value, key) => {
+            if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
+                    value.email.indexOf(query) !== -1) {
+                deletedMap.set(key, value);
+            }
+        });
     }
-
-    phoneBook.forEach((value, key) => {
-        if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
-                value.email.indexOf(query) !== -1) {
-            deletedMap.set(key, value);
-        }
-    });
 
     deletedMap.forEach((_value, key) => {
         phoneBook.delete(key);
