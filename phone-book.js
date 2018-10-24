@@ -101,7 +101,7 @@ function isFind(phone, query) {
  */
 function find(query) {
     const arrFindPhones = [];
-    if (typeof query !== 'string' && query === '') {
+    if (typeof query !== 'string' || query === '') {
         return arrFindPhones;
     }
     for (const phone in phoneBook) {
