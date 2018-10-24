@@ -131,11 +131,14 @@ function search(query) {
         ? false : element.email.includes(query)));
 
     return findedRecords.map(element => element.name + ', ' +
-         toFullPhoneForm(element.phone) + ', ' + element.email).sort();
+         toFullPhoneForm(element.phone) + ((typeof element.email === 'undefined')
+        ? '' : ', ' + element.email)).sort();
 
 }
 
+
 function find(query) {
+
     return search(query);
 }
 
