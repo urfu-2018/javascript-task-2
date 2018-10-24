@@ -29,9 +29,9 @@ function add(phone, name, email) {
             name: name,
             email: email
         });
-        if (!email) {
-            delete phoneBook[phoneBook.length - 1].email;
-        }
+        // if (!email) {
+        //     delete phoneBook[phoneBook.length - 1].email;
+        // }
 
         return true;
     }
