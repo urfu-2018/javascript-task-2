@@ -59,6 +59,7 @@ function update(phone, name, email) {
         if (phoneBook[i].phone === phone) {
             phoneBook.name = name;
             phoneBook.email = email;
+
             return true;
         }
     }
