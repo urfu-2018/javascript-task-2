@@ -90,26 +90,15 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
+
 function findAndRemove(query) {
-    let count = 0;
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === query) {
-            phoneBook.splice(i, 1);
-            count++;
-        }
-
-        if (phoneBook[i].name === query) {
-            phoneBook.splice(i, 1);
-            count++;
-        }
-
-        if (phoneBook[i].email === query) {
-            phoneBook.splice(i, 1);
-            count++;
-        }
+    const found = phoneBook.filter(e => e.phone.includes(query) ||
+    e.name.includes(query) ||
+    ((typeof e.email === 'undefined') ? false : e.email.includes(query)));
+    for (let i = 0; i < found.length; i++) {
+        phoneBook.splice(phoneBook.findIndex(e => e === found[i]), 1);
     }
 
-    return count;
 }
 
 function toFullPhoneForm(phone) {
@@ -128,17 +117,17 @@ function toFullPhoneForm(phone) {
 function search(query) {
     let findedRecords = [];
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === query) {
+        if (phoneBook[i].phone.search(query) !== -1) {
             findedRecords.push(phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
              ', ' + phoneBook[i].email);
         }
 
-        if (phoneBook[i].name === query) {
+        if (phoneBook[i].name.search(query) !== -1) {
             findedRecords.push(phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
              ', ' + phoneBook[i].email);
         }
 
-        if (phoneBook[i].email === query) {
+        if (phoneBook[i].email !== undefined && phoneBook[i].email.search(query) !== -1) {
             findedRecords.push(phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
              ', ' + phoneBook[i].email);
         }
@@ -149,7 +138,7 @@ function search(query) {
 
 function find(query) {
     let findedRecords = [];
-    if (query === '*' || query === '555') {
+    if (query === '*') {
         for (let i = 0; i < phoneBook.length; i++) {
             findedRecords[i] = phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
              ', ' + phoneBook[i].email;
