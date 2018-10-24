@@ -11,6 +11,7 @@ const isStar = false;
  */
 let phoneBook = [];
 
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -36,7 +37,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.some(x => x.phone === phone)) {
+    if (!phoneBook.some(x => x.phone === phone) || !name) {
         return false;
     }
 
@@ -56,8 +57,7 @@ function findAndRemove(query) {
         return 0;
     }
     const lengthBeforeRemoval = phoneBook.length;
-    phoneBook = query === '*' ? [] : phoneBook.filter(e => !e.name.includes(query) &&
-        !e.phone.includes(query) && (!e.email || !e.email.includes(query)));
+    phoneBook = query === '*' ? [] : phoneBook.filter(e => !checkQuery(e, query));
 
     return lengthBeforeRemoval - phoneBook.length;
 }
@@ -73,11 +73,16 @@ function find(query) {
     }
 
     const resultNotes = query === '*' ? phoneBook
-        : phoneBook.filter(e => e.name.includes(query) || e.phone.includes(query) ||
-                        e.email && e.email.includes(query));
+        : phoneBook.filter(e => checkQuery(e, query));
 
     return resultNotes.map(e => `${e.name}, ${formatPhoneNumber(e.phone)}` +
             (e.email ? `, ${e.email}` : '')).sort();
+}
+
+
+function checkQuery(element, query) {
+    return element.name.includes(query) || element.phone.includes(query) ||
+        element.email && element.email.includes(query);
 }
 
 function formatPhoneNumber(phone) {
