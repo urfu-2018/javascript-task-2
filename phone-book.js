@@ -9,7 +9,21 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
+
+let isCorrectNumber = (phone) =>
+    typeof(phone) === 'string' && /^\d{10}$/.test(phone);
+
+let phoneFormat = (phone) =>
+    `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+
+let notesByQuery = (query) =>
+    typeof(query) !== 'string' || query === ''
+        ? 0
+        : Object.keys(phoneBook)
+            .map(phone => [phoneBook[phone].name, phone, phoneBook[phone].email])
+            .filter(x =>
+                x.some(str => str.indexOf(query) + 1 || query === '*'));
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,8 +32,13 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name, email = '') {
+    if (!isCorrectNumber(phone) || !name || phone in phoneBook) {
+        return false;
+    }
+    phoneBook[phone] = { 'name': name, 'email': email };
 
+    return true;
 }
 
 /**
@@ -29,8 +48,13 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone, name, email = '') {
+    if (!(phone in phoneBook) || !name) {
+        return false;
+    }
+    phoneBook[phone] = { 'name': name, 'email': email };
 
+    return true;
 }
 
 /**
@@ -39,7 +63,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
+    return notesByQuery(query)
+        .filter(x => delete(phoneBook[x[1]]))
+        .length;
 }
 
 /**
@@ -48,7 +74,11 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-
+    return notesByQuery(query)
+        .map(x => [x[0], phoneFormat(x[1]), x[2]]
+            .filter(el => el)
+            .join(', '))
+        .sort();
 }
 
 /**
@@ -58,11 +88,11 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-
-    return csv.split('\n').length;
+    return csv
+        .split('\n')
+        .map(x => x.split(';'))
+        .filter(x => add(x[1], x[0], x[2]) || update(x[1], x[0], x[2]))
+        .length;
 }
 
 module.exports = {
