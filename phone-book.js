@@ -42,9 +42,9 @@ function isCorrectEmail(email) {
 
 function recordNotExists(phone, name) {
     for (let i = 0; i < phoneBook.length; i++) {
-       if (phoneBook[i].phone === phone && phoneBook[i].name === name) {
-           return false;
-       }
+        if (phoneBook[i].phone === phone && phoneBook[i].name === name) {
+            return false;
+        }
     }
 
     return true;
