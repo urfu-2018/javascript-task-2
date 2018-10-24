@@ -13,7 +13,7 @@ let phoneBook = new Map();
 
 
 const isParamsCorrect = (phone, name) => {
-    if (typeof phone !== 'string' || typeof name !== 'string') {
+    if (typeof phone !== 'string' || typeof name !== 'string' || name === '') {
         return false;
     }
     let isPhoneCorrect = /^\d{10}$/.test(phone);
