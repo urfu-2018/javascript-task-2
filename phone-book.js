@@ -23,7 +23,7 @@ function add(phone, name, email) {
         return false;
     }
     if (/^[0-9]{10}$/.test(phone) && name) {
-        phoneBook.set(phone, (`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`));
+        phoneBook.set(phone, { name: name, phone: phone, email: email });
 
         return true;
     }
@@ -36,6 +36,11 @@ function formatNumber(phone) {
     return phone.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
 }
 
+function formatLine(line) {
+
+    return (`${line.name}, ${formatNumber(line.phone)}${line.email ? `, ${line.email}` : ''}`);
+}
+
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -45,7 +50,7 @@ function formatNumber(phone) {
  */
 function update(phone, name, email) {
     if (/^[0-9]{10}$/.test(phone) && name && phoneBook.has(phone)) {
-        phoneBook.set(phone, (`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`));
+        phoneBook.set(phone, { name: name, phone: phone, email: email });
 
         return true;
     }
@@ -64,13 +69,18 @@ function findAndRemove(query) {
     }
     let count = 0;
     for (var [key, value] of phoneBook.entries()) {
-        if (value.indexOf(query) > 0 || query === '*') {
+        if (query === '*' || findInLine(value, query)) {
             phoneBook.delete(key);
             count++;
         }
     }
 
     return count;
+}
+
+function findInLine(line, query) {
+    return line.phone.indexOf(query) > -1 || line.name.indexOf(query) > -1 ||
+        (line.email && line.email.indexOf(query) > -1);
 }
 
 /**
@@ -84,12 +94,12 @@ function find(query) {
     }
     const res = [];
     for (var value of phoneBook.values()) {
-        if (value.indexOf(query) > 0 || query === '*') {
+        if (query === '*' || findInLine(value, query)) {
             res.push(value);
         }
     }
 
-    return res.sort();
+    return res.map(x => formatLine(x)).sort();
 }
 
 /**
