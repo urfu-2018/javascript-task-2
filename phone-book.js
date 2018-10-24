@@ -13,21 +13,33 @@ let phoneBook = new Map();
 
 
 const isParamsCorrect = (phone, name, email) => {
+    if (typeof phone !== 'string' || typeof name !== 'string') {
+        return false;
+    }
     let isPhoneCorrect = /^\d{10}$/.test(phone);
-    let isNameFormatCorrect = name !== undefined;
     let isEmailFormatCorrect =
         /^[0-9a-z]+@[a-z0-9]+\.[a-z0-9]+$/i.test(email) || email === undefined;
 
-    return isPhoneCorrect && isNameFormatCorrect && isEmailFormatCorrect;
+    return isPhoneCorrect && isEmailFormatCorrect;
 };
 
 const convertAnswer = userInf => {
-    userInf = userInf.split(' ');
-    let phone = userInf[0];
+    return `${userInf.name}, +7 (${
+        userInf.phone.slice(0, 3)
+    }) ${
+        userInf.phone.slice(3, 6)
+    }-${userInf.phone.slice(6, 8)}-${userInf.phone.slice(8, 10)}` +
+        String(userInf.email !== undefined ? `, ${userInf.email}` : '');
+};
 
-    return `${userInf[1]}, +7 (${
-        phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}` +
-        String(userInf[2] !== 'undefined' ? `, ${userInf[2]}` : '');
+const getContacts = () => {
+    const res = [];
+    phoneBook.forEach((value, key) => {
+        let { email, name } = value;
+        res.push({ name, phone: key, email });
+    });
+
+    return res.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 /**
@@ -42,7 +54,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    phoneBook.set(phone, `${phone} ${name} ${email}`);
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -55,12 +67,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) && !isParamsCorrect(phone, name, email)) {
+    if (!(phoneBook.has(phone)) && !isParamsCorrect(phone, name, email)) {
         return false;
     }
 
-    phoneBook.set(phone,
-        `${phone} ${name} ${email}`);
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -71,17 +82,19 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query === '*') {
-        let phoneBookLen = phoneBook.length;
-        phoneBook = new Map();
-
-        return phoneBookLen;
+    if (typeof query !== 'string' || query === '') {
+        return [];
     }
+
     let contactsToDelete = [];
-    let queryRegEx = new RegExp(query);
-    phoneBook.forEach((value, key) => {
-        if (queryRegEx.test(value)) {
-            contactsToDelete.push(key);
+    const queryRegExp = new RegExp(query === '*' ? '' : query);
+    getContacts().forEach(item => {
+        if (queryRegExp.test(item.name) ||
+            queryRegExp.test(item.phone) ||
+            queryRegExp.test(item.email) ||
+            query === '*'
+        ) {
+            contactsToDelete.push(item.phone);
         }
     });
     contactsToDelete.forEach(item => phoneBook.delete(item));
@@ -95,19 +108,23 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let contacts = [];
-    if (query === '*') {
-        phoneBook.forEach((value) => contacts.push(convertAnswer(value)));
-    } else {
-        let queryRegEx = new RegExp(query);
-        phoneBook.forEach((value) => {
-            if (queryRegEx.test(value)) {
-                contacts.push(convertAnswer(value));
-            }
-        });
+    if (typeof query !== 'string' || query === '') {
+        return [];
     }
 
-    return contacts.sort();
+    let res = [];
+    const queryRegExp = new RegExp(query === '*' ? '' : query);
+    getContacts().forEach(item => {
+        if (queryRegExp.test(item.name) ||
+            queryRegExp.test(item.phone) ||
+            queryRegExp.test(item.email) ||
+            query === '*'
+        ) {
+            res.push(convertAnswer(item));
+        }
+    });
+
+    return res;
 }
 
 /**
