@@ -6,10 +6,27 @@
  */
 const isStar = true;
 
-/**
- * Телефонная книга
- */
-let phoneBook;
+
+const phoneBook = {};
+
+
+const PHONE_RE = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
+
+
+function isValidContact(phone, name) {
+    return name && PHONE_RE.test(phone);
+}
+
+
+function addToContactByPredicate(phone, name, email, predicate) {
+    if (!predicate(phone, name, email)) {
+        return false;
+    }
+
+    phoneBook[phone] = { name, email };
+
+    return true;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +36,8 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-
+    return addToContactByPredicate(phone, name, email,
+        (p, n) => isValidContact(p, n) && !phoneBook.hasOwnProperty(p));
 }
 
 /**
@@ -30,7 +48,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    return addToContactByPredicate(phone, name, email,
+        (p, n) => isValidContact(p, n) && phoneBook.hasOwnProperty(p));
+}
 
+function findContacts(query) {
+    return Object.entries(phoneBook)
+        .map(e => [e[0], e[1].name, e[1].email])
+        .filter(e => query === '*' || e.some(q => q && q.includes(query)));
 }
 
 /**
@@ -39,7 +64,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
+    return findContacts(query)
+        .filter(k => delete phoneBook[k])
+        .length;
 }
 
 /**
@@ -48,7 +75,15 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    return findContacts(query)
+        .sort((a, b) => a[0] > b[0])
+        .map(e => {
+            const [phone, name, email] = e;
+            const phoneParts = PHONE_RE.exec(phone);
+            const formattedPhone = `+7 (${phoneParts[1]}) ${phoneParts.slice(2, 5).join('-')}`;
 
+            return `${name}, ${formattedPhone}${email ? ', ' + email : ''}`;
+        });
 }
 
 /**
@@ -58,11 +93,14 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    return csv.split('\n')
+        .map(l => {
+            const parts = l.split(';');
 
-    return csv.split('\n').length;
+            return [parts[1], parts[0], parts[2]];
+        })
+        .filter(e => addToContactByPredicate(...e, isValidContact))
+        .length;
 }
 
 module.exports = {
