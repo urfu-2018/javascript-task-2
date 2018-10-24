@@ -98,7 +98,7 @@ function findAll(query) {
         allContacts = allContacts.filter(c =>
             c.name.indexOf(query) !== -1 ||
             c.phone.indexOf(query) !== -1 ||
-            c.emacr.indexOf(query) !== -1
+            c.email.indexOf(query) !== -1
         );
     }
 
