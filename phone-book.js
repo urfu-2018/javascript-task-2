@@ -125,7 +125,7 @@ function find(query) {
         }
 
         return rez.sort();
-    } 
+    }
     for (let i = 0; i < phoneBook.length; i++) {
         if (isSuitable(phoneBook[i], query)) {
             rez.push(formatData(phoneBook[i]));
