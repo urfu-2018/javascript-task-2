@@ -166,7 +166,7 @@ function importFromCsv(csv) {
         const phone = logData[1];
         const email = logData[2];
 
-        return add(phone, name, email) || update(phone, name, email);
+        return logData.length > 1 && (add(phone, name, email) || update(phone, name, email));
     });
 
     return result.length;
