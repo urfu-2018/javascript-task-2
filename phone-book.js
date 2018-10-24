@@ -32,7 +32,8 @@ function add(phone, name, email) {
 }
 
 function isCorrectPhoneNumber(phone) {
-    return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
+    // return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
+    return /^\d{10}$/.test(phone);
 }
 
 function isCorrectName(name) {
@@ -67,8 +68,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     var foundRecordKeys = find(query);
     for (let key of foundRecordKeys) {
-        // phoneBook.delete(key);
-        delete phoneBook[key];
+        phoneBook.delete(key);
     }
 
     return foundRecordKeys.length;
@@ -93,8 +93,7 @@ function compareNames(a, b) {
 function formatRecord(phone) {
     var number = formatPhoneNumber(phone);
     var output = [phoneBook[phone].name, number];
-    // if (phoneBook[phone].email !== undefined) {
-    if (phoneBook[phone].email) {
+    if (phoneBook[phone].email !== undefined) {
         output.push(phoneBook[phone].email);
     }
 
