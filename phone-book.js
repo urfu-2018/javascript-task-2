@@ -47,12 +47,13 @@ function nameIsCorrect(name) {
     return name && typeof name === 'string' && name.length > 0; // delete
 }
 
-function emailIsCorrect(email){
+function emailIsCorrect(email) {
     return email && typeof email === 'string' && email.length > 0;
 }
 
 function correctData(phone, name, email) {
-    return nameIsCorrect(name) && phoneIsCorrect(phone) && (!email || emailIsCorrect(email)); // delete
+    return nameIsCorrect(name) && phoneIsCorrect(phone) &&
+        (!email || emailIsCorrect(email)); // delete
 }
 
 /**
