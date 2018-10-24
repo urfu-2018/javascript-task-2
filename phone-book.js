@@ -20,10 +20,9 @@ let phoneBook = [];
  */
 function add(phone, name, email) {
     const phoneCheck = /^\d{10}$/.test(phone);
-    const nameCheck = typeof name !== 'undefined';
     let nameInPhoneBookCheck = phoneBook.filter(acc => acc.phone === phone);
 
-    if (phoneCheck && nameCheck && nameInPhoneBookCheck.length === 0) {
+    if (phoneCheck && name && nameInPhoneBookCheck.length === 0) {
         phoneBook.push({
             phone: phone,
             name: name,
