@@ -108,27 +108,56 @@ function updatePhoneBook(phone, name, email) {
     }
 }
 
+
+/**
+ * Поиск записей по запросу в телефонной книге
+ * @param {String} query
+ * @returns {String[]}
+ */
+function find(query) {
+    if (!isString(query)) {
+        return new Set(); // как будто пустой запрос
+    }
+    if (query === '*') {
+        return handleRecords(phoneBook);
+    }
+    var suitablesForQuery = new Set();
+    phoneBook.forEach(element => {
+        if (element.includes(query)) {
+            suitablesForQuery.add(element);
+        }
+    });
+
+    return handleRecords(suitablesForQuery);
+}
+
+function handleRecords(records) {
+    var result = new Set();
+    records.forEach(record => {
+        var splittedRecord = record.split('|');
+        var phone = splittedRecord[0];
+        var handledEmail = ', ' + splittedRecord[2];
+        if (splittedRecord[2] === '') {
+            handledEmail = '';
+        }
+        var handledPhone = `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
+            `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+        var handledRecord = `${splittedRecord[1]}, ${handledPhone}${handledEmail}`;
+        result.add(handledRecord);
+    });
+
+    return Array.from(result).sort();
+}
+
 // /**
 //  * Удаление записей по запросу из телефонной книги
 //  * @param {String} query
 //  * @returns {Number}
 //  */
 // function findAndRemove(query) {
-//     query = 1;
 
-//     return 0; //stub
 // }
 
-// /**
-//  * Поиск записей по запросу в телефонной книге
-//  * @param {String} query
-//  * @returns {String[]}
-//  */
-// function find(query) {
-//     query = 1;
-
-//     return []; //stub
-// }
 
 // /**
 //  * Импорт записей из csv-формата
@@ -153,7 +182,7 @@ module.exports = {
     add,
     update,
     // findAndRemove,
-    // find,
+    find,
     // importFromCsv,
 
     isStar
