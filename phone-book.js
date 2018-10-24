@@ -67,7 +67,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     var foundRecordKeys = find(query);
     for (let key of foundRecordKeys) {
-        //phoneBook.delete(key);
+        // phoneBook.delete(key);
         delete phoneBook[key];
     }
 
@@ -93,7 +93,8 @@ function compareNames(a, b) {
 function formatRecord(phone) {
     var number = formatPhoneNumber(phone);
     var output = [phoneBook[phone].name, number];
-    if (phoneBook[phone].email !== undefined) {
+    // if (phoneBook[phone].email !== undefined) {
+    if (phoneBook[phone].email) {
         output.push(phoneBook[phone].email);
     }
 
