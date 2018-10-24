@@ -56,13 +56,13 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const phoneAndNameAreCorrect = check(phone, name);
     const exist = phoneBook.hasOwnProperty(phone);
-    let different;
+    let different = true;
     if (exist) {
         const differentName = phoneBook[phone].name !== name;
         const differentEmail = phoneBook[phone].email !== email;
         different = differentName || differentEmail;
     }
-    if (phoneAndNameAreCorrect && exist && different) {
+    if (phoneAndNameAreCorrect && different) {
         phoneBook[phone] = {
             name,
             email
