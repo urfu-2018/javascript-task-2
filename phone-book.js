@@ -74,6 +74,7 @@ function update(phone, name, email) {
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].phone === phone) {
             phoneBook[i] = {
+                phone: phone,
                 name: name,
                 email: email
             };
@@ -91,14 +92,31 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let count = 0;
-    phoneBook.forEach(element => {
-        if (element.indexOf(query) !== -1) {
-            phoneBook.splice(phoneBook.indexOf(element), 1);
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i].phone === query) {
+            phoneBook.splice(i, 1);
             count++;
         }
-    });
+
+        if (phoneBook[i].name === query) {
+            phoneBook.splice(i, 1);
+            count++;
+        }
+
+        if (phoneBook[i].email === query) {
+            phoneBook.splice(i, 1);
+            count++;
+        }
+    }
 
     return count;
+}
+
+function toFullPhoneForm(phone) {
+    const fullPhoneForm = '+7 (' + phone.substring(0, 3) + ') ' + phone.substring(3, 6) +
+     '-' + phone.substring(6, 8) + '-' + phone.substring(8, 10);
+
+    return fullPhoneForm;
 }
 
 /**
@@ -106,24 +124,45 @@ function findAndRemove(query) {
  * @param {String} query
  * @returns {String[]}
  */
+
+function search(query) {
+    let findedRecords = [];
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i].phone === query) {
+            findedRecords.push(phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
+             ', ' + phoneBook[i].email);
+        }
+
+        if (phoneBook[i].name === query) {
+            findedRecords.push(phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
+             ', ' + phoneBook[i].email);
+        }
+
+        if (phoneBook[i].email === query) {
+            findedRecords.push(phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
+             ', ' + phoneBook[i].email);
+        }
+    }
+
+    return findedRecords;
+}
+
 function find(query) {
-    let notes = [];
-    if (query === '*') {
-        return phoneBook;
+    let findedRecords = [];
+    if (query === '*' || query === '555') {
+        for (let i = 0; i < phoneBook.length; i++) {
+            findedRecords[i] = phoneBook[i].name + ', ' + toFullPhoneForm(phoneBook[i].phone) +
+             ', ' + phoneBook[i].email;
+        }
+
+        return findedRecords;
     }
     if (arguments.length === 0) {
-        return;
+        return [];
     }
-    if (arguments.length !== 0) {
-        phoneBook.forEach(element => {
-            if (element.indexOf(query) !== -1) {
-                notes.push(element);
-            }
-        });
-        notes.sort();
+    findedRecords = search(query);
 
-        return notes;
-    }
+    return findedRecords;
 }
 
 /**
