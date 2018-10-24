@@ -12,11 +12,11 @@ const isStar = false;
 let phoneBook = [];
 
 function isCorrectPhone(phone) {
-    return typeof phone === 'string' && /^\d{10}$/.test(phone);
+    return (typeof phone === 'string' || phone instanceof String) && /^\d{10}$/.test(phone);
 }
 
 function isCorrectName(name) {
-    return typeof name === 'string' && name;
+    return (typeof name === 'string' || name instanceof String) && name;
 }
 
 function isCorrectQuery(query) {
