@@ -54,7 +54,12 @@ function findAndRemove(query) {
     }
     const initialPhoneBookLen = phoneBook.size;
     phoneBook.forEach(({ name, email }, key) => {
-        if (key.includes(query) || name.includes(query) || (email && email.includes(query))) {
+        if (
+            key.includes(query) ||
+            name.includes(query) ||
+            (email && email.includes(query)) ||
+            query === '*'
+        ) {
             phoneBook.delete(key);
         }
     });
@@ -77,15 +82,11 @@ function find(query) {
             const phone =
                 `+7 (${key.substr(0, 3)}) ${key.substr(3, 3)}-` +
                 `${key.substr(6, 2)}-${key.substr(8, 2)}`;
-            // result.push(`${name}, ${phone}` + (email ? `, ${email}` : ''));
-            result.push({ name, phone, email });
+            result.push(`${name}, ${phone}` + (email ? `, ${email}` : ''));
         }
     });
-    const sorted = result.sort((x, y) => x.name > y.name);
 
-    return sorted.map(
-        ({ name, phone, email }) => `${name}, ${phone}` + (email ? `, ${email}` : '')
-    );
+    return result.sort();
 }
 
 /**
