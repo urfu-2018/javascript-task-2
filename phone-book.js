@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -98,7 +98,7 @@ function findAndRemove(query) {
     let phoneBookIndexList = phoneBookQuerySet.filter((acc) => (acc[0]))
         .map((acc) => (acc[1]));
 
-    phoneBookIndexList.forEach((index) => (phoneBook.splice(index, 1)));
+    phoneBookIndexList.forEach((index) => (delete phoneBook[index]));
 
     return phoneBookIndexList.length;
 }
