@@ -17,8 +17,14 @@ let phoneBook = new Map();
  * @returns {String}
  */
 function toString(phone) {
+    const p1 = phone.slice(0, 3);
+    const p2 = phone.slice(3, 6);
+    const p3 = phone.slice(6, 8);
+    const p4 = phone.slice(8, 10);
+    const p = `+7 (${p1}) ${p2}-${p3}-${p4}`;
 
-    return phoneBook[phone][0] + ', ' + phone + ', ' + phoneBook[phone][1];
+    return phoneBook[phone][0] + ', ' + p +
+    (phoneBook[phone][1] !== undefined ? ', ' + phoneBook[phone][1] : '');
 }
 
 function isContainsContact(phone) {
@@ -114,36 +120,27 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (checkQuery(query)) {
+    const result = findKeys(query);
 
-        return [];
-    }
-    var result = [];
-    for (var contact in phoneBook) {
-        if (phoneBook.hasOwnProperty(contact)) {
-            result = makeArray(contact, result, query);
-        }
-    }
-
-    return result.sort(function (a, b) {
-        var name1 = a.split(', ');
-        var name2 = b.split(', ');
-
-        return name1[0].localeCompare(name2[0]);
-    });
+    return result.sort((a, b) =>
+        phoneBook[a][0].localeCompare(phoneBook[b][0])
+    )
+        .map(toString);
 }
 
-function makeArray(contact, result, query) {
-    var tmpStr = toString(contact);
-    if (query === '*' || tmpStr.includes(query)) {
-        var str = tmpStr.split(', ');
-        var checkEmail = str[2] === 'undefined' ? '' : ', ' + str[2];
-        var tel = str[0] + ', +7 (' + str[1].slice(0, 3) + ') ' + str[1].slice(3, 6) + '-' +
-        str[1].slice(6, 8) + '-' + str[1].slice(8, 10) + checkEmail;
-        result[result.length] = tel;
+function findKeys(query) {
+    if (query === '*') {
+        return Object.keys(phoneBook);
+    }
+    if (query === '' || query === undefined) {
+        return [];
     }
 
-    return result;
+    return Object.keys(phoneBook)
+        .filter(phone =>
+            phone.includes(query) ||
+            phoneBook[phone][0].includes(query) ||
+            (phoneBook[phone][1] !== undefined && phoneBook[phone][1].includes(query)));
 }
 
 /**
