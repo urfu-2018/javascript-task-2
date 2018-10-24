@@ -99,7 +99,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     var result = findKeys(query);
     for (var item of result) {
-        phoneBook.delete(item);
+        delete phoneBook[item];
     }
 
     return result.length;
