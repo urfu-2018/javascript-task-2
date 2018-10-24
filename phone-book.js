@@ -37,8 +37,8 @@ function checkInput(phone, name, email) {
  */
 function add(phone, name, email) {
     if (arguments.length !== 1 && checkInput(phone, name, email) &&
-        phoneBook[phone] === undefined) {
-        email = email === undefined ? '' : email;
+        typeof(phoneBook[phone]) === 'undefined') {
+        email = typeof(email) === 'undefined' ? '' : email;
         phoneBook[phone] = [name, email];
 
         return true;
@@ -56,8 +56,8 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (arguments.length !== 1 && checkInput(phone, name, email) &&
-        phoneBook[phone] !== undefined) {
-        email = email === undefined ? '' : email;
+        typeof(phoneBook[phone]) !== 'undefined') {
+        email = typeof(email) === 'undefined' ? '' : email;
         phoneBook[phone] = [name, email];
 
         return true;
@@ -143,7 +143,7 @@ function importFromCsv(csv) {
         let data = {
             name: contact[0],
             phone: contact[1],
-            email: contact[2] === undefined ? '' : contact[2]
+            email: typeof(contact[2]) === 'undefined' ? '' : contact[2]
         };
         kills = update(data.phone, data.name, data.email) ||
         add(data.phone, data.name, data.email) ? kills + 1 : kills;
@@ -161,3 +161,4 @@ module.exports = {
 
     isStar
 };
+
