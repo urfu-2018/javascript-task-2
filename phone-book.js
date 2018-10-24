@@ -9,7 +9,7 @@ const isStar = false;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -73,7 +73,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let rez;
+    let rez = [];
     let removed;
     if (query === '*') {
         removed = phoneBook.length;
@@ -100,7 +100,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let rez;
+    let rez = [];
     if (query === '*') {
         return phoneBook.sort((a, b) => a.name.localCompare(b.name));
     }
