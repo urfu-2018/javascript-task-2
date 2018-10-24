@@ -148,7 +148,7 @@ function importFromCsv(csv) {
         var name = data[0];
         var phone = data[1];
         var email = data[2];
-        if (add(phone, name, email) ||) {
+        if (add(phone, name, email)) {
             count++;
         } else if (update(phone, name, email)) {
             count++;
