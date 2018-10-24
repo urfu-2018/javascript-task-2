@@ -68,7 +68,7 @@ function findAndRemove(query) {
     let matchingEntryPhones = findMatchingEntryPhones(query);
 
     function removeEntryByPhone(phone) {
-        phoneBook[phone] = undefined;
+        delete phoneBook[phone];
     }
 
     matchingEntryPhones.forEach(removeEntryByPhone);
