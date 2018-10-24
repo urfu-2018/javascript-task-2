@@ -26,7 +26,8 @@ function isContainsContact(phone) {
         return false;
     }
 
-    return phoneBook[phone] !== undefined;
+    return Object.keys(phoneBook).includes(phone);
+    // return phoneBook[phone] !== undefined;
 }
 
 
