@@ -7,7 +7,6 @@ phoneBook.add('5554440044', 'Григорий', 'grisha@example.com');
 phoneBook.add('5552220022', 'Борис', 'boris@example.com');
 phoneBook.add('5551110011', 'Алекс');
 phoneBook.add('5553330033', 'Валерий', 'valera@example.com');
-
 // Эти записи не добавятся, вернется `false`
 phoneBook.add('3330033', 'Неизвестный', 'unknown@example.com');
 phoneBook.add('5551110011', 'Алексей');
