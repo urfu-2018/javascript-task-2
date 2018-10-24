@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -40,11 +40,11 @@ function formatLine(line) {
 }
 
 function phoneIsCorrect(phone) {
-    return phone && typeof phone === 'string' && /^[0-9]{10}$/.test(phone); // delete
+    return phone && typeof phone === 'string' && /^[0-9]{10}$/.test(phone);
 }
 
 function nameIsCorrect(name) {
-    return name && typeof name === 'string' && name.length > 0; // delete
+    return name && typeof name === 'string' && name.length > 0;
 }
 
 function emailIsCorrect(email) {
@@ -53,7 +53,7 @@ function emailIsCorrect(email) {
 
 function correctData(phone, name, email) {
     return nameIsCorrect(name) && phoneIsCorrect(phone) &&
-        (!email || emailIsCorrect(email)); // delete
+        (!email || emailIsCorrect(email));
 }
 
 /**
@@ -125,11 +125,16 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    const data = csv.split('\n');
+    let count = 0;
 
-    return csv.split('\n').length;
+    data.forEach(line => {
+        let splitedLine = line.split(';');
+        splitedLine = [splitedLine[1], splitedLine[0], splitedLine[2]];
+        count += add(...splitedLine) || update(...splitedLine);
+    });
+
+    return count;
 }
 
 module.exports = {
