@@ -125,10 +125,10 @@ function find(query) {
     }
 
     return result.sort(function (a, b) {
-        var a1 = a.slice(0, a.indexOf(', '));
-        var b1 = b.slice(0, b.indexOf(', '));
+        var name1 = a.split(', ');
+        var name2 = b.split(', ');
 
-        return a1.localeCompare(b1);
+        return name1[0].localeCompare(name2[0]);
     });
 }
 
@@ -185,6 +185,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-
     isStar
 };
