@@ -19,9 +19,6 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof phone !== 'string' || typeof name !== 'string') {
-        throw new TypeError()
-    }
     if (!/^[0-9]{10}$/.test(phone)) {
         return false;
     }
@@ -30,7 +27,7 @@ function add(phone, name, email) {
             return false;
         }
     }
-    if (typeof name === 'undefined') {
+    if (typeof name !== 'string') {
         return false;
     }
     let notation = { phone: phone, name: name, email: email };
