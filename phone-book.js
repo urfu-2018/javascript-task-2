@@ -9,28 +9,26 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {
-    contact: new Map(),
-    sizePhoneBook: 0,
-    isContainsContact: function (name) {
-        if (this.sizePhoneBook === 0) {
-            return false;
-        }
+let phoneBook = new Map();
 
-        return this.contact[name] !== undefined;
-    },
-
-    /**
+/**
  * Приводит по конкретному индексу контакта в строку
- * @param {String?} name
+ * @param {String?} phone
  * @returns {String}
  */
-    toString: function (name) {
+function toString(phone) {
 
-        return name + ', ' + this.contact[name][0] + ', ' + this.contact[name][1];
+    return phoneBook[phone][0] + ', ' + phone + ', ' + phoneBook[phone][1];
+}
+
+function isContainsContact(phone) {
+    if (phoneBook.length === 0) {
+        return false;
     }
 
-};
+    return phoneBook[phone] !== undefined;
+}
+
 
 /**
  * Добавление записи в телефонную книгу
@@ -43,12 +41,11 @@ function add(phone, name, email) {
     if (!isCorrect(phone, name)) {
         return false;
     }
-    if (!phoneBook.isContainsContact(name) && find(phone).length === 0) {
+    if (!isContainsContact(phone)) {
         var temp = [];
-        temp[0] = phone;
+        temp[0] = name;
         temp[1] = email;
-        phoneBook.sizePhoneBook++;
-        phoneBook.contact[name] = temp;
+        phoneBook[phone] = temp;
 
         return true;
     }
@@ -78,31 +75,11 @@ function update(phone, name, email) {
     if (!isCorrect(phone, name)) {
         return false;
     }
-    if (phoneBook.isContainsContact(name)) {
+    if (isContainsContact(phone)) {
         var temp = [];
-        temp[0] = phone;
+        temp[0] = name;
         temp[1] = email;
-        phoneBook.contact[name] = temp;
-
-        return true;
-    }
-
-    return updatePhoneOrEmail(phone, name, email);
-}
-
-function updatePhoneOrEmail(phone, name, email) {
-    var updatePhone = isContainsPhoneOrEmail(phone);
-    var updateEmail = isContainsPhoneOrEmail(email);
-    var updatePhOrEm = updatePhone !== -1 ? updatePhone : 0;
-    if (updatePhOrEm === 0) {
-        updatePhOrEm = updateEmail !== -1 ? updateEmail : -1;
-    }
-    if (updatePhOrEm !== -1) {
-        delete phoneBook.contact[updatePhOrEm];
-        var temp = [];
-        temp[0] = phone;
-        temp[1] = email;
-        phoneBook.contact[name] = temp;
+        phoneBook[phone] = temp;
 
         return true;
     }
@@ -126,9 +103,8 @@ function findAndRemove(query) {
     var count = 0;
     var delContact = find(query);
     for (var item of delContact) {
-        var del = delete phoneBook.contact[item.split(', ')[0]];
+        var del = delete phoneBook[item.split(', ')[0]];
         if (del) {
-            phoneBook.sizePhoneBook--;
             count++;
         }
     }
@@ -151,9 +127,9 @@ function find(query) {
         query = '';
     }
     var result = [];
-    for (var con in phoneBook.contact) {
-        if (phoneBook.contact.hasOwnProperty(con)) {
-            result = makeArray(con, result, query);
+    for (var contact in phoneBook) {
+        if (phoneBook.hasOwnProperty(contact)) {
+            result = makeArray(contact, result, query);
         }
     }
 
@@ -165,8 +141,8 @@ function find(query) {
     });
 }
 
-function makeArray(con, result, query) {
-    var tmpStr = phoneBook.toString(con);
+function makeArray(contact, result, query) {
+    var tmpStr = toString(contact);
     if (tmpStr.includes(query)) {
         var str = tmpStr.split(', ');
         var checkEmail = str[2] === 'undefined' ? '' : ', ' + str[2];
@@ -203,28 +179,8 @@ function importFromCsv(csv) {
     return count;
 }
 
-function isContainsPhoneOrEmail(query) {
-    var result = -1;
-    for (var cont in phoneBook.contact) {
-        if (phoneBook.contact.hasOwnProperty(cont)) {
-            result = fiendQuery(cont, query, result);
-        }
-    }
-
-    return result;
-}
-
-function fiendQuery(cont, query, result) {
-    var tmp = phoneBook.contact[cont].indexOf(query);
-    if (tmp !== -1) {
-        result = cont;
-    }
-
-    return result;
-}
-
 function checkQuery(query) {
-    if (phoneBook.sizePhoneBook === 0 || query === undefined || query === '') {
+    if (phoneBook.length === 0 || query === undefined || query === '') {
 
         return true;
     }
