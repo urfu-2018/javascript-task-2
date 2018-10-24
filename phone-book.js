@@ -177,10 +177,6 @@ function importFromCsv(csv) {
         let phone = values[1];
         let email = values[2];
 
-        if (isBadNameOrPhone(phone, name)) {
-            return;
-        }
-
         let result = add(phone, name, email) || update(phone, name, email);
 
         if (result) {
