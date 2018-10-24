@@ -92,14 +92,14 @@ function find(query) {
     if (!(typeof query === 'string') || query === '') {
         return [];
     }
-    const persons = Array.from(phoneBook.values());
+    let persons = Array.from(phoneBook.values());
     persons.sort((per1, per2) => per1.name > per2.name);
     if (query === '*') {
 
         return persons.map(person => person.toString());
     }
 
-    return persons.filter((person) => person.toString().includes(query))
+    return persons.filter((person) => person.contains(query))
         .map(person => person.toString());
 }
 
