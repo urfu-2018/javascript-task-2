@@ -142,11 +142,14 @@ function find(query) {
  */
 function importFromCsv(csv) {
     const entriesArray = csv.split('\n');
+
     return entriesArray.reduce((acc, entry) => {
         const [name, phone, email] = entry.split(';');
         if (update(phone, name, email) || add(phone, name, email)) {
             acc++;
         }
+
+        return acc;
     }, 0);
 }
 
