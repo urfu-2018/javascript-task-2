@@ -19,19 +19,22 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const a = /^\d{10}$/.test(phone);
-    if (!a || phoneBook.hasOwnProperty(phone) || !name) {
+    if (!isCorrectPhoneNumber(phone) || !isCorrectName(name) ||
+    Object.keys(phoneBook).includes(phone)) {
         return false;
     }
-    phoneBook[phone] = { name, email };
+    phoneBook[phone] = {
+        name: name,
+        email: email
+    };
 
     return true;
 }
 
-/* function isCorrectPhoneNumber(phone) {
+function isCorrectPhoneNumber(phone) {
     return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
     // return /^\d{10}$/.test(phone);
-}*/
+}
 
 function isCorrectName(name) {
     return typeof(name) === 'string' && name !== '';
@@ -45,7 +48,7 @@ function isCorrectName(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (Object.keys(phoneBook).includes(phone) && isCorrectName) {
+    if (Object.keys(phoneBook).includes(phone) && name !== undefined && name !== '') {
         phoneBook[phone] = {
             name: name,
             email: email
