@@ -87,7 +87,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     if (query === undefined || query === '') {
-        return [];
+        return new Map();
     }
     if (query === '*') {
         return correctOutput(new Map(phoneBook));
