@@ -23,7 +23,10 @@ function add(phone, name, email) {
     Object.keys(phoneBook).includes(phone)) {
         return false;
     }
-    phoneBook[phone] = { name, email };
+    phoneBook[phone] = {
+        name: name,
+        email: email
+    };
 
     return true;
 }
@@ -48,7 +51,7 @@ function update(phone, name, email) {
     if (Object.keys(phoneBook).includes(phone) && isCorrectName) {
         phoneBook[phone] = {
             name: name,
-            email: email
+            email: (typeof(email) === undefined ? '' : email)
         };
 
         return true;
