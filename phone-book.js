@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -177,7 +177,15 @@ function importFromCsv(csv) {
         let phone = values[1];
         let email = values[2];
 
-        let result = add(phone, name, email) || update(phone, name, email);
+        if (isBadNameOrPhone(phone, name)) {
+            return;
+        }
+
+        let indexOfRecord = findIndexOfPhone(phone);
+
+        let result = indexOfRecord === -1
+            ? add(phone, name, email)
+            : update(phone, name, email);
 
         if (result) {
             counter++;
@@ -194,6 +202,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-
     isStar
 };
