@@ -11,9 +11,8 @@ const isStar = true;
  */
 let phoneBook = {};
 
-function checkArgs(phone, name, email) {
-    return !(typeof(email) !== 'string' ||
-        typeof(name) !== 'string' || !name ||
+function checkArgs(phone, name) {
+    return !(typeof(name) !== 'string' || !name ||
         typeof(phone) !== 'string' || !(/^[0-9]{10}$/.test(phone)));
 }
 
@@ -25,7 +24,7 @@ function checkArgs(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name = '', email = '') {
-    return !(!checkArgs(phone, name, email) || phone in phoneBook ||
+    return !(!checkArgs(phone, name) || phone in phoneBook ||
         !(phoneBook[phone] = { name, email }));
 }
 
@@ -37,7 +36,7 @@ function add(phone, name = '', email = '') {
  * @returns {Boolean}
  */
 function update(phone, name = '', email = '') {
-    return !(!checkArgs(phone, name, email) || !(phone in phoneBook) ||
+    return !(!checkArgs(phone, name) || !(phone in phoneBook) ||
         !(phoneBook[phone] = { name, email }));
 }
 
@@ -63,7 +62,7 @@ function find(query) {
     return !query || typeof(query) !== 'string' ? [] : Object.keys(phoneBook)
         .filter((record)=>[record, ...Object.values(phoneBook[record])]
             .some((rec)=>(query !== '*' ? new RegExp(query) : /.?/).test(rec)))
-        .sort((a, b)=>phoneBook[a].name.localeCompare(phoneBook[b].name))
+        .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
         .map((rec)=>[
             phoneBook[rec].name,
             `+7 (${rec.slice(0, 3)}) ${rec.slice(3, 6)}-${rec.slice(6, 8)}-${rec.slice(8, 10)}`,
