@@ -11,7 +11,7 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = new Map();
-const phoneTest = /(\d{3})(\d{3})(\d{2})(\d{2})/;
+const phoneTest = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
 /**
  * Добавление записи в телефонную книгу
