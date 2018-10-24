@@ -32,11 +32,7 @@ function add(phone, name, email) {
 }
 
 function isCorrectPhoneNumber(phone) {
-<<<<<<< HEAD
     return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
-=======
-    return typeof(phone) === 'string' && /^\d{10}$/.test(phone);
->>>>>>> 63082e4b0b015ee115351d4b31fbc29c51bb8d57
 }
 
 function isCorrectName(name) {
@@ -51,11 +47,7 @@ function isCorrectName(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-<<<<<<< HEAD
     if (Object.keys(phoneBook).includes(phone) && isCorrectName) {
-=======
-    if (Object.keys(phoneBook).includes(phone) && isCorrectPhoneNumber && isCorrectName) {
->>>>>>> 63082e4b0b015ee115351d4b31fbc29c51bb8d57
         phoneBook[phone] = {
             name: name,
             email: email
@@ -73,8 +65,8 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    var foundRecordKeys1 = find(query);
-    for (let key of foundRecordKeys1) {
+    var foundRecordKeys = find(query);
+    for (let key of foundRecordKeys) {
         phoneBook.delete(key);
     }
 
@@ -87,14 +79,13 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-<<<<<<< HEAD
     const foundKeys = findKeysToRemove(query);
 
     return foundKeys.sort(compareNames)
         .map(formatRecord);
 }
 
-function compareNames(a, b) {
+function compareNames(a, b) { //
     return phoneBook[a].name.localeCompare(phoneBook[b].name);
 }
 
@@ -116,34 +107,6 @@ function formatPhoneNumber(phone) {
     const p3 = phone.slice(6, 8);
     const p4 = phone.slice(8, 10);
 
-=======
-    return findKeysToRemove(query).sort(compareNames)
-        .map(formatRecord);
-}
-
-function compareNames(a, b) {
-    return phoneBook[a].name.localeCompare(phoneBook[b].name);
-}
-
-function formatRecord(phone) {
-    var number = formatPhoneNumber(phone);
-    var output = [phoneBook[phone].name, number];
-    if (phoneBook[phone].email !== undefined) {
-        output.push(phoneBook[phone].email);
-    }
-
-    return output.join(', ');
-}
-
-function formatPhoneNumber(phone) {
-    // var arr = /^(\d{3})(\d{3})(\d{2})(\d{2})$/.exec(phone);
-    // return format: +7 (555) 333-00-33
-    const p1 = phone.slice(0, 3);
-    const p2 = phone.slice(3, 6);
-    const p3 = phone.slice(6, 8);
-    const p4 = phone.slice(8, 10);
-
->>>>>>> 63082e4b0b015ee115351d4b31fbc29c51bb8d57
     return `+7 (${p1}) ${p2}-${p3}-${p4}`;
 }
 
