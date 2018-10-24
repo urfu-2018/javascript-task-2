@@ -11,22 +11,17 @@ const isStar = true;
  */
 let phoneBook = [];
 
-function validatePhone(phone) {
-    const PHONE_PATTERN = /^\d{10}$/;
-
-    if (typeof phone !== 'string') {
-        return false;
-    }
-
-    return PHONE_PATTERN.test(phone);
+function checkString(string) {
+    return typeof string === 'string' && string !== '';
 }
 
-function validateName(name) {
-    if (typeof name !== 'string' || name === '') {
+function validatePhone(phone) {
+    if (!checkString(phone)) {
         return false;
     }
+    const PHONE_PATTERN = /^\d{10}$/;
 
-    return true;
+    return PHONE_PATTERN.test(phone);
 }
 
 function validateEmail(email) {
@@ -34,12 +29,12 @@ function validateEmail(email) {
         return true;
     }
 
-    return typeof email === 'string' && email !== '';
+    return checkString(email);
 }
 
 function checkArgs(phone, name, email) {
     return validatePhone(phone) &&
-        validateName(name) &&
+        checkString(name) &&
         validateEmail(email);
 }
 
@@ -92,13 +87,9 @@ function update(phone, name, email) {
     return false;
 }
 
-function checkQuery(query) {
-    return typeof query === 'string' && query !== '';
-}
-
 function entryContainsQuery(entry, query) {
     const values = Object.values(entry);
-    const pattern = query === '*' ? /.*/ : new RegExp(query);
+    const pattern = (query === '*' ? /.*/ : new RegExp(query));
 
     return values.some(value => value !== undefined && pattern.test(value));
 }
@@ -109,7 +100,7 @@ function entryContainsQuery(entry, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!checkQuery(query)) {
+    if (!checkString(query)) {
         return 0;
     }
 
@@ -141,7 +132,7 @@ function formatPhoneString(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!checkQuery(query)) {
+    if (!checkString(query)) {
         return [];
     }
 
@@ -181,13 +172,7 @@ function importFromCsv(csv) {
         const phone = tokens[1];
         const email = tokens[2];
 
-        let success = false;
-
-        success = add(phone, name, email);
-
-        if (!success) {
-            success = update(phone, name, email);
-        }
+        const success = add(phone, name, email) || update(phone, name, email);
 
         if (success) {
             addedCount++;
