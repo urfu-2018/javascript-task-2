@@ -116,14 +116,14 @@ function find(query) {
         for (let i = 0; i < phoneBook.length; i++) {
             rez.add(formatData(phoneBook[i]));
         }
-
-        return rez.sort();
     }
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone.includes(query) ||
-            phoneBook[i].name.includes(query) ||
-            phoneBook[i].email.includes(query)) {
-            rez.add(formatData(phoneBook[i]));
+    else {
+        for (let i = 0; i < phoneBook.length; i++) {
+            if (phoneBook[i].phone.includes(query) ||
+                phoneBook[i].name.includes(query) ||
+                phoneBook[i].email.includes(query)) {
+                rez.add(formatData(phoneBook[i]));
+            }
         }
     }
 
