@@ -73,7 +73,7 @@ function findAndRemove(query) {
         }
     });
 
-    deletedMap.forEach((value, key) => {
+    deletedMap.forEach((_value, key) => {
         phoneBook.delete(key);
     });
 
