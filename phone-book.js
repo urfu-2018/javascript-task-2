@@ -50,7 +50,9 @@ function add(phone, name, email) {
     if (!isContainsContact(phone)) {
         var temp = [];
         temp[0] = name;
-        temp[1] = email;
+        if (email !== undefined) {
+            temp[1] = email;
+        }
         phoneBook[phone] = temp;
 
         return true;
@@ -141,7 +143,7 @@ function findKeys(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (typeof(csv) !== 'string') {
+    if (typeof(csv) !== 'string' || csv === '') {
         return 0;
     }
     var tempContact = csv.split('\n');
