@@ -40,15 +40,23 @@ function checkRecordByQuery(phone, query) {
         phoneBook[phone].name.includes(query) ||
         phoneBook[phone].email && phoneBook[phone].email.includes(query);
 
-    return query === '*' || res;
+    return res;
+}
+
+function getPartsOfPhone(phone) {
+    let res = [];
+    res.push(phone.substr(0, 3));
+    res.push(phone.substr(3, 3));
+    res.push(phone.substr(6, 2));
+    res.push(phone.substr(8, 2));
+
+    return res;
 }
 
 function formatPhone(phone) {
-    function part(start, len) {
-        return phone.substr(start, len);
-    }
+    let parts = getPartsOfPhone(phone);
 
-    return `+7 (${part(0, 3)}) ${part(3, 3)}-${part(6, 2)}-${part(8, 2)}`;
+    return `+7 (${parts[0]}) ${parts[1]}-${parts[2]}-${parts[3]}`;
 }
 
 function formatRecord(phone) {
@@ -61,10 +69,18 @@ function formatRecord(phone) {
 }
 
 function getRecordsByQuery(query) {
-    return Object.keys(phoneBook)
-        .filter(phone => {
-            return checkRecordByQuery(phone, query);
-        });
+    let result = [];
+
+    if (query === '*') {
+        result = Object.keys(phoneBook);
+    } else {
+        result = Object.keys(phoneBook)
+            .filter(phone => {
+                return checkRecordByQuery(phone, query);
+            });
+    }
+
+    return result;
 }
 
 /**
