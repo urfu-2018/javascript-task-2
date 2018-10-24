@@ -16,20 +16,13 @@ function checkString(string) {
 }
 
 function validatePhone(phone) {
-    if (!checkString(phone)) {
-        return false;
-    }
     const PHONE_PATTERN = /^\d{10}$/;
 
-    return PHONE_PATTERN.test(phone);
+    return checkString(phone) && PHONE_PATTERN.test(phone);
 }
 
 function validateEmail(email) {
-    if (email === undefined) {
-        return true;
-    }
-
-    return checkString(email);
+    return email === undefined || checkString(email);
 }
 
 function checkArgs(phone, name, email) {
@@ -89,9 +82,9 @@ function update(phone, name, email) {
 
 function entryContainsQuery(entry, query) {
     const values = Object.values(entry);
-    const pattern = (query === '*' ? /.*/ : new RegExp(query));
+    query = (query === '*' ? '' : query);
 
-    return values.some(value => value !== undefined && pattern.test(value));
+    return values.some(value => value !== undefined && value.includes(query));
 }
 
 /**
