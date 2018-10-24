@@ -16,7 +16,7 @@ const isValidEmail = email => {
 };
 
 const isValidName = name => {
-    return typeof name === 'string' || name === undefined;
+    return typeof name === 'string' || name === '';
 };
 
 const isParamsCorrect = (phone, name, email) => {
