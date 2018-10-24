@@ -143,11 +143,10 @@ function importFromCsv(csv) {
         let data = {
             name: contact[0],
             phone: contact[1],
-            email: contact[2]
+            email: contact[2] === undefined ? '' : contact[2]
         };
-        data.email = data.email === undefined ? '' : data.email;
-        kills = add(data.phone, data.name, data.email) ||
-        update(data.phone, data.name, data.email) ? kills + 1 : kills;
+        kills = update(data.phone, data.name, data.email) ||
+        add(data.phone, data.name, data.email) ? kills + 1 : kills;
     }
 
     return kills;
