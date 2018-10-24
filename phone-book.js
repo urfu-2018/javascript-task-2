@@ -23,8 +23,8 @@ function toString(phone) {
     const p4 = phone.slice(8, 10);
     const p = `+7 (${p1}) ${p2}-${p3}-${p4}`;
 
-    return phoneBook[phone][0] + ', ' + p +
-    (phoneBook[phone][1] !== undefined ? ', ' + phoneBook[phone][1] : '');
+    return phoneBook[phone].name + ', ' + p +
+    (phoneBook[phone].email !== undefined ? ', ' + phoneBook[phone].email : '');
 }
 
 function isContainsContact(phone) {
@@ -48,12 +48,7 @@ function add(phone, name, email) {
         return false;
     }
     if (!isContainsContact(phone)) {
-        var temp = [];
-        temp[0] = name;
-        if (email !== undefined) {
-            temp[1] = email;
-        }
-        phoneBook[phone] = temp;
+        phoneBook[phone] = { name, email };
 
         return true;
     }
@@ -82,10 +77,7 @@ function update(phone, name, email) {
         return false;
     }
     if (isContainsContact(phone)) {
-        var temp = [];
-        temp[0] = name;
-        temp[1] = email;
-        phoneBook[phone] = temp;
+        phoneBook[phone] = { name, email };
 
         return true;
     }
@@ -116,7 +108,7 @@ function find(query) {
     const result = findKeys(query);
 
     return result.sort((a, b) =>
-        phoneBook[a][0].localeCompare(phoneBook[b][0])
+        phoneBook[a].name.localeCompare(phoneBook[b].name)
     )
         .map(toString);
 }
@@ -132,8 +124,8 @@ function findKeys(query) {
     return Object.keys(phoneBook)
         .filter(phone =>
             phone.includes(query) ||
-            phoneBook[phone][0].includes(query) ||
-            (phoneBook[phone][1] !== undefined && phoneBook[phone][1].includes(query)));
+            phoneBook[phone].name.includes(query) ||
+            (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)));
 }
 
 /**
