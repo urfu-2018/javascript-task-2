@@ -23,7 +23,7 @@ let notesByQuery = (query) =>
         : Object.keys(phoneBook)
             .map(phone => [phoneBook[phone].name, phone, phoneBook[phone].email])
             .filter(x =>
-                x.some(str => str.indexOf(query) + 1 || query === '*'));
+                x.some(str => query === '*' || str.indexOf(query) + 1));
 
 /**
  * Добавление записи в телефонную книгу
