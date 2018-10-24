@@ -115,14 +115,16 @@ function matches(el, phone, query) {
         el.hasOwnProperty('email') && el.email !== undefined && el.email.includes(query);
 }
 
-/**
- * Поиск записей по запросу в телефонной книге
- * @param {String} query
- * @returns {String[]}
- */
-function find(query) {
+function isNonEmptyString(query) {
+    return typeof query !== 'string' || query.length === 0;
+}
+
+function _find(query) {
+    if (isNonEmptyString(query)) {
+        return {};
+    }
     if (query === '*') {
-        return format(phoneBook);
+        return phoneBook;
     }
     let result = {};
     for (const phone in phoneBook) {
@@ -135,7 +137,16 @@ function find(query) {
         }
     }
 
-    return format(result);
+    return result;
+}
+
+/**
+ * Поиск записей по запросу в телефонной книге
+ * @param {String} query
+ * @returns {String[]}
+ */
+function find(query) {
+    return format(_find(query));
 }
 
 /**
