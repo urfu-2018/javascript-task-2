@@ -40,11 +40,11 @@ function isCorrectEmail(email) {
     return true;
 }
 
-function recordNotExists(phone) {
+function recordNotExists(phone, name) {
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return false;
-        }
+       if (phoneBook[i].phone === phone && phoneBook[i].name === name) {
+           return false;
+       }
     }
 
     return true;
