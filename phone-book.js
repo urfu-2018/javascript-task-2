@@ -68,7 +68,8 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     var foundRecordKeys = find(query);
     for (let key of foundRecordKeys) {
-        phoneBook.delete(key);
+        // phoneBook.delete(key);
+        delete phoneBook[key];
     }
 
     return foundRecordKeys.length;
