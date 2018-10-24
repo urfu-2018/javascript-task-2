@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -49,12 +49,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!query) {
-        return 0;
-    }
     const initialPhoneBookLen = phoneBook.size;
     phoneBook.forEach(({ name, email }, phone) => {
-        if (checkQueryInRecord(phone, name, email, query)) {
+        if (checkIfQueryInRecord(phone, name, email, query)) {
             phoneBook.delete(phone);
         }
     });
@@ -68,12 +65,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!query) {
-        return [];
-    }
     const result = [];
     phoneBook.forEach(({ name, email }, phone) => {
-        if (checkQueryInRecord(phone, name, email, query)) {
+        if (checkIfQueryInRecord(phone, name, email, query)) {
             const formatedPhone =
                 `+7 (${phone.substr(0, 3)}) ${phone.substr(3, 3)}-` +
                 `${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
@@ -87,15 +81,21 @@ function find(query) {
 /**
  * Импорт записей из csv-формата
  * @star
- * @param {String} csv
+ * @param {String[]} csv
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    let n = 0;
+    for (const line of csv.split('\n')) {
+        const [name, phone, email] = line.split(';');
+        if (phoneBook.has(phone)) {
+            n += update(phone, name, email) ? 1 : 0;
+        } else {
+            n += add(phone, name, email) ? 1 : 0;
+        }
+    }
 
-    return csv.split('\n').length;
+    return n;
 }
 
 /**
@@ -109,12 +109,21 @@ function isCorrectArgs(phone, name) {
     return /^\d{10}$/.test(phone) && typeof name === 'string' && name;
 }
 
-function checkQueryInRecord(phone, name, email, query) {
+/**
+ * Проверяет на то что query содержиться хотя бы в одном поле
+ * @param {String} phone
+ * @param {String} name
+ * @param {String?} email
+ * @param {String?} query
+ * @returns {Boolean}
+ */
+function checkIfQueryInRecord(phone, name, email, query) {
     return (
-        query === '*' ||
-        phone.includes(query) ||
-        name.includes(query) ||
-        (email && email.includes(query))
+        query &&
+        (query === '*' ||
+            phone.includes(query) ||
+            name.includes(query) ||
+            (email && email.includes(query)))
     );
 }
 
