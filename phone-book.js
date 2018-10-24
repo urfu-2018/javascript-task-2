@@ -22,7 +22,7 @@ function add(phone, name, email) {
     if (!isString(phone) || !isString(name)) {
         return false;
     }
-    if (!(/^\d{10}$/g.test(phone) && findContact(phone) === -1)) {
+    if (!(/^\d{10}$/.test(phone) && findContact(phone) === -1)) {
         return false;
     }
     let phoneContact = {
@@ -68,7 +68,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isString(query) || query.length === 0) {
+    if (!isString(query) || query === '') {
         return [];
     }
     let count = 0;
@@ -89,21 +89,24 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query) || query.length === 0) {
+    if (!isString(query) || query === '') {
         return [];
     }
-    let result;
-    if (query === '*') {
-        result = phoneBook;
-    } else {
-        result = phoneBook.filter((contact) => {
-            return objectIncludes(contact, query);
-        });
-    }
+    let result = getContact(query);
 
     return result
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(renderContact);
+}
+
+function getContact(query) {
+    if (query === '*') {
+        return phoneBook;
+    }
+
+    return phoneBook.filter((contact) => {
+        return objectIncludes(contact, query);
+    });
 }
 
 /*
@@ -123,7 +126,7 @@ function findContact(phone) {
 * Проверка на undefined
 */
 function isString(value) {
-    return typeof value === 'string';
+    return typeof value === 'string' && value !== '';
 }
 
 /*
