@@ -40,22 +40,12 @@ function isCorrectEmail(email) {
     return true;
 }
 
-function recordNotExists(phone, name) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone && phoneBook[i].name === name) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 function isAllArgumentsCorrect(phone, name, email) {
     return isCorrectPhone(phone) && isCorrectName(name) && isCorrectEmail(email);
 }
 
 function add(phone, name, email) {
-    if (isAllArgumentsCorrect(phone, name, email) && recordNotExists(phone)) {
+    if (isAllArgumentsCorrect(phone, name, email)) {
         phoneBook.push({
             phone: phone,
             name: name,
