@@ -44,7 +44,7 @@ function formatNumber(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (/^[0-9]{10}$/.test(phone) && name) {
+    if (/^[0-9]{10}$/.test(phone) && name && !phoneBook.get(phone)) {
         phoneBook.set(phone, (`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`));
 
         return true;
