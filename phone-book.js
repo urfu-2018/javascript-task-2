@@ -102,7 +102,7 @@ function findAndRemove(query) {
     }
     if (query === '*') {
         // т.к. * это все записи, то можно вернуть длину массива ключей и вернуть пустой объект
-        const deletions = phoneBook.keys.length;
+        const deletions = Object.keys(phoneBook).length;
         phoneBook = {};
 
         return deletions;
