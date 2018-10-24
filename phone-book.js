@@ -49,10 +49,7 @@ function isCorrectName(name) {
  */
 function update(phone, name, email) {
     if (Object.keys(phoneBook).includes(phone) && name !== undefined && name !== '') {
-        phoneBook[phone] = {
-            name: name,
-            email: email
-        };
+        phoneBook[phone] = { name, email };
 
         return true;
     }
