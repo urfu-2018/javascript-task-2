@@ -21,8 +21,8 @@ let phoneBook = new Map();
 function add(phone, name, email) {
     // if (!isCorrectPhoneNumber(phone) || !isCorrectName(name) ||
     // Object.keys(phoneBook).includes(phone)) {
-    if (!isCorrectPhoneNumber(phone) || !name ||
-    Object.keys(phoneBook).includes(phone)) {
+    if (!isCorrectPhoneNumber(phone) || phoneBook.hasOwnProperty(phone) ||
+    !name) {
         return false;
     }
     phoneBook[phone] = {
