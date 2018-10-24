@@ -174,7 +174,7 @@ function importFromCsv(csv) {
 }
 
 function checkQuery(query) {
-    if (phoneBook.length === 0 || query === undefined || query === '') {
+    if (query === undefined || query === '') {
 
         return true;
     }
