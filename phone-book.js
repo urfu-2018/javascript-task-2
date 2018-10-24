@@ -123,8 +123,11 @@ function find(query) {
 function rewriteInString(phone) {
     let fixPhone = '+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) +
     '-' + phone.slice(6, 8) + '-' + phone.slice(8);
+    if (phoneBook[phone].email !== '') {
+        return (phoneBook[phone].name + ', ' + fixPhone + ', ' + phoneBook[phone].email);
+    }
 
-    return (phoneBook[phone].name + ', ' + fixPhone + ', ' + phoneBook[phone].email);
+    return (phoneBook[phone].name + ', ' + fixPhone);
 }
 
 function findMatching(query, formatArray) {
