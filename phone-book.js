@@ -3,8 +3,9 @@
 class Person {
     constructor(name, phone, email) {
         this.name = name;
-        this.phone = phone;
+        this.phone = tryConvertPhoneNumber(phone);
         this.email = email || '';
+        this.standartPhone = phone;
     }
 
     toString() {
@@ -17,7 +18,7 @@ class Person {
     }
 
     contains(query) {
-        return this.name.includes(query) || this.phone.includes(query) ||
+        return this.name.includes(query) || this.standartPhone.includes(query) ||
         this.email.includes(query);
     }
 }
@@ -43,8 +44,8 @@ let phoneBook = new Map();
 
 function add(phone, name, email) {
     const convertedPhone = tryConvertPhoneNumber(phone);
-    if (isName(name) && convertedPhone && isEmail(email) && !phoneBook.has(convertedPhone)) {
-        phoneBook.set(convertedPhone, new Person(name, convertedPhone, email));
+    if (isName(name) && convertedPhone && isEmail(email) && !phoneBook.has(phone)) {
+        phoneBook.set(phone, new Person(name, phone, email));
 
         return true;
     }
@@ -61,9 +62,9 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     const convertedPhone = tryConvertPhoneNumber(phone);
-    if (isName(name) && convertedPhone && isEmail(email) && phoneBook.has(convertedPhone)) {
-        phoneBook.delete(convertedPhone);
-        phoneBook.set(convertedPhone, new Person(name, convertedPhone, email));
+    if (isName(name) && convertedPhone && isEmail(email) && phoneBook.has(phone)) {
+        phoneBook.delete(phone);
+        phoneBook.set(phone, new Person(name, phone, email));
 
         return true;
     }
