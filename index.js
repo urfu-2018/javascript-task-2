@@ -2,8 +2,6 @@
 
 const phoneBook = require('./phone-book');
 
-
-console.log(phoneBook.formatNumber('5554440044'))
 // Эти записи добавятся, вернется `true`
 phoneBook.add('5554440044', 'Григорий', 'grisha@example.com');
 phoneBook.add('5552220022', 'Борис', 'boris@example.com');
@@ -31,7 +29,7 @@ console.info(phoneBook.find('555'));
 // ]
 
 // Удаление записей, содержащих '@', вернется `3`
-console.info(phoneBook.findAndRemove('@'));
+phoneBook.findAndRemove('@');
 
 if (phoneBook.isStar) {
     const csv = [

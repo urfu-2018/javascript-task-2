@@ -19,23 +19,21 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    //console.log(!phoneBook.get(phone));
-    if (typeof phone !== 'string' || typeof name !== 'string' || phoneBook.get(phone)) {
-        console.log('FALSE1');
+    if (phoneBook.get(phone)) {
         return false;
     }
     if (/^[0-9]{10}$/.test(phone) && name) {
         phoneBook.set(phone, (`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`));
-        console.log(`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`)
+
         return true;
     }
-    console.log('FALSE2');
+
     return false;
 }
 
-function formatNumber(phone){
+function formatNumber(phone) {
+
     return phone.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
-    //`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`;
 }
 
 /**
@@ -46,16 +44,12 @@ function formatNumber(phone){
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof phone !== 'string' || typeof name !== 'string') {
-        console.log('FALSE1');
-        return false;
-    }
     if (/^[0-9]{10}$/.test(phone) && name) {
         phoneBook.set(phone, (`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`));
-        console.log(`${name}, ${formatNumber(phone)}${email ? `, ${email}` : ''}`)
+
         return true;
     }
-    console.log('FALSE2');
+
     return false;
 }
 
@@ -70,11 +64,12 @@ function findAndRemove(query) {
     }
     let count = 0;
     for (var [key, value] of phoneBook.entries()) {
-        if (value.indexOf(query) > 0 || query === '*'){
+        if (value.indexOf(query) > 0 || query === '*') {
             phoneBook.delete(key);
             count++;
         }
     }
+
     return count;
 }
 
@@ -89,9 +84,11 @@ function find(query) {
     }
     const res = [];
     for (var value of phoneBook.values()) {
-        if (value.indexOf(query) > 0 || query === '*')
-            res.push(value)
+        if (value.indexOf(query) > 0 || query === '*') {
+            res.push(value);
+        }
     }
+
     return res.sort();
 }
 
@@ -115,7 +112,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-    formatNumber, // delete
-
     isStar
 };
