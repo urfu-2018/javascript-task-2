@@ -19,16 +19,13 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^[0-9]{10}$/.test(phone)) {
+    if (!/^[0-9]{10}$/.test(phone) || typeof name !== 'string') {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].phone === phone) {
             return false;
         }
-    }
-    if (typeof name !== 'string') {
-        return false;
     }
     let notation = { phone: phone, name: name, email: email };
     phoneBook.push(notation);
@@ -100,7 +97,7 @@ function find(query) {
     }
 
     return notes.sort(function (a, b) {
-        if (a.split(', ')[0] >= b.split(', ')[0]) {
+        if (a.split(', ')[0] > b.split(', ')[0]) {
             return 1;
         }
 
