@@ -16,6 +16,14 @@ function phoneIsCorrect(phoneStr) {
         phoneStr.length === 10;
 }
 
+function isNonEmptyString(value) {
+    return typeof value === 'string' && value.length !== 0;
+}
+
+function check(phone, name) {
+    return phoneIsCorrect(phone) && isNonEmptyString(name);
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -24,10 +32,9 @@ function phoneIsCorrect(phoneStr) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const phoneCorrect = phoneIsCorrect(phone);
-    const nameCorrect = name !== undefined;
+    const phoneAndNameAreCorrect = check(phone, name);
     const exist = phoneBook.hasOwnProperty(phone);
-    if (phoneCorrect && nameCorrect && (!exist || phoneBook[phone].name === name)) {
+    if (phoneAndNameAreCorrect && (!exist || phoneBook[phone].name === name)) {
         phoneBook[phone] = {
             name,
             email
@@ -47,7 +54,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const phoneCorrect = phoneIsCorrect(phone);
+    const phoneAndNameAreCorrect = check(phone, name);
     const exist = phoneBook.hasOwnProperty(phone);
     let different;
     if (exist) {
@@ -55,7 +62,7 @@ function update(phone, name, email) {
         const differentEmail = phoneBook[phone].email !== email;
         different = differentName || differentEmail;
     }
-    if (phoneCorrect && exist && different) {
+    if (phoneAndNameAreCorrect && exist && different) {
         phoneBook[phone] = {
             name,
             email
@@ -74,15 +81,13 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let counter = 0;
-    for (const phone in phoneBook) {
-        if (!phoneBook.hasOwnProperty(phone)) {
+    const result = _find(query);
+    for (const phone in result) {
+        if (!result.hasOwnProperty(phone)) {
             continue;
         }
-        const el = phoneBook[phone];
-        if (matches(el, phone, query)) {
-            delete phoneBook[phone];
-            counter++;
-        }
+        delete phoneBook[phone];
+        counter++;
     }
 
     return counter;
@@ -115,12 +120,8 @@ function matches(el, phone, query) {
         el.hasOwnProperty('email') && el.email !== undefined && el.email.includes(query);
 }
 
-function isNonEmptyString(query) {
-    return typeof query !== 'string' || query.length === 0;
-}
-
 function _find(query) {
-    if (isNonEmptyString(query)) {
+    if (!isNonEmptyString(query)) {
         return {};
     }
     if (query === '*') {
