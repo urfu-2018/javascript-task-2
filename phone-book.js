@@ -97,9 +97,6 @@ function findAndRemove(query) {
 
         return 0;
     }
-    if (query === '*') {
-        query = '';
-    }
     var count = 0;
     var delContact = find(query);
     for (var item of delContact) {
