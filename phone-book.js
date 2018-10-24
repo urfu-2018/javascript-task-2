@@ -17,7 +17,10 @@ function isCorrectPhone(phone) {
 
 function isCorrectName(name) {
     return typeof name === 'string' && name;
+}
 
+function isCorrectQuery(query) {
+    return typeof(query) === 'string' && query;
 }
 
 function isCorrectPhoneAndName(phone, name) {
@@ -92,7 +95,7 @@ function update(phone, name, email) {
 * Возвращает число удаленных записей
 */
 function findAndRemove(query) {
-    if (typeof(query) !== 'string' && query) {
+    if (!isCorrectQuery(query)) {
         return;
     }
     let finded = find(query);
@@ -141,7 +144,7 @@ function isFinded(query, note) {
  */
 function find(query) {
     let result = [];
-    if (typeof(query) !== 'string' && query) {
+    if (!isCorrectQuery(query)) {
         return;
     }
     if (query === '*') {
