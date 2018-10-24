@@ -56,8 +56,8 @@ function findAndRemove(query) {
         return 0;
     }
     const lengthBeforeRemoval = phoneBook.length;
-    phoneBook = phoneBook.filter(e => !e.name.includes(query) && !e.phone.includes(query) &&
-        (typeof e.email === 'undefined' || !e.email.includes(query)));
+    phoneBook = query === '*' ? [] : phoneBook.filter(e => !e.name.includes(query) &&
+        !e.phone.includes(query) && (!e.email || !e.email.includes(query)));
 
     return lengthBeforeRemoval - phoneBook.length;
 }
@@ -74,10 +74,10 @@ function find(query) {
 
     const resultNotes = query === '*' ? phoneBook
         : phoneBook.filter(e => e.name.includes(query) || e.phone.includes(query) ||
-                        typeof e.email !== 'undefined' && e.email.includes(query));
+                        e.email && e.email.includes(query));
 
     return resultNotes.map(e => `${e.name}, ${formatPhoneNumber(e.phone)}` +
-            (typeof e.email !== 'undefined' ? `, ${e.email}` : '')).sort();
+            (e.email ? `, ${e.email}` : '')).sort();
 }
 
 function formatPhoneNumber(phone) {
