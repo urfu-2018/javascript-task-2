@@ -19,11 +19,18 @@ describe('phone-book', () => {
         assert.ok(!phoneBook.add('5556660066abc', 'Герман', 'gera@example.com'));
         assert.ok(!phoneBook.add('5551110011', 'Алексей'));
         assert.ok(!phoneBook.add('5555550055'));
+        assert.ok(!phoneBook.add('5556662222a', 'Алексей'));
+        assert.ok(!phoneBook.add('5', 'Алексей'));
+        assert.ok(!phoneBook.add('aaaaaaaaaa', 'Алексей'));
+        assert.ok(!phoneBook.add('', 'Алексей'));
+        assert.ok(!phoneBook.add('+75553330022', '', 'valera@example.com'));
+        assert.ok(!phoneBook.add('5553330033', 'Валерий', 'valera@example.com'));
     });
 
     it('должен обновлять существующие записи', () => {
         assert.ok(phoneBook.update('5551110011', 'Алексей', 'alex@example.com'));
         assert.ok(phoneBook.update('5553330033', 'Валерий'));
+        assert.ok(!phoneBook.update('5553330033', ''));
     });
 
     it('должен искать все записи по запросу "*"', () => {

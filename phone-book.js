@@ -120,7 +120,7 @@ function isEmail(email) {
     return typeof email === 'string' || typeof email === 'undefined';
 }
 function tryConvertPhoneNumber(phone) {
-    if (!(typeof phone === 'string')) {
+    if (!(typeof phone === 'string') || phone.length !== 10) {
         return false;
     }
 
