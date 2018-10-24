@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 
 const phoneBook = {};
@@ -48,7 +48,23 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    return addToContactByPredicate(phone, name, email, (p, n) => n && phoneBook.hasOwnProperty(p));
+    return addToContactByPredicate(phone, name, email,
+        (p, n) => n && phoneBook.hasOwnProperty(p));
+}
+
+function isMatch(contact, query) {
+    return contact.phone.includes(query) ||
+        contact.name.includes(query) ||
+        (contact.email && contact.email.includes(query));
+}
+
+function getAllContacts() {
+    return Object.entries(phoneBook)
+        .map(e => ({
+            phone: e[0],
+            name: e[1].name,
+            email: e[1].email
+        }));
 }
 
 function findContacts(query) {
@@ -56,9 +72,7 @@ function findContacts(query) {
         return [];
     }
 
-    return Object.entries(phoneBook)
-        .map(e => [e[0], e[1].name, e[1].email])
-        .filter(e => query === '*' || e.some(q => q && q.includes(query)));
+    return getAllContacts().filter(c => query === '*' || isMatch(c, query));
 }
 
 /**
@@ -79,13 +93,13 @@ function findAndRemove(query) {
  */
 function find(query) {
     return findContacts(query)
-        .sort((a, b) => a[1].localeCompare(b[1]))
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map(e => {
-            const [phone, name, email] = e;
-            const phoneParts = PHONE_RE.exec(phone);
-            const formattedPhone = `+7 (${phoneParts[1]}) ${phoneParts.slice(2, 5).join('-')}`;
+            const phoneParts = PHONE_RE.exec(e.phone);
+            const formattedPhone = `+7 (${phoneParts[1]}) ${phoneParts.slice(2, 5)
+                .join('-')}`;
 
-            return `${name}, ${formattedPhone}${email ? ', ' + email : ''}`;
+            return `${e.name}, ${formattedPhone}${e.email ? ', ' + e.email : ''}`;
         });
 }
 
