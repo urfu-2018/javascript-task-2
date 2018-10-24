@@ -116,6 +116,7 @@ function find(query) {
         for (let i = 0; i < phoneBook.length; i++) {
             rez.add(formatData(phoneBook[i]));
         }
+
         return rez.sort();
     }
     for (let i = 0; i < phoneBook.length; i++) {
