@@ -146,7 +146,7 @@ function importFromCsv(csv) {
             email: contact[2]
         };
         kills = add(data.phone, data.name, data.email) ||
-        update(data.phone, data.name, data.email) ? ++kills : kills;
+        update(data.phone, data.name, data.email) ? kills + 1 : kills;
     }
 
     return kills;
