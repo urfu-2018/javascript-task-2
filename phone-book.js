@@ -127,7 +127,7 @@ function find(query) {
         processed = phoneBook.filter(contact => findQueryInContact(contact, query) === true);
     }
 
-    return processed.sort().map(function (contact) {
+    return processed.map(function (contact) {
         const formattedPhone = contact.phone.replace(/(.{3})(.{3})(.{2})(.{2})/,
             '+7 ($1) $2-$3-$4');
         let result = contact.name + ', ' + formattedPhone;
@@ -136,7 +136,7 @@ function find(query) {
         }
 
         return result;
-    });
+    }).sort();
 }
 
 /**
