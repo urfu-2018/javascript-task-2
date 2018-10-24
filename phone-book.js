@@ -15,9 +15,17 @@ function containsPhone(phone) {
     return phoneBook.find(contact => contact.phone === phone);
 }
 
-function checkParameters(phone, name) {
+/* function checkParameters(phone, name) {
     return !/^(\d){10}$/.test(phone) || typeof name !== 'string' ||
         typeof phone !== 'string' || name.length === 0;
+}*/
+
+function validName(name) {
+    return name !== '' && typeof name === 'string';
+}
+
+function validPhone(phone) {
+    return /^\d{10}$/.test(phone) && typeof phone === 'string';
 }
 
 function toNewFormatPhone(phone) {
@@ -85,7 +93,7 @@ function sort() {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkParameters(phone, name) || containsPhone(phone)) {
+    if (!validPhone(phone) || !validName(name) || containsPhone(phone)) {
         return false;
     }
 
@@ -106,11 +114,17 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkParameters(phone, name)) {
+    if (!validName(name)) {
         return false;
     }
 
+    const newContact = { phone, name, email };
+
     for (let i = 0; i < phoneBook.length; i++) {
+        if (JSON.stringify(phoneBook[i]) === JSON.stringify(newContact)) {
+            return false;
+        }
+
         if (phoneBook[i].phone === phone) {
             phoneBook[i].name = name;
             phoneBook[i].email = email;
@@ -181,16 +195,21 @@ function importFromCsv(csv) {
         return 0;
     }
 
-    const contact = csv.replace(/;/g, ' ').split('\n');
+    const contact = csv.split('\n');
     let count = 0;
 
+    // console.log(phoneBook)
+
     for (let i = 0; i < contact.length; i++) {
-        const temp = contact[i].split(' ');
+        const temp = contact[i].split(';');
         const data = {
             phone: temp[1],
-            name: temp[0],
-            email: temp[2]
+            name: temp[0]
         };
+
+        if (typeof temp[2] !== 'undefined') {
+            data.email = temp[2];
+        }
 
         if (update(data.phone, data.name, data.email) ||
             add(data.phone, data.name, data.email)) {
