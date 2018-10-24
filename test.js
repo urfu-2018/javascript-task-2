@@ -30,7 +30,7 @@ console.info(phoneBook.find('1'));
 
 // Удаление записей, содержащих '@', вернется `3`
 console.info(phoneBook.findAndRemove('*'));
-
+console.info(phoneBook.find('*'));
 if (phoneBook.isStar) {
     const csv = [
         'Борис;5552220022;boris@example.com',

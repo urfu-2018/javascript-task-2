@@ -100,7 +100,8 @@ function findAndRemove(query) {
     var count = 0;
     var delContact = find(query);
     for (var item of delContact) {
-        var del = delete phoneBook[item.split(', ')[0]];
+        var delPhone = item.split(', ')[1].replace(/(\D)/ig, '').slice(1, 11);
+        var del = delete phoneBook[delPhone];
         if (del) {
             count++;
         }
