@@ -121,15 +121,9 @@ function find(query) {
         return [];
     }
     var result = [];
-    if (query === '*') {
-        for (var contact in phoneBook) {
-            result = makeArrayAll(contact, result);
-        }
-    } else {
-        for (var contact in phoneBook) {
-            if (phoneBook.hasOwnProperty(contact)) {
-                result = makeArray(contact, result, query);
-            }
+    for (var contact in phoneBook) {
+        if (phoneBook.hasOwnProperty(contact)) {
+            result = makeArray(contact, result, query);
         }
     }
 
@@ -143,24 +137,13 @@ function find(query) {
 
 function makeArray(contact, result, query) {
     var tmpStr = toString(contact);
-    if (tmpStr.includes(query)) {
+    if (query === '*' || tmpStr.includes(query)) {
         var str = tmpStr.split(', ');
         var checkEmail = str[2] === 'undefined' ? '' : ', ' + str[2];
         var tel = str[0] + ', +7 (' + str[1].slice(0, 3) + ') ' + str[1].slice(3, 6) + '-' +
         str[1].slice(6, 8) + '-' + str[1].slice(8, 10) + checkEmail;
         result[result.length] = tel;
     }
-
-    return result;
-}
-
-function makeArrayAll(contact, result) {
-    var tmpStr = toString(contact);
-    var str = tmpStr.split(', ');
-    var checkEmail = str[2] === 'undefined' ? '' : ', ' + str[2];
-    var tel = str[0] + ', +7 (' + str[1].slice(0, 3) + ') ' + str[1].slice(3, 6) + '-' +
-    str[1].slice(6, 8) + '-' + str[1].slice(8, 10) + checkEmail;
-    result[result.length] = tel;
 
     return result;
 }
