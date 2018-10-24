@@ -18,7 +18,7 @@ let phoneBook = {};
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone = '', name = '', email = '') {
+function add(phone, name = '', email = '') {
     const validPhone = /^(\d)\1\1(\d)\2\2(\d)\3(\d)\4$/.test(phone);
     const contact = phoneBook[phone];
 
@@ -27,7 +27,7 @@ function add(phone = '', name = '', email = '') {
     }
 
     phoneBook[phone] = {
-        phone,
+        phone: phone.toString(),
         name,
         email
     };
@@ -87,19 +87,18 @@ function find(query) {
 }
 
 function findAll(query) {
-    if (!query) {
+
+    if (!query.trim() || typeof query !== 'string') {
         return [];
     }
 
     let allContacts = Object.keys(phoneBook).map(p => phoneBook[p]);
 
     if (query !== '*') {
-        const regEx = new RegExp(query);
-
         allContacts = allContacts.filter(c =>
-            regEx.test(c.name) ||
-            regEx.test(c.phone) ||
-            regEx.test(c.email)
+            c.name.indexOf(query) !== -1 ||
+            c.phone.indexOf(query) !== -1 ||
+            c.emacr.indexOf(query) !== -1
         );
     }
 
