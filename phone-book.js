@@ -20,15 +20,8 @@ let phoneBook = [];
  */
 function add(phone, name, email) {
     const isPhoneValid = /^\d{10}$/.test(phone);
-    if (!isPhoneValid || !name) {
-        return false;
-    }
-    const containsPhone = phoneBook.find(
-        (entry) => {
-            return entry.phone === phone;
-        }
-    );
-    if (containsPhone) {
+    const containsPhone = phoneBook.find(entry => entry.phone === phone);
+    if (!isPhoneValid || !name || containsPhone) {
         return false;
     }
 
@@ -49,14 +42,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (name === undefined || name.length === 0) {
-        return false;
-    }
-
-    const found = phoneBook.find(
-        (entry) => entry.phone === phone
-    );
-    if (found) {
+    const found = phoneBook.find(entry => entry.phone === phone);
+    if (name && found) {
         found.name = name;
         found.email = email;
 
@@ -67,19 +54,18 @@ function update(phone, name, email) {
 }
 
 function findEntries(query) {
-    if (query === undefined || query.length === 0) {
+    if (!query) {
         return [];
     }
 
     if (query === '*') {
         return phoneBook.slice();
     }
+
     const result = phoneBook.filter(
-        (entry) => {
-            return entry.phone.includes(query) ||
-                entry.name.includes(query) ||
-                entry.email !== undefined && entry.email.includes(query);
-        }
+        entry => (entry.phone.includes(query) ||
+            entry.name.includes(query) ||
+            entry.email && entry.email.includes(query))
     );
 
     return result;
@@ -92,9 +78,7 @@ function findEntries(query) {
  */
 function findAndRemove(query) {
     const findResult = findEntries(query);
-    phoneBook = phoneBook.filter(
-        (entry) => !findResult.includes(entry)
-    );
+    phoneBook = phoneBook.filter(entry => !findResult.includes(entry));
 
     return findResult.length;
 }
@@ -121,9 +105,7 @@ function formatContact(contact) {
  */
 function find(query) {
     const result = findEntries(query);
-    result.sort((e1, e2) => {
-        return e1.name > e2.name;
-    });
+    result.sort((e1, e2) => e1.name > e2.name);
 
     return result.map(formatContact);
 }
@@ -140,11 +122,8 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
     return csv.split('\n').map(i => {
         const parts = i.split(';');
-        if (update(parts[1], parts[0], parts[2])) {
-            return true;
-        }
 
-        return add(parts[1], parts[0], parts[2]);
+        return update(parts[1], parts[0], parts[2]) ? true : add(parts[1], parts[0], parts[2]);
     })
         .filter(success => success).length;
 }
