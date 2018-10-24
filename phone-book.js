@@ -11,8 +11,17 @@ const isStar = false;
  */
 let phoneBook = [];
 
-function checkFallPhoneAndName(phone, name) {
-    return phone === undefined || !/^\d\d\d\d\d\d\d\d\d\d$/.test(phone) || name === undefined;
+function isCorrectPhone(phone) {
+    return typeof phone === 'string' && !/^\d{10}$/.test(phone);
+}
+
+function isCorrectName(name) {
+    return typeof name === 'string' && name;
+
+}
+
+function isCorrectPhoneAndName(phone, name) {
+    return isCorrectPhone(phone) && isCorrectName(name);
 }
 
 function checkContain(phoneNote) {
@@ -33,7 +42,7 @@ function checkContain(phoneNote) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkFallPhoneAndName(phone, name)) {
+    if (!isCorrectPhoneAndName(phone, name)) {
         return false;
     }
     let phoneNote;
@@ -58,7 +67,7 @@ function add(phone, name, email) {
  */
 
 function update(phone, name, email) {
-    if (checkFallPhoneAndName(phone, name)) {
+    if (!isCorrectPhoneAndName(phone, name)) {
         return false;
     }
     let newPhoneNote;
