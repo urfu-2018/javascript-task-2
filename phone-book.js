@@ -90,7 +90,7 @@ function find(query) {
 }
 
 function isBadString(string) {
-    return typeof string !== 'string' || string === undefined || string === '';
+    return typeof string !== 'string' || string === undefined || string.trim() === '';
 }
 function findMatchingEntryPhones(query) {
     let phones = [];
