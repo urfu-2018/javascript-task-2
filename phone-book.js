@@ -124,19 +124,11 @@ function reduceAddedOrUpdatedNumbers(accumulator, currentValue) {
 
     const name = phoneBookElements[0];
     const phoneNumber = phoneBookElements[1];
-    let email;
+    const email = phoneBookElements[2];
 
-    if (phoneBookElements.length > 2) {
-        email = phoneBookElements[0];
-    }
-
-    if (add(phoneNumber, name, email)) {
-        return accumulator + 1;
-    } else if (update(phoneNumber, name, email)) {
-        return accumulator + 1;
-    }
-
-    return accumulator;
+    return add(phoneNumber, name, email) || update(phoneNumber, name, email)
+        ? accumulator + 1
+        : accumulator;
 }
 
 /**
