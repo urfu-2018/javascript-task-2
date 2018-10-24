@@ -54,10 +54,7 @@ function add(phone, name, email) {
 }
 
 function isCorrect(phone, name) {
-    if (phone.length !== 10 || name === undefined || name === '') {
-        return false;
-    }
-    if (typeof(name) !== 'string') {
+    if (phone.length !== 10 || typeof(name) !== 'string' || name === '') {
         return false;
     }
 
