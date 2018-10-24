@@ -16,7 +16,7 @@ function checkPhoneFormat(phone) {
 }
 
 function checkNameFormat(name) {
-    return (!(name === undefined || name === ''));
+    return (String(name) !== name || name === '');
 }
 
 function convertPhone(phone) {
@@ -31,7 +31,8 @@ function isInclude(t1, t2, t3, query) {
 }
 
 function leadStr(phone, name, email) {
-    return (email === '') ? name + ', ' + phone : name + ', ' + phone + ', ' + email;
+    return (email === '' || String(email) !== email)
+        ? name + ', ' + phone : name + ', ' + phone + ', ' + email;
 }
 
 function checkQuery(query) {
@@ -39,7 +40,7 @@ function checkQuery(query) {
 }
 
 function justAdd(phone, name, email) {
-    if (email === undefined || email === ' ') {
+    if (String(email) !== email || email === ' ') {
         phoneBook.set(phone, [name]);
     } else {
         phoneBook.set(phone, [name, email]);
@@ -54,7 +55,7 @@ function justAdd(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!checkPhoneFormat(phone) || phoneBook.has(phone) || !checkNameFormat(name)) {
+    if (!checkPhoneFormat(phone) || phoneBook.has(phone) || checkNameFormat(name)) {
         return false;
     }
     justAdd(phone, name, email);
@@ -70,7 +71,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) || !checkNameFormat(name)) {
+    if (!phoneBook.has(phone) || checkNameFormat(name)) {
         return false;
     }
     justAdd(phone, name, email);
