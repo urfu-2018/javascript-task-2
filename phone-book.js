@@ -22,7 +22,7 @@ function add(phone, name, email) {
     if (phoneBook.has(phone)) {
         return false;
     }
-    if (/^[0-9]{10}$/.test(phone) && name) {
+    if (nameIsCorrect(name) && /^[0-9]{10}$/.test(phone) && name) {
         phoneBook.set(phone, { name: name, phone: phone, email: email });
 
         return true;
