@@ -79,8 +79,7 @@ function findAndRemove(query) {
 function find(query) {
     const foundKeys = findKeysToRemove(query);
 
-    return foundKeys.sort(compareNames)
-        .map(formatRecord);
+    return foundKeys.map(formatRecord);
 }
 
 function compareNames(a, b) {
@@ -88,13 +87,11 @@ function compareNames(a, b) {
 }
 
 function formatRecord(phone) {
-    var number = formatPhoneNumber(phone);
-    var output = [phoneBook[phone].name, number];
-    if (phoneBook[phone].email !== undefined) {
-        output.push(phoneBook[phone].email);
+    if (phoneBook[phone].email) {
+        return `${phoneBook[phone].name}, ${formatPhoneNumber(phone)}, ${phoneBook[phone].email}`;
     }
 
-    return output.join(', ');
+    return `${phoneBook[phone].name}, ${formatPhoneNumber(phone)}`;
 }
 
 function formatPhoneNumber(phone) {
