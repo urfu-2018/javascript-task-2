@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const phoneCheck = /^(\d{3}){2}(\d{2}){2}$/.test(phone);
+    const phoneCheck = /^\d{10}$/.test(phone);
     const nameCheck = typeof name !== 'undefined';
     let nameInPhoneBookCheck = phoneBook.filter(acc => acc.phone === phone);
 
@@ -29,9 +29,6 @@ function add(phone, name, email) {
             name: name,
             email: email
         });
-        // if (!email) {
-        //     delete phoneBook[phoneBook.length - 1].email;
-        // }
 
         return true;
     }
@@ -156,6 +153,10 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (typeof(csv) !== 'string' || !csv) {
+        return 0;
+    }
+
     const listOfPhoneLogs = csv.split('\n');
     const result = listOfPhoneLogs.filter((log) => {
         const logData = log.split(';');
