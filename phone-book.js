@@ -7,7 +7,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook;
 
 /**
  * Добавление записи в телефонную книгу
@@ -34,7 +34,17 @@ function isCorrectName(name) {
 
 function isCorrectEmail(email) {
     if (email === undefined) {
-        return true;
+        return false;
+    }
+
+    return true;
+}
+
+function recordNotExists(phone) {
+    for (let i = 0; i < phoneBook.length; i++) {
+       if (phoneBook[i].phone === phone) {
+           return false;
+       }
     }
 
     return true;
@@ -45,7 +55,7 @@ function isAllArgumentsCorrect(phone, name, email) {
 }
 
 function add(phone, name, email) {
-    if (isAllArgumentsCorrect(phone, name, email)) {
+    if (isAllArgumentsCorrect(phone, name, email) && recordNotExists(phone)) {
         phoneBook.push({
             phone: phone,
             name: name,
