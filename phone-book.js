@@ -13,19 +13,20 @@ let phoneBook = new Set();
 
 
 const phoneReg = /^\d{10}$/;
-const isString = (arg) => typeof(arg) === 'string';
+const isString = arg => typeof(arg) === 'string';
 function replaceBadTypes(phone, name, email) {
-    // arguments.map((arg) => arg || '').map((arg) => arg.trim());
-    // почему это не работает?(в гугле не нашел подходящего объяснения)
-    phone = phone || '';
-    name = name || '';
-    email = email || '';
+    var args = [phone, name, email];
 
-    return [phone.trim(), name.trim(), email.trim()];
+    return args.map((arg) => arg || '').map((arg) => arg.trim());
+    // phone = phone || '';
+    // name = name || '';
+    // email = email || '';
+
+    // return [phone.trim(), name.trim(), email.trim()];
 }
 const argsTypesAreCorrect = (phone, name, email) =>
-    (!isString(phone) || !isString(name) || !isString(email));
-const phoneIsSuitable = (phone) => phoneReg.test(phone);
+    isString(phone) && isString(name) && isString(email);
+const phoneIsSuitable = phone => phoneReg.test(phone);
 
 function telInPhoneBook(phone) {
     for (let element of phoneBook) {
@@ -41,7 +42,7 @@ function areArgsCorrect(phone, name, email) {
     if (!argsTypesAreCorrect(phone, name, email)) {
         return false;
     }
-    if (!name) {
+    if (typeof name === 'undefined' || name === '' || name === null) {
         return false;
     }
     if (!phoneIsSuitable(phone)) {
