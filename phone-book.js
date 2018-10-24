@@ -35,8 +35,8 @@ function checkDoubles(personPhone) {
 }
 
 function add(phone, name, email) {
-    if (phoneValidation(phone) && checkDoubles(phone) < 0 && isCorrect(name)) {
-        phoneBook.push({ phone, name, email: isCorrect(email) || undefined });
+    if (phoneValidation(phone) && checkDoubles(phone) < 0 && isString(name)) {
+        phoneBook.push({ phone, name, email: email });
 
         return true;
     }
@@ -55,7 +55,7 @@ function update(phone, name, email) {
     const index = checkDoubles(phone);
 
     if (index !== -1 && isCorrect(name)) {
-        phoneBook[index] = { phone, name, email: isCorrect(email) || undefined };
+        phoneBook[index] = { phone, name, email: email };
 
         return true;
     }
@@ -138,16 +138,13 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    let counter = 0;
+    return csv.split('\n')
+        .map(person => {
+            const [name, phone, email] = person.split(';');
 
-    csv.split('\n').forEach(person => {
-        const [name, phone, email] = person.split(';');
-        if (add(phone, name, email) || update(phone, name, email)) {
-            counter += 1;
-        }
-    });
-
-    return counter;
+            return (add(phone, name, email) || update(phone, name, email));
+        })
+        .filter(x => x).length;
 }
 
 module.exports = {
