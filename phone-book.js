@@ -97,21 +97,12 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (checkQuery(query)) {
-
-        return 0;
-    }
-    var count = 0;
-    var delContact = find(query);
-    for (var item of delContact) {
-        var delPhone = item.split(', ')[1].replace(/(\D)/ig, '').slice(1, 11);
-        var del = delete phoneBook[delPhone];
-        if (del) {
-            count++;
-        }
+    var result = findKeys(query);
+    for (var item of result) {
+        phoneBook.delete(item);
     }
 
-    return count;
+    return result.length;
 }
 
 /**
@@ -166,15 +157,6 @@ function importFromCsv(csv) {
     }
 
     return count;
-}
-
-function checkQuery(query) {
-    if (query === undefined || query === '') {
-
-        return true;
-    }
-
-    return false;
 }
 
 module.exports = {
