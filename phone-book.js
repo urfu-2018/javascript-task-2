@@ -15,9 +15,58 @@ function containsPhone(phone) {
     return phoneBook.filter(contact => contact.phone === phone).length > 0;
 }
 
-function checkParamters(phone, name) {
-    return !/^\d{10}$/.test(phone) || typeof name !== 'string' ||
-        typeof phone !== 'string' || name === '';
+function checkParameters(phone, name) {
+    return !/^(\d){10}$/.test(phone) || typeof name !== 'string' ||
+        typeof phone !== 'string' || name.length === 0;
+}
+
+function toFormat(phone) {
+    return `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 8)}` +
+        `-${phone.substring(8)}`;
+}
+
+function toDefaultFormat(phone) {
+    return phone.substring(4).match(/\d/g)
+        .join('');
+}
+
+function returnAllBook(sortBook) {
+    const res = [];
+
+    for (let i = 0; i < sortBook.length; i++) {
+        const newPhone = toFormat(sortBook[i].phone);
+
+        if (typeof sortBook[i].email === 'undefined') {
+            res.push(`${sortBook[i].name}, ${newPhone}`);
+        } else {
+            res.push(`${sortBook[i].name}, ${newPhone}, ${sortBook[i].email}`);
+        }
+    }
+
+    return res;
+}
+
+function findElement(query, sortBook) {
+    const res = [];
+
+    for (let i = 0; i < sortBook.length; i++) {
+        const newPhone = toFormat(sortBook[i].phone);
+        const contact = `${sortBook[i].phone} ${sortBook[i].name} ${sortBook[i].email}`;
+
+        if (contact.indexOf(query) > -1 && typeof sortBook[i].email !== 'undefined') {
+            res.push(`${sortBook[i].name}, ${newPhone}, ${sortBook[i].email}`);
+        } else if (contact.indexOf(query) > -1) {
+            res.push(`${sortBook[i].name}, ${newPhone}`);
+        }
+    }
+
+    return res;
+}
+
+function sort() {
+    const temp = Array.from(phoneBook);
+
+    return temp.sort((contact, anotherContact) => contact.name > anotherContact.name);
 }
 
 /**
@@ -28,7 +77,7 @@ function checkParamters(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkParamters(phone, name) || containsPhone(phone)) {
+    if (checkParameters(phone, name) || containsPhone(phone)) {
         return false;
     }
 
@@ -49,14 +98,19 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkParamters(phone, name)) {
+    if (checkParameters(phone, name)) {
         return false;
     }
 
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
+        if (phoneBook[i].phone === phone && typeof email !== 'undefined') {
             phoneBook[i].name = name;
             phoneBook[i].email = email;
+
+            return true;
+        } else if (phoneBook[i].phone === phone) {
+            phoneBook[i].name = name;
+            delete phoneBook[i].email;
 
             return true;
         }
@@ -77,57 +131,16 @@ function findAndRemove(query) {
 
     const contacts = find(query);
 
-    if (contacts.length !== 0) {
-        phoneBook = phoneBook.filter(contact => !contacts.includes(contact));
+    for (let i = 0; i < contacts.length; i++) {
+        const phone = toDefaultFormat(contacts[i].split(', ')[1]);
+        const index = phoneBook.findIndex(contact => contact.phone === phone);
 
-        return contacts.length;
-    }
-
-    return 0;
-}
-
-function makeNewFormatPhone(phone) {
-    return `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 8)}` +
-        `-${phone.substring(8)}`;
-}
-
-function returnAllBook(sortBook) {
-    const res = [];
-
-    for (let i = 0; i < sortBook.length; i++) {
-        const newPhone = makeNewFormatPhone(sortBook[i].phone);
-
-        if (typeof sortBook[i].email === 'undefined') {
-            res.push(`${sortBook[i].name}, ${newPhone}`);
-        } else {
-            res.push(`${sortBook[i].name}, ${newPhone}, ${sortBook[i].email}`);
+        if (index > -1) {
+            phoneBook.splice(index, 1);
         }
     }
 
-    return res;
-}
-
-function findElement(query, sortBook) {
-    const res = [];
-
-    for (let i = 0; i < sortBook.length; i++) {
-        const newPhone = makeNewFormatPhone(sortBook[i].phone);
-        const contact = `${sortBook[i].phone} ${sortBook[i].name} ${sortBook[i].email}`;
-
-        if (contact.indexOf(query) > -1 && typeof phoneBook[i].email !== 'undefined') {
-            res.push(`${sortBook[i].name}, ${newPhone}, ${sortBook[i].email}`);
-        } else if (contact.indexOf(query) > -1) {
-            res.push(`${sortBook[i].name}, ${newPhone}`);
-        }
-    }
-
-    return res;
-}
-
-function sort() {
-    const temp = phoneBook;
-
-    return temp.sort((contact, anotherContact) => contact.name > anotherContact.name);
+    return contacts.length;
 }
 
 /**
@@ -136,11 +149,13 @@ function sort() {
  * @returns {String[]}
  */
 function find(query) {
+    let sortBook = [];
+
     if (query === '' || typeof query !== 'string') {
-        return [];
+        return sortBook;
     }
 
-    const sortBook = sort();
+    sortBook = sort();
 
     if (query === '*') {
 
