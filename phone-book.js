@@ -9,25 +9,22 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
-const checkEmail = (email) => typeof email === 'string' && /^[\w,.\-+]+@\w+\.[a-z]+$/.test(email);
+let phoneBook = new Map();
 const checkPhone = (phone) => typeof phone === 'string' && /^\d{10}$/.test(phone);
 const checkName = (name) => typeof name === 'string' && /^[a-zA-Zа-яА-ЯёЁ]+$/.test(name);
 const transformePhoneBack = (phone) => phone.replace(/\+7 \(|\) |-/g, '');
 
-function getContactData(contact) {
-    let res = [];
-    Object.keys(contact).forEach((key) => res.push(contact[key]));
-    res[1] = transformPhone(res[1]);
+// function getContactData(contact) {
+//     let res = [];
+//     Object.keys(contact).forEach((key) => res.push(contact[key]));
+//     res[1] = transformPhone(res[1]);
 
-    return res;
-}
+//     return res;
+// }
 
 function transformPhone(phone) {
-    let transformedPhone = '+7 (' + phone.slice(0, 3) + ') ';
-
-    return transformedPhone.concat(
-        [phone.slice(3, 6), phone.slice(6, 8), phone.slice(8, 10)].join('-'));
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
+        `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 }
 
 
@@ -42,19 +39,14 @@ function add(phone, name, email) {
     if (!checkPhone(phone) || !checkName(name)) {
         return false;
     }
-    if (phoneBook === undefined) {
-        phoneBook = new Map();
-    }
     if (phoneBook.get(phone) !== undefined) {
         return false;
     }
     let contact = {
         name,
-        phone
+        phone,
+        email
     };
-    if (checkEmail(email)) {
-        contact.email = email;
-    }
     phoneBook.set(phone, contact);
 
     return true;
@@ -69,7 +61,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook === undefined || !checkPhone(phone)) {
+    if (!checkPhone(phone)) {
         return false;
     }
     let contact = phoneBook.get(phone);
@@ -79,7 +71,7 @@ function update(phone, name, email) {
     if (checkName(name)) {
         contact.name = name;
     }
-    if (checkEmail(email)) {
+    if (email !== undefined) {
         contact.email = email;
     } else {
         delete contact.email;
@@ -94,9 +86,6 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (phoneBook === undefined) {
-        return 0;
-    }
     let finded = find(query).map((contact) => contact.split(', '));
     let count = 0;
     finded.forEach(
@@ -116,13 +105,13 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (phoneBook === undefined || typeof query !== 'string') {
+    if (typeof query !== 'string') {
         return [];
     }
     let result;
     if (query === '*') {
         result = Array.from(phoneBook.values())
-            .map((contact) => getContactData(contact));
+            .sort((first, second) => first.name > second.name);
     } else {
         result = Array.from(phoneBook.values())
             .filter((contact) =>
@@ -130,10 +119,12 @@ function find(query) {
                 contact.name.indexOf(query) !== -1 ||
                 (contact.email !== undefined &&
                     contact.email.indexOf(query) !== -1))
-            .map((contact) => getContactData(contact));
+            .sort((first, second) => first.name > second.name);
     }
 
-    return result.map((e) => e.join(', ')).sort();
+    return result.map((contact) => contact.email !== undefined
+        ? `${contact.name}, ${transformPhone(contact.phone)}, ${contact.email}`
+        : `${contact.name}, ${transformPhone(contact.phone)}`);
 }
 
 
