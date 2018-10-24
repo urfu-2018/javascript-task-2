@@ -48,7 +48,7 @@ function add(phone, name, email) {
     if (!isCorrectPhoneAndName(phone, name)) {
         return false;
     }
-    let phoneNote = { mPhone: phone, mName: name, mEmail: email };
+    const phoneNote = { mPhone: phone, mName: name, mEmail: email };
 
     if (checkContain(phoneNote)) {
         return false;
@@ -64,7 +64,6 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-
 function update(phone, name, email) {
     if (!isCorrectPhoneAndName(phone, name)) {
         return false;
@@ -76,8 +75,7 @@ function update(phone, name, email) {
     }
     for (let i = 0; i < phoneBook.length; i++) {
         if (phone === phoneBook[i].mPhone) {
-            phoneBook[i].mName = newPhoneNote.mName;
-            phoneBook[i].mEmail = newPhoneNote.mEmail;
+            phoneBook[i] = newPhoneNote;
 
             return true;
         }
@@ -89,14 +87,9 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
-/*
-* На вход принимает запрос в виде строки
-* Находит (смотри __find__) и удаляет все найденные записи
-* Возвращает число удаленных записей
-*/
 function findAndRemove(query) {
     if (!isCorrectQuery(query)) {
-        return;
+        return [];
     }
     let finded = find(query);
     for (let i = 0; i < finded.length; i++) {
@@ -145,7 +138,7 @@ function isFinded(query, note) {
 function find(query) {
     let result = [];
     if (!isCorrectQuery(query)) {
-        return;
+        return [];
     }
     if (query === '*') {
         for (let i = 0; i < phoneBook.length; i++) {
