@@ -11,28 +11,16 @@ const isStar = false;
  */
 let phoneBook = [];
 
-function goodArgs(phone, name, email) {
-    if (arguments.length < 2 ||
-        (!goodValues(phone, name, email) && !goodValues(phone, name)) ||
-        badNumber(phone)) {
-        return false;
+function badName(name) {
+    if (typeof name !== 'string' || name.length < 1) {
+        return true;
     }
 
-    return true;
-}
-
-function goodValues(phone, name, email) {
-    if (typeof phone !== 'string' ||
-        typeof name !== 'string' ||
-        arguments.length > 2 && typeof email !== 'string' || name.length < 1) {
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 function badNumber(phone) {
-    if (!/^555\d{7}$/.test(phone)) {
+    if (!/^555\d{7}$/.test(phone) || typeof phone !== 'string') {
         return true;
     }
 
@@ -47,11 +35,12 @@ function badNumber(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (arguments.length > 2 && typeof email !== 'string') {
+    if (badNumber(phone) || badName(name) ||
+        arguments.length < 2 || typeof phoneBook[phone] !== 'undefined') {
         return false;
     }
-    if (!goodArgs(phone, name, email) || typeof phoneBook[phone] !== 'undefined') {
-        return false;
+    if (arguments.length < 3) {
+        email = '';
     }
     phoneBook[phone] = [name, email];
 
@@ -67,7 +56,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!goodArgs(phone, name, email) || typeof phoneBook[phone] === 'undefined') {
+    if (badName(name) || badNumber(phone) ||
+        arguments.length < 2 || typeof phoneBook[phone] === 'undefined') {
         return false;
     }
     if (arguments.length === 2) {
