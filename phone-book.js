@@ -127,8 +127,8 @@ function find(query) {
         processed = phoneBook.filter(contact => findQueryInContact(contact, query) === true);
     }
 
-    return processed.map(function (contact) {
-        const formattedPhone = contact.phone.replace(/(.{3})(.{3})(.{2})(.{2})/,
+    return processed.sort((a, b) => a.name.localeCompare(b.name)).map(function (contact) {
+        const formattedPhone = contact.phone.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/,
             '+7 ($1) $2-$3-$4');
         let result = contact.name + ', ' + formattedPhone;
         if (contact.email) {
@@ -136,7 +136,7 @@ function find(query) {
         }
 
         return result;
-    }).sort();
+    });
 }
 
 /**
@@ -151,7 +151,7 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
 
     const entries = csv.split('\n');
-    let count = null;
+    let count = 0;
     for (let entry of entries) {
         const contact = entry.split(';');
         const name = contact[0];
