@@ -74,7 +74,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let rez = [];
-    let removed;
+    let removed = 0;
     if (query === '*') {
         removed = phoneBook.length;
         phoneBook = rez;
@@ -99,20 +99,34 @@ function findAndRemove(query) {
  * @param {String} query
  * @returns {String[]}
  */
+
+function formatData(person) {
+    return person.name +
+    ', +7 (' +
+    person.phone.slice(0, 3) +
+    ') ' +
+    person.phone.slice(3, 6) + '-' +
+    person.phone.slice(6, 8) + '-' +
+    person.phone.slice(8, 10) + ', ' + person.email;
+}
+
 function find(query) {
     let rez = [];
     if (query === '*') {
-        return phoneBook.sort((a, b) => a.name.localCompare(b.name));
+        for (let i = 0; i < phoneBook.length; i++) {
+            rez.add(formatData(phoneBook[i]));
+        }
+        return rez.sort();
     }
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].phone.includes(query) ||
             phoneBook[i].name.includes(query) ||
             phoneBook[i].email.includes(query)) {
-            rez.push(phoneBook[i]);
+            rez.add(formatData(phoneBook[i]));
         }
     }
 
-    return rez.sort((a, b) => a.name.localCompare(b.name));
+    return rez.sort();
 }
 
 /**
