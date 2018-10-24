@@ -22,12 +22,9 @@ function toString(phone) {
     const p3 = phone.slice(6, 8);
     const p4 = phone.slice(8, 10);
     const p = `+7 (${p1}) ${p2}-${p3}-${p4}`;
-    const hasEmail = (phoneBook[phone].email !== undefined);
-    if (hasEmail) {
-        return phoneBook[phone].name + ', ' + p + ', ' + phoneBook[phone].email;
-    }
 
-    return phoneBook[phone].name + ', ' + p;
+    return phoneBook[phone].name + ', ' + p +
+    (phoneBook[phone].email !== undefined ? ', ' + phoneBook[phone].email : '');
 }
 
 function isContainsContact(phone) {
@@ -37,7 +34,6 @@ function isContainsContact(phone) {
 
     return Object.keys(phoneBook).includes(phone);
 }
-
 
 /**
  * Добавление записи в телефонную книгу
@@ -60,7 +56,7 @@ function add(phone, name, email) {
 }
 
 function isCorrect(phone, name) {
-    if (phone.length !== 10 || !/^\d{10}$/.test(phone) ||
+    if (typeof(phone) !== 'string' || phone.length !== 10 || !/^\d{10}$/.test(phone) ||
     typeof(name) !== 'string' || name === '') {
         return false;
     }
