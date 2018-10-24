@@ -54,7 +54,9 @@ function update(phone, name, email) {
     }
     phoneBook[index].name = name;
     if (!isString(email)) {
-        delete phoneBook[index].email;
+        if ('email' in phoneBook[index]) {
+            delete phoneBook[index].email;
+        }
     } else {
         phoneBook[index].email = email;
     }
