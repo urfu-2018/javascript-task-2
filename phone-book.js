@@ -141,7 +141,7 @@ function findKeys(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (typeof(csv) !== 'string' || csv === '') {
+    if (typeof(csv) !== 'string') {
         return 0;
     }
     var tempContact = csv.split('\n');
