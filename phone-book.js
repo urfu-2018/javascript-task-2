@@ -125,7 +125,15 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').length;
+    return csv
+        .split('\n')
+        .map(function (record) {
+            return record.split(';');
+        })
+        .filter(function (record) {
+            return add(record[1], record[0], record[2]) ||
+                update(record[1], record[0], record[2]);
+        }).length;
 }
 
 module.exports = {
