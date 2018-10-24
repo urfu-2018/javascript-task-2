@@ -95,7 +95,7 @@ function isBadString(string) {
 function findMatchingEntryPhones(query) {
     let phones = [];
 
-    if (query === '') {
+    if (isBadString(query)) {
         return phones;
     }
 
