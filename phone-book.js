@@ -5,7 +5,7 @@
  * Реализован метод importFromCsv
  */
 
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -83,7 +83,7 @@ function find(query) {
         return [];
     }
 
-    return Array.from(phoneBook.entries()).filter(([phone, { name, email }]) =>
+    return Array.from(phoneBook.entries()).filter(([phone, { name, email = '' }]) =>
         query === '*' || phone.includes(query) || name.includes(query) || email.includes(query))
         .map(([phone, { name, email }]) =>
             `${name}, ${phone.replace(phoneTest, '+7 ($1) $2-$3-$4')}${email ? ', ' + email : ''}`)
