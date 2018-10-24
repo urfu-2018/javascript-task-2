@@ -19,12 +19,12 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^\d{10}$/.test(phone) || !name || phoneBook.has(phone)) {
+    if (!dataValidation(phone, name, email) || phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, {
-        'name': name,
-        'email': email
+        name,
+        email
     });
 
     return true;
@@ -38,7 +38,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!/^\d{10}$/.test(phone) || !name || !phoneBook.has(phone)) {
+    if (!dataValidation(phone, name, email) || !phoneBook.has(phone)) {
         return false;
     }
     let phoneRecord = phoneBook.get(phone);
@@ -56,7 +56,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     const contacts = findContacts(query);
     for (let i = 0; i < contacts.length; i++) {
-        phoneBook.delete(contacts[i][1]);
+        phoneBook.delete(contacts[i].phone);
     }
 
     return contacts.length;
@@ -69,22 +69,32 @@ function findAndRemove(query) {
  */
 function find(query) {
     const contacts = findContacts(query);
-    contacts.sort((c1, c2) => c1[0].localeCompare(c2[0]));
+    contacts.sort((c1, c2) => c1.name.localeCompare(c2.name));
 
     return contacts.map(
         contact =>
-            `${contact[0]}, ${formalize(contact[1])}${contact[2] ? `, ${contact[2]}` : ''}`);
+            `${contact.name}, ${formalize(contact.phone)}${contact.email
+                ? `, ${contact.email}` : ''}`
+    );
+}
+
+function formalize(phone) {
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
 }
 
 function findContacts(query) {
-    if (!query) {
+    if (!query || typeof(query) !== 'string') {
         return [];
     }
     const searchQuery = query === '*' ? '' : query;
     let foundContacts = [];
     for (let [phone, record] of phoneBook) {
         if (queryInPhoneRecord(searchQuery, phone, record)) {
-            foundContacts.push([record.name, phone, record.email]);
+            foundContacts.push({
+                'name': record.name,
+                phone,
+                'email': record.email
+            });
         }
     }
 
@@ -92,11 +102,9 @@ function findContacts(query) {
 }
 
 function queryInPhoneRecord(query, phone, contact) {
-    return `${phone}, ${contact.name}, ${contact.email}`.indexOf(query) !== -1;
-}
-
-function formalize(phone) {
-    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
+    return phone.indexOf(query) !== -1 ||
+        contact.name.indexOf(query) !== -1 ||
+        contact.email && contact.email.indexOf(query) !== -1;
 }
 
 /**
@@ -106,18 +114,23 @@ function formalize(phone) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    let correctContactsNumber = 0;
+    let correctChanges = 0;
     let contacts = csv.split('\n');
     for (let i = 0; i < contacts.length; i++) {
         let [name, phone, email] = contacts[i].split(';');
-        if (phoneBook.has(phone)) {
-            correctContactsNumber += update(phone, name, email) ? 1 : 0;
-        } else {
-            correctContactsNumber += add(phone, name, email) ? 1 : 0;
-        }
+        correctChanges += Number(!phoneBook.has(phone)
+            ? add(phone, name, email)
+            : update(phone, name, email)
+        );
     }
 
-    return correctContactsNumber;
+    return correctChanges;
+}
+
+function dataValidation(phone, name, email) {
+    return typeof(phone) === 'string' && /^\d{10}$/.test(phone) &&
+        name && typeof(name) === 'string' &&
+        (!email || typeof(email) === 'string');
 }
 
 module.exports = {
