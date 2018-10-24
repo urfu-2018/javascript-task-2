@@ -112,7 +112,9 @@ function find(query) {
     const clonePhoneBook = phoneBook.slice(0);
 
     if (query === '*') {
-        return clonePhoneBook.map(person => transformItem(person)).sort();
+        return clonePhoneBook
+            .sort(({ name }, { name: _name }) => name.localeCompare(_name))
+            .map(person => transformItem(person));
     }
     if (query !== undefined && query !== '' && isString(query)) {
         return clonePhoneBook
@@ -122,8 +124,8 @@ function find(query) {
                     phone.search(query) + 1 ||
                     (email ? email.search(query) + 1 : false)
             )
-            .map(person => transformItem(person))
-            .sort();
+            .sort(({ name }, { name: _name }) => name.localeCompare(_name))
+            .map(person => transformItem(person));
     }
 
     return [];
