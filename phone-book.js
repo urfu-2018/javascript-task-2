@@ -57,8 +57,9 @@ function add(phone, name, email) {
     if (checkContains(phoneNote)) {
         return false;
     }
+    phoneBook.push(phoneNote);
 
-    return Boolean(phoneBook.push(phoneNote));
+    return true;
 }
 
 /**
