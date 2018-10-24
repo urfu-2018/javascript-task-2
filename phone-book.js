@@ -40,7 +40,7 @@ let phoneBook = {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phone.length !== 10 || name === undefined || name === '') {
+    if (!isCorrect(phone, name)) {
         return false;
     }
     if (!phoneBook.isContainsContact(name) && find(phone).length === 0) {
@@ -54,6 +54,17 @@ function add(phone, name, email) {
     }
 
     return false;
+}
+
+function isCorrect(phone, name) {
+    if (phone.length !== 10 || name === undefined || name === '') {
+        return false;
+    }
+    if (typeof(name) !== 'string') {
+        return false;
+    }
+
+    return true;
 }
 
 /**
