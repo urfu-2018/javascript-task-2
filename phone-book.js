@@ -1,24 +1,27 @@
 'use strict';
 
-class Person{
+class Person {
     constructor(name, phone, email) {
         this.name = name;
         this.phone = phone;
         this.email = email || '';
     }
-    
+
     toString() {
         let result = this.name + ', ' + this.phone;
-        if (this.email != '') {
+        if (this.email !== '') {
             result += ', ' + this.email;
         }
+
         return result;
     }
 
     contains(query) {
-        return this.name.includes(query) || this.phone.includes(query) || this.email.includes(query);
+        return this.name.includes(query) || this.phone.includes(query) ||
+        this.email.includes(query);
     }
 }
+
 /**
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
@@ -96,7 +99,8 @@ function find(query) {
         return persons.map(person => person.toString());
     }
 
-    return persons.filter((person) => person.toString().includes(query));
+    return persons.filter((person) => person.toString().includes(query))
+        .map(person => person.toString());
 }
 
 /**
