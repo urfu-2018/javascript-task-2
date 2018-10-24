@@ -10,6 +10,7 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = new Map();
+let phoneBookByQuery = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -64,19 +65,14 @@ function findAndRemove(query) {
     if (query === '*') {
         query = '';
     }
-    let size = phoneBook.size;
-    phoneBook.forEach(function (key, value) {
-        let phone = value;
-        let email = '';
-        if (key[1]) {
-            email = key[1];
-        }
-        if (isInclude(phone, key[0], email, query)) {
-            phoneBook.delete(phone);
-        }
-    });
+    phoneBookByQuery = [];
 
-    return size - phoneBook.size;
+    phoneBook.forEach((value, key) => findByQuery(value, key, query));
+    for (let i = 0; i < phoneBookByQuery.length; i++) {
+        phoneBook.delete(phoneBookByQuery[i]);
+    }
+
+    return phoneBookByQuery.length;
 }
 
 /**
@@ -85,6 +81,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    phoneBookByQuery = [];
     if (validateQuery(query)) {
         return [];
     }
@@ -92,18 +89,24 @@ function find(query) {
         query = '';
     }
     let res = [];
-    phoneBook.forEach(function (key, value) {
-        let phone = value;
-        let email = '';
-        if (key[1]) {
-            email = key[1];
-        }
-        if (isInclude(phone, key[0], email, query)) {
-            res.push(arrayToString([key[0], formattingPhone(phone), email]));
-        }
-    });
+    phoneBook.forEach((value, key) => findByQuery(value, key, query));
+    for (let i = 0; i < phoneBookByQuery.length; i++) {
+        res.push(arrayToString([phoneBook.get(phoneBookByQuery[i])[0],
+            formattingPhone(phoneBookByQuery[i]), phoneBook.get(phoneBookByQuery[i])[1]]));
+    }
 
     return res;
+}
+
+function findByQuery(value, key, query) {
+    let phone = key;
+    let email = '';
+    if (value[1]) {
+        email = value[1];
+    }
+    if (isInclude(phone, value[0], email, query)) {
+        phoneBookByQuery.push(phone);
+    }
 }
 
 /**
@@ -153,7 +156,6 @@ function formattingPhone(phone) {
         '-' + phone.substr(8, 2);
 
     return phone;
-
 }
 
 function validatePhoneAndEmail(phone, name) {
@@ -162,8 +164,6 @@ function validatePhoneAndEmail(phone, name) {
     return (typeof phone === 'string' && typeof name === 'string' && name.length !== 0 &&
         typeof phone !== undefined && typeof name !== undefined && phoneRegexp.test(phone));
 }
-
-console.info(typeof 0 === 'string' && typeof 'foo' === 'string');
 
 function validateQuery(query) {
 
