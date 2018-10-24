@@ -19,11 +19,11 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^[0-9]{10}$/.test(phone)) {
+    if (typeof phone !== 'string' || !/^[0-9]{10}$/.test(phone)) {
         return false;
     }
 
-    if (name === undefined) {
+    if (typeof name !== 'string' || name === undefined) {
         return false;
     }
 
@@ -47,11 +47,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!/[0-9]{10}/.test(phone)) {
+    if (typeof phone !== 'string' || !/[0-9]{10}/.test(phone)) {
         return false;
     }
 
-    if (name === undefined) {
+    if (typeof name !== 'string' || name === undefined) {
         return false;
     }
 
