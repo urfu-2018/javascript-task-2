@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!(isString(phone) && isString(name))) {
+    if (!isString(phone) || !isString(name)) {
         return false;
     }
     if (!(/^\d{10}$/g.test(phone) && findContact(phone) === -1)) {
@@ -54,9 +54,7 @@ function update(phone, name, email) {
     }
     phoneBook[index].name = name;
     if (!isString(email)) {
-        if ('email' in phoneBook[index]) {
-            delete phoneBook[index].email;
-        }
+        delete phoneBook[index].email;
     } else {
         phoneBook[index].email = email;
     }
@@ -70,6 +68,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!isString(query) || query.length === 0) {
+        return [];
+    }
     let count = 0;
     for (let i = 0; i < phoneBook.length; i++) {
         if (objectIncludes(phoneBook[i], query)) {
@@ -88,7 +89,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query)) {
+    if (!isString(query) || query.length === 0) {
         return [];
     }
     let result;
