@@ -192,8 +192,8 @@ function importFromCsv(csv) {
             email: temp[2]
         };
 
-        if (add(data.phone, data.name, data.email) ||
-            update(data.phone, data.name, data.email)) {
+        if (update(data.phone, data.name, data.email) ||
+            add(data.phone, data.name, data.email)) {
             count++;
         }
     }
