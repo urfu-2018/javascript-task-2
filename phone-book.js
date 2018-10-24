@@ -25,7 +25,8 @@ function isCorrectQuery(query) {
 }
 
 function isCorrectPhoneAndNameAndEmail(phone, name, email) {
-    return isCorrectPhone(phone) && isCorrectName(name) && typeof email === 'string';
+    return isCorrectPhone(phone) && isCorrectName(name) &&
+    (typeof email === 'string' || email === undefined);
 }
 
 function checkQueryContains(field, query) {
