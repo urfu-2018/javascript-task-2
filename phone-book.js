@@ -48,11 +48,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    return addToContactByPredicate(phone, name, email,
-        (p, n) => isValidContact(p, n) && phoneBook.hasOwnProperty(p));
+    return addToContactByPredicate(phone, name, email, p => name && phoneBook.hasOwnProperty(p));
 }
 
 function findContacts(query) {
+    if (!query) {
+        return [];
+    }
+
     return Object.entries(phoneBook)
         .map(e => [e[0], e[1].name, e[1].email])
         .filter(e => query === '*' || e.some(q => q && q.includes(query)));
