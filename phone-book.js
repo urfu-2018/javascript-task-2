@@ -28,10 +28,10 @@ function add(phone, name, email) {
     return true;
 }
 
-function isCorrectPhoneNumber(phone) {
+/* function isCorrectPhoneNumber(phone) {
     return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
     // return /^\d{10}$/.test(phone);
-}
+}*/
 
 function isCorrectName(name) {
     return typeof(name) === 'string' && name !== '';
