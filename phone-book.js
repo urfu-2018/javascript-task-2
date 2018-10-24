@@ -53,9 +53,9 @@ function findAndRemove(query) {
         return 0;
     }
     const initialPhoneBookLen = phoneBook.size;
-    phoneBook.forEach(({ name, email }, key) => {
-        if (key.includes(query) || name.includes(query) || (email && email.includes(query))) {
-            phoneBook.delete(key);
+    phoneBook.forEach(({ name, email }, phone) => {
+        if (checkQueryInRecord(phone, name, email, query)) {
+            phoneBook.delete(phone);
         }
     });
 
@@ -72,20 +72,16 @@ function find(query) {
         return [];
     }
     const result = [];
-    phoneBook.forEach(({ name, email }, key) => {
-        if (query === '*' || key.includes(query) || name.includes(query) || email.includes(query)) {
-            const phone =
-                `+7 (${key.substr(0, 3)}) ${key.substr(3, 3)}-` +
-                `${key.substr(6, 2)}-${key.substr(8, 2)}`;
-            // result.push(`${name}, ${phone}` + (email ? `, ${email}` : ''));
-            result.push({ name, phone, email });
+    phoneBook.forEach(({ name, email }, phone) => {
+        if (checkQueryInRecord(phone, name, email, query)) {
+            const formatedPhone =
+                `+7 (${phone.substr(0, 3)}) ${phone.substr(3, 3)}-` +
+                `${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
+            result.push(`${name}, ${formatedPhone}` + (email ? `, ${email}` : ''));
         }
     });
-    const sorted = result.sort((x, y) => x.name > y.name);
 
-    return sorted.map(
-        ({ name, phone, email }) => `${name}, ${phone}` + (email ? `, ${email}` : '')
-    );
+    return result.sort();
 }
 
 /**
@@ -111,6 +107,15 @@ function importFromCsv(csv) {
  */
 function isCorrectArgs(phone, name) {
     return /^\d{10}$/.test(phone) && typeof name === 'string' && name;
+}
+
+function checkQueryInRecord(phone, name, email, query) {
+    return (
+        query === '*' ||
+        phone.includes(query) ||
+        name.includes(query) ||
+        (email && email.includes(query))
+    );
 }
 
 module.exports = {
