@@ -185,7 +185,7 @@ function makeArray(con, result, query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!Array.isArray(cvs) || cvs.length === 0) {
+    if (Array.isArray(csv) || csv.length === 0) {
         return 0;
     }
     var tempContact = csv.split('\n');
