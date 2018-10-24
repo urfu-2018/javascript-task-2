@@ -23,7 +23,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (typeof name !== 'string' || name === undefined) {
+    if (typeof name !== 'string' || name === undefined || name === '') {
         return false;
     }
 
@@ -51,7 +51,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    if (typeof name !== 'string' || name === undefined) {
+    if (typeof name !== 'string' || name === undefined || name === '') {
         return false;
     }
 
@@ -112,7 +112,7 @@ function entryToString(entry) {
     let phone = entry.phone;
     let phoneString =
         `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
-    if (entry.email === undefined) {
+    if (entry.email === undefined || entry.email === '') {
         return `${entry.name}, ${phoneString}`;
     }
 
