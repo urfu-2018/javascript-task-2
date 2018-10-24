@@ -71,7 +71,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) || checkNameFormat(name)) {
+    if (!checkPhoneFormat(phone) || !phoneBook.has(phone) || checkNameFormat(name)) {
         return false;
     }
     justAdd(phone, name, email);
