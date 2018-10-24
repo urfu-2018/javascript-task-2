@@ -39,7 +39,7 @@ function add(phone, name, email) {
 }
 
 function getEmptyIfNotString(str) {
-    return typeof str === 'string' ? str : '';
+    return typeof str === 'string' ? str.trim() : '';
 }
 
 /**
@@ -117,7 +117,14 @@ function find(query) {
 }
 
 function sortedPhonesByName(manA, manB) {
-    return manA[0].localeCompare(manB[0]);
+    if (manA[0] > manB[0]) {
+        return 1;
+    }
+    if (manA[0] < manB[0]) {
+        return -1;
+    }
+
+    return 0;
 }
 
 function getFormatString(contacts) {
