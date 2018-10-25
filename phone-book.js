@@ -23,7 +23,7 @@ function validatePhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (validatePhone(phone) || phoneBook.has(phone) || !name) {
+    if (!validatePhone(phone) || phoneBook.has(phone) || !name) {
         return false;
     }
     if (!email) {
