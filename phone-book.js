@@ -4,11 +4,11 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 const tuple = (...args) => Object.freeze(args);
 
 function createRecord(name, phone, email) {
-    if (validatePhone(phone) && validateName(name) && email) {
+    if (validatePhone(phone) && validateName(name)) {
         return tuple(name, phone, email);
     }
 
@@ -108,7 +108,7 @@ function find(query) {
  * @returns {Array}
  */
 function findRecords(query) {
-    if (typeof query !== 'string' || query === '') {
+    if (typeof query !== 'string') {
         return [];
     }
     let entries = Array.from(phoneBook.values());
