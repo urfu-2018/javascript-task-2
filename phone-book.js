@@ -12,8 +12,8 @@ const isStar = true;
 let phoneBook = {};
 const PHONE_REGEX = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
-function checkFormat(str) {
-    return PHONE_REGEX.test(str);
+function isCorrect(phone, name) {
+    return PHONE_REGEX.test(phone) && name;
 }
 
 /**
@@ -24,7 +24,7 @@ function checkFormat(str) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkFormat(phone) && name && !(phone in phoneBook)) {
+    if (isCorrect(phone, name) && !(phone in phoneBook)) {
         phoneBook[phone] = { name, email };
 
         return true;
@@ -41,35 +41,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkFormat(phone) && name && phone in phoneBook) {
+    if (isCorrect(phone, name) && phone in phoneBook) {
         phoneBook[phone] = { name, email };
 
         return true;
     }
 
     return;
-}
-
-/**
- * Удаление записей по запросу из телефонной книги
- * @param {String} query
- * @returns {Number}
- */
-function findAndRemove(query) {
-    if (query === '') {
-        return [];
-    }
-    if (query === '*') {
-        query = '';
-    }
-    let numbers = Object.keys(phoneBook);
-
-    let toDelete = numbers.filter(number => {
-        return checkContain(number, query);
-    });
-    toDelete.forEach(number => delete phoneBook[number]);
-
-    return toDelete.length;
 }
 
 function checkContain(number, query) {
@@ -79,36 +57,49 @@ function checkContain(number, query) {
 }
 
 /**
- * Поиск записей по запросу в телефонной книге
- * @param {String} query
- * @returns {String[]}
+ * @param {String} query поисковый запрос
+ * @returns {Array} массив номеров, удовлетворяющих запросу
  */
-function find(query) {
+function __find(query) {
     if (query === '') {
         return [];
     }
     if (query === '*') {
         query = '';
     }
-    let numbers = Object.keys(phoneBook);
 
-    return numbers.filter(number => {
+    return Object.keys(phoneBook)
+        .filter(number => {
+            return checkContain(number, query);
+        });
+}
 
-        return checkContain(number, query);
-    }) // contains condition
+
+/**
+ * Удаление записей по запросу из телефонной книги
+ * @param {String} query
+ * @returns {Number}
+ */
+function findAndRemove(query) {
+    let phonesToDelete = __find(query);
+    phonesToDelete.forEach(phone => {
+        delete phoneBook[phone];
+    });
+
+    return phonesToDelete.length;
+}
+
+/**
+ * Поиск записей по запросу в телефонной книге
+ * @param {String} query
+ * @returns {String[]}
+ */
+function find(query) {
+    return __find(query)
         .map(number => {
             return { name: phoneBook[number].name, number, email: phoneBook[number].email };
         })
-        .sort(function (a, b) {
-            if (a.name > b.name) {
-                return 1;
-            }
-            if (a.name < b.name) {
-                return -1;
-            }
-
-            return 0;
-        })
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map(record => {
             let digits = record.number.match(PHONE_REGEX);
             let str = `${record.name}, +7 (${digits[1]}) ${digits[2]}-${digits[3]}-${digits[4]}`;
