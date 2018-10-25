@@ -126,7 +126,7 @@ function find(query) {
         }
     });
     if (suitablesForQuery.length === 0) {
-        return [];
+        return []
     }
 
     return handleRecords(suitablesForQuery);
@@ -181,9 +181,7 @@ function importFromCsv(csv) {
         var splittedRecord = record.split(';');
         var name = splittedRecord[0];
         var phone = splittedRecord[1];
-        var email = splittedRecord[2];
-        email = email || '';
-        email = email.trim();
+        var email = (splittedRecord[2] || '').trim();
         if (add(phone, name, email) || update(phone, name, email)) {
             addedRecordsCount++;
         }
