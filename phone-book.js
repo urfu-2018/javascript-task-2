@@ -22,7 +22,7 @@ function add(phone, name, email) {
     if (!name || !/^\d{10}$/.test(phone) || phoneBook[phone]) {
         return false;
     }
-    phoneBook[phone] = { name: name, email: email };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -35,10 +35,10 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!name || !/^\d{10}$/.test(phone) || !phoneBook[phone]) {
+    if (!name || !phoneBook[phone]) {
         return false;
     }
-    phoneBook[phone] = { name: name, email: email };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -49,12 +49,12 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let foundKeys = findKeys(query);
-    foundKeys.forEach(element => {
-        delete(phoneBook[element]);
+    let foundPhones = findPhones(query);
+    foundPhones.forEach(contact => {
+        delete(phoneBook[contact]);
     });
 
-    return foundKeys.length;
+    return foundPhones.length;
 }
 
 /**
@@ -66,19 +66,21 @@ function find(query) {
     if (query === '' || query === undefined) {
         return [];
     }
-    let foundKeys = sortByName(findKeys(query));
+    let foundPhones = sortByName(findPhones(query));
 
-    return formatRecords(foundKeys);
+    return formatContacts(foundPhones);
 }
 
-function findKeys(query) {
-    let foundKeys = Object.keys(phoneBook);
+function findPhones(query) {
+    let foundPhones = Object.keys(phoneBook);
     if (query === '*') {
-        return foundKeys;
+        return foundPhones;
     }
 
-    return foundKeys.filter(phone => {
-        return `${phone} ${phoneBook[phone].name} ${phoneBook[phone].email}`.includes(query);
+    return foundPhones.filter(phone => {
+        let email = phoneBook[phone].email || '';
+
+        return `${phone} ${phoneBook[phone].name} ${email}`.includes(query);
     });
 }
 
@@ -86,8 +88,8 @@ function sortByName(records) {
     return records.sort((a, b) => phoneBook[a].name > phoneBook[b].name);
 }
 
-function formatRecords(records) {
-    return records.map(phone => {
+function formatContacts(phones) {
+    return phones.map(phone => {
         let email = phoneBook[phone].email ? ', ' + phoneBook[phone].email : '';
 
         return phoneBook[phone].name +
@@ -104,22 +106,18 @@ function formatRecords(records) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-
-    let records = csv.split('\n');
-    let modifiedRecords = 0;
-    records.forEach(record => {
-        let phone = record.split(';')[1].replace(/\D/);
-        let name = record.split(';')[0];
-        let email = record.split(';')[2];
+    let lines = csv.split('\n');
+    let modifiedContacts = 0;
+    lines.forEach(line => {
+        let phone = line.split(';')[1].replace(/\D/);
+        let name = line.split(';')[0];
+        let email = line.split(';')[2];
         if (add(phone, name, email) || update(phone, name, email)) {
-            modifiedRecords++;
+            modifiedContacts++;
         }
     });
 
-    return modifiedRecords;
+    return modifiedContacts;
 }
 
 module.exports = {
