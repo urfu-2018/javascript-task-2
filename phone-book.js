@@ -22,6 +22,9 @@ function add(phone, name, email) {
     if (checkEmptyString(name)) {
         return false;
     }
+    if (checkEmptyString(phone)) {
+        return false;
+    }
     if (phone.match(/^\d{10}$/) === null) {
         return false;
     }
@@ -48,7 +51,8 @@ function checkExistingValue(existingValues, phone) {
 }
 
 function checkEmptyString(str) {
-    if (typeof(str) !== 'string' || str.length === 0) {
+    if (str === undefined ||
+         typeof(str) !== 'string' || str.length === 0) {
         return true;
     }
 
