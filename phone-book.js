@@ -96,7 +96,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const result = findKeys(query);
+    let result = findKeys(query);
 
     return result.sort((a, b) =>
         phoneBook[a].name.localeCompare(phoneBook[b].name)
