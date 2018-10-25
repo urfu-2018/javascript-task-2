@@ -14,19 +14,19 @@ let phoneBook = [];
 const regextel = /^\d{10}$/;
 
 function check1(phone, name) {
-    return typeof phone !== 'string' ||
-    phone === '' ||
+    return typeof name !== 'string' ||
     !phone.match(regextel) ||
-    name === undefined ||
-    name === '' ||
+    !name ||
+    !phone ||
     phoneBook.some((rec)=>rec.tel === phone);
 }
 
 function check2(phone, name, ind) {
-    return typeof phone !== 'string' ||
-    phone === '' ||
+    return typeof name !== 'string' ||
+    !phone ||
+    !name ||
     ind === -1 ||
-    name === '' || !phone.match(regextel);
+    !phone.match(regextel);
 }
 
 /**
@@ -39,7 +39,7 @@ function check2(phone, name, ind) {
 
 function add(phone, name, email) {
     let record;
-    if (check1(phone, name) || arguments.length === 0) {
+    if (check1(phone, name)) {
         return false;
     }
     if (email !== undefined) {
@@ -61,7 +61,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     let ind = phoneBook.findIndex(x => x.tel === phone);
-    if (check2(phone, name, ind) || arguments.length === 0) {
+    if (check2(phone, name, ind)) {
         return false;
     }
     if (email !== undefined) {
