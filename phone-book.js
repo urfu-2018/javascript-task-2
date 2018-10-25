@@ -54,7 +54,8 @@ function checkName(name) {
  */
 function update(phone, name, email) {
     const regexp = /^\d{10}$/;
-    if (typeof phone === 'string' && regexp.test(phone) && name !== undefined &&
+    name = checkName(name);
+    if (typeof phone === 'string' && regexp.test(phone) && name !== '' &&
     phoneBook[phone] !== undefined) {
         if (email) {
             phoneBook[phone] = {
