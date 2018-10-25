@@ -68,19 +68,19 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    const oldPhoneBookLength = phoneBook.length;
+
     if (!query) {
         return 0;
     }
 
-    const phoneBookLength = phoneBook.length;
-
     if (query === '*') {
         phoneBook = [];
 
-        return phoneBookLength;
+        return oldPhoneBookLength;
     }
 
-    phoneBook = phoneBook.filter((log) => {
+    phoneBook = phoneBook.filter(log => {
         const phoneCheck = log.phone.includes(query);
         const nameCheck = log.name.includes(query);
         const emailCheck = log.email && log.email.includes(query);
@@ -88,7 +88,7 @@ function findAndRemove(query) {
         return !(phoneCheck || nameCheck || emailCheck);
     });
 
-    return phoneBookLength - phoneBook.length;
+    return oldPhoneBookLength - phoneBook.length;
 }
 
 /**
@@ -98,11 +98,9 @@ function findAndRemove(query) {
  */
 function find(query) {
     const formatLog = log => {
-        const phone = '+7 (' +
-            log.phone.substring(0, 3) + ') ' +
-            log.phone.substring(3, 6) + '-' +
-            log.phone.substring(6, 8) + '-' +
-            log.phone.substring(8, 10);
+        const phone = `+7 (${log.phone.substring(0, 3)}) ${log.phone.substring(3, 6)}-` +
+            `${log.phone.substring(6, 8)}-${log.phone.substring(8, 10)}`;
+
         if (!log.email) {
             return [log.name, phone].join(', ');
         }
@@ -141,13 +139,13 @@ function importFromCsv(csv) {
     }
 
     const listOfPhoneLogs = csv.split('\n');
-    const result = listOfPhoneLogs.filter((log) => {
+    const result = listOfPhoneLogs.filter(log => {
         const logData = log.split(';');
         const name = logData[0];
         const phone = logData[1];
         const email = logData[2];
 
-        return logData.length > 1 && (add(phone, name, email) || update(phone, name, email));
+        return add(phone, name, email) || update(phone, name, email);
     });
 
     return result.length;
