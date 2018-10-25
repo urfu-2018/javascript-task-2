@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,6 +18,18 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
+ 
+function match(phone, name, email) {
+    for (let key in phoneBook.keys()) {
+        if ((phoneBook[key].username === name &&
+            key === phone &&
+            phoneBook[key].useremail === email) || key === phone) {
+
+            return true;
+        }
+    }
+}
+
 function add(phone, name, email) {
     if (phone.match(/^\d+$/) !== null &&
         phone.length === 10 &&
@@ -25,13 +37,9 @@ function add(phone, name, email) {
         if (phoneBook === undefined) {
             phoneBook = new Map();
         }
-        for (let key in phoneBook.keys()) {
-            if ((phoneBook[key].username === name &&
-                key === phone &&
-                phoneBook[key].useremail === email) || key === phone) {
-			 
-                return false;
-            }
+        if (match(phone, name, email)) {
+
+            return false;
         }
         let user = {
             username: name,
@@ -41,7 +49,7 @@ function add(phone, name, email) {
 
         return true;
     }
-	
+    
     return false;
 }
 
@@ -96,7 +104,7 @@ function find(query) {
     }
     let sorted = [...phoneBook.entries()]
                     .sort((a, b) => a[1].username > b[1].username).map( function(val) {
-		
+        
         return [val[1].username,
             val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
             val[1].useremail].filter(x => x !== undefined);
