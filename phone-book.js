@@ -70,13 +70,13 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let stroka = query;
+    let itt = 0;
     if (stroka === undefined || stroka === '') {
-        return [];
+        return itt;
     }
     if (stroka === '*') {
         stroka = '';
     }
-    let itt = 0;
     let search = phoneBook.filter(function (rec) {
         if (rec.hasOwnProperty('email')) {
             return (rec.tel.indexOf(stroka)) !== -1 ||
