@@ -135,7 +135,7 @@ function importFromCsv(csv) {
                    phoneBook[data[0]][1] !== data[2]){
             update(data[0], data[1], data[2]);
         } else {
-            count--;
+            count = count - 1;
         }
     }
 
