@@ -59,7 +59,7 @@ function checkItem(item, query) {
     item[1][1].indexOf(query) > -1);
 }
 
-/*R * Удаление записей по запросу из телефонной книги
+/** Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
