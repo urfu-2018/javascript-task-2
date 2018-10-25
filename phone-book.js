@@ -82,9 +82,10 @@ function findAndRemove(query) {
     }
     let count = 0;
     if (query === '*') {
+        const res = phoneBook.length;
         deleteAll();
 
-        return phoneBook.length;
+        return res;
     }
     for (let phone in phoneBook) {
         if (phoneBook.hasOwnProperty(phone)) {
