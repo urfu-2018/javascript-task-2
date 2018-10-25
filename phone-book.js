@@ -182,6 +182,8 @@ function importFromCsv(csv) {
         var name = splittedRecord[0];
         var phone = splittedRecord[1];
         var email = splittedRecord[2];
+        email = email || '';
+        email = email.trim();
         if (add(phone, name, email) || update(phone, name, email)) {
             addedRecordsCount++;
         }
