@@ -15,6 +15,7 @@ const regextel = /^\d{10}$/;
 
 function check1(phone, name) {
     return typeof name !== 'string' ||
+    typeof phone !== 'string' ||
     !phone.match(regextel) ||
     !name ||
     !phone ||
@@ -23,6 +24,7 @@ function check1(phone, name) {
 
 function check2(phone, name, ind) {
     return typeof name !== 'string' ||
+    typeof phone !== 'string' ||
     !phone ||
     !name ||
     ind === -1 ||
