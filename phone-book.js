@@ -13,23 +13,13 @@ function createRecord(name, phone, email) {
     }
 
     function validatePhone(arg) {
-        console.info(arg);
-
-        return /^\d{10}$/.test(arg);
+        return typeof arg === 'string' && /^\d{10}$/.test(arg);
     }
 
     function validateName(arg) {
         return typeof arg === 'string' && arg !== '';
     }
 }
-
-// function recordsAreEqual(first, second) {
-//    if (first.length === 2 || second.length === 2) {
-//        return first[0] === second[0] && first[1] === second[1];
-//    }
-//
-//    return first[0] === second[0] && first[1] === second[1] && first[2] === second[2];
-// }
 
 function isRecordContainsQuery(record, query) {
     return record[0].indexOf(query) >= 0 || record[1].indexOf(query) >= 0 ||
@@ -90,16 +80,6 @@ function update(phone, name, email) {
     }
 
     return false;
-    // return this.phone.includes(query) || this.name.includes(query) ||
-    // (this.email && this.email.includes(query));
-
-    // if (!phoneBook.has(phone) || newRecord === undefined ||
-    //    recordsAreEqual(phoneBook.get(phone), newRecord)) {
-    //    return false;
-    // }
-    // phoneBook.set(phone, newRecord);
-
-    // return true;
 }
 
 /**
