@@ -9,27 +9,28 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = new Map();
+const phoneBook = new Map();
 
 function isPhoneValid(phone) {
     if (typeof phone !== 'undefined') {
-        return phone.match(/^\d{10}$/);
+        return phone.test(/^\d{10}$/);
     }
 
     return false;
 }
 
-function getUsers(query) {
+function getContacts(query) {
     if (query === '') {
         return [];
     }
     const users = [];
     const isUniQuery = query === '*';
-    phoneBook.forEach((v, k) => {
-        const emailResult = typeof v.email === 'undefined' ? false : v.email.includes(query);
+    phoneBook.forEach((info, phone) => {
 
-        if (isUniQuery || v.name.includes(query) || emailResult || k.includes(query)) {
-            users.push({ name: v.name, phone: k, email: v.email });
+        if (isUniQuery || info.name.includes(query) ||
+            (typeof info.email === 'string' && info.email.includes(query)) ||
+            phone.includes(query)) {
+            users.push({ name: info.name, phone, email: info.email });
         }
     });
 
@@ -44,8 +45,7 @@ function getUsers(query) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const hasName = typeof name !== 'undefined' && name !== '';
-    email = email === '' ? undefined : email;
+    const hasName = Boolean(name);
     if (isPhoneValid(phone) && hasName && !phoneBook.has(phone)) {
         phoneBook.set(phone, { name: name, email: email });
 
@@ -67,8 +67,8 @@ function update(phone, name, email) {
     if (typeof person === 'undefined' || typeof name === 'undefined') {
         return false;
     }
-    person.name = (name === '') ? person.name : name;
-    person.email = email === '' ? undefined : email;
+    person.name = name;
+    person.email = email;
 
     return true;
 }
@@ -79,7 +79,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const users = getUsers(query);
+    const users = getContacts(query);
     users.forEach(e => phoneBook.delete(e.phone));
 
     return users.length;
@@ -91,7 +91,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const users = getUsers(query);
+    const users = getContacts(query);
 
     users.sort(function (a, b) {
         if (a.name > b.name) {
@@ -105,10 +105,11 @@ function find(query) {
     });
 
     return users.map(function (value) {
-        const p = value.phone;
-        const phone = `+7 (${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6, 8)}-${p.slice(8)}`;
-        const result = `${value.name}, ${phone}`;
-        if (typeof value.email !== 'undefined') {
+        const phone = value.phone;
+        const phoneInFormat =
+            `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
+        const result = `${value.name}, ${phoneInFormat}`;
+        if (value.email) {
             return `${result}, ${value.email}`;
         }
 
