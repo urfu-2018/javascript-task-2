@@ -86,7 +86,7 @@ function update(phone, name, email) {
         email = String(email);
     }
 
-    if (basicChecks(phone, name)) {
+    if (basicChecks(phone, name) && phoneBook.has(phone)) {
         phoneBook.set(phone, [name, email]);
 
         return true;
