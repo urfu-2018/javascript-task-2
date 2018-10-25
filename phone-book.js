@@ -85,7 +85,7 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const record = phoneBook.get(phone);
     const newRecord = createRecord(name, phone, email);
-    if (record === undefined || newRecord === undefined || recordsAreEqual(record, newRecord)) {
+    if (newRecord === undefined || record !== undefined && recordsAreEqual(record, newRecord)) {
         return false;
     }
     phoneBook.set(phone, newRecord);
