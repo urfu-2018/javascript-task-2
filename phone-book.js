@@ -169,7 +169,10 @@ function findAll() {
         let strg = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
         phoneBook[i].phone.substring(3, 6) + '-' + phoneBook[i].phone.substring(6, 8) + '-' +
         phoneBook[i].phone.substring(8) + ', ' + phoneBook[i].email;
-        if (phoneBook[i].email === undefined || phoneBook[i].email === '') {
+        if (phoneBook[i].email === undefined) {
+            strg = strg.substring(0, strg.length - 11);
+        }
+        if (phoneBook[i].email === '') {
             strg = strg.substring(0, strg.length - 2);
         }
         str.push(strg);
