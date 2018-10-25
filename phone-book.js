@@ -11,10 +11,8 @@ const isStar = true;
  */
 let phoneBook = {};
 
-function createEntry(name, email) {
-    let entry = {};
-    entry.name = name;
-    entry.email = email;
+function createEntry(name, email, phone=null) {
+    let entry = { phone, name, email };
 
     return entry;
 }
@@ -46,13 +44,9 @@ function update(phone, name, email) {
     if (!name || !phoneBook[phone]) {
         return false;
     }
-    if (name !== undefined && name !== '') {
-        phoneBook[phone] = createEntry(name, email);
+    phoneBook[phone] = createEntry(name, email);
 
-        return true;
-    }
-
-    return false;
+    return true;
 }
 
 /**
@@ -78,7 +72,11 @@ function findAndRemove(query) {
 }
 
 var compareEntry = function (a, b) {
-    return a.name > b.name;
+    if(a.name > b.name)
+        return 1;
+    if(a.name < b.name)
+        return -1;
+    return 0;
 };
 
 function createFindResult(array) {
@@ -89,15 +87,6 @@ function createFindResult(array) {
             ? `${x.name}, ${correctPhone}, ${x.email}`
             : `${x.name}, ${correctPhone}`;
     });
-}
-
-function createFindEntry(phone, name, email) {
-    let entry = {};
-    entry.name = name;
-    entry.email = email;
-    entry.phone = phone;
-
-    return entry;
 }
 
 function getCorrectPhone(phone) {
@@ -126,7 +115,7 @@ function takeAllEntries() {
     let keys = Object.keys(phoneBook);
     keys.forEach(key => {
         let value = phoneBook[key];
-        entries.push(createFindEntry(key, value.name, value.email));
+        entries.push(createEntry(value.name, value.email, key));
     });
 
     return entries;
@@ -139,7 +128,6 @@ function takeAllEntries() {
  */
 function find(query) {
     var entries = takeAllEntries();
-
     if (query === '*') {
         return createFindResult(entries);
     }
@@ -158,11 +146,11 @@ function importFromCsv(csv) {
 
     let count = 0;
     newEntries.forEach(entry => {
-        let r = entry.split(';');
-        if (phoneBook[r[1]]) {
-            count += update(r[1], r[0], r[2]);
+        let fields = entry.split(';');
+        if (phoneBook[fields[1]]) {
+            count += update(fields[1], fields[0], fields[2]);
         } else {
-            count += add(r[1], r[0], r[2]);
+            count += add(fields[1], fields[0], fields[2]);
         }
     });
 
