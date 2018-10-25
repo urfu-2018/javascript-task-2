@@ -89,7 +89,7 @@ function find(query) {
     let arrayWithDate = phoneBookToArray();
     if (query === '*') {
         return arrayWithDate.sort((a, b) => a[0].localeCompare(b[0]));
-    } else if (!query) {
+    } else if (!query || query === ' ') {
 
         return [];
     }
