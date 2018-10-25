@@ -26,7 +26,8 @@ function check2(email) {
         if (typeof email !== 'string' || email.trim() === '') {
             return false;
         }
-
+    }
+    if (email === undefined) {
         return true;
     }
 }
