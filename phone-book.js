@@ -66,8 +66,7 @@ let phoneBook = new Map();
  */
 function add(phone, name, email) {
     const newRecord = createRecord(name, phone, email);
-    const record = phoneBook.get(phone);
-    if (newRecord === undefined || record !== undefined) {
+    if (newRecord === undefined || phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, newRecord);
@@ -83,9 +82,9 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const record = phoneBook.get(phone);
     const newRecord = createRecord(name, phone, email);
-    if (newRecord === undefined || record !== undefined && recordsAreEqual(record, newRecord)) {
+    if (!phoneBook.has(phone) || newRecord === undefined ||
+        recordsAreEqual(phoneBook.get(phone), newRecord)) {
         return false;
     }
     phoneBook.set(phone, newRecord);
