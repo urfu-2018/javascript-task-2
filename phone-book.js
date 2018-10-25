@@ -96,7 +96,7 @@ function findAndRemove(query) {
     if (typeof query !== 'string' || query === '') {
         return 0;
     }
-    let findedRecords = search(query);
+    let findedRecords = find(query);
     for (let i = 0; i < findedRecords.length; i++) {
         phoneBook.splice(phoneBook.findIndex(element => element === findedRecords[i]), 1);
     }
@@ -116,7 +116,9 @@ function toFullPhoneForm(phone) {
  * @param {String} query
  * @returns {String[]}
  */
-function search(query) {
+
+
+function find(query) {
     if (query === undefined || typeof query !== 'string' || query === '') {
         return [];
     }
@@ -132,13 +134,6 @@ function search(query) {
     findedRecords = phoneBook.filter(element => element.phone.includes(query) ||
      element.name.includes(query) || ((typeof element.email === 'undefined')
         ? false : element.email.includes(query)));
-
-    return findedRecords;
-}
-
-function find(query) {
-    let findedRecords = [];
-    findedRecords = search(query);
 
     return findedRecords.map(element => element.name + ', ' +
          toFullPhoneForm(element.phone) + ((typeof element.email === 'undefined')
