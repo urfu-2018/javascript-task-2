@@ -100,6 +100,11 @@ function findAndRemove(query) {
     return found.length;
 }
 
+function getPhoneFromPerson(person) {
+    let [, phone] = person.split(',');
+    
+    return phone.replace(/[^0-9]/g, '').slice(1);
+}
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
