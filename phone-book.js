@@ -25,12 +25,6 @@ let notesByQuery = (query) =>
             .filter(x =>
                 x.some(str => query === '*' || str.indexOf(query) + 1));
 
-let set = function (phone, name, email) {
-    phoneBook[phone] = { 'name': name, 'email': email };
-
-    return true;
-};
-
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -39,10 +33,12 @@ let set = function (phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    return isCorrectNumber(phone) &&
-        !(phone in phoneBook) &&
-        name &&
-        set(phone, name, email);
+    if (!isCorrectNumber(phone) || !name || phone in phoneBook) {
+        return false;
+    }
+    phoneBook[phone] = { 'name': name, 'email': email };
+
+    return true;
 }
 
 /**
@@ -53,9 +49,12 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    return phone in phoneBook &&
-        name &&
-        set(phone, name, email);
+    if (!(phone in phoneBook) || !name) {
+        return false;
+    }
+    phoneBook[phone] = { 'name': name, 'email': email };
+
+    return true;
 }
 
 /**
