@@ -97,34 +97,22 @@ function update(phone, name, email) {
  */
 
 
-function findAndRemoveStar(numberRecords) {
-    phoneBook.forEach(element => {
-        delete phoneBook[element];
-        numberRecords++;
-    });
-
-    return numberRecords;
-}
-
-
 function findAndRemove(query) {
     if (typeof query !== 'string' || query.length === 0) {
         return 0;
     }
-    var numberRecords = 0;
+    var numberRecords = phoneBook.length;
     if (query === '*') {
-        return findAndRemoveStar(numberRecords);
-    }
-    phoneBook.forEach(element => {
-        if (element.phone.includes(query) === true ||
-            element.name.includes(query) === true ||
-            (element.email ? element.email.includes(query) : false)) {
-            delete phoneBook[element];
-            numberRecords++;
-        }
-    });
+        phoneBook = [];
 
-    return numberRecords;
+        return numberRecords;
+    }
+    phoneBook = phoneBook.filter(({ name, phone, email }) =>
+        !(name.includes(query) ||
+        phone.includes(query) ||
+        (email ? email.includes(query) : false)));
+
+    return numberRecords - phoneBook.length;
 }
 
 /**
@@ -134,20 +122,16 @@ function findAndRemove(query) {
  */
 
 function findStar(query, string, found) {
-    phoneBook.forEach(element => {
-        if (element.email !== undefined && query === '*') {
+    if (query === '*') {
+        phoneBook.forEach(element => {
             string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
-            element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
-            '-' + element.phone.slice(8, 10) + ', ' + element.email;
+                    element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
+                    '-' + element.phone.slice(8, 10) +
+                    (element.email ? ', ' + element.email : '');
             found.push(string);
-        }
-        if (query === '*' && element.email === undefined) {
-            string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
-            element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
-            '-' + element.phone.slice(8, 10);
-            found.push(string);
-        }
-    });
+
+        });
+    }
 }
 
 function find(query) {
@@ -169,7 +153,6 @@ function find(query) {
 
     });
     findStar(query, string, found);
-    // findMore(query, string, found);
 
     return found.sort((a, b) => a.split(',')[0].localeCompare(b.split(',')[0]));
 }
