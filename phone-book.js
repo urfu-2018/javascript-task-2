@@ -75,7 +75,7 @@ function findAndRemove(query) {
             if (phoneBook[objectKey][1] !== undefined) {
                 e = phoneBook[objectKey][1].indexOf(query);
             }
-            if (p === -1 || n === -1 || e === -1 || query === '*') {
+            if (p !== -1 || n !== -1 || e !== 0) {
                 delete phoneBook[objectKey];
                 count++;
             }
@@ -128,6 +128,20 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    csv.forEach(
+        function (item) {
+            let arr = item.split(';');
+            let name = arr[0];
+            let phone = arr[1];
+            let email = arr[2];
+            if (checkValid(phone, name)) {
+                phoneBook[phone][0] = name;
+            }
+            if (checkValid(phone, name) && email !== undefined) {
+                phoneBook[phone][1] = email;
+            }
+        }
+    );
 
     return csv.split('\n').length;
 }
