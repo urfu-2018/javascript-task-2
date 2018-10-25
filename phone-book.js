@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -68,31 +68,27 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query === '*') {
-        const phoneBookLength = phoneBook.length;
-        phoneBook.length = 0;
-
-        return phoneBookLength;
-    }
-
     if (!query) {
         return 0;
     }
 
-    let phoneBookQuerySet = phoneBook.map((acc, index) => {
+    const phoneBookLength = phoneBook.length;
+
+    if (query === '*') {
+        phoneBook = [];
+
+        return phoneBookLength;
+    }
+
+    phoneBook = phoneBook.filter((acc) => {
         const phoneCheck = acc.phone.includes(query);
         const nameCheck = acc.name.includes(query);
         const emailCheck = acc.email && acc.email.includes(query);
 
-        return [phoneCheck || nameCheck || emailCheck, index];
+        return !(phoneCheck || nameCheck || emailCheck);
     });
 
-    let phoneBookIndexList = phoneBookQuerySet.filter(acc => acc[0])
-        .map(acc => acc[1]);
-
-    phoneBookIndexList.forEach((index) => (phoneBook.splice(index, 1)));
-
-    return phoneBookIndexList.length;
+    return phoneBookLength - phoneBook.length;
 }
 
 /**
