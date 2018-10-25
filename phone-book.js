@@ -22,7 +22,7 @@ function add(phone, name, email) {
     if (!isString(phone) || !isString(name)) {
         return false;
     }
-    if (!(/^\d{10}$/.test(phone) && findContact(phone) === -1)) {
+    if (!/^\d{10}$/.test(phone) || isOldPhone(phone)) {
         return false;
     }
     let phoneContact = {
@@ -37,6 +37,12 @@ function add(phone, name, email) {
     return true;
 }
 
+function isOldPhone(phone) {
+    return phoneBook.some(function (contact) {
+        return contact.phone === phone;
+    });
+}
+
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -45,10 +51,10 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(isString(phone) && isString(name))) {
+    if (!isString(phone) || !isString(name)) {
         return false;
     }
-    let index = findContact(phone);
+    let index = phoneBook.findIndex(x=>x.phone === phone);
     if (index === -1) {
         return false;
     }
@@ -68,19 +74,30 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isString(query) || query === '') {
+    if (!isString(query)) {
         return [];
     }
     let count = 0;
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (objectIncludes(phoneBook[i], query)) {
-            phoneBook.splice(i, 1);
-            i--;
-            count++;
-        }
+    let index;
+    while ((index = findContact(query)) !== -1) {
+        phoneBook.splice(index, 1);
+        count++;
     }
 
     return count;
+}
+
+/*
+* Поиск индекса контакта по строке
+*/
+function findContact(query) {
+    return phoneBook.findIndex(x => objectIncludes(x, query));
+}
+
+function objectIncludes(contact, query) {
+    return contact.name.includes(query) ||
+    contact.phone.includes(query) ||
+    ('email' in contact && contact.email.includes(query));
 }
 
 /**
@@ -89,57 +106,29 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query) || query === '') {
+    if (!isString(query)) {
         return [];
     }
-    let result = getContact(query);
+    let result = filterContact(query);
 
     return result
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(renderContact);
 }
 
-function getContact(query) {
+function filterContact(query) {
     if (query === '*') {
         return phoneBook;
     }
 
-    return phoneBook.filter((contact) => {
-        return objectIncludes(contact, query);
-    });
+    return phoneBook.filter((contact) => objectIncludes(contact, query));
 }
 
 /*
-* Поиск контакта по номеру
-*/
-function findContact(phone) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-/*
-* Проверка на undefined
+* Проверка на string
 */
 function isString(value) {
     return typeof value === 'string' && value !== '';
-}
-
-/*
-* Поиск вхождения строки в контакте
-*/
-function objectIncludes(contact, query) {
-    for (let key in contact) {
-        if (contact[key].includes(query)) {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 /*
@@ -178,11 +167,10 @@ function importFromCsv(csv) {
     let contacts = csv.split('\n');
     for (let i = 0; i < contacts.length; i++) {
         let contact = contacts[i].split(';');
-
-        if (findContact(contact[1]) === -1) {
-            countAdded += add(contact[1], contact[0], contact[2]) ? 1 : 0;
-        } else {
+        if (isOldPhone(contact[1])) {
             countAdded += update(contact[1], contact[0], contact[2]) ? 1 : 0;
+        } else {
+            countAdded += add(contact[1], contact[0], contact[2]) ? 1 : 0;
         }
     }
 
