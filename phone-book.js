@@ -135,7 +135,10 @@ function process(i, query) {
         x = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
             phoneBook[i].phone.substring(3, 6) + '-' + phoneBook[i].phone.substring(6, 8) +
              '-' + phoneBook[i].phone.substring(8) + ', ' + phoneBook[i].email;
-        if (phoneBook[i].email === undefined || phoneBook[i].email === '') {
+        if (phoneBook[i].email === undefined) {
+            x = x.substring(0, x.length - 11);
+        }
+        if (phoneBook[i].email === '') {
             x = x.substring(0, x.length - 2);
         }
 
