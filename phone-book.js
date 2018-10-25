@@ -9,7 +9,17 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
+
+function checkValid(phone, name) {
+    let number = phone.replace(/[^0-9]+/, '');
+    if (number === phone && number.length === 10 && name !== '' && name !== undefined) {
+
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +29,13 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (checkValid(phone, name) && !(phone in phoneBook)) {
+        phoneBook[phone] = [name, email];
 
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -30,7 +46,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (checkValid(phone, name) && (phone in phoneBook)) {
+        phoneBook[phone][0] = [name];
+        phoneBook[phone][1] = [email];
 
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -39,7 +62,23 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let count = 0;
+    if (query === '') {
 
+        return count;
+    }
+    Object.keys(phoneBook).map(
+        function (objectKey) {
+            let p = objectKey.indexOf(query);
+            let n = phoneBook[objectKey][0].indexOf(query);
+            let e = phoneBook[objectKey][1].indexOf(query);
+            if (p === -1 || n === -1 || e === -1 || query === '*') {
+                delete phoneBook.objectKey;
+            }
+
+            return false;
+        }
+    );
 }
 
 /**
@@ -48,7 +87,29 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (query === '') {
 
+        return false;
+    }
+    let listQuery = [];
+    Object.keys(phoneBook).map(
+        function (objectKey) {
+            let k = objectKey;
+            let p = '+7 (' + k.slice(0, 3) + ') ';
+            p += k.slice(3, 6) + '-' + k.slice(6, 8) + '-' + k.slice(8);
+            let n = phoneBook[objectKey][0];
+            let e = phoneBook[objectKey][1];
+            let emailTrue = (e !== undefined) ? ', ' + e : '';
+            let item = n + ', ' + p + emailTrue;
+            if (item.indexOf(query) !== -1 || query === '*') {
+                listQuery.push(item);
+            }
+
+            return false;
+        }
+    );
+
+    return listQuery.sort();
 }
 
 /**
@@ -71,6 +132,5 @@ module.exports = {
     findAndRemove,
     find,
     importFromCsv,
-
     isStar
 };
