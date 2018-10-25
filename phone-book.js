@@ -9,14 +9,14 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = new Map();
+const phoneBook = new Map();
 
-function isCurrectPhone(phone) {
+function isCorrectPhone(phone) {
     return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
-function isCurrectName(name) {
-    return typeof name === 'string' && name !== '';
+function isCorrectName(name) {
+    return typeof name === 'string' && name;
 }
 
 /**
@@ -27,7 +27,7 @@ function isCurrectName(name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isCurrectPhone(phone) || !isCurrectName(name) || phoneBook.has(phone)) {
+    if (!isCorrectPhone(phone) || !isCorrectName(name) || phoneBook.has(phone)) {
         return false;
     }
 
@@ -47,7 +47,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCurrectPhone(phone) || !isCurrectName(name) || !phoneBook.has(phone)) {
+    if (!isCorrectPhone(phone) || !isCorrectName(name) || !phoneBook.has(phone)) {
         return false;
     }
 
@@ -94,26 +94,20 @@ function search(query) {
         return phoneBookArray;
     }
 
-    return phoneBookArray.reduce((acc, entry) => {
-        for (let i = 0; i < entry.length; i++) {
-            if (entry[i].includes(query)) {
-                acc.push(entry);
-                break;
-            }
-        }
-
-        return acc;
-    }, []);
+    return phoneBookArray.filter(entry => {
+        return entry.some(element => element.includes(query));
+    });
 }
 
 function entriesToStringArray(entries) {
-    return entries.sort((a, b) => a[0].localeCompare(b[0]))
+    return entries.sort((entry1, entry2) => entry1[0].localeCompare(entry2[0]))
         .map(entry => {
-            if (entry[2]) {
-                return `${entry[0]}, ${transformPhone(entry[1])}, ${entry[2]}`;
+            const [name, phone, email] = entry;
+            if (entry.length === 3) {
+                return `${name}, ${transformPhone(phone)}, ${email}`;
             }
 
-            return `${entry[0]}, ${transformPhone(entry[1])}`;
+            return `${name}, ${transformPhone(phone)}`;
         });
 }
 
