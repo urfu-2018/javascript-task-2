@@ -55,8 +55,8 @@ function checkEmptyRequest(query) {
 }
 
 function checkItem(item, query) {
-    return (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
-    i[1][1].indexOf(query) > -1);
+    return (query === '*' || item[0].indexOf(query) > -1 || item[1][0].indexOf(query) > -1 ||
+    item[1][1].indexOf(query) > -1);
 }
 
 /*R * Удаление записей по запросу из телефонной книги
