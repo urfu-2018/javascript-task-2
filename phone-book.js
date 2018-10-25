@@ -57,7 +57,7 @@ function update(phone, name, email = '') {
  */
 
 function findAndRemove(query) {
-    if (query === '') {
+    if (!query) {
         return 0;
     }
     if (query === '*') {
@@ -78,7 +78,7 @@ function findAndRemove(query) {
  */
 
 function find(query) {
-    if (query === '') {
+    if (!query) {
         return [];
     }
 
