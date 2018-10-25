@@ -17,7 +17,7 @@ function formatPhone(phone) {
         return null;
     }
 
-    const matcher = /^(\d{3})(\d{3})(\d{2})(\d{2})/;
+    const matcher = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
     if (!matcher.test(phone)) {
         return null;
     }
