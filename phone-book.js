@@ -8,32 +8,48 @@ const isStar = true;
 const tuple = (...args) => Object.freeze(args);
 
 function createRecord(name, phone, email) {
-    if (validatePhone(phone) && validateName(name) && validateEmail(email)) {
+    if (validatePhone(phone) && validateName(name)) {
         return tuple(name, phone, email);
     }
 
-    function validatePhone(phone) {
-        return /\d{10}/.test(phone);
+    function validatePhone(arg) {
+        console.info(arg);
+
+        return /^\d{10}$/.test(arg);
     }
 
-    function validateName(name) {
-        return typeof name === 'string' || name !== '';
-    }
-
-    function validateEmail(email) {
-        return true;
+    function validateName(arg) {
+        return typeof arg === 'string' && arg !== '';
     }
 }
 
 function recordsAreEqual(first, second) {
-    if (!Array.isArray(first) || !Array.isArray(second) || 
-    first.length !== second.length || first.length !== 3) {
-        return TypeError();
+    if (first.length === 2 || second.length === 2) {
+        return first[0] === second[0] && first[1] === second[1];
     }
 
     return first[0] === second[0] && first[1] === second[1] && first[2] === second[2];
 }
 
+function isRecordContainsQuery(record, query) {
+    return record[0].indexOf(query) >= 0 ||
+        record[1].indexOf(query) >= 0 ||
+        record[2] !== undefined && record[2].indexOf(query) >= 0;
+}
+
+function formatPhoneNumber(phone) {
+    var secondPart = [phone.slice(3, 6), phone.slice(6, 8), phone.slice(8, 10)];
+
+    return `+7 (${phone.slice(0, 3)}) ${secondPart.join('-')}`;
+}
+
+function getPrettyRecord(record) {
+    const name = record[0];
+    const phone = formatPhoneNumber(record[1]);
+    const email = record[2];
+
+    return [name, phone, email].filter(value => typeof value === 'string').join(', ');
+}
 
 
 /**
@@ -50,11 +66,12 @@ let phoneBook = new Map();
  */
 function add(phone, name, email) {
     const newRecord = createRecord(name, phone, email);
-    const record = phoneBook[phone];
+    const record = phoneBook.get(phone);
     if (newRecord === undefined || record !== undefined) {
         return false;
     }
-    phoneBook[phone] = newRecord;
+    phoneBook.set(phone, newRecord);
+
     return true;
 }
 
@@ -67,12 +84,13 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     // email может быть undefined.
-    const record = phoneBook[phone];
+    const record = phoneBook.get(phone);
     const newRecord = createRecord(name, phone, email);
-    if (record === undefined || newRecord === undefined) {
+    if (record === undefined || newRecord === undefined || recordsAreEqual(record, newRecord)) {
         return false;
     }
-    phoneBook[phone] = newRecord;
+    phoneBook.set(phone, newRecord);
+
     return true;
 }
 
@@ -82,7 +100,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    var records = findRecords(query);
+    records.map(value => phoneBook.delete(value[1]));
 
+    return records.length;
 }
 
 /**
@@ -91,18 +112,22 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string' || query.length === 0) {
-        return;
+    return findRecords(query).map(value => getPrettyRecord(value));
+}
+
+/**
+ * Возвращает массив объектов с контактными данными из справочника, соответствующих запросу
+ * @param {String} query - поисковый запрос
+ * @returns {Array}
+ */
+function findRecords(query) {
+    if (typeof query !== 'string') {
+        return [];
     }
-    var result = [];
+    let entries = Array.from(phoneBook.values());
+    entries.sort((first, second) => first[0] > second[0]);
 
-    Object.keys(map).forEach(function(key) {
-        var record = phoneBook[key];
-        if ()
-        console.log(value);
-    });
-
-
+    return entries.filter(value => query === '*' || isRecordContainsQuery(value, query));
 }
 
 /**
@@ -112,11 +137,19 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    const csvLines = csv.split('\n');
+    var newRecordsCount = 0;
 
-    return csv.split('\n').length;
+    csvLines.forEach(line => {
+        const [name, phone, email] = line.split(';');
+        var newRecord = createRecord(name, phone, email);
+        if (newRecord) {
+            phoneBook.set(phone, newRecord);
+            newRecordsCount += 1;
+        }
+    });
+
+    return newRecordsCount;
 }
 
 module.exports = {
@@ -124,6 +157,7 @@ module.exports = {
     update,
     findAndRemove,
     find,
+    findRecords,
     importFromCsv,
     isStar
 };
