@@ -58,10 +58,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const foundedContacts = Object.keys(phoneBook)
-        .filter(phone => phone.includes(query) ||
-            phoneBook[phone].name.includes(query) ||
-            phoneBook[phone].email && phoneBook[phone].email.includes(query));
+    const foundedContacts = getPropertys(query);
 
     foundedContacts.forEach(phone => delete phoneBook[phone]);
 
@@ -96,24 +93,25 @@ function sortByName(x, y) {
     return phoneBook[x].name > phoneBook[y].name;
 }
 
-
-function find(query) {
+function getPropertys(query) {
     if (!query) {
         return [];
     }
 
     if (query === '*') {
-        return Object.keys(phoneBook)
-            .sort((x, y) => sortByName(x, y))
-            .map(contactView);
+        return Object.keys(phoneBook);
     }
 
     return Object.keys(phoneBook)
         .filter(phone => phone.includes(query) ||
             phoneBook[phone].name.includes(query) ||
-           phoneBook[phone].email && phoneBook[phone].email.includes(query))
-        .sort((x, y) => sortByName(x, y))
-        .map(phone => contactView(phone));
+            (phoneBook[phone].email && phoneBook[phone].email.includes(query)));
+}
+
+function find(query) {
+    return getPropertys(query)
+        .sort(sortByName)
+        .map(contactView);
 }
 
 /**
@@ -126,6 +124,9 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    if (!csv || typeof csv !== 'string') {
+        return 0;
+    }
 
     return csv.split('\n').map(
         a => {
