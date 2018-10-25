@@ -114,7 +114,7 @@ function deleteAndCount(query) {
 function find(query) {
     let formatArray = [];
     if (typeof(query) !== 'string' || query === '') {
-        return;
+        return formatArray;
     } else if (query === '*') {
         for (let i = 0; i < Object.keys(phoneBook).length; i++) {
             formatArray.push(rewriteInString(Object.keys(phoneBook)[i]));
