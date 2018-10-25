@@ -49,6 +49,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!query) {
+        return 0;
+    }
     let foundPhones = findPhones(query);
     foundPhones.forEach(phone => {
         delete phoneBook[phone];
@@ -111,7 +114,7 @@ function importFromCsv(csv) {
     let lines = csv.split('\n');
     let modifiedContacts = 0;
     lines.forEach(line => {
-        let phone = line.split(';')[1].replace(/\D/);
+        let phone = line.split(';')[1];
         let name = line.split(';')[0];
         let email = line.split(';')[2];
         if (add(phone, name, email) || update(phone, name, email)) {
