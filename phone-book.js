@@ -11,6 +11,14 @@ const isStar = true;
  */
 let phoneBook = [];
 
+function check(phone, name) {
+    const regextel = /^\d{10}$/;
+
+    return typeof phone !== 'string' || !phone.match(regextel) ||
+    name === undefined ||
+    name === '' ||
+    phoneBook.some((rec)=>rec.tel === phone);
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,14 +27,10 @@ let phoneBook = [];
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
 
-    const regextel = /^\d{10}$/;
+function add(phone, name, email) {
     let record;
-    if (!phone.match(regextel) ||
-    name === undefined ||
-    name === '' ||
-    phoneBook.some((rec)=>rec.tel === phone)) {
+    if (check(phone, name)) {
         return false;
     }
     if (email !== undefined) {
