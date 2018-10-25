@@ -80,6 +80,7 @@ function find(query) {
 
     return str;
 }
+
 /**
  * @param {String} email
  * @returns {String}
@@ -88,6 +89,7 @@ function checkEmail(email) {
     if (email) {
         return ', ' + email;
     }
+
     return '';
 }
 
