@@ -4,12 +4,12 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,27 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (typeof(phone) === 'string' && check(phone, name)) {
+        phoneBook.push(new Phone(phone, name, email));
 
+        return true;
+    }
+
+    return false;
+}
+
+function check(phone, name) {
+    if ((/^[0-9]{10}$/).test(phone) && name !== '' && name !== undefined && find(phone) === '') {
+        return true;
+    }
+
+    return false;
+}
+
+function Phone(phone, name, email) {
+    this.phone = phone;
+    this.name = name;
+    this.email = email;
 }
 
 /**
@@ -30,7 +50,22 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    let ch = 0;
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (email === undefined) {
+            email = '';
+        }
+        if (phoneBook[i].phone === phone) {
+            phoneBook[i].name = name;
+            phoneBook[i].email = email;
+            ch = 1;
+        }
+    }
+    if (ch === 1) {
+        return true;
+    }
 
+    return false;
 }
 
 /**
@@ -39,7 +74,22 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let count = 0;
+    let length = phoneBook.length;
+    for (let i = 0; i < length; i++) {
+        let ph = phoneBook[i].phone;
+        let nm = phoneBook[i].name;
+        let em = phoneBook[i].email;
+        if (findElement(ph, nm, em, query)) {
+            console.info(phoneBook[i].name);
+            phoneBook.splice(i, 1);
+            length = length - 1;
+            count++;
+            i--;
+        }
+    }
 
+    return count;
 }
 
 /**
@@ -48,7 +98,74 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let array = [];
+    let checkbox = 0;
+    phoneBook.sort(sortAr);
+    if (query === '*') {
+        let str = findAll();
 
+        return str;
+    }
+    for (let i = 0; i < phoneBook.length; i++) {
+        let x = process(i, query);
+        if (x !== '') {
+            array.push(x);
+            checkbox++;
+        }
+    }
+    if (checkbox !== 0) {
+
+        return array;
+    }
+
+    return '';
+
+}
+
+function process(i, query) {
+    let x = '';
+    if (findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query)) {
+        x = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
+            phoneBook[i].phone.substring(3, 6) + '-' + phoneBook[i].phone.substring(6, 8) +
+             '-' + phoneBook[i].phone.substring(8) + ', ' + phoneBook[i].email;
+        if (phoneBook[i].email === undefined || phoneBook[i].email === '') {
+            x = x.substring(0, x.length - 2);
+        }
+
+        return x;
+    }
+
+    return '';
+
+}
+function sortAr(a, b) {
+    return a.name > b.name;
+}
+
+function findElement(ph, nm, em, query) {
+    if (em === undefined) {
+        em = '';
+    }
+    if (ph.indexOf(query) !== -1 || nm.indexOf(query) !== -1 || em.indexOf(query) !== -1) {
+        return true;
+    }
+
+    return false;
+}
+
+function findAll() {
+    let str = [];
+    for (let i = 0; i < phoneBook.length; i++) {
+        let strg = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
+        phoneBook[i].phone.substring(3, 6) + '-' + phoneBook[i].phone.substring(6, 8) + '-' +
+        phoneBook[i].phone.substring(8) + ', ' + phoneBook[i].email;
+        if (phoneBook[i].email === undefined || phoneBook[i].email === '') {
+            strg = strg.substring(0, strg.length - 2);
+        }
+        str.push(strg);
+    }
+
+    return str;
 }
 
 /**
