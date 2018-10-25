@@ -27,7 +27,7 @@ function correctName(name) {
 }
 
 function add(phone, name, email) {
-    if (!correctPhone(phone) || !correctName(name) || phoneBook[phone]) {
+    if (!correctPhone(phone) || phoneBook[phone] || !correctName(name)) {
         return false;
     }
     phoneBook[phone] = { name, email };
@@ -43,7 +43,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!correctName(name) || !correctPhone(phone)) {
+    if (!phoneBook[phone] || !correctName(name) || !correctPhone(phone)) {
         return false;
     }
 
@@ -78,9 +78,9 @@ function phoneView(phone) {
     let firstPart = phone.slice(0, 3);
     let secondPart = phone.slice(3, 6);
     let thirdPart = phone.slice(6, 8);
-    let fouthPart = phone.slice(8, 10);
+    let fourthPart = phone.slice(8, 10);
 
-    return `+7 (${firstPart}) ${secondPart}-${thirdPart}-${fouthPart}`;
+    return `+7 (${firstPart}) ${secondPart}-${thirdPart}-${fourthPart}`;
 }
 
 function contactView(phone) {
