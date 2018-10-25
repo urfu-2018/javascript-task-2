@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -76,7 +76,8 @@ function findAndRemove(query) {
     for (let data of dataToDelete) {
         let phone = data.split(', ')[1];
         // приведём номер к простому виду и избавимся в начале строки от 7
-        phone = phone.replace(/[- +()]/g, '').slice(1);
+        phone = phone.substring(4, 7) + phone.substring(9, 12) +
+        phone.substring(13, 15) + phone.substring(16, 19);
         delete phoneBook[phone];
     }
 
@@ -161,4 +162,3 @@ module.exports = {
 
     isStar
 };
-
