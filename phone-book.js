@@ -11,20 +11,22 @@ const isStar = true;
  */
 let phoneBook = [];
 
-function CheckPhone(phone) {
+function checkPhone(phone) {
     return typeof(phone) === 'string' && /^[0-9]{10}$/.test(phone);
 }
 
-function CheckName(name) {
+function checkName(name) {
     return typeof(name) === 'string' && name.length > 0;
 }
 
-function CheckEmail(email) {
-    return typeof(email) === 'string' && (/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email) || email.length === 0);
+function checkEmail(email) {
+    return typeof(email) === 'string' &&
+    (/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email) ||
+    email.length === 0);
 }
 
-function CheckAll(phone, name, email) {
-    return CheckPhone(phone) && CheckName(name) && CheckEmail(email);
+function checkAll(phone, name, email) {
+    return checkPhone(phone) && checkName(name) && checkEmail(email);
 }
 
 function transform(phone) {
@@ -40,8 +42,9 @@ function transform(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook[phone] === 'undefined' && CheckAll(phone, name, email)) {
+    if (phoneBook[phone] === 'undefined' && checkAll(phone, name, email)) {
         phoneBook[phone] = [name, email];
+
         return true;
     }
 
@@ -56,8 +59,9 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook[phone] !== 'undefined' && CheckName(name) && CheckEmail(email)) {
+    if (phoneBook[phone] !== 'undefined' && checkName(name) && checkEmail(email)) {
         phoneBook[phone] = [name, email];
+
         return true;
     }
 
@@ -78,11 +82,12 @@ function findAndRemove(query) {
     return forRemove.length;
 }
 
-function GetData(data, query) {
+function getData(data, query) {
     let result = [];
     const keys = Object.keys(data);
     for (let i = 0; i < keys.length; i++) {
-        if (typeof(query) === 'undefined' || data[keys[i]][0] === query || data[keys[i]][1] === query) {
+        if (typeof(query) === 'undefined' || data[keys[i]][0] === query ||
+        data[keys[i]][1] === query) {
             result.push(data[keys[i]][0] + ', ' + transform(keys[i]) +
                         data[keys[i]][1].length > 0 ? ', ' + data[keys[i]][1] : '');
         }
@@ -99,16 +104,14 @@ function GetData(data, query) {
 function find(query) {
     let result = [];
     if (query === '*') {
-        result = GetData(phoneBook);
+        result = getData(phoneBook);
     } else if (query !== '') {
         if (CheckPhone(query) && phoneBook[query] !== 'undefined') {
             let temp = [];
-            temp[query] = [phoneBook[query][0], phoneBook[query][1]]
-            result = GetData(temp);
-        }
-        else
-        {
-            result = GetData(phoneBook, query);
+            temp[query] = [phoneBook[query][0], phoneBook[query][1]];
+            result = getData(temp);
+        } else {
+            result = getData(phoneBook, query);
         }
     }
     result.sort();
