@@ -2,7 +2,7 @@
 const isStar = true;
 
 let phoneBook = [];
-const phoneTest = /(\d{3})(\d{3})(\d{2})(\d{2})$/;
+const phoneTest = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
 function validDate(phone, name) {
     return phoneTest.test(phone) && name;
@@ -43,7 +43,7 @@ function findQueryInContact(contact, query) {
 }
 
 function findAndRemove(query) {
-    if (query === '') {
+    if (!query) {
         return 0;
     }
     const countContact = phoneBook.length;
