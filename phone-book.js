@@ -96,6 +96,9 @@ function findAndRemove(query) {
 
         return ((rec.tel.indexOf(stroka)) !== -1 ||
     (rec.name.indexOf(stroka) !== -1));
+    }).sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+
     });
     phoneBook = phoneBook.filter(function (rec) {
         return !search.some(function (recsearch) {
