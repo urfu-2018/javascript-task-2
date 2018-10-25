@@ -50,14 +50,17 @@ function update(phone, name, email) {
     return add(phone, name, email);
 }
 
-/**
- * Удаление записей по запросу из телефонной книги
+function checkEmptyRequest(query) {
+    return query === '';
+}
+
+/*R * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
 function findAndRemove(query) {
     let count = 0;
-    if (query === '') {
+    if (checkEmptyRequest(query)) {
         return count;
     }
     for (let i of phoneBook) {
@@ -78,6 +81,9 @@ function findAndRemove(query) {
  */
 function find(query) {
     let str = [];
+    if (checkEmptyRequest(query)) {
+        return str;
+    }
     for (let i of phoneBook) {
         let email = checkEmail(i[1][1]);
         if (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
