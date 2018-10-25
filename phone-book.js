@@ -136,6 +136,12 @@ function bookToString(records) {
     return result.sort();
 }
 
+function getData(line, reg) {
+    let data = line.match(reg);
+
+    return data === null ? undefined : data[0];
+}
+
 /**
  * Импорт записей из csv-формата
  * @star
@@ -146,8 +152,15 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    let count = 0;
+    for (let line of csv.split('\n')) {
+        let phone = getData(line, /\d{10}/);
+        let name = line.split(';')[0];
+        let email = getData(line, /([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+/);
+        count += add(phone, name, email) || update(phone, name, email) ? 1 : 0;
+    }
 
-    return csv.split('\n').length;
+    return count;
 }
 
 module.exports = {
