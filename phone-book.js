@@ -19,7 +19,8 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if ((/^[0-9]{10}$/).test(phone) && name !== '' && name !== undefined && find(phone) === '') {
+    if ((/^[0-9]{10}$/).test(phone) && name !== '' && name !== undefined &&
+    !phoneBook.some(e => e.phone === phone)) {
         phoneBook.push(new Phone(phone, name, email));
 
         return true;
@@ -77,6 +78,11 @@ function update2(phone, name, email, i) {
  */
 function findAndRemove(query) {
     let count = 0;
+    phoneBook.sort(sortAr);
+    if (query === '' || query === undefined) {
+
+        return 0;
+    }
     let length = phoneBook.length;
     for (let i = 0; i < length; i++) {
         let ph = phoneBook[i].phone;
@@ -119,7 +125,7 @@ function find(query) {
         return array;
     }
 
-    return '';
+    return [];
 
 }
 
