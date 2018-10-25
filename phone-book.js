@@ -72,12 +72,13 @@ function findAndRemove(query) {
     }
     let count = 0;
     if (query === '*') {
-        count = phoneBook.keys().length();
+        count = phoneBook.keys().length;
         phoneBook = new Map();
     }
     let toDelete = findAllRecords(query);
     count = toDelete.length;
     deleteAllRecords(toDelete);
+    console.info(phoneBook);
 
     return count;
 }
