@@ -20,15 +20,11 @@ const argsTypesAreCorrect = (phone, name, email) =>
     isString(phone) && isString(name) && isString(email);
 
 function replaceBadTypes(phone, name, email) {
-    // var args = [phone, name, email];
+    var args = [phone, name, email];
 
-    // return args.map((arg) => arg || '').map((arg) => arg.trim());
-    phone = phone || '';
-    name = name || '';
-    email = email || '';
-
-    return [phone.trim(), name.trim(), email.trim()];
+    return args.map((arg) => arg || '').map((arg) => arg.trim());
 }
+
 
 function telInPhoneBook(phone) {
     for (let element of phoneBook) {
