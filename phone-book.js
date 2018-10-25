@@ -32,18 +32,14 @@ const getRecords = (query) => query === '*' ? getAllRecords() : getRecordsByQuer
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!checkPhone(phone) || !checkName(name)) {
+    if (!checkPhone(phone) || !checkName(name) || phoneBook.has(phone)) {
         return false;
     }
-    if (phoneBook.get(phone) !== undefined) {
-        return false;
-    }
-    let contact = {
+    phoneBook.set(phone, {
         name,
         phone,
         email
-    };
-    phoneBook.set(phone, contact);
+    });
 
     return true;
 }
@@ -57,16 +53,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhone(phone)) {
+    if (!checkPhone(phone) || !phoneBook.has(phone) || !checkName(name)) {
         return false;
     }
     let contact = phoneBook.get(phone);
-    if (contact === undefined) {
-        return false;
-    }
-    if (checkName(name)) {
-        contact.name = name;
-    }
+    contact.name = name;
     if (email !== undefined) {
         contact.email = email;
     } else {
@@ -128,7 +119,7 @@ function importFromCsv(csv) {
     let count = 0;
     csv.split('\n').forEach((record) => {
         let splitted = record.split(';');
-        if (phoneBook.get(splitted[1]) !== undefined) {
+        if (phoneBook.has(splitted[1])) {
             if (update(splitted[1], splitted[0], splitted[2])) {
                 count++;
             }
