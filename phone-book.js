@@ -149,13 +149,12 @@ function importFromCsv(csv) {
     let counter = 0;
     csv.split('\n').forEach(element => {
         const elements = element.split(';');
-        const name = elements[0];
-        const phone = elements[1];
-        const email = elements[2];
-        if (add(phone, name, email)) {
+        let flag = add(elements[0], elements[1], elements[2]);
+        if (!flag) {
+            flag = update(elements[0], elements[1], elements[2]);
+        }
+        if (flag) {
             counter++;
-        } else {
-            update(phone, name, email);
         }
     });
 
