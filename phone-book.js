@@ -124,7 +124,7 @@ function find(query) {
  */
 function importFromCsv(csv) {
     let phones = csv.split('\n');
-    for (int i = 0; i < phones.length; i++) {
+    for (let i = 0; i < phones.length; i++) {
         let data = phones[i].split(';');
         if (phoneBook[data[0]] === 'undefined') {
             add(data[0], data[1], data[2]);
