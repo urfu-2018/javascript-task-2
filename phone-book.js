@@ -11,16 +11,8 @@ const isStar = true;
  */
 let phoneBook = [];
 
-function isString(parameter) {
-    return typeof parameter === 'string';
-}
-
 function phoneValidation(phone) {
-    return isString(phone) && /^\d{10}$/.test(phone);
-}
-
-function isCorrect(parameter) {
-    return isString(parameter) && parameter.length > 0;
+    return /^\d{10}$/.test(phone);
 }
 
 function checkDoubles(personPhone) {
@@ -52,7 +44,7 @@ function transformItem(item) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneValidation(phone) && checkDoubles(phone) < 0 && isCorrect(name)) {
+    if (phoneValidation(phone) && checkDoubles(phone) < 0 && name) {
         phoneBook.push({ phone, name, email });
 
         return true;
@@ -71,7 +63,7 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const index = checkDoubles(phone);
 
-    if (index !== -1 && isCorrect(name)) {
+    if (index !== -1 && name) {
         phoneBook[index] = { phone, name, email };
 
         return true;
@@ -93,7 +85,7 @@ function findAndRemove(query) {
 
         return initialLength;
     }
-    if (isCorrect(query)) {
+    if (query) {
         phoneBook = phoneBook.filter(person => !isInclude(person, query));
 
         return initialLength - phoneBook.length;
@@ -115,7 +107,7 @@ function find(query) {
             .sort(({ name }, { name: _name }) => name.localeCompare(_name))
             .map(person => transformItem(person));
     }
-    if (isCorrect(query)) {
+    if (query) {
         return clonePhoneBook
             .filter(person => isInclude(person, query))
             .sort(({ name }, { name: _name }) => name.localeCompare(_name))
