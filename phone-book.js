@@ -111,6 +111,7 @@ function findRecords(query) {
     if (typeof query !== 'string' || query === '') {
         return [];
     }
+
     let entries = Array.from(phoneBook.values());
     entries.sort((first, second) => first[0] > second[0]);
 
