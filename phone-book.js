@@ -37,7 +37,7 @@ function add(phone, name, email) {
 function isPhone(phone) {
     let maskPhone = /^\d{10}$/;
 
-    return maskPhone.test(phone) && phone.length === 10 && isString(phone);
+    return maskPhone.test(phone) && phone.length === 10 && typeof phone === 'string';
 }
 
 function isOldPhone(phone) {
@@ -54,7 +54,7 @@ function isOldPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isString(phone) || !isString(name) || !isOldPhone(phone)) {
+    if (!isPhone(phone) || !isString(name) || !isOldPhone(phone)) {
         return false;
     }
     let index = phoneBook.findIndex(x=>x.phone === phone);
@@ -78,6 +78,12 @@ function findAndRemove(query) {
         return 0;
     }
     let count = 0;
+    if (query === '*') {
+        count = phoneBook.length;
+        phoneBook = [];
+
+        return count;
+    }
     let index;
     while ((index = findContact(query)) !== -1) {
         phoneBook.splice(index, 1);
