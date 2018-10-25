@@ -133,7 +133,7 @@ function find(query) {
     if (query === '*') {
         return pushAll();
     }
-    for (var phone in phoneBook) {
+    for (let phone in phoneBook) {
         if (phoneBook.hasOwnProperty(phone)) {
             tmpAnswer.push(pushContact(phone, query));
         }
