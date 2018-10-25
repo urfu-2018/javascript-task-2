@@ -95,16 +95,17 @@ function findAndRemove(query) {
         return 0;
     }
     const found = find(query);
-    found.map(person => phoneBook.delete(person.standartPhone));
+    found.map(person => phoneBook.delete(getPhoneFromPerson(person)));
 
     return found.length;
 }
 
 function getPhoneFromPerson(person) {
     let [, phone] = person.split(',');
-    
+
     return phone.replace(/[^0-9]/g, '').slice(1);
 }
+
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
