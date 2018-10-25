@@ -20,7 +20,7 @@ const phoneRegex = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isValidName(name) &&
+    if (isValidString(name) &&
         isValidPhone(phone, phoneRegex) &&
         !phoneBook.has(phone)) {
         phoneBook.set(phone, { name, email });
@@ -31,7 +31,7 @@ function add(phone, name, email) {
     return false;
 }
 
-function isValidName(name) {
+function isValidString(name) {
     return typeof name === 'string' && name.trim().length !== 0;
 }
 
@@ -47,7 +47,7 @@ function isValidPhone(phone, regexPhone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isValidName(name) &&
+    if (isValidString(name) &&
         isValidPhone(phone, phoneRegex) &&
         phoneBook.has(phone)) {
         phoneBook.set(phone, { name, email });
@@ -64,6 +64,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!isValidString(query)) {
+        return 0;
+    }
     let phoneArray = Array.from(phoneBook);
     filterEntriesPhoneBooks(phoneArray, query).forEach(
         entries => phoneBook.delete(entries[0])
@@ -83,7 +86,7 @@ function find(query) {
     if (query !== '*') {
         phoneArray = filterEntriesPhoneBooks(phoneArray, query);
     }
-    if (query === ' ') {
+    if (!isValidString(query)) {
         return [];
     }
     phoneArray.sort(
