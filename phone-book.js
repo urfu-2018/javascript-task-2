@@ -11,19 +11,11 @@ const isStar = false;
  */
 let phoneBook = new Map();
 
-const isValidEmail = email => {
-    return typeof email === 'string' || email === undefined;
-};
-
 const isValidName = name => {
     return typeof name === 'string' && name !== '';
 };
 
-const isParamsCorrect = (phone, name, email) => {
-    if (typeof phone !== 'string' || !isValidName(name) || !isValidEmail(email)) {
-        return false;
-    }
-
+const isValidPhone = phone => {
     return /^\d{10}$/.test(phone);
 };
 
@@ -54,7 +46,7 @@ function getContacts() {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isParamsCorrect(phone, name, email) || phoneBook.has(phone)) {
+    if (!isValidPhone(phone) || !isValidName(name) || phoneBook.has(phone)) {
         return false;
     }
 
@@ -71,7 +63,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isParamsCorrect(phone, name, email)) {
+    if (!isValidPhone(phone) || !isValidName(name) || !phoneBook.has(phone)) {
         return false;
     }
 
