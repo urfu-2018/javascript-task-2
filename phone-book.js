@@ -3,13 +3,13 @@
 class Person {
     constructor(name, phone, email) {
         this.name = name;
-        this.phone = tryConvertPhoneNumber(phone);
+        this.convertedPhone = tryConvertPhoneNumber(phone);
         this.email = email || '';
         this.standartPhone = phone;
     }
 
     toString() {
-        let result = this.name + ', ' + this.phone;
+        let result = this.name + ', ' + this.convertedPhone;
         if (this.email !== '') {
             result += ', ' + this.email;
         }
@@ -134,7 +134,7 @@ function importFromCsv(csv) {
     return csv.split('\n').length;
 }
 function isEmail(email) {
-    return typeof email === 'string' || typeof email === 'undefined';
+    return typeof email === 'undefined' || typeof email === 'string';
 }
 function tryConvertPhoneNumber(phone) {
     if (typeof phone !== 'string' || phone.length !== 10) {
