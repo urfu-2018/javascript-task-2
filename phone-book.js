@@ -23,8 +23,8 @@ function isCorrectName(value) {
     return isString(value) && value !== '';
 }
 
-function checkInput(phone, name, email) {
-    return isCorrectPhone(phone) && (isString(email) || typeof(email) === 'undefined') &&
+function checkInput(phone, name) {
+    return isCorrectPhone(phone) &&
     isCorrectName(name);
 }
 
@@ -36,7 +36,7 @@ function checkInput(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (arguments.length !== 1 && checkInput(phone, name, email) &&
+    if (arguments.length !== 1 && checkInput(phone, name) &&
         typeof(phoneBook[phone]) === 'undefined') {
         email = typeof(email) === 'undefined' ? '' : email;
         phoneBook[phone] = [name, email];
@@ -55,7 +55,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (arguments.length !== 1 && checkInput(phone, name, email) &&
+    if (arguments.length !== 1 && checkInput(phone, name) &&
         typeof(phoneBook[phone]) !== 'undefined') {
         email = typeof(email) === 'undefined' ? '' : email;
         phoneBook[phone] = [name, email];
@@ -76,8 +76,7 @@ function findAndRemove(query) {
     for (let data of dataToDelete) {
         let phone = data.split(', ')[1];
         // приведём номер к простому виду и избавимся в начале строки от 7
-        phone = phone.substring(4, 7) + phone.substring(9, 12) +
-        phone.substring(13, 15) + phone.substring(16, 19);
+        phone = phone.replace(/[- +()]/g, '').slice(1);
         delete phoneBook[phone];
     }
 
