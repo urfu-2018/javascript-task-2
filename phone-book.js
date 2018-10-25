@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -20,9 +20,13 @@ const argsTypesAreCorrect = (phone, name, email) =>
     isString(phone) && isString(name) && isString(email);
 
 function replaceBadTypes(phone, name, email) {
-    var args = [phone, name, email];
+    // var args = [phone, name, email];
+    // return args.map((arg) => arg || '').map((arg) => arg.trim());
+    phone = phone || '';
+    name = name || '';
+    email = email || '';
 
-    return args.map((arg) => arg || '').map((arg) => arg.trim());
+    return [phone.trim(), name.trim(), email.trim()];
 }
 
 
