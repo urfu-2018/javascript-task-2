@@ -78,7 +78,6 @@ function findAndRemove(query) {
     let toDelete = findAllRecords(query);
     count = toDelete.length;
     deleteAllRecords(toDelete);
-    console.info(phoneBook);
 
     return count;
 }
