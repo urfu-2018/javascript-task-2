@@ -102,6 +102,9 @@ function findAndRemoveStar(numberRecords) {
 }
 
 function findAndRemove(query) {
+    if (typeof query !== 'string') {
+        return [];
+    }
     if (query === '') {
         return [];
     }
@@ -167,6 +170,9 @@ function findStar(query, string, found) {
 }
 
 function find(query) {
+    if (typeof query !== 'string') {
+        return [];
+    }
     var string;
     var found = [];
     if (query === '') {
@@ -196,6 +202,9 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (typeof csv !== 'string') {
+        return 0;
+    }
     var line = csv.split('\n');
     var lineAdd = 0;
     var lineSplit;
