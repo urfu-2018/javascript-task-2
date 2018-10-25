@@ -54,7 +54,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     if (query === '' || query === undefined) {
 
-        return [];
+        return 0;
     }
     let arrforDelete = [];
     if (query === '*') {
