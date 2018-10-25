@@ -51,9 +51,9 @@ function update(phone, name, email) {
 }
 
 function checkContain(number, query) {
-    let emailCond = phoneBook[number].email && phoneBook[number].email.includes(query);
-
-    return number.includes(query) || phoneBook[number].name.includes(query) || emailCond;
+    return [number, phoneBook[number].email, phoneBook[number].name].some(element => {
+        return element !== undefined && element.includes(query);
+    });
 }
 
 /**
@@ -73,7 +73,6 @@ function __find(query) {
             return checkContain(number, query);
         });
 }
-
 
 /**
  * Удаление записей по запросу из телефонной книги
@@ -107,8 +106,6 @@ function find(query) {
             return record.email ? str + ', ' + record.email : str;
 
         });
-
-
 }
 
 /**
