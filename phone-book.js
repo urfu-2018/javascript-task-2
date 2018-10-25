@@ -19,17 +19,9 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof(phone) === 'string' && check(phone, name)) {
+    if ((/^[0-9]{10}$/).test(phone) && name !== '' && name !== undefined && find(phone) === '') {
         phoneBook.push(new Phone(phone, name, email));
 
-        return true;
-    }
-
-    return false;
-}
-
-function check(phone, name) {
-    if ((/^[0-9]{10}$/).test(phone) && name !== '' && name !== undefined && find(phone) === '') {
         return true;
     }
 
@@ -51,21 +43,31 @@ function Phone(phone, name, email) {
  */
 function update(phone, name, email) {
     let ch = 0;
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (email === undefined) {
-            email = '';
-        }
-        if (phoneBook[i].phone === phone) {
-            phoneBook[i].name = name;
-            phoneBook[i].email = email;
-            ch = 1;
-        }
+    if (name === '' || name === undefined) {
+        return false;
     }
-    if (ch === 1) {
+    for (let i = 0; i < phoneBook.length; i++) {
+        ch = ch + update2(phone, name, email, i);
+    }
+    if (ch >= 1) {
         return true;
     }
 
     return false;
+}
+
+function update2(phone, name, email, i) {
+    if (email === undefined) {
+        email = '';
+    }
+    if (phoneBook[i].phone === phone) {
+        phoneBook[i].name = name;
+        phoneBook[i].email = email;
+
+        return 1;
+    }
+
+    return 0;
 }
 
 /**
@@ -81,7 +83,6 @@ function findAndRemove(query) {
         let nm = phoneBook[i].name;
         let em = phoneBook[i].email;
         if (findElement(ph, nm, em, query)) {
-            console.info(phoneBook[i].name);
             phoneBook.splice(i, 1);
             length = length - 1;
             count++;
