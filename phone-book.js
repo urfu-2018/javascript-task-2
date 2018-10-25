@@ -23,17 +23,16 @@ function createRecord(name, phone, email) {
     }
 }
 
-function recordsAreEqual(first, second) {
-    if (first.length === 2 || second.length === 2) {
-        return first[0] === second[0] && first[1] === second[1];
-    }
-
-    return first[0] === second[0] && first[1] === second[1] && first[2] === second[2];
-}
+// function recordsAreEqual(first, second) {
+//    if (first.length === 2 || second.length === 2) {
+//        return first[0] === second[0] && first[1] === second[1];
+//    }
+//
+//    return first[0] === second[0] && first[1] === second[1] && first[2] === second[2];
+// }
 
 function isRecordContainsQuery(record, query) {
-    return record[0].indexOf(query) >= 0 ||
-        record[1].indexOf(query) >= 0 ||
+    return record[0].indexOf(query) >= 0 || record[1].indexOf(query) >= 0 ||
         record[2] !== undefined && record[2].indexOf(query) >= 0;
 }
 
@@ -83,13 +82,24 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     const newRecord = createRecord(name, phone, email);
-    if (!phoneBook.has(phone) || newRecord === undefined ||
-        recordsAreEqual(phoneBook.get(phone), newRecord)) {
-        return false;
-    }
-    phoneBook.set(phone, newRecord);
 
-    return true;
+    if (phoneBook.has(phone) && newRecord !== undefined) {
+        phoneBook.set(phone, newRecord);
+
+        return true;
+    }
+
+    return false;
+    // return this.phone.includes(query) || this.name.includes(query) ||
+    // (this.email && this.email.includes(query));
+
+    // if (!phoneBook.has(phone) || newRecord === undefined ||
+    //    recordsAreEqual(phoneBook.get(phone), newRecord)) {
+    //    return false;
+    // }
+    // phoneBook.set(phone, newRecord);
+
+    // return true;
 }
 
 /**
