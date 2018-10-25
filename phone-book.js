@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
@@ -106,7 +106,18 @@ function formatContacts(phones) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    return csv.split('\n').length;
+    let lines = csv.split('\n');
+    let modifiedContacts = 0;
+    lines.forEach(line => {
+        let phone = line.split(';')[1].replace(/\D/);
+        let name = line.split(';')[0];
+        let email = line.split(';')[2];
+        if (add(phone, name, email) || update(phone, name, email)) {
+            modifiedContacts++;
+        }
+    });
+
+    return modifiedContacts;
 }
 
 module.exports = {
