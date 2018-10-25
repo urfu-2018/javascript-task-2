@@ -49,10 +49,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let count;
+    let count = 0;
     for (let i of phoneBook) {
-        if (i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
-        i[1][1].indexOf(query) > -1 || query === '*') {
+        if (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
+        i[1][1].indexOf(query) > -1) {
             phoneBook.delete(i[0]);
             count++;
         }
@@ -70,8 +70,8 @@ function find(query) {
     let str = [];
     for (let i of phoneBook) {
         let email = checkEmail(i[1][1]);
-        if (i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
-        i[1][1].indexOf(query) > -1 || query === '*') {
+        if (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
+        i[1][1].indexOf(query) > -1) {
             str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ') ' + i[0].substr(3, 3) + '-' +
             i[0].substr(6, 2) + '-' + i[0].substr(8, 2) + email);
         }
