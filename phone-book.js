@@ -82,7 +82,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     if (typeof query !== 'string' || query === '') {
-        return;
+        return 0;
     } else if (query === '*') {
         const deletedQuantity = Object.keys(phoneBook).length;
         phoneBook = [];
@@ -123,7 +123,15 @@ function find(query) {
         formatArray = findMatching(query, formatArray);
     }
 
-    return formatArray.sort(sortByName);
+    return isAnyFindings(formatArray);
+}
+
+function isAnyFindings(formatArray) {
+    if (formatArray.length > 0) {
+        return formatArray.sort(sortByName);
+    }
+
+    return;
 }
 
 function rewriteInString(phone) {
