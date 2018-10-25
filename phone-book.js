@@ -69,11 +69,10 @@ function findAndRemove(query) {
 function find(query) {
     let str = [];
     for (let i of phoneBook) {
-        let email;
-        if (!i[1][1]) {
-            email = '';
-        } else
-        email = ', ' + i[1][1];
+        let email = '';
+        if (i[1][1]) {
+            email = ', ' + i[1][1];
+        }
         if (i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
         i[1][1].indexOf(query) > -1 || query === '*') {
             str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ') ' + i[0].substr(2, 3) + '-' +
