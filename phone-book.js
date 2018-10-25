@@ -132,10 +132,10 @@ function importFromCsv(csv) {
         if (typeof(phoneBook[data[0]]) === 'undefined') {
             add(data[0], data[1], data[2]);
         } else if (phoneBook[data[0]][0] !== data[1] ||
-                   phoneBook[data[0]][1] !== data[2]){
+                   phoneBook[data[0]][1] !== data[2]) {
             update(data[0], data[1], data[2]);
         } else {
-            count = count - 1;
+            count--;
         }
     }
 
