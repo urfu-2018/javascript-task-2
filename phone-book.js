@@ -20,18 +20,16 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+
     const regextel = /^\d{10}$/;
-    const regexmail = /^[\w.-]+@[\w.-]+[a-z]$/;
     let record;
     if (!phone.match(regextel) ||
     name === undefined ||
+    name === '' ||
     phoneBook.some((rec)=>rec.tel === phone)) {
         return false;
     }
     if (email !== undefined) {
-        if (!email.match(regexmail)) {
-            return false;
-        }
         record = { name: name, tel: phone, email: email };
     } else {
         record = { name: name, tel: phone };
@@ -49,15 +47,11 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const regexmail = /^[\w.-]+@[\w.-]+[a-z]$/;
     let ind = phoneBook.findIndex(x => x.tel === phone);
-    if (ind === -1 || name === undefined) {
+    if (ind === -1 || name === undefined || name === '') {
         return false;
     }
     if (email !== undefined) {
-        if (!email.match(regexmail)) {
-            return false;
-        }
         phoneBook[ind] = { name: name, tel: phone, email: email };
     } else if (phoneBook[ind].hasOwnProperty('email')) {
         phoneBook[ind] = { name: name, tel: phone };
