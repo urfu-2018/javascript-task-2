@@ -47,7 +47,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhone(phone) || !checkName(name)) {
+    if (!checkPhone(phone) || !checkName(name) || !phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone,
