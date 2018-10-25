@@ -68,7 +68,7 @@ function find(query) {
     }
     let foundPhones = sortByName(findPhones(query));
 
-    return [] || formatContacts(foundPhones);
+    return formatContacts(foundPhones);
 }
 
 function findPhones(query) {
