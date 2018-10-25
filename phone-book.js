@@ -19,11 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof(phone) !== 'string') {
-
-        return false;
-    }
-    if (phone.search('^\\d{10}$') === -1) {
+    if (checkArguments(phone, name, email)) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
@@ -31,12 +27,24 @@ function add(phone, name, email) {
             return false;
         }
     }
-    if (typeof(name) !== 'string' || name === '') {
-        return false;
-    }
     phoneBook.push({ phone: phone, name: name, email: email });
 
     return true;
+}
+
+function checkArguments(phone, name, email) {
+    if (typeof(phone) !== 'string') {
+
+        return true;
+    }
+    if (phone.search('^\\d{10}$') === -1) {
+
+        return true;
+    }
+    if (typeof(name) !== 'string' || name === '') {
+
+        return true;
+    }
 }
 
 /**
@@ -47,14 +55,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof(phone) !== 'string') {
-
-        return false;
-    }
-    if (phone.search('^\\d{10}$') === -1) {
-        return false;
-    }
-    if (typeof(name) !== 'string' || name === '') {
+    if (checkArguments(phone, name, email)) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
