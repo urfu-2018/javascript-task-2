@@ -159,9 +159,9 @@ function findMore(query, string, found) {
         if (element.email !== undefined) {
             if (element.email.includes(query) === true || element.phone.includes(query) === true ||
             element.name.includes(query) === true) {
-                string = element.name + ', +7 (' + String(element.phone).slice(0, 3) + ') ' +
-                String(element.phone).slice(3, 6) + '-' + String(element.phone).slice(6, 8) +
-                '-' + String(element.phone).slice(8, 10) + ', ' + element.email;
+                string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
+                element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
+                '-' + element.phone.slice(8, 10) + ', ' + element.email;
                 found.push(string);
             }
         }
@@ -172,15 +172,15 @@ function findMore(query, string, found) {
 function findStar(query, string, found) {
     phoneBook.forEach(element => {
         if (element.email !== undefined && query === '*') {
-            string = element.name + ', +7 (' + String(element.phone).slice(0, 3) + ') ' +
-            String(element.phone).slice(3, 6) + '-' + String(element.phone).slice(6, 8) +
-            '-' + String(element.phone).slice(8, 10) + ', ' + element.email;
+            string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
+            element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
+            '-' + element.phone.slice(8, 10) + ', ' + element.email;
             found.push(string);
         }
         if (query === '*' && element.email === undefined) {
-            string = element.name + ', +7 (' + String(element.phone).slice(0, 3) + ') ' +
-            String(element.phone).slice(3, 6) + '-' + String(element.phone).slice(6, 8) +
-            '-' + String(element.phone).slice(8, 10);
+            string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
+            element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
+            '-' + element.phone.slice(8, 10);
             found.push(string);
         }
     });
@@ -199,9 +199,9 @@ function find(query) {
         if (element.email === undefined) {
             if (element.phone.includes(query) === true ||
             element.name.includes(query) === true) {
-                string = element.name + ', +7 (' + String(element.phone).slice(0, 3) + ') ' +
-                String(element.phone).slice(3, 6) + '-' + String(element.phone).slice(6, 8) +
-                '-' + String(element.phone).slice(8, 10);
+                string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
+                element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
+                '-' + element.phone.slice(8, 10);
                 found.push(string);
             }
         }
@@ -225,8 +225,8 @@ function importFromCsv(csv) {
     var line = csv.split('\n');
     var lineAdd = 0;
     var lineSplit;
-    for (var i = 0; i <= line.length; i++) {
-        lineSplit = String(line[i]).split(';');
+    for (var i = 0; i < line.length; i++) {
+        lineSplit = line[i].split(';');
         if (update(lineSplit[1], lineSplit[0], lineSplit[2]) === true) {
             lineAdd++;
         }
