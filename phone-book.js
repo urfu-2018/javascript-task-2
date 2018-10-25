@@ -47,8 +47,8 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (checkValid(phone, name) && (phone in phoneBook)) {
-        phoneBook[phone][0] = [name];
-        phoneBook[phone][1] = [email];
+        phoneBook[phone][0] = name;
+        phoneBook[phone][1] = email;
 
         return true;
     }
@@ -71,14 +71,20 @@ function findAndRemove(query) {
         function (objectKey) {
             let p = objectKey.indexOf(query);
             let n = phoneBook[objectKey][0].indexOf(query);
-            let e = phoneBook[objectKey][1].indexOf(query);
+            let e = 0;
+            if (phoneBook[objectKey][1] !== undefined) {
+                e = phoneBook[objectKey][1].indexOf(query);
+            }
             if (p === -1 || n === -1 || e === -1 || query === '*') {
-                delete phoneBook.objectKey;
+                delete phoneBook[objectKey];
+                count++;
             }
 
             return false;
         }
     );
+
+    return count;
 }
 
 /**
@@ -99,7 +105,7 @@ function find(query) {
             p += k.slice(3, 6) + '-' + k.slice(6, 8) + '-' + k.slice(8);
             let n = phoneBook[objectKey][0];
             let e = phoneBook[objectKey][1];
-            let emailTrue = (e !== undefined) ? ', ' + e : '';
+            let emailTrue = (e !== undefined && e !== '') ? ', ' + e : '';
             let item = n + ', ' + p + emailTrue;
             if (item.indexOf(query) !== -1 || query === '*') {
                 listQuery.push(item);
