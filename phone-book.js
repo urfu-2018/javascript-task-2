@@ -28,26 +28,12 @@ function add(phone, name, email) {
     if (phone.match(/^\d{10}$/) === null) {
         return false;
     }
-    const existingValues = find(phone);
-    if (checkExistingValue(existingValues, changePhoneFormat(phone))) {
+    if (Object.keys(phoneBook).includes(phone)) {
         return false;
     }
     phoneBook[phone] = { name: name, email: email };
 
     return true;
-}
-
-function checkExistingValue(existingValues, phone) {
-    if (existingValues === undefined) {
-        return false;
-    }
-    for (let j = 0; j < existingValues.length; j++) {
-        if (existingValues[j].indexOf(phone) + 1) {
-            return true;
-        }
-
-        return false;
-    }
 }
 
 function checkEmptyString(str) {
