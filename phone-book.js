@@ -84,7 +84,7 @@ function findAndRemove(query) {
 
         return removed;
     }
-    if (typeof(query) !== 'string' || query === '') {
+    if (checkQuery(query)) {
 
         return 0;
     }
@@ -134,11 +134,16 @@ function isSuitable(person, query) {
     person.email.includes(query);
 }
 
+function checkQuery(query) {
+
+    return typeof(query) !== 'string' || query === '';
+}
+
 function find(query) {
     let rez = [];
-    if (typeof(query) !== 'string' || query === '') {
+    if (checkQuery(query)) {
 
-        return rez.sort();
+        return rez;
     }
     if (query === '*') {
         for (let i = 0; i < phoneBook.length; i++) {
