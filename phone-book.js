@@ -52,7 +52,16 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const arrforDelete = findWithoutOutput(query);
+    if (typeof query !== 'string' || query === '' || query === undefined) {
+
+        return [];
+    }
+    let arrforDelete = [];
+    if (query === '*') {
+        arrforDelete = sortArrayfromAtoZbyName(Object.keys(phoneBook));
+    } else {
+        arrforDelete = findWithoutOutput(query);
+    }
     for (let i of arrforDelete) {
         delete phoneBook[i];
     }
