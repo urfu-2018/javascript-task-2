@@ -10,6 +10,7 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = new Map();
+let phoneRegExp = /^(\d){10}$/;
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,9 +20,7 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkNameFormat(name) &&
-        checkPhoneFormat(phone) &&
-        checkEmailFormat(email) &&
+    if (isValidInput(phone, name, email) &&
         !phoneBook.has(phone)) {
         addNote(name, phone, email);
 
@@ -29,10 +28,6 @@ function add(phone, name, email) {
     }
 
     return false;
-}
-
-function checkPhoneFormat(phone) {
-    return phone && isString(phone) && (/^(\d){10}$/).test(phone);
 }
 
 /**
@@ -43,9 +38,7 @@ function checkPhoneFormat(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkNameFormat(name) &&
-        checkPhoneFormat(phone) &&
-        checkEmailFormat(email) &&
+    if (isValidInput(phone, name, email) &&
         phoneBook.has(phone)) {
         addNote(name, phone, email);
 
@@ -56,17 +49,33 @@ function update(phone, name, email) {
 }
 
 function addNote(name, phone, email) {
-    phoneBook.set(phone, { name: name, phone: phone });
     if (email) {
-        phoneBook.set(phone, { name: name, phone: phone, email: email });
+        phoneBook.set(phone, { name, phone, email });
+    } else {
+        phoneBook.set(phone, { name, phone });
     }
 }
-function checkNameFormat(name) {
+
+function isValidInput(phone, name, email) {
+    return isCorrectName(name) &&
+        isCorrectPhone(phone) &&
+        isCorrectEmail(email);
+}
+
+function isCorrectPhone(phone) {
+    return phone && isString(phone) && (phoneRegExp).test(phone);
+}
+
+function isCorrectName(name) {
     return name && isString(name);
 }
 
-function checkEmailFormat(email) {
-    return typeof email === 'string' || email === undefined;
+function isCorrectEmail(email) {
+    return isString(email) || email === undefined;
+}
+
+function isString(query) {
+    return typeof query === 'string' && query !== '';
 }
 
 /**
@@ -84,6 +93,7 @@ function findAndRemove(query) {
 
         return count;
     }
+
     let found = findQueryInSorted(query);
     for (let i = 0; i < found.length; i++) {
         phoneBook.delete(found[i].phone);
@@ -98,50 +108,42 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!(isString(query) && query)) {
-        return [];
-    }
-    if (query === '*') {
-        return sortedBook()
-            .map(x=> formatForOutput(x));
-    }
-
     return findQueryInSorted(query)
-        .map(x=>formatForOutput(x));
-
-}
-
-function isString(query) {
-    return typeof query === 'string' && query !== '';
+        .map(formatNote);
 }
 
 function findQueryInSorted(query) {
-    return sortedBook().filter(x => {
-        return x.name.indexOf(query) + 1 ||
-            x.phone.indexOf(query) + 1 ||
-            (x.email && x.email.indexOf(query) + 1);
-    });
-}
-
-function formatForOutput(note) {
-    if (!note.email) {
-        return note.name + ', ' + rightFormatForPhone(note.phone);
+    let isAll = false;
+    if (query === '*') {
+        isAll = true;
     }
 
-    return note.name + ', ' + rightFormatForPhone(note.phone) + ', ' + note.email;
-}
-function sortedBook() {
-    return [...phoneBook.values()]
-        .sort((a, b) => {
-            return a.name.localeCompare(b.name);
+    return sortedBook()
+        .filter(x => {
+            return isAll ||
+            x.name.includes(query) ||
+            x.phone.includes(query) ||
+            (x.email && x.email.includes(query));
         });
 }
 
-function rightFormatForPhone(phone) {
-    return '+7 (' + phone.slice(0, 3) +
-        ') ' + phone.slice(3, 6) + '-' +
-        phone.slice(6, 8) +
-        '-' + phone.slice(8, 10);
+function formatNote(note) {
+    if (note.email) {
+        return `${note.name}, ${formatPhone(note.phone)}, ${note.email}`;
+    }
+
+    return `${note.name}, ${formatPhone(note.phone)}`;
+}
+
+function formatPhone(phone) {
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}` +
+        `-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+}
+
+function sortedBook() {
+    return Array.from(phoneBook.values()).sort((a, b) => {
+        return a.name.localeCompare(b.name);
+    });
 }
 
 /**
@@ -156,17 +158,12 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
     let notes = csv
         .split('\n')
-        .map(x=>x.split(';'));
-    let count = 0;
-    for (let i = 0; i < notes.length; i++) {
-        if (phoneBook.has(notes[i][1])) {
-            count = update(notes[i][1], notes[i][0], notes[i][2]) ? count + 1 : count;
-        } else {
-            count = add(notes[i][1], notes[i][0], notes[i][2]) ? count + 1 : count;
-        }
-    }
+        .map(x => x.split(';'));
+    let filtered = notes.filter(x => {
+        return phoneBook.has(x[1]) ? update(x[1], x[0], x[2]) : add(x[1], x[0], x[2]);
+    });
 
-    return count;
+    return filtered.length;
 }
 
 module.exports = {
