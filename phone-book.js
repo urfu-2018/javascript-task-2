@@ -49,9 +49,6 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!query) {
-        return 0;
-    }
     let foundPhones = findPhones(query);
     foundPhones.forEach(phone => {
         delete phoneBook[phone];
@@ -66,15 +63,15 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!query) {
-        return [];
-    }
     let foundPhones = sortByName(findPhones(query));
 
     return formatContacts(foundPhones);
 }
 
 function findPhones(query) {
+    if (!query) {
+        return [];
+    }
     let foundPhones = Object.keys(phoneBook);
     if (query === '*') {
         return foundPhones;
