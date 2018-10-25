@@ -86,7 +86,8 @@ function getData(data, query) {
     const keys = Object.keys(data);
     for (let i = 0; i < keys.length; i++) {
         if (typeof(query) === 'undefined' || data[keys[i]][0] === query ||
-        data[keys[i]][1] === query) {
+        data[keys[i]][1] === query || query === '@'
+        && typeof([keys[i]][1]) !== 'undefined') {
             result.push(data[keys[i]][0] + ', ' + transform(keys[i]) +
             (typeof(data[keys[i]][1]) !== 'undefined' ? ', ' + data[keys[i]][1] : ''));
         }
@@ -129,11 +130,15 @@ function importFromCsv(csv) {
     let count = phones.length;
     for (let i = 0; i < phones.length; i++) {
         let data = phones[i].split(';');
-        if (typeof(phoneBook[data[0]]) === 'undefined') {
-            add(data[0], data[1], data[2]);
-        } else if (phoneBook[data[0]][0] !== data[1] ||
-                   phoneBook[data[0]][1] !== data[2]) {
-            update(data[0], data[1], data[2]);
+        if (checkAll(data[0], data[1], data[2])) {
+            if (typeof(phoneBook[data[0]]) === 'undefined') {
+                add(data[0], data[1], data[2]);
+            } else if (phoneBook[data[0]][0] !== data[1] ||
+                       phoneBook[data[0]][1] !== data[2]) {
+                update(data[0], data[1], data[2]);
+            } else {
+                count--;
+            }
         } else {
             count--;
         }
