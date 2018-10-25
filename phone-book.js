@@ -205,19 +205,32 @@ function contactAsString(contact, phone) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (checkCSV(csv) === 0) {
+        return 0;
+    }
     let withoutN = csv.split('\n');
     const n = withoutN.length;
+    const newLength = 0;
     for (let i = 0; i < n; i++) {
         let splited = withoutN[i].split(';');
         const name = splited[0];
         const phone = splited[1];
         const email = splited[2];
+        if (add(name, phone, email) || update(name, phone, email)) {
+            newLength++;
+        }
     }
 
-    return n;
+    return newLength;
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+}
+
+function checkCSV(csv) {
+    if (csv === undefined || typeof(csv) !== 'string' || csv === '') {
+        return 0;
+    }
 }
 
 module.exports = {
