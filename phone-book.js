@@ -13,7 +13,7 @@ const phoneBook = new Map();
 
 function isPhoneValid(phone) {
     if (typeof phone !== 'undefined') {
-        return phone.test(/^\d{10}$/);
+        return /^\d{10}$/.test(phone);
     }
 
     return false;
