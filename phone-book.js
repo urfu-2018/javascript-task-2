@@ -125,6 +125,9 @@ function find(query) {
             suitablesForQuery.push(element);
         }
     });
+    if (suitablesForQuery.length === 0) {
+        return [];
+    }
 
     return handleRecords(suitablesForQuery);
 }
