@@ -123,15 +123,7 @@ function find(query) {
         formatArray = findMatching(query, formatArray);
     }
 
-    return isAnyFindings(formatArray);
-}
-
-function isAnyFindings(formatArray) {
-    if (formatArray.length > 0) {
-        return formatArray.sort(sortByName);
-    }
-
-    return;
+    return formatArray.sort(sortByName);
 }
 
 function rewriteInString(phone) {
