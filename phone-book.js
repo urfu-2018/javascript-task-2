@@ -1,111 +1,114 @@
 'use strict';
-
-/**
- * Сделано задание на звездочку
- * Реализован метод importFromCsv
- */
-
 const isStar = true;
 
-/**
- * Телефонная книга
- */
-let phoneBook = new Map();
-const phoneTest = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
-
-/**
- * Добавление записи в телефонную книгу
- * @param {String} phone
- * @param {String?} name
- * @param {String?} email
- * @returns {Boolean}
- */
+let phoneBook = [];
+const phoneTest = /(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
 function validDate(phone, name) {
     return phoneTest.test(phone) && name;
 }
 
-function add(phone, name, email = '') {
-    if (!validDate(phone, name) || phoneBook.has(phone)) {
+function findPhone(phone) {
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i].phone === phone) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+function add(phone, name, email) {
+    if (!validDate(phone, name) || findPhone(phone) !== -1) {
         return false;
     }
-    phoneBook.set(phone, { name, email });
+    phoneBook.push({ name, phone, email });
 
     return true;
 }
 
-/**
- * Обновление записи в телефонной книге
- * @param {String} phone
- * @param {String?} name
- * @param {String?} email
- * @returns {Boolean}
- */
-function update(phone, name, email = '') {
-    if (!validDate(phone, name) || !phoneBook.has(phone)) {
+function update(phone, name, email) {
+    const necessaryContact = findPhone(phone);
+    if (!validDate(phone, name) || necessaryContact === -1) {
         return false;
     }
-    phoneBook.set(phone, { name, email });
+    phoneBook[necessaryContact] = { name, phone, email };
 
     return true;
 }
 
-/**
- * Удаление записей по запросу из телефонной книги
- * @param {String} query
- * @returns {Number}
- */
+function findQueryInContact(contact, query) {
+    return (contact.email && contact.email.includes(query)) ||
+        contact.name.includes(query) || contact.phone.includes(query);
+}
 
 function findAndRemove(query) {
-    if (!query) {
+    if (query === '') {
         return 0;
     }
+    const countContact = phoneBook.length;
     if (query === '*') {
-        phoneBook.clear();
+        phoneBook = [];
 
-        return phoneBook.size;
+        return countContact;
     }
+    phoneBook = phoneBook.filter(contact => findQueryInContact(contact, query) === false);
 
-    return Array.from(phoneBook).filter(([phone, { name, email = '' }]) =>
-        phone.includes(query) || name.includes(query) || email.includes(query))
-        .map(([phone]) => phoneBook.delete(phone)).length;
+    return countContact - phoneBook.length;
 }
 
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
- * @returns {String[]}
- */
+ * @returns {String[]}*/
 
 function find(query) {
-    if (!query) {
+    if (query === '') {
         return [];
     }
+    let processed;
+    if (query === '*') {
+        processed = phoneBook;
+    } else {
+        processed = phoneBook.filter(contact => findQueryInContact(contact, query) === true);
+    }
 
-    return Array.from(phoneBook.entries()).filter(([phone, { name, email }]) =>
-        query === '*' || phone.includes(query) || name.includes(query) || email.includes(query))
-        .map(([phone, { name, email }]) =>
-            `${name}, ${phone.replace(phoneTest, '+7 ($1) $2-$3-$4')}${email ? ', ' + email : ''}`)
-        .sort();
+    return processed.map(function (contact) {
+        const formattedPhone = contact.phone.replace(/(.{3})(.{3})(.{2})(.{2})/,
+            '+7 ($1) $2-$3-$4');
+        let result = contact.name + ', ' + formattedPhone;
+        if (contact.email) {
+            result += ', ' + contact.email;
+        }
+
+        return result;
+    }).sort();
 }
 
 /**
  * Импорт записей из csv-формата
  * @star
  * @param {String} csv
- * @returns {number} – количество добавленных и обновленных записей
+ * @returns {Number} – количество добавленных и обновленных записей
  */
-
 function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    return csv.split('\n').filter(log => {
-        const [name, phone, email] = log.split(';');
+    const entries = csv.split('\n');
+    let count = null;
+    for (let entry of entries) {
+        const contact = entry.split(';');
+        const name = contact[0];
+        const phone = contact[1];
+        const email = contact[2];
+        if (add(phone, name, email) || update(phone, name, email)) {
+            count ++;
+        }
+    }
 
-        return add(phone, name, email) || update(phone, name, email);
-    }).length;
+    return count;
 }
 
 module.exports = {
