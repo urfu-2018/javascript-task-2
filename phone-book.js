@@ -84,8 +84,8 @@ function findAndRemove(query) {
 }
 
 function deleteAllRecords(toDelete) {
-    for (let i = 0; i < toDelete.length; i++) {
-        phoneBook.delete(toDelete[i]);
+    for (let line of toDelete) {
+        phoneBook.delete(line[0]);
     }
 }
 
@@ -126,20 +126,14 @@ function bookToString(records) {
     let result = [];
     for (let i = 0; i < records.length; i++) {
         let line = records[i];
-        let ph = `+7 (${line[0].substring(0, 3)}) ${line[0].substring(3, 6)}-${
-            line[0].substring(6, 8)}-${line[0].substring(8)}`;
+        let ph = `+7 (${line[0].substr(0, 3)}) ${line[0].substr(3, 3)}-${
+            line[0].substr(6, 2)}-${line[0].substr(8, 2)}`;
         let name = line[1];
         let email = typeof line[2] === 'undefined' ? '' : ', ' + line[2];
         result.push(`${name}, ${ph}${email}`);
     }
 
     return result.sort();
-}
-
-function getData(line, reg) {
-    let data = line.match(reg);
-
-    return data === null ? undefined : data[0];
 }
 
 /**
@@ -154,9 +148,9 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
     let count = 0;
     for (let line of csv.split('\n')) {
-        let phone = getData(line, /\d{10}/);
         let name = line.split(';')[0];
-        let email = getData(line, /([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+/);
+        let phone = line.split(';')[1];
+        let email = line.split(';')[2];
         count += add(phone, name, email) || update(phone, name, email) ? 1 : 0;
     }
 
