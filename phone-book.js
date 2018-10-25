@@ -106,7 +106,7 @@ function find(query) {
     if (query === '*') {
         result = getData(phoneBook);
     } else if (query !== '') {
-        if (CheckPhone(query) && phoneBook[query] !== 'undefined') {
+        if (checkPhone(query) && phoneBook[query] !== 'undefined') {
             let temp = [];
             temp[query] = [phoneBook[query][0], phoneBook[query][1]];
             result = getData(temp);
