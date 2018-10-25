@@ -74,6 +74,8 @@ function findAndRemove(query) {
 
     if (query === '*') {
         phoneBook.clear();
+
+        return phoneBook.length();
     }
 
     const res = Array.from(phoneBook.values()).filter(r => hasRecord(r, query));
