@@ -9,7 +9,8 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
+
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +20,25 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    const regextel = /^\d{10}$/;
+    const regexmail = /^[\w.-]+@[\w.-]+[a-z]$/;
+    let record;
+    if (!phone.match(regextel) ||
+    name === undefined ||
+    phoneBook.some((rec)=>rec.tel === phone)) {
+        return false;
+    }
+    if (email !== undefined) {
+        if (!email.match(regexmail)) {
+            return false;
+        }
+        record = { name: name, tel: phone, email: email };
+    } else {
+        record = { name: name, tel: phone };
+    }
+    phoneBook.push(record);
 
+    return true;
 }
 
 /**
@@ -30,7 +49,22 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    const regexmail = /^[\w.-]+@[\w.-]+[a-z]$/;
+    let ind = phoneBook.findIndex(x => x.tel === phone);
+    if (ind === -1 || name === undefined) {
+        return false;
+    }
+    if (email !== undefined) {
+        if (!email.match(regexmail)) {
+            return false;
+        }
+        phoneBook[ind] = { name: name, tel: phone, email: email };
+    } else if (phoneBook[ind].hasOwnProperty('email')) {
+        phoneBook[ind] = { name: name, tel: phone };
+        delete phoneBook[ind].email;
+    }
 
+    return true;
 }
 
 /**
@@ -39,7 +73,38 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let itt = 0;
+    let search = phoneBook.filter(function (rec) {
+        if (rec.hasOwnProperty('email')) {
+            return (rec.tel.indexOf(query)) !== -1 ||
+            (rec.name.indexOf(query)) !== -1 ||
+            (rec.email.indexOf(query) !== -1);
+        }
 
+        return ((rec.tel.indexOf(query)) !== -1 ||
+    (rec.name.indexOf(query) !== -1));
+    }).sort(function (a, b) {
+        if (a.name > b.name) {
+            return 1;
+        } else if (a.name < b.name) {
+            return -1;
+        }
+
+        return 0;
+    });
+    phoneBook = phoneBook.filter(function (rec) {
+        return !search.some(function (recsearch) {
+            if (rec === recsearch) {
+                itt++;
+
+                return true;
+            }
+
+            return false;
+        });
+    });
+
+    return itt;
 }
 
 /**
@@ -48,7 +113,46 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let stroka = query;
+    if (stroka === undefined) {
+        return [];
+    }
+    if (stroka === '*') {
+        stroka = '';
+    }
+    let search = phoneBook.filter(function (rec) {
+        if (rec.hasOwnProperty('email')) {
+            return (rec.tel.indexOf(stroka)) !== -1 ||
+        (rec.name.indexOf(stroka)) !== -1 ||
+        (rec.email.indexOf(stroka) !== -1);
+        }
 
+        return ((rec.tel.indexOf(stroka)) !== -1 ||
+        (rec.name.indexOf(stroka) !== -1));
+    }).sort(function (a, b) {
+        if (a.name > b.name) {
+            return 1;
+        } else if (a.name < b.name) {
+            return -1;
+        }
+
+        return 0;
+    });
+    let resultat = search.map(function (rec) {
+        let telprob = '+7 (' + rec.tel.slice(0, 3) + ') ' +
+    rec.tel.slice(3, 6) + '-' + rec.tel.slice(6, 8) +
+    '-' + rec.tel.slice(8, 10);
+        let resulstr = [rec.name, telprob];
+        if (rec.email !== undefined) {
+            resulstr.push(rec.email);
+
+            return (resulstr.join(', '));
+        }
+
+        return resulstr.join(', ');
+    });
+
+    return resultat;
 }
 
 /**
@@ -61,8 +165,16 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    let recs = csv.split('\n');
+    let count = 0;
+    for (let i = 0; i < recs.length; i++) {
+        let rec = recs[i].split(';');
+        if (add(rec[1], rec[0], rec[2]) || update(rec[1], rec[0], rec[2])) {
+            count++;
+        }
+    }
 
-    return csv.split('\n').length;
+    return count;
 }
 
 module.exports = {
