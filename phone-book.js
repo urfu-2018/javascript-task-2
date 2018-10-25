@@ -19,7 +19,7 @@ let phoneFormat = (phone) =>
 
 let notesByQuery = (query) =>
     typeof(query) !== 'string' || query === ''
-        ? 0
+        ? []
         : Object.keys(phoneBook)
             .map(phone => [phoneBook[phone].name, phone, phoneBook[phone].email])
             .filter(x =>
