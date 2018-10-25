@@ -42,7 +42,7 @@ function transform(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook[phone] === 'undefined' && checkAll(phone, name, email)) {
+    if (typeof(phoneBook[phone]) === 'undefined' && checkAll(phone, name, email)) {
         phoneBook[phone] = [name, email];
 
         return true;
@@ -59,7 +59,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook[phone] !== 'undefined' && checkName(name) && checkEmail(email)) {
+    if (typeof(phoneBook[phone]) !== 'undefined' && checkName(name) && checkEmail(email)) {
         phoneBook[phone] = [name, email];
 
         return true;
@@ -106,7 +106,7 @@ function find(query) {
     if (query === '*') {
         result = getData(phoneBook);
     } else if (query !== '') {
-        if (checkPhone(query) && phoneBook[query] !== 'undefined') {
+        if (checkPhone(query) && typeof(phoneBook[query]) !== 'undefined') {
             let temp = [];
             temp[query] = [phoneBook[query][0], phoneBook[query][1]];
             result = getData(temp);
@@ -129,7 +129,7 @@ function importFromCsv(csv) {
     let phones = csv.split('\n');
     for (let i = 0; i < phones.length; i++) {
         let data = phones[i].split(';');
-        if (phoneBook[data[0]] === 'undefined') {
+        if (typeof(phoneBook[data[0]]) === 'undefined') {
             add(data[0], data[1], data[2]);
         } else {
             update(data[0], data[1], data[2]);
