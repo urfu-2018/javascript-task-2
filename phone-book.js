@@ -114,15 +114,15 @@ function updatePhoneBook(phone, name, email) {
  */
 function find(query) {
     if (!isString(query) || hasWrongValue(query)) {
-        return new Set(); // как будто пустой запрос
+        return []; // как будто пустой запрос
     }
     if (query === '*') {
         return handleRecords(phoneBook);
     }
-    var suitablesForQuery = new Set();
+    var suitablesForQuery = [];
     phoneBook.forEach(element => {
         if (element.includes(query)) {
-            suitablesForQuery.add(element);
+            suitablesForQuery.push(element);
         }
     });
 
