@@ -128,14 +128,17 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    csv.forEach(
+    let count = 0;
+    let array = csv.split('\n');
+    array.forEach(
         function (item) {
             let arr = item.split(';');
             let name = arr[0];
             let phone = arr[1];
             let email = arr[2];
             if (checkValid(phone, name)) {
-                phoneBook[phone][0] = name;
+                phoneBook[phone] = [name];
+                count++;
             }
             if (checkValid(phone, name) && email !== undefined) {
                 phoneBook[phone][1] = email;
@@ -143,7 +146,7 @@ function importFromCsv(csv) {
         }
     );
 
-    return csv.split('\n').length;
+    return count;
 }
 
 module.exports = {
