@@ -19,17 +19,28 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!correctParams(phone, name, email) || phoneBook.has(phone)) {
-        return false;
-    }
-    phoneBook.set(phone, [name, email]);
+    if (isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) {
+        if (!phoneBook.has(phone)) {
+            phoneBook.set(phone, [name, email]);
 
-    return true;
+            return true;
+        }
+    }
+
+    return false;
 }
 
-function correctParams(phone, name, email) {
-    return typeof phone === 'string' && typeof name === 'string' && typeof email === 'string' &&
-    /^d{10}$/.test(phone) && /^\S+@\w+.\w+$/.test(email);
+function isPhone(phone) {
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
+}
+
+function isName(name) {
+    return typeof name === 'string' && /^\S+$/.test(name);
+}
+
+function isEmail(email) {
+    return typeof email === 'string' &&
+            /^([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(email);
 }
 
 /**
@@ -40,9 +51,15 @@ function correctParams(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phone.length < 0 || name.length < 0 || email.length < 0) {
-        return null;
+    if (isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) {
+        if (phoneBook.delete(phone)) {
+            phoneBook.set(phone, [name, email]);
+
+            return true;
+        }
     }
+
+    return false;
 }
 
 /**
@@ -51,9 +68,39 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query.length !== -1) {
-        return null;
+    if (query === '' || typeof query !== 'string') {
+        return 0;
     }
+    let count = 0;
+    if (query === '*') {
+        count = phoneBook.keys().length();
+        phoneBook = new Map();
+    }
+    let toDelete = findAllRecords(query);
+    count = toDelete.length;
+    deleteAllRecords(toDelete);
+
+    return count;
+}
+
+function deleteAllRecords(toDelete) {
+    for (let i = 0; i < toDelete.length; i++) {
+        phoneBook.delete(toDelete[i]);
+    }
+}
+
+function findAllRecords(query) {
+    let result = [];
+    for (let key of phoneBook.keys()) {
+        if (key.includes(query) ||
+            phoneBook.get(key)[0].includes(query) ||
+            (isEmail(phoneBook.get(key)[1]) && phoneBook.get(key)[1].includes(query)) ||
+            query === '*') {
+            result.push([key, phoneBook.get(key)[0], phoneBook.get(key)[1]]);
+        }
+    }
+
+    return result;
 }
 
 /**
@@ -62,9 +109,27 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query.length !== -1) {
-        return null;
+    if (query === '' || typeof query !== 'string') {
+        return [];
     }
+    let result = findAllRecords(query);
+    let bookString = bookToString(result);
+
+    return bookString;
+}
+
+function bookToString(records) {
+    let result = [];
+    for (let i = 0; i < records.length; i++) {
+        let line = records[i];
+        let ph = `+7 (${line[0].substring(0, 3)}) ${line[0].substring(3, 6)}-${
+            line[0].substring(6, 8)}-${line[0].substring(8)}`;
+        let name = line[1];
+        let email = typeof line[2] === 'undefined' ? '' : ', ' + line[2];
+        result.push(`${name}, ${ph}${email}`);
+    }
+
+    return result.sort();
 }
 
 /**
