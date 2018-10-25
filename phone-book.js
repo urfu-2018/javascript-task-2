@@ -19,6 +19,13 @@ const isValidPhone = phone => {
     return /^\d{10}$/.test(phone);
 };
 
+const isQueryFinded = (item, query) => {
+    return item.name.includes(query) ||
+        item.phone.includes(query) ||
+        item.email !== undefined && item.email.includes(query) ||
+        query === '*';
+};
+
 const convertAnswer = userInf => {
     return `${userInf.name}, +7 (${
         userInf.phone.slice(0, 3)
@@ -84,11 +91,7 @@ function findAndRemove(query) {
 
     let contactsToDelete = [];
     getContacts().forEach(item => {
-        if (item.name.includes(query) ||
-            item.phone.includes(query) ||
-            item.email !== undefined && item.email.includes(query) ||
-            query === '*'
-        ) {
+        if (isQueryFinded(item, query)) {
             contactsToDelete.push(item.phone);
         }
     });
@@ -109,11 +112,7 @@ function find(query) {
 
     let res = [];
     getContacts().forEach(item => {
-        if (item.name.includes(query) ||
-            item.phone.includes(query) ||
-            item.email !== undefined && item.email.includes(query) ||
-            query === '*'
-        ) {
+        if (isQueryFinded(item, query)) {
             res.push(convertAnswer(item));
         }
     });
