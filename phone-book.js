@@ -57,6 +57,9 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let count = 0;
+    if (query === '') {
+        return count;
+    }
     for (let i of phoneBook) {
         if (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
         i[1][1].indexOf(query) > -1) {
