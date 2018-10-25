@@ -11,7 +11,7 @@ const isStar = true;
  */
 let phoneBook = {};
 
-function createEntry(name, email, phone=null) {
+function createEntry(name, email, phone = null) {
     let entry = { phone, name, email };
 
     return entry;
@@ -72,10 +72,13 @@ function findAndRemove(query) {
 }
 
 var compareEntry = function (a, b) {
-    if(a.name > b.name)
+    if (a.name > b.name) {
         return 1;
-    if(a.name < b.name)
+    }
+    if (a.name < b.name) {
         return -1;
+    }
+
     return 0;
 };
 
