@@ -127,8 +127,6 @@ function deleteContact(phone, name, email, query) {
  * @returns {String[]}
  */
 function find(query) {
-    let tmpAnswer = [];
-    let answer = [];
     if (checkEmptyString(query)) {
         return [];
     }
