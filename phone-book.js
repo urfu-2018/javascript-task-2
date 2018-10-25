@@ -79,11 +79,11 @@ function update(phone, name, email) {
 }
 
 function searchPredicate(entry, query) {
+    if (!query) {
+        return false;
+    }
     if (query === '*') {
         return true;
-    }
-    if (query === '') {
-        return false;
     }
 
     return Object.values(entry)
