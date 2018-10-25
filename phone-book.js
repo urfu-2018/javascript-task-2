@@ -18,7 +18,7 @@ let phoneBook = new Map();
  * @param {String?} email
  * @returns {Boolean}
  */
- 
+
 function match(phone, name, email) {
     for (let key in phoneBook.keys()) {
         if ((phoneBook[key].username === name &&
@@ -49,7 +49,7 @@ function add(phone, name, email) {
 
         return true;
     }
-    
+
     return false;
 }
 
@@ -103,12 +103,12 @@ function find(query) {
         patt = '';
     }
     let sorted = [...phoneBook.entries()]
-                    .sort((a, b) => a[1].username > b[1].username).map( function(val) {
-        
-        return [val[1].username,
-            val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
-            val[1].useremail].filter(x => x !== undefined);
-    });
+        .sort((a, b) => a[1].username > b[1].username).map( function( val) {
+
+            return [val[1].username,
+                val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
+                val[1].useremail].filter(x => x !== undefined);
+        });
 
     return sorted.filter(x => x.join('').includes(patt));
 }
@@ -123,7 +123,7 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    let users = csv.split('\n').map( function(val) {
+    let users = csv.split('\n').map( function( val) {
         let arr = val.split(';');
 
         return [arr[1], arr[0], arr[2]];
