@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-const phoneBook = new Map();
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,23 +19,22 @@ const phoneBook = new Map();
  * @returns {Boolean}
  */
 function checkPhone(phone) {
-    return /^\d{10}$/.test(phone) && typeof(phone) === 'string';
+    return (/^\d{10}$/.test(phone) && typeof(phone) === 'string');
 }
 
 function checkName(name) {
-    return typeof(name) === 'string' && name;
+    return (typeof(name) === 'string' && name.length > 0);
 }
 
 function add(phone, name, email) {
     if (!checkPhone(phone) || !checkName(name) || phoneBook.has(phone)) {
         return false;
     }
-
     phoneBook.set(phone,
         {
-            phone,
-            name,
-            email });
+            phone: phone,
+            name: name,
+            email: email });
 
     return true;
 }
@@ -51,7 +50,6 @@ function update(phone, name, email) {
     if (!checkPhone(phone) || !checkName(name) || !phoneBook.has(phone)) {
         return false;
     }
-
     phoneBook.set(phone,
         {
             phone,
@@ -72,7 +70,7 @@ function findAndRemove(query) {
         return [];
     }
 
-    const arrayWithDate = search(query);
+    const arrayWithDate = find(query);
     arrayWithDate.forEach(entry => phoneBook.delete(entry[1]));
 
     return arrayWithDate.length;
@@ -119,9 +117,9 @@ function search(query) {
 }
 
 function phoneBookToArray() {
-    const arrayWithDate = [];
+    let arrayWithDate = [];
     for (let value of phoneBook.values()) {
-        if (typeof value.email === 'undefined') {
+        if (value.email === undefined) {
             arrayWithDate.push([value.name, value.phone]);
         } else {
             arrayWithDate.push([value.name, value.phone, value.email]);
