@@ -14,21 +14,21 @@ let phoneBook = [];
 const regextel = /^\d{10}$/;
 
 function check1(phone, name) {
-    return typeof name !== 'string' ||
+    return !phone.match(regextel) ||
     typeof phone !== 'string' ||
-    !phone.match(regextel) ||
+    typeof name !== 'string' ||
     !name ||
     !phone ||
     phoneBook.some((rec)=>rec.tel === phone);
 }
 
 function check2(phone, name, ind) {
-    return typeof name !== 'string' ||
+    return !phone.match(regextel) ||
     typeof phone !== 'string' ||
-    !phone ||
+    typeof name !== 'string' ||
     !name ||
-    ind === -1 ||
-    !phone.match(regextel);
+    !phone ||
+    ind === -1;
 }
 
 /**
