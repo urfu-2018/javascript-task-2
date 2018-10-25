@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -80,7 +80,9 @@ function findPhones(query) {
     return foundPhones.filter(phone => {
         let email = phoneBook[phone].email || '';
 
-        return `${phone} ${phoneBook[phone].name} ${email}`.includes(query);
+        return phone.includes(query) ||
+            phoneBook[phone].name.includes(query) ||
+            email.includes(query);
     });
 }
 
