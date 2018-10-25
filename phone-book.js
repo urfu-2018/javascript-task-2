@@ -54,6 +54,11 @@ function checkEmptyRequest(query) {
     return query === '';
 }
 
+function checkItem(item, query) {
+    return (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
+    i[1][1].indexOf(query) > -1);
+}
+
 /*R * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
@@ -64,8 +69,7 @@ function findAndRemove(query) {
         return count;
     }
     for (let i of phoneBook) {
-        if (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
-        i[1][1].indexOf(query) > -1) {
+        if (checkItem(i, query)) {
             phoneBook.delete(i[0]);
             count++;
         }
@@ -86,8 +90,7 @@ function find(query) {
     }
     for (let i of phoneBook) {
         let email = checkEmail(i[1][1]);
-        if (query === '*' || i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
-        i[1][1].indexOf(query) > -1) {
+        if (checkItem(i, query)) {
             str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ') ' + i[0].substr(3, 3) + '-' +
             i[0].substr(6, 2) + '-' + i[0].substr(8, 2) + email);
         }
