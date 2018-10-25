@@ -19,12 +19,11 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) {
-        if (!phoneBook.has(phone)) {
-            phoneBook.set(phone, [name, email]);
+    if ((isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) &&
+        !phoneBook.has(phone)) {
+        phoneBook.set(phone, [name, email]);
 
-            return true;
-        }
+        return true;
     }
 
     return false;
@@ -51,12 +50,11 @@ function isEmail(email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) {
-        if (phoneBook.delete(phone)) {
-            phoneBook.set(phone, [name, email]);
+    if ((isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) &&
+        phoneBook.delete(phone)) {
+        phoneBook.set(phone, [name, email]);
 
-            return true;
-        }
+        return true;
     }
 
     return false;
@@ -92,15 +90,19 @@ function deleteAllRecords(toDelete) {
 function findAllRecords(query) {
     let result = [];
     for (let key of phoneBook.keys()) {
-        if (key.includes(query) ||
-            phoneBook.get(key)[0].includes(query) ||
-            (isEmail(phoneBook.get(key)[1]) && phoneBook.get(key)[1].includes(query)) ||
-            query === '*') {
+        if (dataIncludesQuery(key, phoneBook.get(key)[0], phoneBook.get(key)[1], query)) {
             result.push([key, phoneBook.get(key)[0], phoneBook.get(key)[1]]);
         }
     }
 
     return result;
+}
+
+function dataIncludesQuery(phone, name, email, query) {
+    return phone.includes(query) ||
+            name.includes(query) ||
+            (isEmail(email) && email.includes(query)) ||
+            query === '*';
 }
 
 /**
