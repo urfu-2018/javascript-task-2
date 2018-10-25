@@ -92,13 +92,12 @@ function update(phone, name, email) {
  */
 
 function findAndRemove(query) {
-    const found = phoneBook.filter(e => e.phone.includes(query) ||
-    e.name.includes(query) ||
-    ((typeof e.email === 'undefined') ? false : e.email.includes(query)));
-    for (let i = 0; i < found.length; i++) {
-        phoneBook.splice(phoneBook.findIndex(e => e === found[i]), 1);
+    let findedRecords = find(query);
+    for (let i = 0; i < findedRecords.length; i++) {
+        phoneBook.splice(phoneBook.findIndex(element => element === findedRecords[i]), 1);
     }
-
+    
+    return findedRecords.length;
 }
 
 function toFullPhoneForm(phone) {
@@ -114,7 +113,8 @@ function toFullPhoneForm(phone) {
  * @returns {String[]}
  */
 
-function search(query) {
+
+function find(query) {
     let findedRecords = [];
     if (query === '*') {
         findedRecords = phoneBook.map(element => element.name + ', ' +
@@ -134,13 +134,6 @@ function search(query) {
     return findedRecords.map(element => element.name + ', ' +
          toFullPhoneForm(element.phone) + ((typeof element.email === 'undefined')
         ? '' : ', ' + element.email)).sort();
-
-}
-
-
-function find(query) {
-
-    return search(query);
 }
 
 /**
