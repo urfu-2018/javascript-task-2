@@ -56,6 +56,10 @@ function update(phone, name, email) {
         email = '';
     }
 
+    if (!phoneBook.some(record => record.phone === phone)) {
+        return false;
+    }
+
     phoneBook.forEach(record => {
         if (record.phone === phone) {
             record.name = name;
@@ -133,10 +137,10 @@ function find(query) {
     }
 
     if (query === '*') {
-        return searchRecords(phoneBook);
+        return sortingAndConvertingObjects(phoneBook);
     }
 
-    return searchRecords(phoneBook
+    return sortingAndConvertingObjects(phoneBook
         .filter(note => {
             for (let key in note) {
                 if (note[key].includes(query)) {
@@ -148,19 +152,19 @@ function find(query) {
         }));
 }
 
-function searchRecords(arrayRecords) {
+function sortingAndConvertingObjects(arrayRecords) {
     return arrayRecords
         .sort((a, b) => {
             return a.name.localeCompare(b.name);
         })
         .map(record => {
-            if (record.email.length === 0) {
-                return `${record.name}, +7 (${record.phone.substr(0, 3)}) ${record.phone.substr(3,
-                    3)}-${record.phone.substr(6, 2)}-${record.phone.substr(8, 2)}`;
+            let result = `${record.name}, +7 (${record.phone.substr(0, 3)}) ${record.phone.substr(3,
+                3)}-${record.phone.substr(6, 2)}-${record.phone.substr(8, 2)}`;
+            if (record.email.length !== 0) {
+                result += `, ${record.email}`;
             }
 
-            return `${record.name}, +7 (${record.phone.substr(0, 3)}) ${record.phone.substr(3,
-                3)}-${record.phone.substr(6, 2)}-${record.phone.substr(8, 2)}, ${record.email}`;
+            return result;
         });
 }
 
