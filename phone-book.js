@@ -28,7 +28,7 @@ function add(phone, name, email) {
     if (!((/^\d{10}$/).test(phone))) {
         return false;
     }
-    if (Object.keys(phoneBook).includes(phone)) {
+    if (phoneBook.hasOwnProperty(phone)) {
         return false;
     }
     if (checkEmptyString(email)) {
@@ -211,13 +211,13 @@ function importFromCsv(csv) {
     if (checkCSV(csv) === 0) {
         return 0;
     }
-    const arrwithoutN = csv.split('\n');
+    const withoutN = csv.split('\n');
     let newLength = 0;
-    for (let i = 0; i < arrwithoutN.length; i++) {
-        const line = arrwithoutN[i].split(';');
-        const name = line[0];
-        const phone = line[1];
-        const email = line[2];
+    for (let i = 0; i < withoutN.length; i++) {
+        const str = withoutN[i].split(';');
+        const name = str[0];
+        const phone = str[1];
+        const email = str[2];
         if (add(phone, name, email) || update(phone, name, email)) {
             newLength++;
         }
