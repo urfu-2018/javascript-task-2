@@ -64,9 +64,6 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isValidString(query)) {
-        return 0;
-    }
     let phoneArray = Array.from(phoneBook);
     filterEntriesPhoneBooks(phoneArray, query).forEach(
         entries => phoneBook.delete(entries[0])
