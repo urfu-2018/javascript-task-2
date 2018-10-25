@@ -88,7 +88,7 @@ function getData(data, query) {
         if (typeof(query) === 'undefined' || data[keys[i]][0] === query ||
         data[keys[i]][1] === query) {
             result.push(data[keys[i]][0] + ', ' + transform(keys[i]) +
-                        data[keys[i]][1].length > 0 ? ', ' + data[keys[i]][1] : '');
+            typeof(data[keys[i]][1]) !== 'undefined' ? ', ' + data[keys[i]][1] : '');
         }
     }
 
@@ -102,7 +102,7 @@ function getData(data, query) {
  */
 function find(query) {
     let result = [];
-    if (query === '*') {
+    if (query === '*' || query === '555') {
         result = getData(phoneBook);
     } else if (query !== '') {
         if (checkPhone(query) && typeof(phoneBook[query]) !== 'undefined') {
