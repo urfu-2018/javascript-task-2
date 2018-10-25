@@ -83,11 +83,10 @@ function findAndRemove(query) {
     }
 
     let contactsToDelete = [];
-    const queryRegExp = new RegExp(query === '*' ? '' : query);
     getContacts().forEach(item => {
-        if (queryRegExp.test(item.name) ||
-            queryRegExp.test(item.phone) ||
-            queryRegExp.test(item.email) ||
+        if (item.name.includes(query) ||
+            item.phone.includes(query) ||
+            item.email !== undefined && item.email.includes(query) ||
             query === '*'
         ) {
             contactsToDelete.push(item.phone);
@@ -109,11 +108,10 @@ function find(query) {
     }
 
     let res = [];
-    const queryRegExp = new RegExp(query === '*' ? '' : query);
     getContacts().forEach(item => {
-        if (queryRegExp.test(item.name) ||
-            queryRegExp.test(item.phone) ||
-            queryRegExp.test(item.email) ||
+        if (item.name.includes(query) ||
+            item.phone.includes(query) ||
+            item.email !== undefined && item.email.includes(query) ||
             query === '*'
         ) {
             res.push(convertAnswer(item));
