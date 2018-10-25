@@ -83,7 +83,6 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    // email может быть undefined.
     const record = phoneBook.get(phone);
     const newRecord = createRecord(name, phone, email);
     if (record === undefined || newRecord === undefined || recordsAreEqual(record, newRecord)) {
@@ -142,9 +141,7 @@ function importFromCsv(csv) {
 
     csvLines.forEach(line => {
         const [name, phone, email] = line.split(';');
-        var newRecord = createRecord(name, phone, email);
-        if (newRecord) {
-            phoneBook.set(phone, newRecord);
+        if (add(phone, name, email) || update(phone, name, email)) {
             newRecordsCount += 1;
         }
     });
