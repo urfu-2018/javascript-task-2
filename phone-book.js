@@ -12,20 +12,17 @@ const isStar = true;
 let phoneBook = [];
 
 function check(phone, name) {
-    if (typeof phone !== 'string' || typeof name !== 'string' || name.trim === '') {
-        return false;
-    }
-    if (phone.search(/^\d{10}$/) === -1) {
-
+    if (typeof phone !== 'string' || typeof name !== 'string' || name.trim() === '' ||
+    phone.trim() === '') {
         return false;
     }
 
-    return true;
+    return /^\d{10}$/.test(phone);
 }
 
 function check2(email) {
     if (email !== undefined) {
-        if (typeof email !== 'string' || email.trim === '') {
+        if (typeof email !== 'string' || email.trim() === '') {
             return false;
         }
 
@@ -37,7 +34,6 @@ function generalCheck(phone, name, email) {
     if (check(phone, name) === false || check2(email) === false) {
         return false;
     }
-
 
     return true;
 }
