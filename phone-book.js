@@ -20,7 +20,8 @@ let phoneBook = [];
  */
 function add(phone, name, email) {
     if (typeof(phone) !== 'string') {
-        throw new TypeError();
+
+        return false;
     }
     if (phone.search('^\\d{10}$') === -1) {
         return false;
@@ -47,7 +48,8 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (typeof(phone) !== 'string') {
-        throw new TypeError();
+
+        return false;
     }
     if (phone.search('^\\d{10}$') === -1) {
         return false;
@@ -80,6 +82,10 @@ function findAndRemove(query) {
         phoneBook = rez;
 
         return removed;
+    }
+    if (typeof(query) !== 'string') {
+
+        return 0;
     }
     for (let i = 0; i < phoneBook.length; i++) {
         if (!(isSuitable(phoneBook[i], query))) {
@@ -128,6 +134,10 @@ function isSuitable(person, query) {
 
 function find(query) {
     let rez = [];
+    if (typeof(query) !== 'string') {
+
+        return rez;
+    }
     if (query === '*') {
         for (let i = 0; i < phoneBook.length; i++) {
             rez.push(formatData(phoneBook[i]));
