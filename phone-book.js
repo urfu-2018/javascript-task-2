@@ -114,7 +114,7 @@ function deleteContact(phone, name, email, query) {
         delete phoneBook[phone];
         count = 1;
     } else if (email !== undefined &&
-    phoneBook[phone].email.indexOf(query) > -1) {
+         email.indexOf(query) > -1) {
         delete phoneBook[phone];
         count = 1;
     }
@@ -205,11 +205,19 @@ function contactAsString(contact, phone) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    let withoutN = csv.split('\n');
+    const n = withoutN.length;
+    for (let i = 0; i < n; i++) {
+        let splited = withoutN[i].split(';');
+        const name = splited[0];
+        const phone = splited[1];
+        const email = splited[2];
+    }
+
+    return n;
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-
-    return csv.split('\n').length;
 }
 
 module.exports = {
