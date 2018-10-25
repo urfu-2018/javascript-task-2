@@ -4,12 +4,12 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,12 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!/^\d{10}$/.test(phone) || phoneBook.has(phone) || !name) {
+        return false;
+    }
+    phoneBook.set(phone, [name, email]);
 
+    return true;
 }
 
 /**
@@ -30,7 +35,12 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!phoneBook.has(phone) || !name) {
+        return false;
+    }
+    phoneBook.delete(phone);
 
+    return add(phone, name, email);
 }
 
 /**
@@ -39,7 +49,15 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let count;
+    for (let i of phoneBook) {
+        if (i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 || i[1][1].indexOf(query) > -1) {
+            phoneBook.delete(i[0]);
+            count++;
+        }
+    }
 
+    return count;
 }
 
 /**
@@ -48,7 +66,16 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let str = [];
+    for (let i of phoneBook) {
+        if (i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 || i[1][1].indexOf(query) > -1) {
+            str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ')' + i[0].substr(2, 3) + '-' +
+            i[0].substr(5, 2) + '-' + i[0].substr(7, 2) + ', ' + i[1][1]);
+        }
+    }
+    str.sort();
 
+    return str;
 }
 
 /**
