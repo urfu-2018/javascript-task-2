@@ -74,7 +74,8 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     let dataToDelete = find(query);
     for (let data of dataToDelete) {
-        let phone = data.split(', ')[1];
+        let phone = data.split(', ');
+        phone = phone[1];
         // приведём номер к простому виду и избавимся в начале строки от 7
         phone = phone.replace(/[- +()]/g, '').slice(1);
         delete phoneBook[phone];
@@ -122,8 +123,11 @@ function find(query) {
     if (query === '*') {
         return everythingFrom(phoneBook);
     }
+    let smth = [];
+    smth = getAllBy(query);
+    smth = everythingFrom(smth);
 
-    return everythingFrom(getAllBy(query));
+    return smth;
 }
 
 /**
