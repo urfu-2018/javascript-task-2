@@ -19,7 +19,7 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof(phone) !== 'string' || !((/^\d{10}$/).test(phone)) || name === '' ||
+    if (!((/^\d{10}$/).test(phone)) || name === '' ||
     name === undefined || phoneBook.hasOwnProperty(phone)) {
 
         return false;
@@ -52,7 +52,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string' || query === '' || query === undefined) {
+    if (query === '' || query === undefined) {
 
         return [];
     }
@@ -113,7 +113,8 @@ function transferPhone(phone) {
 function choicebyPhone(somearray, query) {
 
     return somearray.filter(phone => phoneBook[phone].name.includes(query) ||
-    (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)) ||
+    (phoneBook[phone].email !== undefined && phoneBook[phone].email !== '' &&
+    phoneBook[phone].email.includes(query)) ||
     phone.includes(query));
 }
 
