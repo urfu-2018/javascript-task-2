@@ -118,7 +118,7 @@ function isSuitable(person, query) {
     if (typeof(person.email) !== 'string') {
 
         return person.phone.includes(query) ||
-        person.name.includes(query);       
+        person.name.includes(query);
     }
 
     return person.phone.includes(query) ||
