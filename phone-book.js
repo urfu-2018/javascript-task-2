@@ -47,13 +47,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    const regextel = /^\d{10}$/;
     let ind = phoneBook.findIndex(x => x.tel === phone);
-    if (ind === -1 || name === undefined || name === '') {
+    if (ind === -1 || name === undefined || name === '' || !phone.match(regextel)) {
         return false;
     }
     if (email !== undefined) {
         phoneBook[ind] = { name: name, tel: phone, email: email };
-    } else if (phoneBook[ind].hasOwnProperty('email')) {
+    } else {
         phoneBook[ind] = { name: name, tel: phone };
         delete phoneBook[ind].email;
     }
