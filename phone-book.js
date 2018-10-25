@@ -103,7 +103,7 @@ function findAndRemoveStar(numberRecords) {
 
 function findAndRemove(query) {
     if (query === '') {
-        return;
+        return [];
     }
     var numberRecords = 0;
     if (query === '*') {
@@ -170,7 +170,7 @@ function find(query) {
     var string;
     var found = [];
     if (query === '') {
-        return;
+        return [];
     }
     phoneBook.forEach(element => {
         if (element.email === undefined) {
