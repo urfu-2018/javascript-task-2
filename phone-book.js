@@ -2,7 +2,7 @@
 
 /**
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -17,7 +17,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function isCorrectPhone(phone) {
-    if (typeof phone !== undefined && typeof(phone) === 'string' && phone.length === 10) {
+    if (phone !== undefined && typeof(phone) === 'string' && phone.length === 10) {
         return true;
     }
 
@@ -25,15 +25,7 @@ function isCorrectPhone(phone) {
 }
 
 function isCorrectName(name) {
-    if (typeof name !== undefined && typeof(name) === 'string') {
-        return true;
-    }
-
-    return false;
-}
-
-function isCorrectEmail(email) {
-    if (typeof email !== undefined && typeof(email === 'string')) {
+    if (name !== undefined && typeof(name) === 'string') {
         return true;
     }
 
@@ -50,8 +42,8 @@ function recordExists(phone) {
     return false;
 }
 
-function isAllArgumentsCorrect(phone, name, email) {
-    return isCorrectPhone(phone) && isCorrectName(name) && isCorrectEmail(email);
+function isAllArgumentsCorrect(phone, name) {
+    return isCorrectPhone(phone) && isCorrectName(name);
 }
 
 function add(phone, name, email) {
@@ -75,7 +67,6 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-
 function update(phone, name, email) {
     if (!isAllArgumentsCorrect(phone, name) && !recordExists(phone)) {
         return false;
@@ -155,8 +146,20 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    let counter = 0;
+    csv.split('\n').forEach(element => {
+        const elements = element.split(';');
+        const name = elements[0];
+        const phone = elements[1];
+        const email = elements[2];
+        if (add(phone, name, email)) {
+            counter++;
+        } else {
+            update(phone, name, email);
+        }
+    });
 
-    return csv.split('\n').length;
+    return counter;
 }
 
 module.exports = {
