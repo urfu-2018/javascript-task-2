@@ -43,7 +43,7 @@ function findEntryByPhone(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (name === undefined ||
+    if (!name ||
         formatPhone(phone) === null ||
         findEntryByPhone(phone) !== undefined) {
         return false;
@@ -65,7 +65,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (name === undefined || formatPhone(phone) === null) {
+    if (!name || formatPhone(phone) === null) {
         return false;
     }
     const entry = findEntryByPhone(phone);
