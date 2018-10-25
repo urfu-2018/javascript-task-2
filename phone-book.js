@@ -99,7 +99,7 @@ function dataToString(x) {
 }
 function findByQuery(query) {
     if (Boolean(query) === false || !isString(query)) {
-        return [];
+        return new Map();
     }
     if (query === '*') {
         return phoneBook;
