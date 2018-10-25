@@ -84,14 +84,8 @@ function isString(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!(isString(query) && query)) {
+    if (!isString(query) || !query) {
         return 0;
-    }
-    if (query === '*') {
-        let count = phoneBook.size;
-        phoneBook.clear();
-
-        return count;
     }
 
     let found = findQueryInSorted(query);
@@ -113,10 +107,7 @@ function find(query) {
 }
 
 function findQueryInSorted(query) {
-    let isAll = false;
-    if (query === '*') {
-        isAll = true;
-    }
+    let isAll = query === '*';
 
     return sortedBook()
         .filter(x => {
