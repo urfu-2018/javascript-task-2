@@ -71,7 +71,7 @@ function findAndRemove(query) {
     }
     let arrayWithDate = find(query);
     for (let i of arrayWithDate) {
-        let phone = i.split(',');
+        let phone = i.split(', ');
         phone = phone[1].replace(/[+7() -]/g, '');
         phoneBook.delete(phone);
     }
