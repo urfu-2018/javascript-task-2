@@ -74,6 +74,8 @@ function findAndRemove(query) {
     if (query === '*') {
         count = phoneBook.keys().length;
         phoneBook = new Map();
+
+        return count;
     }
     let toDelete = findAllRecords(query);
     count = toDelete.length;
