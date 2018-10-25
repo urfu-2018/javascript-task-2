@@ -98,7 +98,7 @@ function findAndRemove(query) {
 
     if (query === '*') {
         countDeleteRecords = phoneBook.length;
-        phoneBook.slice(0, phoneBook.length);
+        phoneBook.splice(0, phoneBook.length);
 
         return countDeleteRecords;
     }
@@ -107,7 +107,7 @@ function findAndRemove(query) {
     countDeleteRecords = arrayRecords.length;
 
     arrayRecords.forEach(record => {
-        phoneBook.slice(phoneBook.indexOf(record), 1);
+        phoneBook.splice(phoneBook.indexOf(record), 1);
     });
 
     return countDeleteRecords;
