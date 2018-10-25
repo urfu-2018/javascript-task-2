@@ -22,7 +22,7 @@ function trueParam(phone, name, email) {
     var tel = /(^[0-9]{10}$)/;
 
     return (typeof phone === 'string') && (tel.test(phone)) && (name !== '') &&
-        (email === undefined || typeof email === 'string');
+        (name !== undefined) && (email === undefined || typeof email === 'string');
 }
 
 /**
@@ -33,7 +33,7 @@ function trueParam(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook.hasOwnProperty(phone) || !trueParam(phone, name, email)) {
+    if (phoneBook.find(phone) || !trueParam(phone, name, email)) {
         return false;
     }
     phoneBook[phone] = { name: name, email: email };
@@ -49,7 +49,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook.hasOwnProperty(phone).length > 0 && (trueParam(phone, name, email))) {
+    if (phoneBook.find(phone).length > 0 && (trueParam(phone, name, email))) {
         phoneBook[phone] = { name: name, email: email };
 
         return true;
