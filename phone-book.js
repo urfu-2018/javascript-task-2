@@ -14,7 +14,7 @@ let phoneBook = [];
 
 function check(phone, name) {
     if (typeof phone !== 'string' || typeof name !== 'string' || name.trim() === '' ||
-    phone.trim() === '') {
+    phone.trim() === '' || name === undefined) {
         return false;
     }
 
@@ -94,6 +94,7 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
+
 
 function findAndRemoveStar(numberRecords) {
     phoneBook.forEach(element => {
