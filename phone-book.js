@@ -78,13 +78,9 @@ function findAndRemove(query) {
         return ((rec.tel.indexOf(query)) !== -1 ||
     (rec.name.indexOf(query) !== -1));
     }).sort(function (a, b) {
-        if (a.name > b.name) {
-            return 1;
-        } else if (a.name < b.name) {
-            return -1;
-        }
 
-        return 0;
+        return a.name.localeCompare(b.name);
+
     });
     phoneBook = phoneBook.filter(function (rec) {
         return !search.some(function (recsearch) {
