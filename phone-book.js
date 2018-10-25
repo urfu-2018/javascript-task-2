@@ -32,7 +32,7 @@ function add(phone, name, email) {
     return true;
 }
 
-function checkArguments(phone, name, email) {
+function checkArguments(phone, name) {
     if (typeof(phone) !== 'string') {
 
         return true;
