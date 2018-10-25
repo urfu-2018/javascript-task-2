@@ -11,13 +11,6 @@ const isStar = true;
  */
 let phoneBook = new Map();
 
-/**
- * Добавление записи в телефонную книгу
- * @param {String} phone
- * @param {String?} name
- * @param {String?} email
- * @returns {Boolean}
- */
 
 function match(phone, name, email) {
     for (let key in phoneBook.keys()) {
@@ -65,11 +58,6 @@ function update(phone, name, email) {
     }
 }
 
-/**
- * Удаление записей по запросу из телефонной книги
- * @param {String} query
- * @returns {Number}
- */
 function findAndRemove(query) {
     let findres = find(query);
     let val;
@@ -81,11 +69,6 @@ function findAndRemove(query) {
     return findres.length;
 }
 
-/**
- * Поиск записей по запросу в телефонной книге
- * @param {String} query
- * @returns {String[]}
- */
 function find(query) {
     if (query === '') {
 
@@ -96,7 +79,7 @@ function find(query) {
         patt = '';
     }
     let sorted = [...phoneBook.entries()]
-        .sort((a, b) => a[1].username > b[1].username).map ( function ( val) {
+        .sort((a, b) => a[1].username > b[1].username).map (function (val) {
 
             return [val[1].username,
                 val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
@@ -106,17 +89,8 @@ function find(query) {
     return sorted.filter(x => x.join('').includes(patt));
 }
 
-/**
- * Импорт записей из csv-формата
- * @star
- * @param {String} csv
- * @returns {Number} – количество добавленных и обновленных записей
- */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-    let users = csv.split('\n').map( function( val) {
+    let users = csv.split('\n').map (function (val) {
         let arr = val.split(';');
 
         return [arr[1], arr[0], arr[2]];
