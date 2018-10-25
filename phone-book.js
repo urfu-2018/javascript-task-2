@@ -4,12 +4,12 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +19,40 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (checkEmptyString(name)) {
+        return false;
+    }
+    if (phone.match(/^\d{10}$/) === null) {
+        return false;
+    }
+    const existingValues = find(phone);
+    if (checkExistingValue(existingValues, changePhoneFormat(phone))) {
+        return false;
+    }
+    phoneBook[phone] = { name: name, email: email };
 
+    return true;
+}
+
+function checkExistingValue(existingValues, phone) {
+    if (existingValues === undefined) {
+        return false;
+    }
+    for (let j = 0; j < existingValues.length; j++) {
+        if (existingValues[j].indexOf(phone) + 1) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+function checkEmptyString(str) {
+    if (typeof(str) !== 'string' || str.length === 0) {
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -30,7 +63,19 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (checkEmptyString(name)) {
+        return false;
+    }
+    if (email === undefined) {
+        phoneBook[phone].name = name;
+        delete phoneBook[phone].email;
 
+        return true;
+    }
+    phoneBook[phone].name = name;
+    phoneBook[phone].email = email;
+
+    return true;
 }
 
 /**
@@ -39,7 +84,43 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let count = 0;
+    if (query === '*') {
+        deleteAll();
+    }
+    for (var phone in phoneBook) {
+        if (phoneBook.hasOwnProperty(phone)) {
+            count = count +
+             deleteContact(phone, phoneBook[phone].name, phoneBook[phone].email, query);
+        }
+    }
 
+    return count;
+}
+
+function deleteAll() {
+    for (var ph in phoneBook) {
+        if (phoneBook.hasOwnProperty(ph)) {
+            delete phoneBook[ph];
+        }
+    }
+}
+
+function deleteContact(phone, name, email, query) {
+    let count = 0;
+    if (phone.indexOf(query) > -1) {
+        delete phoneBook[phone];
+        count = 1;
+    } else if (name.indexOf(query) > -1) {
+        delete phoneBook[phone];
+        count = 1;
+    } else if (email !== undefined &&
+    phoneBook[phone].email.indexOf(query) > -1) {
+        delete phoneBook[phone];
+        count = 1;
+    }
+
+    return count;
 }
 
 /**
@@ -48,7 +129,66 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let tmpAnswer = [];
+    let answer = [];
+    if (query === '*') {
+        return pushAll();
+    }
+    for (var phone in phoneBook) {
+        if (phoneBook.hasOwnProperty(phone)) {
+            tmpAnswer.push(pushContact(phone, query));
+        }
+    }
+    for (let i = 0; i < tmpAnswer.length; i++) {
+        if (tmpAnswer[i] !== '') {
+            answer.push(tmpAnswer[i]);
+        }
+    }
 
+    return answer.sort();
+}
+
+function pushContact(phone, query) {
+    let answer = '';
+    if (phone.indexOf(query) > -1) {
+        answer = (contactAsString(phoneBook[phone], phone));
+    } else if (phoneBook[phone].name.indexOf(query) > -1) {
+        answer = (contactAsString(phoneBook[phone], phone));
+    } else if (phoneBook[phone].email !== undefined &&
+        phoneBook[phone].email.indexOf(query) > -1) {
+        answer = (contactAsString(phoneBook[phone], phone));
+    }
+
+    return answer;
+}
+
+function pushAll() {
+    let answer = [];
+    for (var ph in phoneBook) {
+        if (phoneBook.hasOwnProperty(ph)) {
+            answer.push(contactAsString(phoneBook[ph], ph));
+        }
+    }
+
+    return answer.sort();
+}
+
+function changePhoneFormat(phone) {
+    let result = '+7 (' + phone.substring(0, 3) +
+     ') ' + phone.substring(3, 6) +
+      '-' + phone.substring(6, 8) +
+       '-' + phone[8] + phone[9];
+
+    return result;
+}
+
+function contactAsString(contact, phone) {
+    var result = contact.name + ', ' + changePhoneFormat(phone);
+    if (contact.email !== undefined) {
+        result += ', ' + contact.email;
+    }
+
+    return result;
 }
 
 /**
