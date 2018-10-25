@@ -23,7 +23,7 @@ function checkPhone(phone) {
 }
 
 function checkName(name) {
-    return (typeof(name) === 'string' && name.length > 0);
+    return (typeof(name) === 'string' && name);
 }
 
 function add(phone, name, email) {
@@ -32,9 +32,9 @@ function add(phone, name, email) {
     }
     phoneBook.set(phone,
         {
-            phone: phone,
-            name: name,
-            email: email });
+            phone,
+            name,
+            email });
 
     return true;
 }
@@ -67,10 +67,10 @@ function update(phone, name, email) {
 
 function findAndRemove(query) {
     if (!query) {
-        return [];
+        return 0;
     }
 
-    const arrayWithDate = find(query);
+    const arrayWithDate = search(query);
     arrayWithDate.forEach(entry => phoneBook.delete(entry[1]));
 
     return arrayWithDate.length;
@@ -119,7 +119,7 @@ function search(query) {
 function phoneBookToArray() {
     let arrayWithDate = [];
     for (let value of phoneBook.values()) {
-        if (value.email === undefined) {
+        if (typeof value.email === 'undefined') {
             arrayWithDate.push([value.name, value.phone]);
         } else {
             arrayWithDate.push([value.name, value.phone, value.email]);
@@ -130,8 +130,8 @@ function phoneBookToArray() {
 }
 
 function formatPhone(phone) {
-    return ('+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) + '-' + phone.slice(6, 8) +
-    '-' + phone.slice(8, 10));
+    return '+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) + '-' + phone.slice(6, 8) +
+    '-' + phone.slice(8);
 }
 
 /**
