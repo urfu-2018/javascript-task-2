@@ -2,7 +2,7 @@
 
 /**
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
@@ -17,7 +17,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function isCorrectPhone(phone) {
-    if (phone !== undefined && typeof(phone) === 'string') {
+    if (phone !== undefined && typeof(phone) === 'string' && phone.length === 10) {
         return true;
     }
 
