@@ -130,7 +130,7 @@ function find(query) {
 }
 
 function handleRecords(records) {
-    var result = new Set();
+    var result = [];
     records.forEach(record => {
         var splittedRecord = record.split('|');
         var phone = splittedRecord[0];
@@ -141,10 +141,10 @@ function handleRecords(records) {
         var handledPhone = `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
             `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
         var handledRecord = `${splittedRecord[1]}, ${handledPhone}${handledEmail}`;
-        result.add(handledRecord);
+        result.push(handledRecord);
     });
 
-    return Array.from(result).sort();
+    return result.sort();
 }
 
 /**
