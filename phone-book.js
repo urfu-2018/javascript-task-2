@@ -10,7 +10,7 @@ const phoneRe = new RegExp('^[0-9]{10}$');
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -20,12 +20,11 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isEmptyString(name) || !checkPhone(phone) ||
+    if (Boolean(name) === false || !checkPhone(phone) ||
         phone in phoneBook || !isString(name)) {
         return false;
     }
-    const person = { name, email };
-    phoneBook[phone] = person;
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -34,16 +33,9 @@ function isString(obj) {
     return typeof obj === 'string';
 }
 
-function isEmptyString(str) {
-    return str === undefined || str === '';
-}
 
 function checkPhone(phone) {
-    if (!isString(phone)) {
-        return false;
-    }
-
-    return phoneRe.test(phone);
+    return isString(phone) && phoneRe.test(phone);
 }
 
 /**
@@ -54,13 +46,10 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(phone in phoneBook) || !isString(name) || isEmptyString(name)) {
+    if (!(phone in phoneBook) || !isString(name) || Boolean(name) === false) {
         return false;
     }
-    const person = phoneBook[phone];
-
-    person.email = email;
-    person.name = name;
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -91,29 +80,16 @@ function findAndRemove(query) {
 function find(query) {
     const findResults = findByQuery(query);
     const result = [];
-    const keys = Object.keys(findResults);
-    for (var i = 0; i < keys.length; i++) {
-        const key = keys[i];
+    for (const phone of Object.keys(findResults)) {
         const person = {
-            'phone': transformPhone(key),
-            'name': findResults[key].name,
-            'email': findResults[key].email
+            'phone': transformPhone(phone),
+            'name': findResults[phone].name,
+            'email': findResults[phone].email
         };
         result.push(person);
     }
 
-    return result.sort(compare).map(x => dataToString(x));
-}
-
-function compare(a, b) {
-    if (a.name < b.name) {
-        return -1;
-    }
-    if (a.name > b.name) {
-        return 1;
-    }
-
-    return 0;
+    return result.sort((a, b) => a.name.localeCompare(b.name)).map(x => dataToString(x));
 }
 
 function dataToString(x) {
@@ -125,42 +101,34 @@ function dataToString(x) {
     return res;
 }
 function findByQuery(query) {
-    if (isEmptyString(query) || !isString(query)) {
-        return new Array(0);
+    if (Boolean(query) === false || !isString(query)) {
+        return [];
     }
-    let results;
     if (query === '*') {
-        results = phoneBook;
-    } else {
-        results = {};
-        var keys = Object.keys(phoneBook);
-
-        for (var i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            const x = phoneBook[key];
-            checkPersonAndUpdate(x, query, results, key);
-        }
+        return phoneBook;
+    }
+    const results = {};
+    for (const phone of Object.keys(phoneBook)) {
+        tryFindMatchAndUpdate(query, results, phone);
     }
 
     return results;
 }
-function checkPersonAndUpdate(x, query, results, key) {
-    if (checkPerson(x, query, key)) {
-        results[key] = x;
+function tryFindMatchAndUpdate(query, results, phone) {
+    const personData = phoneBook[phone];
+    if (checkPerson(personData, query, phone)) {
+        results[phone] = personData;
     }
 }
 
-function checkPerson(x, query, key) {
-    return (!isEmptyString(x.email) && x.email.includes(query)) ||
-        key.includes(query) ||
-        x.name.includes(query);
+function checkPerson(personData, query, phone) {
+    return (Boolean(personData.email) && personData.email.includes(query)) ||
+        phone.includes(query) || personData.name.includes(query);
 }
 
 function transformPhone(phone) {
-    const firstPart = phone.slice(0, 3);
-    const secondPart = phone.slice(3, 6);
-
-    return `+7 (${firstPart}) ${secondPart}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}\
+-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 }
 
 /**
@@ -175,8 +143,10 @@ function importFromCsv(csv) {
     for (var i = 0; i < csvRows.length; i++) {
         const row = csvRows[i];
         const phone = row[1];
-        if (update(phone, row[0], row[2]) ||
-            add(phone, row[0], row[2])) {
+        const name = row[0];
+        const email = row[2];
+        if (update(phone, name, email) ||
+            add(phone, name, email)) {
             result += 1;
         }
     }
