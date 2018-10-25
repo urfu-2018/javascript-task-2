@@ -105,8 +105,8 @@ function findAndRemove(query) {
     if (typeof query !== 'string') {
         return [];
     }
-    if (query === '') {
-        return [];
+    if (query.trim() === '') {
+        return 0;
     }
     var numberRecords = 0;
     if (query === '*') {
