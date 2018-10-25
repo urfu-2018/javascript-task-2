@@ -32,7 +32,7 @@ function add(phone, name, email) {
 }
 
 function isValidString(name) {
-    return typeof name === 'string' && name.trim().length !== 0;
+    return typeof name === 'string' && name.trim().length > 0;
 }
 
 function isValidPhone(phone, regexPhone) {
@@ -64,6 +64,15 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!isValidString(query)) {
+        return 0;
+    }
+    if (query === '*') {
+        const sizePhoneBook = phoneBook.size;
+        phoneBook = new Map();
+
+        return sizePhoneBook;
+    }
     let phoneArray = Array.from(phoneBook);
     filterEntriesPhoneBooks(phoneArray, query).forEach(
         entries => phoneBook.delete(entries[0])
@@ -80,11 +89,11 @@ function findAndRemove(query) {
  */
 function find(query) {
     let phoneArray = Array.from(phoneBook);
-    if (query !== '*') {
-        phoneArray = filterEntriesPhoneBooks(phoneArray, query);
-    }
     if (!isValidString(query)) {
         return [];
+    }
+    if (query !== '*') {
+        phoneArray = filterEntriesPhoneBooks(phoneArray, query);
     }
     phoneArray.sort(
         (entriesFirst, entriesSecond) => entriesFirst[1].name.localeCompare(entriesSecond[1].name),
