@@ -21,10 +21,10 @@ let phoneBook = new Map();
  */
 function add(phone, name, email) {
     if (Boolean(name) === false || !checkPhone(phone) ||
-        phone in phoneBook || !isString(name)) {
+        phoneBook.has(phone) || !isString(name)) {
         return false;
     }
-    phoneBook[phone] = { name, email };
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -46,10 +46,10 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(phone in phoneBook) || !isString(name) || Boolean(name) === false) {
+    if (!phoneBook.has(phone) || !isString(name) || Boolean(name) === false) {
         return false;
     }
-    phoneBook[phone] = { name, email };
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -61,15 +61,12 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const toDelete = findByQuery(query);
-    const res = {};
-    for (var key in phoneBook) {
-        if (!(key in toDelete)) {
-            res[key] = phoneBook[key];
-        }
+    for (const key of toDelete.keys()) {
+        phoneBook.delete(key);
     }
-    phoneBook = res;
 
-    return Object.keys(toDelete).length;
+
+    return toDelete.size;
 }
 
 /**
@@ -80,11 +77,11 @@ function findAndRemove(query) {
 function find(query) {
     const findResults = findByQuery(query);
     const result = [];
-    for (const phone of Object.keys(findResults)) {
+    for (const phone of findResults.keys()) {
         const person = {
             'phone': transformPhone(phone),
-            'name': findResults[phone].name,
-            'email': findResults[phone].email
+            'name': findResults.get(phone).name,
+            'email': findResults.get(phone).email
         };
         result.push(person);
     }
@@ -107,17 +104,17 @@ function findByQuery(query) {
     if (query === '*') {
         return phoneBook;
     }
-    const results = {};
-    for (const phone of Object.keys(phoneBook)) {
+    const results = new Map();
+    for (const phone of phoneBook.keys()) {
         tryFindMatchAndUpdate(query, results, phone);
     }
 
     return results;
 }
 function tryFindMatchAndUpdate(query, results, phone) {
-    const personData = phoneBook[phone];
+    const personData = phoneBook.get(phone);
     if (checkPerson(personData, query, phone)) {
-        results[phone] = personData;
+        results.set(phone, personData);
     }
 }
 
