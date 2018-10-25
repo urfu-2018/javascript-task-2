@@ -65,6 +65,9 @@ function update(phone, name, email) {
 
         return true;
     }
+    if (Object.keys(phoneBook).includes(phone)) {
+        add(phone, phoneBook.name, phoneBook.email);
+    }
     phoneBook[phone].name = name;
     phoneBook[phone].email = email;
 
@@ -81,7 +84,7 @@ function findAndRemove(query) {
     if (query === '*') {
         deleteAll();
     }
-    for (var phone in phoneBook) {
+    for (let phone in phoneBook) {
         if (phoneBook.hasOwnProperty(phone)) {
             count = count +
              deleteContact(phone, phoneBook[phone].name, phoneBook[phone].email, query);
@@ -92,7 +95,7 @@ function findAndRemove(query) {
 }
 
 function deleteAll() {
-    for (var ph in phoneBook) {
+    for (let ph in phoneBook) {
         if (phoneBook.hasOwnProperty(ph)) {
             delete phoneBook[ph];
         }
