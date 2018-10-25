@@ -33,10 +33,10 @@ function trueParam(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (find(phone).length > 0 || !trueParam(phone, name, email)) {
+    if (phoneBook[phone] || !trueParam(phone, name, email)) {
         return false;
     }
-    phoneBook[phone] = { name: name, email: email };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -49,7 +49,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!find(phone).length > 0 && (trueParam(phone, name, email))) {
+    if (!phoneBook[phone] && (trueParam(phone, name, email))) {
         phoneBook[phone] = { name: name, email: email };
 
         return true;
@@ -85,8 +85,9 @@ function find(query) {
     if (query === '') {
         return [];
     }
+    var phones = Object.keys(phoneBook);
     if (query === '*') {
-        query = '';
+        return phones;
     }
     const result = [];
     var res = '';
