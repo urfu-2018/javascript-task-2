@@ -75,7 +75,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     let forRemove = find(query);
     for (let i = 0; i < forRemove.length; i++) {
-        delete phoneBook[forRemove.split(', ')[1]];
+        delete phoneBook[forRemove[i].split(', ')[1]];
     }
 
     return forRemove.length;
