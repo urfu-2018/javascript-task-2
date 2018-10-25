@@ -37,12 +37,11 @@ function isPhone(phone) {
 }
 
 function isName(name) {
-    return typeof name === 'string' && /^\S+$/.test(name);
+    return typeof name === 'string' && name !== '';
 }
 
 function isEmail(email) {
-    return typeof email === 'string' &&
-            /^([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(email);
+    return typeof email === 'string' && email !== '';
 }
 
 /**
