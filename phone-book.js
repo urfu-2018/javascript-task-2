@@ -54,11 +54,11 @@ function update(phone, name, email) {
 
     if (name && phoneLogIndex !== -1) {
         phoneBook[phoneLogIndex].name = name;
-        if (!email) {
-            delete phoneBook[phoneLogIndex].email;
-        } else {
-            phoneBook[phoneLogIndex].email = email;
-        }
+        // if (!email) {
+        //     delete phoneBook[phoneLogIndex].email;
+        // } else {
+        phoneBook[phoneLogIndex].email = email;
+        // }
 
         return true;
     }
@@ -98,7 +98,7 @@ function findAndRemove(query) {
     let phoneBookIndexList = phoneBookQuerySet.filter((acc) => (acc[0]))
         .map((acc) => (acc[1]));
 
-    phoneBookIndexList.forEach((index) => (delete phoneBook[index]));
+    phoneBookIndexList.forEach((index) => (phoneBook.splice(index, 1)));
 
     return phoneBookIndexList.length;
 }
