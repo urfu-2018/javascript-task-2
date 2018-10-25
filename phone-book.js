@@ -14,7 +14,7 @@ const regextel = /^\d{10}$/;
 
 function check(phone, name) {
 
-    return (!name || typeof name !== 'string' || typeof phone !== 'string' ||
+    return (!name || !phone || typeof name !== 'string' || typeof phone !== 'string' ||
     !phone.match(regextel));
 }
 
