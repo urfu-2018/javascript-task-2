@@ -83,6 +83,7 @@ function findAndRemove(query) {
     let count = 0;
     if (query === '*') {
         deleteAll();
+
         return phoneBook.length;
     }
     for (let phone in phoneBook) {
