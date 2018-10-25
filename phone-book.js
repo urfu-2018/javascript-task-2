@@ -116,7 +116,6 @@ function toFullPhoneForm(phone) {
  * @param {String} query
  * @returns {String[]}
  */
-
 function search(query) {
     if (query === undefined || typeof query !== 'string' || query === '') {
         return [];
@@ -138,7 +137,8 @@ function search(query) {
 }
 
 function find(query) {
-    let findedRecords = search(query);
+    let findedRecords = [];
+    findedRecords = search(query);
 
     return findedRecords.map(element => element.name + ', ' +
          toFullPhoneForm(element.phone) + ((typeof element.email === 'undefined')
