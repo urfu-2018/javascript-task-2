@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -210,11 +210,16 @@ function findAll() {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    let array = csv.split('\n');
+    let count = 0;
+    for (let i = 0; i < array.length; i++) {
+        let array2 = array[i].split(';');
+        if (add(array2[1], array2[0], array2[2]) || update(array2[1], array2[0], array2[2])) {
+            count++;
+        }
+    }
 
-    return csv.split('\n').length;
+    return count;
 }
 
 module.exports = {
