@@ -80,10 +80,10 @@ function findAndRemove(query) {
 function phoneBookToArray() {
     return Array.from(phoneBook).map(entry => {
         if (typeof entry[1].email === 'undefined') {
-            return [entry[1].name, transformPhone(entry[0])];
+            return [entry[1].name, entry[0]];
         }
 
-        return [entry[1].name, transformPhone(entry[0]), entry[1].email];
+        return [entry[1].name, entry[0], entry[1].email];
     });
 }
 
@@ -102,7 +102,12 @@ function search(query) {
 function entriesToStringArray(entries) {
     return entries.sort((entry1, entry2) => entry1[0].localeCompare(entry2[0]))
         .map(entry => {
-            return entry.join(', ');
+            const [name, phone, email] = entry;
+            if (entry.length === 3) {
+                return `${name}, ${transformPhone(phone)}, ${email}`;
+            }
+
+            return `${name}, ${transformPhone(phone)}`;
         });
 }
 
