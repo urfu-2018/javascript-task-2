@@ -103,7 +103,16 @@ function findAndRemove(query) {
         return countDeleteRecords;
     }
 
-    const arrayRecords = find(query);
+    const arrayRecords = phoneBook
+        .filter(note => {
+            for (let key in note) {
+                if (note[key].includes(query)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
     countDeleteRecords = arrayRecords.length;
 
     arrayRecords.forEach(record => {
