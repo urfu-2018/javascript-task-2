@@ -30,7 +30,7 @@ function add(phone, name, email) {
         return true;
     }
 
-    return;
+    return false;
 }
 
 /**
@@ -47,7 +47,7 @@ function update(phone, name, email) {
         return true;
     }
 
-    return;
+    return false;
 }
 
 function checkContain(number, query) {
@@ -102,8 +102,13 @@ function find(query) {
         .map(record => {
             let digits = record.number.match(PHONE_REGEX);
             let str = `${record.name}, +7 (${digits[1]}) ${digits[2]}-${digits[3]}-${digits[4]}`;
+            if (record.email === undefined) {
+                record.email = '';
+            } else {
+                record.email = ', ' + record.email;
+            }
 
-            return record.email ? str + ', ' + record.email : str;
+            return str + record.email;
 
         });
 }
