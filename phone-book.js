@@ -73,7 +73,7 @@ function findAndRemove(query) {
     let dataToDelete = find(query);
     for (let data of dataToDelete) {
         // приведём номер к простому виду и избавимся в начале строки от 7
-        let phone = data.split(', ')[1].replace(/[- +()]/g, '').slice(1);
+        let phone = data.split(', ')[1].replace(/[- +()]/g, '').substring(1);
         delete phoneBook[phone];
     }
 
@@ -83,8 +83,8 @@ function findAndRemove(query) {
 function everythingFrom(array) {
     let result = [];
     for (let key of Object.keys(array)) {
-        let element = `${array[key][0]}, +7 (${key.slice(0, 3)}) ` +
-        `${key.slice(3, 6)}-${key.slice(6, 8)}-${key.slice(8, 10)}`;
+        let element = `${array[key][0]}, +7 (${key.substring(0, 3)}) ` +
+        `${key.substring(3, 6)}-${key.substring(6, 8)}-${key.substring(8, 10)}`;
         if (array[key][1] !== undefined) {
             element = `${element}, ${array[key][1]}`;
         }
@@ -98,8 +98,8 @@ function everythingFrom(array) {
 function getAllBy(element) {
     let result = [];
     for (let key of Object.keys(phoneBook)) {
-        if (phoneBook[key][0].search(element) !== -1 || key.search(element) !== -1 ||
-        (phoneBook[key][1] !== undefined && phoneBook[key][1].search(element) !== -1)) {
+        if (phoneBook[key][0].indexOf(element) !== -1 || key.indexOf(element) !== -1 ||
+        (phoneBook[key][1] !== undefined && phoneBook[key][1].indexOf(element) !== -1)) {
             result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
