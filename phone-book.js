@@ -82,7 +82,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     if (typeof query !== 'string' || query === '') {
-        return 0;
+        return;
     } else if (query === '*') {
         const deletedQuantity = Object.keys(phoneBook).length;
         phoneBook = [];
