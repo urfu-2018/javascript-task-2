@@ -81,12 +81,16 @@ function findAndRemove(query) {
     return forRemove.length;
 }
 
+function extraChecking(query, data, keys) {
+    return typeof(query) === 'undefined' || data[keys[i]][0].indexOf(query) !== -1 ||
+        typeof([keys[i]][1]) !== 'undefined' && data[keys[i]][1].indexOf(query) !== -1;
+}
+
 function getData(data, query) {
     let result = [];
     const keys = Object.keys(data);
     for (let i = 0; i < keys.length; i++) {
-        if (typeof(query) === 'undefined' || data[keys[i]][0].indexOf(query) !== -1 ||
-        typeof([keys[i]][1]) !== 'undefined' && data[keys[i]][1].indexOf(query) !== -1) {
+        if (extraChecking(query, data, keys)) {
             result.push(data[keys[i]][0] + ', ' + transform(keys[i]) +
             (typeof(data[keys[i]][1]) !== 'undefined' ? ', ' + data[keys[i]][1] : ''));
         }
@@ -146,7 +150,7 @@ function importFromCsv(csv) {
     let count = phones.length;
     for (let i = 0; i < phones.length; i++) {
         let data = phones[i].split(';');
-        if (!csvAdd) {
+        if (!csvAdd(data)) {
             count--;
         }
     }
