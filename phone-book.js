@@ -59,7 +59,7 @@ function update(phone, name, email) {
     if (checkEmptyString(name)) {
         return false;
     }
-    if (checkEmptyString(phone)) {
+    if (!(phone in phoneBook)) {
         return false;
     }
     if (email === undefined) {
