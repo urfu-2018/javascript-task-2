@@ -48,7 +48,7 @@ function isValidName(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) && !isValidRecord(phone, name)) {
+    if (!phoneBook.has(phone) || !isValidRecord(phone, name)) {
         return false;
     }
 
@@ -119,7 +119,7 @@ function formatRecord(record) {
 }
 
 function formatNumber(phone) {
-    const phoneNumber = `${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+    const phoneNumber = `${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
 
     return `+7 (${phone.slice(0, 3)}) ${phoneNumber}`;
 }
