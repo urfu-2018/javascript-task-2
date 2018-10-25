@@ -21,7 +21,7 @@ let phoneBook = [];
 function add(phone, name, email) {
     const phoneCheck = /^\d{10}$/.test(phone);
     const nameCheck = name && name.length > 0;
-    let nameInPhoneBookCheck = phoneBook.filter(acc => acc.phone === phone);
+    const nameInPhoneBookCheck = phoneBook.filter(acc => acc.phone === phone);
 
     if (phoneCheck && nameCheck && nameInPhoneBookCheck.length === 0) {
         phoneBook.push({
@@ -80,10 +80,10 @@ function findAndRemove(query) {
         return phoneBookLength;
     }
 
-    phoneBook = phoneBook.filter((acc) => {
-        const phoneCheck = acc.phone.includes(query);
-        const nameCheck = acc.name.includes(query);
-        const emailCheck = acc.email && acc.email.includes(query);
+    phoneBook = phoneBook.filter((log) => {
+        const phoneCheck = log.phone.includes(query);
+        const nameCheck = log.name.includes(query);
+        const emailCheck = log.email && log.email.includes(query);
 
         return !(phoneCheck || nameCheck || emailCheck);
     });
@@ -97,17 +97,17 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const formatLog = acc => {
+    const formatLog = log => {
         const phone = '+7 (' +
-            acc.phone.substring(0, 3) + ') ' +
-            acc.phone.substring(3, 6) + '-' +
-            acc.phone.substring(6, 8) + '-' +
-            acc.phone.substring(8, 10);
-        if (!acc.email) {
-            return [acc.name, phone].join(', ');
+            log.phone.substring(0, 3) + ') ' +
+            log.phone.substring(3, 6) + '-' +
+            log.phone.substring(6, 8) + '-' +
+            log.phone.substring(8, 10);
+        if (!log.email) {
+            return [log.name, phone].join(', ');
         }
 
-        return [acc.name, phone, acc.email].join(', ');
+        return [log.name, phone, log.email].join(', ');
     };
 
     if (!query) {
@@ -118,10 +118,10 @@ function find(query) {
         return phoneBook.map(formatLog).sort();
     }
 
-    let phoneBookQuerySet = phoneBook.filter(acc => {
-        const phoneCheck = acc.phone.includes(query);
-        const nameCheck = acc.name.includes(query);
-        const emailCheck = acc.email && acc.email.includes(query);
+    let phoneBookQuerySet = phoneBook.filter(log => {
+        const phoneCheck = log.phone.includes(query);
+        const nameCheck = log.name.includes(query);
+        const emailCheck = log.email && log.email.includes(query);
 
         return phoneCheck || nameCheck || emailCheck;
     });
