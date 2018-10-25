@@ -16,13 +16,15 @@ function formatPhone(phone) {
     if (phone === undefined || phone.toString() !== phone || phone.length !== phoneLength) {
         return null;
     }
-    const unique = something => new Set(something).size === 1;
+
+    const matcher = /^(\d{3})(\d{3})(\d{2})(\d{2})/;
+    if (!matcher.test(phone)) {
+        return null;
+    }
+
     // noinspection JSCheckFunctionSignatures
     const tokens = [[0, 3], [3, 3], [6, 2], [8, 2]]
         .map(pair => phone.substr(...pair));
-    if (!tokens.every(unique)) {
-        return null;
-    }
 
     return `+7 (${tokens[0]}) ` + tokens.slice(1)
         .join('-');
