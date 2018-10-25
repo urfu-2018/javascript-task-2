@@ -36,9 +36,8 @@ function checkInput(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (arguments.length !== 1 && checkInput(phone, name) &&
+    if (checkInput(phone, name) &&
         typeof(phoneBook[phone]) === 'undefined') {
-        email = typeof(email) === 'undefined' ? '' : email;
         phoneBook[phone] = [name, email];
 
         return true;
@@ -55,9 +54,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (arguments.length !== 1 && checkInput(phone, name) &&
+    if (checkInput(phone, name) &&
         typeof(phoneBook[phone]) !== 'undefined') {
-        email = typeof(email) === 'undefined' ? '' : email;
         phoneBook[phone] = [name, email];
 
         return true;
@@ -74,10 +72,8 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     let dataToDelete = find(query);
     for (let data of dataToDelete) {
-        let phone = data.split(', ');
-        phone = phone[1];
         // приведём номер к простому виду и избавимся в начале строки от 7
-        phone = phone.replace(/[- +()]/g, '').slice(1);
+        let phone = data.split(', ')[1].replace(/[- +()]/g, '').slice(1);
         delete phoneBook[phone];
     }
 
@@ -89,7 +85,7 @@ function everythingFrom(array) {
     for (let key of Object.keys(array)) {
         let element = `${array[key][0]}, +7 (${key.slice(0, 3)}) ` +
         `${key.slice(3, 6)}-${key.slice(6, 8)}-${key.slice(8, 10)}`;
-        if (array[key][1].length !== 0) {
+        if (array[key][1] !== undefined) {
             element = `${element}, ${array[key][1]}`;
         }
         result.push(element);
@@ -103,7 +99,7 @@ function getAllBy(element) {
     let result = [];
     for (let key of Object.keys(phoneBook)) {
         if (phoneBook[key][0].search(element) !== -1 || key.search(element) !== -1 ||
-        phoneBook[key][1].search(element) !== -1) {
+        (phoneBook[key][1] !== undefined && phoneBook[key][1].search(element) !== -1)) {
             result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
@@ -123,11 +119,8 @@ function find(query) {
     if (query === '*') {
         return everythingFrom(phoneBook);
     }
-    let smth = [];
-    smth = getAllBy(query);
-    smth = everythingFrom(smth);
 
-    return smth;
+    return everythingFrom(getAllBy(query));
 }
 
 /**
@@ -147,7 +140,7 @@ function importFromCsv(csv) {
         let data = {
             name: contact[0],
             phone: contact[1],
-            email: typeof(contact[2]) === 'undefined' ? '' : contact[2]
+            email: contact[2]
         };
         kills = update(data.phone, data.name, data.email) ||
         add(data.phone, data.name, data.email) ? kills + 1 : kills;
