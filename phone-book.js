@@ -65,7 +65,7 @@ function __find(query) {
         return [];
     }
     if (query === '*') {
-        query = '';
+        return Object.keys(phoneBook);
     }
 
     return Object.keys(phoneBook)
