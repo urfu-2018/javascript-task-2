@@ -63,7 +63,7 @@ function findAndRemove(query) {
  * @returns {String[]}*/
 
 function find(query) {
-    if (query === '') {
+    if (!query) {
         return [];
     }
     let processed;
@@ -74,8 +74,7 @@ function find(query) {
     }
 
     return processed.map(function (contact) {
-        const formattedPhone = contact.phone.replace(/(.{3})(.{3})(.{2})(.{2})/,
-            '+7 ($1) $2-$3-$4');
+        const formattedPhone = contact.phone.replace(phoneTest, '+7 ($1) $2-$3-$4');
         let result = contact.name + ', ' + formattedPhone;
         if (contact.email) {
             result += ', ' + contact.email;
@@ -96,19 +95,11 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    const entries = csv.split('\n');
-    let count = null;
-    for (let entry of entries) {
-        const contact = entry.split(';');
-        const name = contact[0];
-        const phone = contact[1];
-        const email = contact[2];
-        if (add(phone, name, email) || update(phone, name, email)) {
-            count ++;
-        }
-    }
+    return csv.split('\n').filter(contact => {
+        const [name, phone, email] = contact.split(';');
 
-    return count;
+        return add(phone, name, email) || update(phone, name, email);
+    }).length;
 }
 
 module.exports = {
