@@ -13,8 +13,8 @@ let phoneBook = [];
 
 
 function check(phone, name) {
-    if (typeof phone !== 'string' || typeof name !== 'string' || name.trim() === '' ||
-    phone.trim() === '' || name === undefined) {
+    if (typeof phone !== 'string' || typeof name !== 'string' || name.length <= 0 ||
+    phone <= 0) {
         return false;
     }
 
@@ -23,7 +23,7 @@ function check(phone, name) {
 
 function check2(email) {
     if (email !== undefined) {
-        if (typeof email !== 'string' || email.trim() === '') {
+        if (typeof email !== 'string' || email.length === 0) {
             return false;
         }
     }
@@ -40,8 +40,8 @@ function generalCheck(phone, name, email) {
     return true;
 }
 
-function checkPhone(phoneBookk, phone) {
-    return phoneBookk.some(function (element) {
+function checkPhone(phone) {
+    return phoneBook.some(function (element) {
         return (element.phone === phone);
     });
 }
@@ -57,7 +57,7 @@ function add(phone, name, email) {
     if (generalCheck(phone, name, email) === false) {
         return false;
     }
-    if (checkPhone(phoneBook, phone) === true) {
+    if (checkPhone(phone) === true) {
         return false;
     }
     var entry = { phone: phone, name: name, email: email };
@@ -106,28 +106,9 @@ function findAndRemoveStar(numberRecords) {
     return numberRecords;
 }
 
-function findAndRemoveEmail(query) {
-    var numberRecords = 0;
-    phoneBook.forEach(element => {
-        if (element.email !== undefined) {
-            if (element.phone.includes(query) === true ||
-            element.name.includes(query) === true ||
-            element.email.includes(query) === true) {
-                delete phoneBook[element];
-                numberRecords++;
-            }
-        }
-    });
-
-    return numberRecords;
-}
-
 
 function findAndRemove(query) {
-    if (typeof query !== 'string') {
-        return 0;
-    }
-    if (query.trim() === '') {
+    if (typeof query !== 'string' || query.length === 0) {
         return 0;
     }
     var numberRecords = 0;
@@ -135,15 +116,13 @@ function findAndRemove(query) {
         return findAndRemoveStar(numberRecords);
     }
     phoneBook.forEach(element => {
-        if (element.email === undefined) {
-            if (element.phone.includes(query) === true ||
-            element.name.includes(query) === true) {
-                delete phoneBook[element];
-                numberRecords++;
-            }
+        if (element.phone.includes(query) === true ||
+            element.name.includes(query) === true ||
+            (element.email ? element.email.includes(query) : false)) {
+            delete phoneBook[element];
+            numberRecords++;
         }
     });
-    numberRecords = numberRecords + findAndRemoveEmail(query);
 
     return numberRecords;
 }
@@ -153,21 +132,6 @@ function findAndRemove(query) {
  * @param {String} query
  * @returns {String[]}
  */
-
-function findMore(query, string, found) {
-    phoneBook.forEach(element => {
-        if (element.email !== undefined) {
-            if (element.email.includes(query) === true || element.phone.includes(query) === true ||
-            element.name.includes(query) === true) {
-                string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
-                element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
-                '-' + element.phone.slice(8, 10) + ', ' + element.email;
-                found.push(string);
-            }
-        }
-
-    });
-}
 
 function findStar(query, string, found) {
     phoneBook.forEach(element => {
@@ -187,27 +151,25 @@ function findStar(query, string, found) {
 }
 
 function find(query) {
-    if (typeof query !== 'string') {
+    if (typeof query !== 'string' || query.length === 0) {
         return [];
     }
     var string;
     var found = [];
-    if (query.trim() === '') {
-        return [];
-    }
     phoneBook.forEach(element => {
-        if (element.email === undefined) {
-            if (element.phone.includes(query) === true ||
-            element.name.includes(query) === true) {
-                string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
+        if (element.phone.includes(query) === true ||
+            element.name.includes(query) === true ||
+            (element.email ? element.email.includes(query) : false)) {
+            string = element.name + ', +7 (' + element.phone.slice(0, 3) + ') ' +
                 element.phone.slice(3, 6) + '-' + element.phone.slice(6, 8) +
-                '-' + element.phone.slice(8, 10);
-                found.push(string);
-            }
+                '-' + element.phone.slice(8, 10) +
+                (element.email ? ', ' + element.email : '');
+            found.push(string);
         }
+
     });
     findStar(query, string, found);
-    findMore(query, string, found);
+    // findMore(query, string, found);
 
     return found.sort((a, b) => a.split(',')[0].localeCompare(b.split(',')[0]));
 }
@@ -219,7 +181,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (typeof csv !== 'string' || csv.trim() === '') {
+    if (typeof csv !== 'string' || csv.length === 0) {
         return 0;
     }
     var line = csv.split('\n');
