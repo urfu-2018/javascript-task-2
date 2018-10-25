@@ -16,7 +16,7 @@ const isValidEmail = email => {
 };
 
 const isValidName = name => {
-    return typeof name === 'string' || name === '';
+    return typeof name === 'string' && name !== '';
 };
 
 const isParamsCorrect = (phone, name, email) => {
@@ -36,7 +36,7 @@ const convertAnswer = userInf => {
         String(userInf.email !== undefined ? `, ${userInf.email}` : '');
 };
 
-const getContacts = () => {
+function getContacts() {
     const res = [];
     phoneBook.forEach((value, key) => {
         let { email, name } = value;
@@ -44,7 +44,7 @@ const getContacts = () => {
     });
 
     return res.sort((a, b) => a.name.localeCompare(b.name));
-};
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -71,7 +71,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!(phoneBook.has(phone)) && !isParamsCorrect(phone, name, email)) {
+    if (!isParamsCorrect(phone, name, email)) {
         return false;
     }
 
