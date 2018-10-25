@@ -69,15 +69,14 @@ function findAndRemove(query) {
     if (!query) {
         return 0;
     }
-    let arrayWithDate = phoneBookToArray();
-    let answer = find(query).length;
+    let arrayWithDate = find(query);
     for (let i of arrayWithDate) {
         let phone = i.split(',');
         phone = phone[1].replace(/[+7() -]/g, '');
         phoneBook.delete(phone);
     }
 
-    return answer;
+    return arrayWithDate.length;
 }
 
 /**
@@ -90,7 +89,7 @@ function find(query) {
     let arrayWithDate = phoneBookToArray();
     if (query === '*') {
         return arrayWithDate.sort((a, b) => a[0].localeCompare(b[0]));
-    } else if (query === undefined) {
+    } else if (!query) {
 
         return [];
     }
