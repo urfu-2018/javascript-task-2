@@ -94,13 +94,21 @@ function find(query) {
 
     return numbers.filter(number => {
 
-
         return checkContain(number, query);
     }) // contains condition
         .map(number => {
             return { name: phoneBook[number].name, number, email: phoneBook[number].email };
         })
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort(function (a, b) {
+            if (a.name > b.name) {
+                return 1;
+            }
+            if (a.name < b.name) {
+                return -1;
+            }
+
+            return 0;
+        })
         .map(record => {
             let digits = record.number.match(PHONE_REGEX);
             let str = `${record.name}, +7 (${digits[1]}) ${digits[2]}-${digits[3]}-${digits[4]}`;
@@ -119,11 +127,6 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-
-
     return csv.split('\n')
         .map(line => line.split(';'))
         .reduce((count, record) => {
