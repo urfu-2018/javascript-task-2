@@ -106,6 +106,7 @@ function getAllBy(element) {
             result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
+    result.sort();
 
     return result;
 }
