@@ -107,7 +107,7 @@ function findAndRemove(query) {
 function find(query) {
     if (query === '' || query === undefined) {
 
-        return 0;
+        return [];
     }
     let array = [];
     phoneBook.sort(sortAr);
