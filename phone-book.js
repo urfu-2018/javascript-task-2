@@ -33,7 +33,7 @@ function trueParam(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (find(phone) || !trueParam(phone, name, email)) {
+    if (find(phone).length > 0 || !trueParam(phone, name, email)) {
         return false;
     }
     phoneBook[phone] = { name: name, email: email };
@@ -49,7 +49,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (find(phone).length > 0 && (trueParam(phone, name, email))) {
+    if (!find(phone).length > 0 && (trueParam(phone, name, email))) {
         phoneBook[phone] = { name: name, email: email };
 
         return true;
@@ -117,17 +117,19 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    if (csv === undefined || typeof (csv) !== 'string' || csv === '') {
+    if (csv === undefined || csv === '') {
         return 0;
     }
     const newCsv = csv.split('\n');
     var count = 0;
-    var text = newCsv.split(';');
-    var name = text[0];
-    var phone = text[1];
-    var email = text[2];
-    if (add(phone, name, email) || update(phone, name, email)) {
-        count++;
+    for (var i = 0; i < newCsv.length; i++) {
+        var text = newCsv[i].split(';');
+        var name = text[0];
+        var phone = text[1];
+        var email = text[2];
+        if (add(phone, name, email) || update(phone, name, email)) {
+            count++;
+        }
     }
 
     return count;
