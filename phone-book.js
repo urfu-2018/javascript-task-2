@@ -191,7 +191,7 @@ function find(query) {
     }
     var string;
     var found = [];
-    if (query === '') {
+    if (query.trim() === '') {
         return [];
     }
     phoneBook.forEach(element => {
