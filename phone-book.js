@@ -20,13 +20,10 @@ let phoneBook = new Map();
  */
 function add(phone, name, email) {
     if (!isCorrectPhoneNumber(phone) || !isCorrectName(name) ||
-    Object.keys(phoneBook).includes(phone)) {
+    phoneBook.has(phone)) {
         return false;
     }
-    phoneBook[phone] = {
-        name: name,
-        email: email
-    };
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -47,8 +44,8 @@ function isCorrectName(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (Object.keys(phoneBook).includes(phone) && name !== undefined && name !== '') {
-        phoneBook[phone] = { name, email };
+    if (phoneBook.has(phone) && name !== undefined && name !== '') {
+        phoneBook.set(phone, { name, email });
 
         return true;
     }
@@ -64,7 +61,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     const keys = findKeysToRemove(query);
     for (let key of keys) {
-        delete phoneBook[key];
+        phoneBook.delete(key);
     }
 
     return keys.length;
@@ -76,29 +73,27 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const kyes = findKeysToRemove(query);
+    const keys = findKeysToRemove(query);
 
-    return kyes.sort(compareNames)
+    return keys.sort(compareNames)
         .map(formatRecord);
 }
 
 function compareNames(a, b) {
-    return phoneBook[a].name.localeCompare(phoneBook[b].name);
+    return phoneBook.get(a).name.localeCompare(phoneBook.get(b).name);
 }
 
 function formatRecord(phone) {
-    var number = formatPhoneNumber(phone);
-    var output = [phoneBook[phone].name, number];
-    if (phoneBook[phone].email !== undefined) {
-        output.push(phoneBook[phone].email);
+    const number = formatPhoneNumber(phone);
+    let output = [phoneBook.get(phone).name, number];
+    if (phoneBook.get(phone).email !== undefined) {
+        output.push(phoneBook.get(phone).email);
     }
 
     return output.join(', ');
 }
 
 function formatPhoneNumber(phone) {
-    // var arr = /^(\d{3})(\d{3})(\d{2})(\d{2})$/.exec(phone);
-    // return format: +7 (555) 333-00-33
     const p1 = phone.slice(0, 3);
     const p2 = phone.slice(3, 6);
     const p3 = phone.slice(6, 8);
@@ -109,17 +104,32 @@ function formatPhoneNumber(phone) {
 
 function findKeysToRemove(query) {
     if (query === '*') {
-        return Object.keys(phoneBook);
+        return getAllKeys();
     }
     if (query === '' || query === undefined) {
         return [];
     }
 
-    return Object.keys(phoneBook)
-        .filter(phone =>
-            phone.includes(query) ||
-            phoneBook[phone].name.includes(query) ||
-            (phoneBook[phone].email !== undefined && phoneBook[phone].email.includes(query)));
+    return getAllKeys().filter(phone =>
+        phone.includes(query) ||
+        phoneBook.get(phone).name.includes(query) ||
+        (phoneBook.get(phone).email !== undefined &&
+        phoneBook.get(phone).email.includes(query)));
+}
+
+function getAllKeys() {
+    let keys = [];
+    const iterator = phoneBook.keys();
+
+    for (;;) {
+        const result = iterator.next();
+        if (result.done) {
+            break;
+        }
+        keys.push(result.value);
+    }
+
+    return keys;
 }
 
 /**
@@ -137,13 +147,13 @@ function importFromCsv(csv) {
     if (typeof(csv) !== 'string') {
         return 0;
     }
-    var count = 0;
-    var records = csv.split('\n');
+    let count = 0;
+    const records = csv.split('\n');
     records.forEach(record => {
-        var data = record.split(';');
-        var name = data[0];
-        var phone = data[1];
-        var email = data[2];
+        const data = record.split(';');
+        const name = data[0];
+        const phone = data[1];
+        const email = data[2];
         if (add(phone, name, email)) {
             count++;
         } else if (update(phone, name, email)) {
