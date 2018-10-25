@@ -25,10 +25,7 @@ let notesByQuery = (query) =>
             .filter(x =>
                 x.some(str => query === '*' || str.indexOf(query) + 1));
 
-let checkArgs = (phone, name) =>
-    isCorrectNumber(phone) && name;
-
-let set = (phone, name, email) => {
+let set = function (phone, name, email) {
     phoneBook[phone] = { 'name': name, 'email': email };
 
     return true;
@@ -42,8 +39,9 @@ let set = (phone, name, email) => {
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    return checkArgs(phone, name) &&
+    return isCorrectNumber(phone) &&
         !(phone in phoneBook) &&
+        name &&
         set(phone, name, email);
 }
 
@@ -55,8 +53,8 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    return checkArgs(phone, name) &&
-        phone in phoneBook &&
+    return phone in phoneBook &&
+        name &&
         set(phone, name, email);
 }
 
