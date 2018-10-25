@@ -28,7 +28,7 @@ function add(phone, name, email) {
     if (!((/^\d{10}$/).test(phone))) {
         return false;
     }
-    if (phoneBook[phone] !== undefined) {
+    if (phoneBook.hasOwnProperty(phone)) {
         return false;
     }
     if (checkEmptyString(email)) {
@@ -85,7 +85,7 @@ function findAndRemove(query) {
     }
     let count = 0;
     if (query === '*') {
-        const res = phoneBook.length;
+        const res = Object.keys(phoneBook).length;
         deleteAll();
 
         return res;
