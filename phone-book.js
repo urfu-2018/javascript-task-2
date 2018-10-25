@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,8 +18,21 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name = '', email = '') {
+    const validPhone = /^(\d)\1\1(\d)\2\2(\d)\3(\d)\4$/.test(phone);
+    const contact = phoneBook[phone];
 
+    if (!validPhone || !name || contact) {
+        return false;
+    }
+
+    phoneBook[phone] = {
+        phone: phone.toString(),
+        name,
+        email
+    };
+
+    return true;
 }
 
 /**
@@ -29,8 +42,17 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone = '', name = '', email = '') {
+    const contact = phoneBook[phone];
 
+    if (!contact || !name) {
+        return false;
+    }
+
+    contact.name = name;
+    contact.email = email;
+
+    return true;
 }
 
 /**
@@ -39,7 +61,10 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    const result = findAll(query);
+    result.forEach(r => delete phoneBook[r.phone]);
 
+    return result.length;
 }
 
 /**
@@ -48,7 +73,44 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    const result = findAll(query);
 
+    return result.map(c => {
+        let r = `${c.name}, ${toFullPhone(c.phone)}`;
+
+        if (c.email) {
+            r += `, ${c.email}`;
+        }
+
+        return r;
+    });
+}
+
+function findAll(query) {
+
+    if (!query.trim() || typeof query !== 'string') {
+        return [];
+    }
+
+    let allContacts = Object.keys(phoneBook).map(p => phoneBook[p]);
+
+    if (query !== '*') {
+        allContacts = allContacts.filter(c =>
+            c.name.indexOf(query) !== -1 ||
+            c.phone.indexOf(query) !== -1 ||
+            c.email.indexOf(query) !== -1
+        );
+    }
+
+    allContacts.sort((a, b) => b.name > a.name ? -1 : 1);
+
+    return allContacts;
+}
+
+function toFullPhone(phone) {
+    const code = phone.substr(0, 3);
+
+    return `+7 (${code}) ${phone.substr(3, 3)}-${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
 }
 
 /**
@@ -61,8 +123,19 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    csv.split('\n')
+        .forEach(str => {
+            const contactArray = str.split(';');
+            const obj = {
+                name: contactArray[0],
+                phone: contactArray[1],
+                email: contactArray[2]
+            };
 
-    return csv.split('\n').length;
+            phoneBook[obj.phone] = obj;
+        });
+
+    return csv.split('\n').length - 1;
 }
 
 module.exports = {
