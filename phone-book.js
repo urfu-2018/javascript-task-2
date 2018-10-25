@@ -11,6 +11,10 @@ const isStar = false;
  */
 let phoneBook = new Map();
 
+function validatePhone(phone) {
+    return typeof(phone) === 'string' && /^\d{10}$/.test(phone);
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,7 +23,7 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^\d{10}$/.test(phone) || phoneBook.has(phone) || !name) {
+    if (validatePhone(phone) || phoneBook.has(phone) || !name) {
         return false;
     }
     if (!email) {
