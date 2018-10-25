@@ -47,12 +47,7 @@ function update(phone, name, email) {
         return false;
     }
 
-
-    if (!email) {
-        phoneBook[phone] = { name: name };
-    } else {
-        phoneBook[phone] = { name: name, email: email };
-    }
+    phoneBook[phone] = { name: name, email: email };
 
     return true;
 }
