@@ -18,15 +18,11 @@ let phoneBook = new Map();
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
-    if (email === undefined) {
-        email = '';
-    }
-
+function add(phone, name, email = '') {
     if (!dataIsCorrect(phone, name, email) || phoneBook.has(phone)) {
         return false;
     }
-    phoneBook.set(phone, { 'name': name, 'email': email });
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -38,15 +34,11 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-    if (email === undefined) {
-        email = '';
-    }
-
+function update(phone, name, email = '') {
     if (!dataIsCorrect(phone, name, email) || !phoneBook.has(phone)) {
         return false;
     }
-    phoneBook.set(phone, { 'name': name, 'email': email });
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -65,12 +57,7 @@ function findAndRemove(query) {
     if (query === '*') {
         deletedMap = new Map(phoneBook);
     } else {
-        phoneBook.forEach((value, key) => {
-            if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
-                    value.email.indexOf(query) !== -1) {
-                deletedMap.set(key, value);
-            }
-        });
+        deletedMap = foundMap(query);
     }
 
     deletedMap.forEach((_value, key) => {
@@ -93,13 +80,7 @@ function find(query) {
         return correctOutput(new Map(phoneBook));
     }
 
-    const foundUser = new Map();
-    phoneBook.forEach((value, key) => {
-        if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
-                value.email.indexOf(query) !== -1) {
-            foundUser.set(key, value);
-        }
-    });
+    const foundUser = foundMap(query);
 
     return correctOutput(foundUser);
 }
@@ -149,16 +130,29 @@ function correctOutput(record) {
     record.forEach((value, key) => {
         const phone =
             `+7 (${key.slice(0, 3)}) ${key.slice(3, 6)}-${key.slice(6, 8)}-${key.slice(8)}`;
-        let correct = value.name + ', ' + phone;
+        const result = [value.name, phone];
 
-        if (value.email !== '') {
-            correct += `, ${value.email}`;
+        if (value.email) {
+            result.push(value.email);
         }
 
-        resultOutput.push(correct);
+        resultOutput.push(result.join(', '));
     });
 
     return resultOutput.sort();
+}
+
+function foundMap(query) {
+    const foundUser = new Map();
+
+    phoneBook.forEach((value, key) => {
+        if (key.indexOf(query) !== -1 || value.name.indexOf(query) !== -1 ||
+                value.email.indexOf(query) !== -1) {
+            foundUser.set(key, value);
+        }
+    });
+
+    return foundUser;
 }
 
 module.exports = {
