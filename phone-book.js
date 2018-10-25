@@ -23,7 +23,7 @@ function checkPhone(phone) {
 }
 
 function checkName(name) {
-    return (typeof(name) === 'string' && name !== undefined);
+    return (typeof(name) === 'string' && name.length > 0);
 }
 
 function add(phone, name, email) {
@@ -89,7 +89,7 @@ function find(query) {
     let arrayWithDate = phoneBookToArray();
     if (query === '*') {
         return arrayWithDate.sort((a, b) => a[0].localeCompare(b[0]));
-    } else if (!query || query === ' ') {
+    } else if (!query) {
 
         return [];
     }
