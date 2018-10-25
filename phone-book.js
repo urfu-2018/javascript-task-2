@@ -28,7 +28,7 @@ function add(phone, name, email) {
     if (!((/^\d{10}$/).test(phone))) {
         return false;
     }
-    if (phoneBook.hasOwnProperty(phone)) {
+    if (phoneBook[phone] !== undefined) {
         return false;
     }
     if (checkEmptyString(email)) {
