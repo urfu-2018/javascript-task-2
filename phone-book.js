@@ -68,9 +68,7 @@ function findAndRemove(query) {
             phoneBook[phone].name.includes(query) ||
             phoneBook[phone].email && phoneBook[phone].email.includes(query));
 
-    for (let phone in foundedContacts) {
-        delete phoneBook[phone];
-    }
+    foundedContacts.forEach(phone => delete phoneBook[phone]);
 
     return foundedContacts.length;
 }
