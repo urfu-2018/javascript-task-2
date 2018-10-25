@@ -52,7 +52,7 @@ function findAndRemove(query) {
     let count;
     for (let i of phoneBook) {
         if (i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
-        i[1][1].indexOf(query) > -1) {
+        i[1][1].indexOf(query) > -1 || query === '*') {
             phoneBook.delete(i[0]);
             count++;
         }
@@ -69,10 +69,15 @@ function findAndRemove(query) {
 function find(query) {
     let str = [];
     for (let i of phoneBook) {
+        let email;
+        if (!i[1][1]) {
+            email = '';
+        } else
+        email = ', ' + i[1][1];
         if (i[0].indexOf(query) > -1 || i[1][0].indexOf(query) > -1 ||
-        i[1][1].indexOf(query) > -1) {
-            str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ')' + i[0].substr(2, 3) + '-' +
-            i[0].substr(5, 2) + '-' + i[0].substr(7, 2) + ', ' + i[1][1]);
+        i[1][1].indexOf(query) > -1 || query === '*') {
+            str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ') ' + i[0].substr(2, 3) + '-' +
+            i[0].substr(5, 2) + '-' + i[0].substr(7, 2) + email);
         }
     }
     str.sort();
