@@ -85,7 +85,7 @@ function findAndRemove(query) {
 
 function everythingFrom(array) {
     let result = [];
-    for (const key of Object.keys(array)) {
+    for (let key of Object.keys(array)) {
         let element = `${array[key][0]}, +7 (${key.slice(0, 3)}) ` +
         `${key.slice(3, 6)}-${key.slice(6, 8)}-${key.slice(8, 10)}`;
         if (array[key][1].length !== 0) {
@@ -100,13 +100,12 @@ function everythingFrom(array) {
 
 function getAllBy(element) {
     let result = [];
-    for (const key of Object.keys(phoneBook)) {
+    for (let key of Object.keys(phoneBook)) {
         if (phoneBook[key][0].search(element) !== -1 || key.search(element) !== -1 ||
         phoneBook[key][1].search(element) !== -1) {
             result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
-    result.sort();
 
     return result;
 }
