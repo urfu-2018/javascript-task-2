@@ -48,8 +48,7 @@ function isAllArgumentsCorrect(phone, name) {
 }
 
 function add(phone, name, email) {
-    if (isAllArgumentsCorrect(phone, name) && !recordExists(phone) &&
-     phoneBook[phone] !== undefined) {
+    if (isAllArgumentsCorrect(phone, name) && !recordExists(phone)) {
         phoneBook.push({
             phone: phone,
             name: name,
@@ -94,7 +93,7 @@ function update(phone, name, email) {
  */
 
 function findAndRemove(query) {
-    if (query === '') {
+    if (typeof query !== 'string' || query === '') {
         return 0;
     }
     let findedRecords = find(query);
