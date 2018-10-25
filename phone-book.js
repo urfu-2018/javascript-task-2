@@ -141,7 +141,6 @@ function importFromCsv(csv) {
 
     return csv
         .split('\n')
-        .map(line => line.replace('\r', ''))
         .map(line => line.split(';'))
         .map(changeOrder)
         .map(line => update(...line) ? true : add(...line))
