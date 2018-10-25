@@ -17,7 +17,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function isCorrectPhone(phone) {
-    if (phone !== undefined && typeof(phone) === 'string' && phone.length === 10) {
+    if (typeof phone !== undefined && typeof(phone) === 'string' && phone.length === 10) {
         return true;
     }
 
@@ -25,7 +25,15 @@ function isCorrectPhone(phone) {
 }
 
 function isCorrectName(name) {
-    if (name !== undefined && typeof(name) === 'string') {
+    if (typeof name !== undefined && typeof(name) === 'string') {
+        return true;
+    }
+
+    return false;
+}
+
+function isCorrectEmail(email) {
+    if (typeof email !== undefined && typeof(email === 'string')) {
         return true;
     }
 
@@ -42,8 +50,8 @@ function recordExists(phone) {
     return false;
 }
 
-function isAllArgumentsCorrect(phone, name) {
-    return isCorrectPhone(phone) && isCorrectName(name);
+function isAllArgumentsCorrect(phone, name, email) {
+    return isCorrectPhone(phone) && isCorrectName(name) && isCorrectEmail(email);
 }
 
 function add(phone, name, email) {
@@ -67,6 +75,7 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
+
 function update(phone, name, email) {
     if (!isAllArgumentsCorrect(phone, name) && !recordExists(phone)) {
         return false;
