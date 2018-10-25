@@ -53,13 +53,6 @@ function add(phone, name, email) {
     return false;
 }
 
-/**
- * Обновление записи в телефонной книге
- * @param {String} phone
- * @param {String?} name
- * @param {String?} email
- * @returns {Boolean}
- */
 function update(phone, name, email) {
     if (phoneBook.has(phone)) {
         if (name !== undefined) {
@@ -103,7 +96,7 @@ function find(query) {
         patt = '';
     }
     let sorted = [...phoneBook.entries()]
-        .sort((a, b) => a[1].username > b[1].username).map( function( val) {
+        .sort((a, b) => a[1].username > b[1].username).map ( function ( val) {
 
             return [val[1].username,
                 val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
