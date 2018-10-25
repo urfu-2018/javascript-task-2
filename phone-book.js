@@ -10,25 +10,12 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = [];
-
 const regextel = /^\d{10}$/;
 
-function check1(phone, name) {
-    return !phone.match(regextel) ||
-    typeof phone !== 'string' ||
-    typeof name !== 'string' ||
-    !name ||
-    !phone ||
-    phoneBook.some((rec)=>rec.tel === phone);
-}
+function check(phone, name) {
 
-function check2(phone, name, ind) {
-    return !phone.match(regextel) ||
-    typeof phone !== 'string' ||
-    typeof name !== 'string' ||
-    !name ||
-    !phone ||
-    ind === -1;
+    return (!name || typeof name !== 'string' || typeof phone !== 'string' ||
+    !phone.match(regextel));
 }
 
 /**
@@ -41,7 +28,7 @@ function check2(phone, name, ind) {
 
 function add(phone, name, email) {
     let record;
-    if (check1(phone, name)) {
+    if (check(phone, name) || phoneBook.some((rec)=>rec.tel === phone)) {
         return false;
     }
     if (email !== undefined) {
@@ -63,7 +50,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     let ind = phoneBook.findIndex(x => x.tel === phone);
-    if (check2(phone, name, ind)) {
+    if (check(phone, name) || ind === -1) {
         return false;
     }
     if (email !== undefined) {
