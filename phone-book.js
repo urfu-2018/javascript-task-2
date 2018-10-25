@@ -11,7 +11,7 @@ const isStar = true;
  */
 let phoneBook = new Map();
 const checkPhone = (phone) => typeof phone === 'string' && /^\d{10}$/.test(phone);
-const checkName = (name) => typeof name === 'string' && /^[a-zA-Zа-яА-ЯёЁ]+$/.test(name);
+const checkName = (name) => typeof name === 'string' && name.length > 0;
 function transformPhone(phone) {
     return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
         `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
@@ -21,7 +21,16 @@ const getRecordsByQuery = (query) => Array.from(phoneBook.values())
     .filter((contact) => contact.name.indexOf(query) !== -1 ||
             contact.phone.indexOf(query) !== -1 ||
             (contact.email !== undefined && contact.email.indexOf(query) !== -1));
-const getRecords = (query) => query === '*' ? getAllRecords() : getRecordsByQuery(query);
+function getRecords(query) {
+    if (typeof query !== 'string' || query === '') {
+        return [];
+    }
+    if (query === '*') {
+        return getAllRecords();
+    }
+
+    return getRecordsByQuery(query);
+}
 
 
 /**
@@ -92,9 +101,6 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string') {
-        return [];
-    }
     let result = getRecords(query).sort((first, second) => first.name > second.name);
 
     return result.map((contact) => contact.email !== undefined
