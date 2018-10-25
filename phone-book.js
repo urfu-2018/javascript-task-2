@@ -125,13 +125,8 @@ function find(query) {
         return ((rec.tel.indexOf(stroka)) !== -1 ||
         (rec.name.indexOf(stroka) !== -1));
     }).sort(function (a, b) {
-        if (a.name > b.name) {
-            return 1;
-        } else if (a.name < b.name) {
-            return -1;
-        }
+        return a.name.localeCompare(b.name);
 
-        return 0;
     });
     let resultat = search.map(function (rec) {
         let telprob = '+7 (' + rec.tel.slice(0, 3) + ') ' +
