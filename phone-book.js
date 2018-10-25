@@ -14,9 +14,6 @@ let phoneBook = {};
 let isCorrectNumber = (phone) =>
     typeof(phone) === 'string' && /^\d{10}$/.test(phone);
 
-let isCorrectEmail = (email) =>
-    !email || typeof(email) === 'string' && /^.+@.+\..+$/.test(email);
-
 let phoneFormat = (phone) =>
     `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 
@@ -28,6 +25,15 @@ let notesByQuery = (query) =>
             .filter(x =>
                 x.some(str => query === '*' || str.indexOf(query) + 1));
 
+let checkArgs = (phone, name) =>
+    isCorrectNumber(phone) && name;
+
+let set = (phone, name, email) => {
+    phoneBook[phone] = { 'name': name, 'email': email };
+
+    return true;
+};
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -36,12 +42,9 @@ let notesByQuery = (query) =>
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    if (!isCorrectNumber(phone) || !isCorrectEmail(email) || !name || phone in phoneBook) {
-        return false;
-    }
-    phoneBook[phone] = { 'name': name, 'email': email };
-
-    return true;
+    return checkArgs(phone, name) &&
+        !(phone in phoneBook) &&
+        set(phone, name, email);
 }
 
 /**
@@ -52,12 +55,9 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    if (!(phone in phoneBook) || !name) {
-        return false;
-    }
-    phoneBook[phone] = { 'name': name, 'email': email };
-
-    return true;
+    return checkArgs(phone, name) &&
+        phone in phoneBook &&
+        set(phone, name, email);
 }
 
 /**
