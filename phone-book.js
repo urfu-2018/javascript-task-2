@@ -73,9 +73,7 @@ function findAndRemove(query) {
     }
 
     const arrayWithDate = search(query);
-    arrayWithDate.forEach(entry => {
-        phoneBook.delete(entry[1]);
-    });
+    arrayWithDate.forEach(entry => phoneBook.delete(entry[1]));
 
     return arrayWithDate.length;
 }
@@ -134,7 +132,8 @@ function phoneBookToArray() {
 }
 
 function formatPhone(phone) {
-    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
+    return ('+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) + '-' + phone.slice(6, 8) +
+    '-' + phone.slice(8, 10));
 }
 
 /**
