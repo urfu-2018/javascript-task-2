@@ -129,9 +129,19 @@ function deleteContact(phone, name, email, query) {
 function find(query) {
     let tmpAnswer = [];
     let answer = [];
+    if (checkEmptyString(query)) {
+        return [];
+    }
     if (query === '*') {
         return pushAll();
     }
+
+    return findQuery(query);
+}
+
+function findQuery(query) {
+    let tmpAnswer = [];
+    let answer = [];
     for (let phone in phoneBook) {
         if (phoneBook.hasOwnProperty(phone)) {
             tmpAnswer.push(pushContact(phone, query));
