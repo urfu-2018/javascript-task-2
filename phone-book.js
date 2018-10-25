@@ -128,7 +128,7 @@ function importFromCsv(csv) {
     if (add(phone, name, email) || update(phone, name, email)) {
         count++;
     }
-    return csv.split('\n').length;
+
     return count;
 }
 
