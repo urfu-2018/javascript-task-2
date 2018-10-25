@@ -21,7 +21,6 @@ const phoneRegex = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
  */
 function add(phone, name, email) {
     if (isValidName(name) &&
-        typeof email === 'string' &&
         isValidPhone(phone, phoneRegex) &&
         !phoneBook.has(phone)) {
         phoneBook.set(phone, { name, email });
@@ -49,7 +48,6 @@ function isValidPhone(phone, regexPhone) {
  */
 function update(phone, name, email) {
     if (isValidName(name) &&
-        typeof email === 'string' &&
         isValidPhone(phone, phoneRegex) &&
         phoneBook.has(phone)) {
         phoneBook.set(phone, { name, email });
@@ -66,10 +64,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const lengthPhoneBook = phoneBook.size;
     let phoneArray = Array.from(phoneBook);
 
-    return lengthPhoneBook - filterEntriesPhoneBooks(phoneArray, query).length;
+    return filterEntriesPhoneBooks(phoneArray, query).length;
 
 }
 
@@ -95,13 +92,14 @@ function find(query) {
     );
 }
 
+
 function filterEntriesPhoneBooks(phoneArray, query) {
     return phoneArray.filter(
         (entries) => {
             if (matchCheckField(entries[0], query)) {
                 return true;
             }
-            if (Object.keys(entries[1]).forEach(key => matchCheckField(entries[1][key], query))) {
+            if (Object.keys(entries[1]).some(key => matchCheckField(entries[1][key], query))) {
                 return true;
             }
 
@@ -119,7 +117,11 @@ function formatContact(phone, name, email) {
 }
 
 function matchCheckField(field, query) {
-    return field.includes(query);
+    if (field) {
+        return field.includes(query);
+    }
+
+    return false;
 }
 
 /**
