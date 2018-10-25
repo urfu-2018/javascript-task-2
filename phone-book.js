@@ -108,7 +108,7 @@ function find(query) {
  * @returns {Array}
  */
 function findRecords(query) {
-    if (typeof query !== 'string') {
+    if (typeof query !== 'string' || query === '') {
         return [];
     }
     let entries = Array.from(phoneBook.values());
