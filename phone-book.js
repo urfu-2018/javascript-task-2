@@ -106,17 +106,17 @@ function formatData(person) {
     person.phone.slice(3, 6) + '-' +
     person.phone.slice(6, 8) + '-' +
     person.phone.slice(8, 10);
-    if (typeof(person.email) !== "string") {
+    if (typeof(person.email) !== 'string') {
 
         return rezultString;
     }
 
-    return rezultString +  ', ' + person.email;
+    return rezultString + ', ' + person.email;
 }
 
 function isSuitable(person, query) {
-    if (typeof(persom.email) !== 'string') {
-        person.email = " ";
+    if (typeof(person.email) !== 'string') {
+        person.email = ' ';
     }
 
     return person.phone.includes(query) ||
