@@ -33,9 +33,9 @@ function add(phone, name, email) {
 
     phoneBook.set(phone,
         {
-            phone: phone,
-            name: name,
-            email: email });
+            phone,
+            name,
+            email });
 
     return true;
 }
@@ -72,8 +72,10 @@ function findAndRemove(query) {
         return [];
     }
 
-    const arrayWithDate = find(query);
-    arrayWithDate.forEach(entry => phoneBook.delete(entry[1]));
+    const arrayWithDate = search(query);
+    arrayWithDate.forEach(entry => {
+        phoneBook.delete(entry[1]);
+    });
 
     return arrayWithDate.length;
 }
