@@ -71,9 +71,6 @@ function update(phone, name, email) {
 
         return false;
     }
-    if (typeof (email) === 'undefined') {
-        email = '';
-    }
     phoneBook.set(phone, { name, email });
 
     return true;
@@ -99,7 +96,7 @@ function search(query) {
     phoneBook.forEach((value, phone) => {
         if (query === '*' ||
             value.name.includes(query) ||
-            value.email.includes(query) ||
+            (typeof(value.email) !== 'undefined' && value.email.includes(query)) ||
             phone.includes(query)) {
             resultBook.push([value.name, phone, value.email]);
         }
@@ -114,7 +111,7 @@ function search(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof (query) !== 'string' || query === '') {
+    if (typeof (query) !== 'string' || !query) {
         return 0;
     }
 
@@ -132,7 +129,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof (query) !== 'string' || query.length === 0) {
+    if (typeof (query) !== 'string' || !query) {
         return [];
     }
 
@@ -142,7 +139,7 @@ function find(query) {
     });
 
     return foundRecords.map(record => {
-        if (record[2] === '') {
+        if (typeof (record[2]) === 'undefined') {
             return `${record[0]}, ${convertPhoneToNormalFormat(record[1])}`;
         }
 
