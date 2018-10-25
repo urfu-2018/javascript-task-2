@@ -31,7 +31,7 @@ function add(phone, name, email) {
             return false;
         }
     }
-    if (typeof(name) !== 'string') {
+    if (typeof(name) !== 'string' || name === '') {
         return false;
     }
     phoneBook.push({ phone: phone, name: name, email: email });
@@ -54,7 +54,7 @@ function update(phone, name, email) {
     if (phone.search('^\\d{10}$') === -1) {
         return false;
     }
-    if (typeof(name) !== 'string') {
+    if (typeof(name) !== 'string' || name === '') {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
