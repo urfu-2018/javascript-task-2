@@ -33,7 +33,7 @@ function trueParam(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook.find(phone) || !trueParam(phone, name, email)) {
+    if (find(phone) || !trueParam(phone, name, email)) {
         return false;
     }
     phoneBook[phone] = { name: name, email: email };
@@ -49,7 +49,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook.find(phone).length > 0 && (trueParam(phone, name, email))) {
+    if (find(phone).length > 0 && (trueParam(phone, name, email))) {
         phoneBook[phone] = { name: name, email: email };
 
         return true;
