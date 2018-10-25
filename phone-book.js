@@ -105,8 +105,11 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (query === '' || query === undefined) {
+
+        return 0;
+    }
     let array = [];
-    let checkbox = 0;
     phoneBook.sort(sortAr);
     if (query === '*') {
         let str = findAll();
@@ -117,16 +120,10 @@ function find(query) {
         let x = process(i, query);
         if (x !== '') {
             array.push(x);
-            checkbox++;
         }
     }
-    if (checkbox !== 0) {
 
-        return array;
-    }
-
-    return [];
-
+    return array;
 }
 
 function process(i, query) {
