@@ -19,7 +19,7 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phoneBook.has(phone) || !isValidRecord(phone, name)) {
+    if (!isValidRecord(phone, name) || phoneBook.has(phone)) {
         return false;
     }
 
@@ -48,7 +48,7 @@ function isValidName(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) && !isValidName(name)) {
+    if (!phoneBook.has(phone) && !isValidRecord(phone, name)) {
         return false;
     }
 
@@ -68,7 +68,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
 
-    if (!query) {
+    if (!query || typeof query !== 'string' || query.length === 0) {
         return 0;
     }
 
@@ -90,7 +90,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!query) {
+    if (!query || typeof query !== 'string' || query.length === 0) {
         return [];
     }
 
