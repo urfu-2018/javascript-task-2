@@ -92,6 +92,9 @@ function update(phone, name, email) {
     if (generalCheck(phone, name, email) === false) {
         return false;
     }
+    if (checkPhone(phoneBook, phone) === true) {
+        return false;
+    }
     phoneBook.forEach(element => {
         if (element.phone === phone) {
             element.name = name;
