@@ -104,7 +104,8 @@ function findAndRemoveStar(numberRecords) {
     return numberRecords;
 }
 
-function findAndRemoveEmail(numberRecords, query) {
+function findAndRemoveEmail(query) {
+    var numberRecords = 0;
     phoneBook.forEach(element => {
         if (element.email !== undefined) {
             if (element.phone.includes(query) === true ||
@@ -118,6 +119,7 @@ function findAndRemoveEmail(numberRecords, query) {
 
     return numberRecords;
 }
+
 
 function findAndRemove(query) {
     if (typeof query !== 'string') {
@@ -139,7 +141,7 @@ function findAndRemove(query) {
             }
         }
     });
-    numberRecords = numberRecords + findAndRemoveEmail(numberRecords, query);
+    numberRecords = numberRecords + findAndRemoveEmail(query);
 
     return numberRecords;
 }
