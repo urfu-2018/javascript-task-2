@@ -14,7 +14,9 @@ let phoneBook = [];
 function check1(phone, name) {
     const regextel = /^\d{10}$/;
 
-    return typeof phone !== 'string' || !phone.match(regextel) ||
+    return typeof phone !== 'string' ||
+    phone === '' ||
+    !phone.match(regextel) ||
     name === undefined ||
     name === '' ||
     phoneBook.some((rec)=>rec.tel === phone);
@@ -23,7 +25,9 @@ function check1(phone, name) {
 function check2(phone, name, ind) {
     const regextel = /^\d{10}$/;
 
-    return typeof phone !== 'string' || ind === -1 ||
+    return typeof phone !== 'string' ||
+    phone === '' ||
+    ind === -1 ||
     name === undefined ||
     name === '' || !phone.match(regextel);
 }
