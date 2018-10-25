@@ -108,7 +108,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     let stroka = query;
-    if (stroka === undefined) {
+    if (stroka === undefined || stroka === '') {
         return [];
     }
     if (stroka === '*') {
