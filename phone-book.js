@@ -12,9 +12,9 @@ const isStar = true;
 let phoneBook = new Map();
 
 class Contact {
-    constructor(phone, formattedPhone, name, email) {
+    constructor(phone, name, email) {
         this.phone = phone;
-        this.formatedPhone = formattedPhone;
+        this.formatedPhone = formatPhone(phone);
         this.name = name;
         this.email = email || '';
     }
@@ -48,11 +48,11 @@ class Contact {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const formattedPhone = formatPhone(phone);
-    if (!formattedPhone || !isNameCorrect(name) || !isEmailCorrect(email) || phoneBook.has(phone)) {
+    if (!isPhoneCorrect(phone) || !isNameCorrect(name) ||
+        !isEmailCorrect(email) || phoneBook.has(phone)) {
         return false;
     }
-    phoneBook.set(phone, new Contact(phone, formattedPhone, name, email));
+    phoneBook.set(phone, new Contact(phone, name, email));
 
     return true;
 }
@@ -65,8 +65,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const correctPhone = /^\d{10}$/;
-    if (!isString(phone) || !correctPhone.test(phone) ||
+    if (!isString(phone) || !isPhoneCorrect(phone) ||
         !isNameCorrect(name) || !isEmailCorrect(email) || !phoneBook.has(phone)) {
         return false;
     }
@@ -87,10 +86,9 @@ function findAndRemove(query) {
     }
 
     const found = findByQuery(query);
-    const count = found.length;
     found.forEach(contact => phoneBook.delete(contact.phone));
 
-    return count;
+    return found.length;
 }
 
 /**
@@ -155,6 +153,10 @@ function isNameCorrect(name) {
 
 function isEmailCorrect(email) {
     return typeof email === 'undefined' || isString(email);
+}
+
+function isPhoneCorrect(phone) {
+    return /^\d{10}$/.test(phone);
 }
 
 function formatPhone(phone) {
