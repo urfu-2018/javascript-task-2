@@ -14,6 +14,9 @@ let phoneBook = {};
 let isCorrectNumber = (phone) =>
     typeof(phone) === 'string' && /^\d{10}$/.test(phone);
 
+let isCorrectEmail = (email) =>
+    !email || typeof(email) === 'string' && /^.+@.+\..+$/.test(email);
+
 let phoneFormat = (phone) =>
     `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 
@@ -33,7 +36,7 @@ let notesByQuery = (query) =>
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    if (!isCorrectNumber(phone) || !name || phone in phoneBook) {
+    if (!isCorrectNumber(phone) || !isCorrectEmail(email) || !name || phone in phoneBook) {
         return false;
     }
     phoneBook[phone] = { 'name': name, 'email': email };
