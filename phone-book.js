@@ -72,16 +72,23 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let stroka = query;
+    if (stroka === undefined || stroka === '') {
+        return [];
+    }
+    if (stroka === '*') {
+        stroka = '';
+    }
     let itt = 0;
     let search = phoneBook.filter(function (rec) {
         if (rec.hasOwnProperty('email')) {
-            return (rec.tel.indexOf(query)) !== -1 ||
-            (rec.name.indexOf(query)) !== -1 ||
-            (rec.email.indexOf(query) !== -1);
+            return (rec.tel.indexOf(stroka)) !== -1 ||
+            (rec.name.indexOf(stroka)) !== -1 ||
+            (rec.email.indexOf(stroka) !== -1);
         }
 
-        return ((rec.tel.indexOf(query)) !== -1 ||
-    (rec.name.indexOf(query) !== -1));
+        return ((rec.tel.indexOf(stroka)) !== -1 ||
+    (rec.name.indexOf(stroka) !== -1));
     });
     phoneBook = phoneBook.filter(function (rec) {
         return !search.some(function (recsearch) {
