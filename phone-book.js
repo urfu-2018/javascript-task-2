@@ -68,7 +68,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     let str = [];
-    for (let i of phoneBook) {
+    phoneBook.forEach(i => {
         let email = '';
         if (i[1][1]) {
             email = ', ' + i[1][1];
@@ -78,7 +78,7 @@ function find(query) {
             str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ') ' + i[0].substr(2, 3) + '-' +
             i[0].substr(5, 2) + '-' + i[0].substr(7, 2) + email);
         }
-    }
+    });
     str.sort();
 
     return str;
