@@ -73,7 +73,7 @@ function findAndRemove(query) {
     }
 
     if (query === '*') {
-        const numberOfRecords = Array.from(phoneBook.values()).length;
+        const numberOfRecords = phoneBook.size;
         phoneBook.clear();
 
         return numberOfRecords;
