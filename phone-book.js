@@ -36,7 +36,7 @@ function isValidName(name) {
 }
 
 function isValidPhone(phone, regexPhone) {
-    return regexPhone.test(phone);
+    return regexPhone.test(phone) && typeof phone === 'string';
 }
 
 /**
@@ -65,6 +65,9 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let phoneArray = Array.from(phoneBook);
+    filterEntriesPhoneBooks(phoneArray, query).forEach(
+        entries => phoneBook.delete(entries[0])
+    );
 
     return filterEntriesPhoneBooks(phoneArray, query).length;
 
