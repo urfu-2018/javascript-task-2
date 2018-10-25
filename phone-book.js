@@ -85,8 +85,8 @@ function getData(data, query) {
     let result = [];
     const keys = Object.keys(data);
     for (let i = 0; i < keys.length; i++) {
-        if (typeof(query) === 'undefined' || ~data[keys[i]][0].indexOf(query) ||
-        typeof([keys[i]][1]) !== 'undefined' && ~data[keys[i]][1].indexOf(query)) {
+        if (typeof(query) === 'undefined' || data[keys[i]][0].indexOf(query) !== -1 ||
+        typeof([keys[i]][1]) !== 'undefined' && data[keys[i]][1].indexOf(query) !== -1) {
             result.push(data[keys[i]][0] + ', ' + transform(keys[i]) +
             (typeof(data[keys[i]][1]) !== 'undefined' ? ', ' + data[keys[i]][1] : ''));
         }
@@ -118,6 +118,23 @@ function find(query) {
     return result;
 }
 
+function csvAdd(data) {
+    let result = false;
+    if (checkAll(data[0], data[1], data[2])) {
+        if (typeof(phoneBook[data[0]]) === 'undefined') {
+            add(data[0], data[1], data[2]);
+            result = true;
+        } else if (phoneBook[data[0]][0] !== data[1] ||
+                   phoneBook[data[0]][1] !== data[2]) {
+            update(data[0], data[1], data[2]);
+            result = true;
+        }
+    }
+
+    return result;
+}
+
+
 /**
  * Импорт записей из csv-формата
  * @star
@@ -129,16 +146,7 @@ function importFromCsv(csv) {
     let count = phones.length;
     for (let i = 0; i < phones.length; i++) {
         let data = phones[i].split(';');
-        if (checkAll(data[0], data[1], data[2])) {
-            if (typeof(phoneBook[data[0]]) === 'undefined') {
-                add(data[0], data[1], data[2]);
-            } else if (phoneBook[data[0]][0] !== data[1] ||
-                       phoneBook[data[0]][1] !== data[2]) {
-                update(data[0], data[1], data[2]);
-            } else {
-                count--;
-            }
-        } else {
+        if (!csvAdd) {
             count--;
         }
     }
