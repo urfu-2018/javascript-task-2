@@ -22,6 +22,9 @@ function add(phone, name, email) {
     if (!/^\d{10}$/.test(phone) || phoneBook.has(phone) || !name) {
         return false;
     }
+    if (!email) {
+        email = '';
+    }
     phoneBook.set(phone, [name, email]);
 
     return true;
