@@ -63,12 +63,26 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const convertedPhone = tryConvertPhoneNumber(phone);
     if (isName(name) && convertedPhone && isEmail(email) && phoneBook.has(phone)) {
+        const newPerson = new Person(name, phone, email);
+        const oldPerson = phoneBook.get(phone);
+        if (personsEqual(newPerson, oldPerson)) {
+            return false;
+        }
         phoneBook.set(phone, new Person(name, phone, email));
 
         return true;
     }
 
     return false;
+}
+
+function personsEqual(per1, per2) {
+    if (per1.name === per2.name &&
+        per1.phone === per2.phone &&
+        per1.email === per2.email) {
+
+        return false;
+    }
 }
 
 /**
