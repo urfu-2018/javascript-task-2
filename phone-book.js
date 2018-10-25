@@ -207,7 +207,7 @@ function find(query) {
     findStar(query, string, found);
     findMore(query, string, found);
 
-    return found.sort();
+    return found.sort((a, b) => a.split(',')[0].localeCompare(b.split(',')[0]));
 }
 
 /**
