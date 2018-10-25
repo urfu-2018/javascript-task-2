@@ -65,9 +65,6 @@ function update(phone, name, email) {
 
         return true;
     }
-    if (!Object.keys(phoneBook).includes(phone)) {
-        add(phone, phoneBook.name, phoneBook.email);
-    }
     phoneBook[phone].name = name;
     phoneBook[phone].email = email;
 
@@ -80,6 +77,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (checkEmptyString(query)) {
+        return 0;
+    }
     let count = 0;
     if (query === '*') {
         deleteAll();
@@ -127,6 +127,9 @@ function deleteContact(phone, name, email, query) {
 function find(query) {
     let tmpAnswer = [];
     let answer = [];
+    if (checkEmptyString(query)) {
+        return [];
+    }
     if (query === '*') {
         return pushAll();
     }
