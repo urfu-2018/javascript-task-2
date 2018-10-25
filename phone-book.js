@@ -12,7 +12,7 @@ const isStar = true;
 let phoneBook = [];
 
 function check(phone, name) {
-    if (typeof phone !== 'string' || typeof name !== 'string' || name === '' || name.trim === '') {
+    if (typeof phone !== 'string' || typeof name !== 'string' || name.trim === '') {
         return false;
     }
     if (phone.search(/^\d{10}$/) === -1) {
@@ -25,14 +25,12 @@ function check(phone, name) {
 
 function check2(email) {
     if (email !== undefined) {
-        if (typeof email !== 'string' || email === '' || email.trim === '') {
+        if (typeof email !== 'string' || email.trim === '') {
             return false;
         }
 
         return true;
     }
-
-    return 1;
 }
 
 function generalCheck(phone, name, email) {
@@ -64,17 +62,7 @@ function add(phone, name, email) {
     if (checkPhone(phoneBook, phone) === true) {
         return false;
     }
-    var entry = { phone: phone, name: name, email: email,
-        getphone: function () {
-            return this.phone.toString();
-        },
-        getname: function () {
-            return this.name.toString();
-        },
-        getemail: function () {
-            return this.email.toString();
-        }
-    };
+    var entry = { phone: phone, name: name, email: email };
 
     phoneBook.push(entry);
 
@@ -92,9 +80,6 @@ function update(phone, name, email) {
     if (generalCheck(phone, name, email) === false) {
         return false;
     }
-    if (checkPhone(phoneBook, phone) === true) {
-        return false;
-    }
     phoneBook.forEach(element => {
         if (element.phone === phone) {
             element.name = name;
@@ -110,8 +95,24 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
+
+function findAndRemoveStar(numberRecords) {
+    phoneBook.forEach(element => {
+        delete phoneBook[element];
+        numberRecords++;
+    });
+
+    return numberRecords;
+}
+
 function findAndRemove(query) {
+    if (query === '') {
+        return;
+    }
     var numberRecords = 0;
+    if (query === '*') {
+        return findAndRemoveStar(numberRecords);
+    }
     phoneBook.forEach(element => {
         if (element.email === undefined) {
             if (element.phone.includes(query) === true ||
