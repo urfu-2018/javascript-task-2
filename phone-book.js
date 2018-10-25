@@ -96,7 +96,7 @@ function findAndRemove(query) {
     for (let i = 0; i < findedRecords.length; i++) {
         phoneBook.splice(phoneBook.findIndex(element => element === findedRecords[i]), 1);
     }
-    
+
     return findedRecords.length;
 }
 
