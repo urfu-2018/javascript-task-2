@@ -98,15 +98,17 @@ function findMatchingEntryPhones(query) {
     if (isBadString(query)) {
         return phones;
     }
+    if (query === '*') {
+        return Object.keys(phoneBook);
+    }
 
     return Object.keys(phoneBook).filter(phone => doesMatch(phoneBook[phone], query));
 }
 
 function doesMatch(entry, query) {
-    return query === '*' ||
-        entry.name.includes(query) ||
-        entry.phone.includes(query) ||
-        (entry.email !== undefined && entry.email.includes(query));
+    return entry.name.includes(query) ||
+            entry.phone.includes(query) ||
+            (entry.email !== undefined && entry.email.includes(query));
 }
 
 function entryToString(entry) {
