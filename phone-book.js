@@ -79,10 +79,22 @@ function update2(phone, name, email, i) {
 function findAndRemove(query) {
     let count = 0;
     phoneBook.sort(sortAr);
+    if (query === '*') {
+        count = findAndRemoveAll();
+
+        return count;
+    }
     if (query === '' || query === undefined) {
 
         return 0;
     }
+    count = findAndRemoveOne(query);
+
+    return count;
+}
+
+function findAndRemoveOne(query) {
+    let count = 0;
     let length = phoneBook.length;
     for (let i = 0; i < length; i++) {
         let ph = phoneBook[i].phone;
@@ -94,6 +106,19 @@ function findAndRemove(query) {
             count++;
             i--;
         }
+    }
+
+    return count;
+}
+
+function findAndRemoveAll() {
+    let count = 0;
+    let length = phoneBook.length;
+    for (let i = 0; i < length; i++) {
+        phoneBook.splice(i, 1);
+        length = length - 1;
+        count++;
+        i--;
     }
 
     return count;
