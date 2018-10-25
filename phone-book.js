@@ -65,7 +65,7 @@ function update(phone, name, email) {
 
         return true;
     }
-    if (Object.keys(phoneBook).includes(phone)) {
+    if (!Object.keys(phoneBook).includes(phone)) {
         add(phone, phoneBook.name, phoneBook.email);
     }
     phoneBook[phone].name = name;
