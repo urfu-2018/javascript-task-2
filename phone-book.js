@@ -82,17 +82,13 @@ function findAndRemove(query) {
     let phoneBookQuerySet = phoneBook.map((acc, index) => {
         const phoneCheck = acc.phone.includes(query);
         const nameCheck = acc.name.includes(query);
-
-        if (!acc.email) {
-            return phoneCheck || nameCheck;
-        }
-        const emailCheck = acc.email.includes(query);
+        const emailCheck = acc.email && acc.email.includes(query);
 
         return [phoneCheck || nameCheck || emailCheck, index];
     });
 
-    let phoneBookIndexList = phoneBookQuerySet.filter((acc) => (acc[0]))
-        .map((acc) => (acc[1]));
+    let phoneBookIndexList = phoneBookQuerySet.filter(acc => acc[0])
+        .map(acc => acc[1]);
 
     phoneBookIndexList.forEach((index) => (phoneBook.splice(index, 1)));
 
@@ -105,7 +101,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const func = (acc) => {
+    const formatLog = acc => {
         const phone = '+7 (' +
             acc.phone.substring(0, 3) + ') ' +
             acc.phone.substring(3, 6) + '-' +
@@ -123,21 +119,18 @@ function find(query) {
     }
 
     if (query === '*') {
-        return phoneBook.map(func).sort();
+        return phoneBook.map(formatLog).sort();
     }
 
-    let phoneBookQuerySet = phoneBook.filter((acc) => {
+    let phoneBookQuerySet = phoneBook.filter(acc => {
         const phoneCheck = acc.phone.includes(query);
         const nameCheck = acc.name.includes(query);
-        if (!acc.email) {
-            return phoneCheck || nameCheck;
-        }
-        const emailCheck = acc.email.includes(query);
+        const emailCheck = acc.email && acc.email.includes(query);
 
         return phoneCheck || nameCheck || emailCheck;
     });
 
-    return phoneBookQuerySet.map(func).sort();
+    return phoneBookQuerySet.map(formatLog).sort();
 }
 
 /**
