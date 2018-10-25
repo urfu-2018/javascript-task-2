@@ -77,6 +77,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (query === '') {
+        return 0;
+    }
     const found = find(query);
     found.map(person => phoneBook.delete(person.standartPhone));
 
