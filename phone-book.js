@@ -81,9 +81,9 @@ function findAndRemove(query) {
     return forRemove.length;
 }
 
-function extraChecking(query, data, keys) {
-    return typeof(query) === 'undefined' || data[keys[i]][0].indexOf(query) !== -1 ||
-        typeof([keys[i]][1]) !== 'undefined' && data[keys[i]][1].indexOf(query) !== -1;
+function extraChecking(query, data, key) {
+    return typeof(query) === 'undefined' || data[key][0].indexOf(query) !== -1 ||
+        typeof([key][1]) !== 'undefined' && data[key][1].indexOf(query) !== -1;
 }
 
 function getData(data, query) {
