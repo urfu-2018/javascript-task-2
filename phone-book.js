@@ -33,7 +33,7 @@ function trueParam(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (find(phone).length > 0 || (!trueParam(phone, name, email))) {
+    if (!find(phone).length > 0 || !trueParam(phone, name, email)) {
         return false;
     }
     phoneBook[phone] = { name: name, email: email };
@@ -128,7 +128,7 @@ function importFromCsv(csv) {
     if (add(phone, name, email) || update(phone, name, email)) {
         count++;
     }
-
+    return csv.split('\n').length;
     return count;
 }
 
