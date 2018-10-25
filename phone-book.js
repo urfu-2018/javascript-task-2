@@ -17,7 +17,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function isCorrectPhone(phone) {
-    if (phone !== undefined && typeof(phone) === 'string' && phone.length === 10) {
+    if (phone !== undefined && typeof(phone) === 'string' && /^\d{10}$/.test) {
         return true;
     }
 
@@ -25,7 +25,7 @@ function isCorrectPhone(phone) {
 }
 
 function isCorrectName(name) {
-    if (name !== undefined && typeof(name) === 'string') {
+    if (name !== undefined && typeof(name) === 'string' && name !== '') {
         return true;
     }
 
