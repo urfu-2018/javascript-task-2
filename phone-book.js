@@ -136,7 +136,7 @@ function find(query) {
     let rez = [];
     if (typeof(query) !== 'string') {
 
-        return rez;
+        return rez.sort();
     }
     if (query === '*') {
         for (let i = 0; i < phoneBook.length; i++) {
