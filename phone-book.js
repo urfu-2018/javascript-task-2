@@ -37,7 +37,7 @@ function add(phone, name, email) {
 function isPhone(phone) {
     let maskPhone = /^\d{10}$/;
 
-    return maskPhone.test(phone) && isString(phone);
+    return maskPhone.test(phone) && phone.length === 10 && isString(phone);
 }
 
 function isOldPhone(phone) {
@@ -109,9 +109,8 @@ function find(query) {
     if (!isString(query)) {
         return [];
     }
-    let result = filterContact(query);
 
-    return result
+    return filterContact(query)
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(renderContact);
 }
@@ -163,6 +162,9 @@ function editPhone(phone) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    if (!isString(csv)) {
+        return 0;
+    }
     let countAdded = 0;
     let contacts = csv.split('\n');
     for (let i = 0; i < contacts.length; i++) {
