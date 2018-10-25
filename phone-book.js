@@ -70,6 +70,9 @@ function update(phone, name, email) {
     if (checkEmptyString(name)) {
         return false;
     }
+    if (checkEmptyString(phone)) {
+        return false;
+    }
     if (email === undefined) {
         phoneBook[phone].name = name;
         delete phoneBook[phone].email;
