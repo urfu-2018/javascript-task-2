@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Шаблон телефонного номера
@@ -129,11 +129,31 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    if (typeof csv !== 'string' && !csv) {
+        return 0;
+    }
 
-    return csv.split('\n').length;
+    let splittedCsv = csv.split('\n');
+
+    // let entriesCount = 0;
+    // for (let csvEntry in splittedCsv) {
+    //     if (Object.prototype.hasOwnProperty.call(splittedCsv, csvEntry)) {
+    //         let [name, phone, email] = csvEntry.split(';');
+    //         if (add(phone, name, email) || update(phone, name, email)) {
+    //             entriesCount++;
+    //         }
+    //     }
+    // }
+    // return entriesCount;
+
+    return splittedCsv.reduce((previousVal, csvEntry) => {
+        let [name, phone, email] = csvEntry.split(';');
+        if (add(phone, name, email) || update(phone, name, email)) {
+            previousVal++;
+        }
+
+        return previousVal;
+    }, 0);
 }
 
 module.exports = {
