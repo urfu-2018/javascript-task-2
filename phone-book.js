@@ -98,10 +98,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    var records = findRecords(query);
-    records.map(value => phoneBook.delete(value[1]));
-
-    return records.length;
+    return findRecords(query)
+        .map(value => phoneBook.delete(value[1]))
+        .length;
 }
 
 /**
@@ -135,17 +134,16 @@ function findRecords(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    const csvLines = csv.split('\n');
-    var newRecordsCount = 0;
+    var recordsCount = 0;
 
-    csvLines.forEach(line => {
+    csv.split('\n').forEach(line => {
         const [name, phone, email] = line.split(';');
         if (add(phone, name, email) || update(phone, name, email)) {
-            newRecordsCount += 1;
+            recordsCount += 1;
         }
     });
 
-    return newRecordsCount;
+    return recordsCount;
 }
 
 module.exports = {
@@ -153,7 +151,6 @@ module.exports = {
     update,
     findAndRemove,
     find,
-    findRecords,
     importFromCsv,
     isStar
 };
