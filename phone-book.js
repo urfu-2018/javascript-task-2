@@ -134,8 +134,22 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
+    return csv.split('\n')
+        .map(record => {
+            let [name, phone, email] = record.split(';');
 
-    return csv.split('\n').length;
+            return { phone, name, email };
+        })
+        .filter(record => {
+            if (update(record.phone, record.name, record.email)) {
+                return true;
+            }
+            if (add(record.phone, record.name, record.email)) {
+                return true;
+            }
+
+            return false;
+        }).length;
 }
 
 module.exports = {
