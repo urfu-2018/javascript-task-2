@@ -54,11 +54,7 @@ function update(phone, name, email) {
 
     if (name && phoneLogIndex !== -1) {
         phoneBook[phoneLogIndex].name = name;
-        // if (!email) {
-        //     delete phoneBook[phoneLogIndex].email;
-        // } else {
         phoneBook[phoneLogIndex].email = email;
-        // }
 
         return true;
     }
@@ -127,9 +123,7 @@ function find(query) {
     }
 
     if (query === '*') {
-        return phoneBook
-            .sort((logOne, logTwo) => (logOne.name.localeCompare(logTwo.name)))
-            .map(func);
+        return phoneBook.map(func).sort();
     }
 
     let phoneBookQuerySet = phoneBook.filter((acc) => {
@@ -143,9 +137,7 @@ function find(query) {
         return phoneCheck || nameCheck || emailCheck;
     });
 
-    return phoneBookQuerySet
-        .sort((logOne, logTwo) => (logOne.name.localeCompare(logTwo.name)))
-        .map(func);
+    return phoneBookQuerySet.map(func).sort();
 }
 
 /**
