@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkArguments(phone, name, email)) {
+    if (checkArguments(phone, name)) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
@@ -55,7 +55,7 @@ function checkArguments(phone, name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkArguments(phone, name, email)) {
+    if (checkArguments(phone, name)) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
@@ -84,7 +84,7 @@ function findAndRemove(query) {
 
         return removed;
     }
-    if (typeof(query) !== 'string') {
+    if (typeof(query) !== 'string' || query === '') {
 
         return 0;
     }
@@ -113,7 +113,8 @@ function formatData(person) {
     person.phone.slice(3, 6) + '-' +
     person.phone.slice(6, 8) + '-' +
     person.phone.slice(8, 10);
-    if (typeof(person.email) !== 'string') {
+    if (typeof(person.email) !== 'string' ||
+    person.email === '') {
 
         return rezultString;
     }
@@ -135,7 +136,7 @@ function isSuitable(person, query) {
 
 function find(query) {
     let rez = [];
-    if (typeof(query) !== 'string') {
+    if (typeof(query) !== 'string' || query === '') {
 
         return rez.sort();
     }
