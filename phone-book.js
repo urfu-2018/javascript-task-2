@@ -85,8 +85,8 @@ function getData(data, query) {
     let result = [];
     const keys = Object.keys(data);
     for (let i = 0; i < keys.length; i++) {
-        if typeof(query) === 'undefined' || ~data[keys[i]][0].indexOf(query) ||
-        typeof([keys[i]][1]) !== 'undefined' && ~data[keys[i]][1].indexOf(query) {
+        if (typeof(query) === 'undefined' || ~data[keys[i]][0].indexOf(query) ||
+        typeof([keys[i]][1]) !== 'undefined' && ~data[keys[i]][1].indexOf(query)) {
             result.push(data[keys[i]][0] + ', ' + transform(keys[i]) +
             (typeof(data[keys[i]][1]) !== 'undefined' ? ', ' + data[keys[i]][1] : ''));
         }
