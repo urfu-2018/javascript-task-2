@@ -103,7 +103,7 @@ function findAndRemoveStar(numberRecords) {
 
 function findAndRemove(query) {
     if (typeof query !== 'string') {
-        return [];
+        return 0;
     }
     if (query.trim() === '') {
         return 0;
