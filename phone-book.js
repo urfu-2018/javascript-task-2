@@ -8,7 +8,7 @@ const isStar = true;
 const tuple = (...args) => Object.freeze(args);
 
 function createRecord(name, phone, email) {
-    var newEmail = email === '' ? undefined : email;
+    var newEmail = email === '' || email === null ? undefined : email;
     if (validatePhone(phone) && validateName(name)) {
         return tuple(name, phone, newEmail);
     }
