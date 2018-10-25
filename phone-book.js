@@ -2,7 +2,7 @@
 
 /**
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
