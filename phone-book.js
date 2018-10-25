@@ -19,28 +19,29 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (phone.match(/^\d+$/) !== null
-        && phone.length === 10
-        && name !== undefined) {
-        if (phoneBook === undefined) { 
-            phoneBook = new Map(); 
+    if (phone.match(/^\d+$/) !== null &&
+        phone.length === 10 &&
+        name !== undefined) {
+        if (phoneBook === undefined) {
+            phoneBook = new Map();
         }
-        for(let key in phoneBook.keys()) {
-            if ((phoneBook[key].username === name
-                && key === phone
-                && phoneBook[key].useremail === email) || key === phone) {
-                return false;
-            }
+        for (let key in phoneBook.keys()) {
+             if ((phoneBook[key].username === name &&
+                 key === phone &&
+                 phoneBook[key].useremail === email) || key === phone) {
+					 
+                 return false;
+             }
         }
         let user = {
-            username : name,
+            username: name,
             useremail: email
         };
         phoneBook.set(phone, user);
-        //console.log(phoneBook.has(phone));
-        //console.log('==================');
+		
         return true
     }
+	
     return false
 }
 
@@ -55,14 +56,12 @@ function update(phone, name, email) {
     if (phoneBook.has(phone)) {
         if (name !== undefined) {
             let user = {
-                username : name,
+                username: name,
                 useremail: email
             };
-            phoneBook.set(phone, user);
+            phoneBook.set(phone, user);	
         }
-        //console.log(phoneBook);
     }
-    
 }
 
 /**
@@ -77,6 +76,7 @@ function findAndRemove(query) {
         let key = val[1].replace(/(\d{3})\) (\d{3})-(\d{2})-(\d{2})/, '$1$2$3$4').substring(4);
         phoneBook.delete(key);
     }
+	
     return findres.length;
 }
 
@@ -87,17 +87,20 @@ function findAndRemove(query) {
  */
 function find(query) {
     if (query === '') {
-        return undefined
+		
+        return
     }
     let patt = query
     if (query === '*') {
         patt = ''
     }
     let sorted = [...phoneBook.entries()].sort((a,b) => a[1].username > b[1].username).map(function(val) {
-        return [val[1].username, 
-                val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'), 
+		
+        return [val[1].username,
+                val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
                 val[1].useremail].filter(x => x !== undefined);
     });
+	
     return sorted.filter(x => x.join('').includes(patt));
 }
 
@@ -123,6 +126,7 @@ function importFromCsv(csv) {
         }
     }
     console.log(counter);
+	
     return counter;
 }
 
