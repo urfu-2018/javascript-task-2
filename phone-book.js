@@ -52,9 +52,9 @@ function update(phone, name, email) {
     }
     phoneBook.set(phone,
         {
-            phone: phone,
-            name: name,
-            email: email });
+            phone,
+            name,
+            email });
 
     return true;
 }
@@ -69,12 +69,9 @@ function findAndRemove(query) {
     if (!query) {
         return 0;
     }
-    let arrayWithDate = find(query);
-    for (let i of arrayWithDate) {
-        let phone = i.split(', ');
-        phone = phone[1].replace(/[+7() -]/g, '');
-        phoneBook.delete(phone);
-    }
+
+    const arrayWithDate = find(query);
+    arrayWithDate.forEach(entry => phoneBook.delete(entry[1]));
 
     return arrayWithDate.length;
 }
@@ -86,29 +83,46 @@ function findAndRemove(query) {
  */
 
 function find(query) {
-    let arrayWithDate = phoneBookToArray();
-    if (query === '*') {
-        return arrayWithDate.sort((a, b) => a[0].localeCompare(b[0]));
-    } else if (!query) {
-
+    if (!query) {
         return [];
     }
 
-    return arrayWithDate.filter((e) =>
-        e.indexOf(query) !== -1).sort((a, b) => a[0].localeCompare(b[0]));
+    const arrayWithDate = search(query).sort((a, b) => a[0].localeCompare(b[0]));
+
+    return formatArray(arrayWithDate);
+}
+
+function formatArray(entries) {
+    return entries.map(entry => {
+        const [name, phone, email] = entry;
+        if (entry.length === 3) {
+            return `${name}, ${formatPhone(phone)}, ${email}`;
+        }
+
+        return `${name}, ${formatPhone(phone)}`;
+    });
+}
+
+function search(query) {
+    let arrayWithDate = phoneBookToArray();
+
+    if (query === '*') {
+        return arrayWithDate;
+    }
+
+    return arrayWithDate.filter(entry => {
+
+        return entry.some(element => element.includes(query));
+    });
 }
 
 function phoneBookToArray() {
     let arrayWithDate = [];
     for (let value of phoneBook.values()) {
         if (value.email === undefined) {
-            let strWithContact = value.name + ', ' +
-        value.phone.replace(value.phone, formatPhone(value.phone));
-            arrayWithDate.push(strWithContact);
+            arrayWithDate.push([value.name, value.phone]);
         } else {
-            let strWithContact = value.name + ', ' +
-        value.phone.replace(value.phone, formatPhone(value.phone)) + ', ' + value.email;
-            arrayWithDate.push(strWithContact);
+            arrayWithDate.push([value.name, value.phone, value.email]);
         }
     }
 
@@ -134,8 +148,8 @@ function importFromCsv(csv) {
     let allContacts = csv.split('\n');
     let count = 0;
     for (let i = 0; i < allContacts.length; i++) {
-        let contact = allContacts[i].split(';');
-        if (add(contact[1], contact[0], contact[2]) || update(contact[1], contact[0], contact[2])) {
+        const [name, phone, email] = allContacts[i].split(';');
+        if (add(phone, name, email) || update(phone, name, email)) {
             count++;
         }
     }
