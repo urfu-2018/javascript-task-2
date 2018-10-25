@@ -26,23 +26,23 @@ function add(phone, name, email) {
             phoneBook = new Map();
         }
         for (let key in phoneBook.keys()) {
-             if ((phoneBook[key].username === name &&
-                 key === phone &&
-                 phoneBook[key].useremail === email) || key === phone) {
-					 
-                 return false;
-             }
+            if ((phoneBook[key].username === name &&
+                key === phone &&
+                phoneBook[key].useremail === email) || key === phone) {
+			 
+                return false;
+            }
         }
         let user = {
             username: name,
             useremail: email
         };
         phoneBook.set(phone, user);
-		
-        return true
+
+        return true;
     }
 	
-    return false
+    return false;
 }
 
 /**
@@ -59,7 +59,7 @@ function update(phone, name, email) {
                 username: name,
                 useremail: email
             };
-            phoneBook.set(phone, user);	
+            phoneBook.set(phone, user);
         }
     }
 }
@@ -70,13 +70,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let findres = find(query)
+    let findres = find(query);
     let val;
     for (val of findres) {
         let key = val[1].replace(/(\d{3})\) (\d{3})-(\d{2})-(\d{2})/, '$1$2$3$4').substring(4);
         phoneBook.delete(key);
     }
-	
+
     return findres.length;
 }
 
@@ -87,20 +87,21 @@ function findAndRemove(query) {
  */
 function find(query) {
     if (query === '') {
-		
-        return
+
+        return;
     }
-    let patt = query
+    let patt = query;
     if (query === '*') {
-        patt = ''
+        patt = '';
     }
-    let sorted = [...phoneBook.entries()].sort((a,b) => a[1].username > b[1].username).map(function(val) {
+    let sorted = [...phoneBook.entries()]
+                    .sort((a, b) => a[1].username > b[1].username).map( function(val) {
 		
         return [val[1].username,
-                val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
-                val[1].useremail].filter(x => x !== undefined);
+            val[0].replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4'),
+            val[1].useremail].filter(x => x !== undefined);
     });
-	
+
     return sorted.filter(x => x.join('').includes(patt));
 }
 
@@ -114,8 +115,9 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    let users = csv.split('\n').map(function(val) {
+    let users = csv.split('\n').map( function(val) {
         let arr = val.split(';');
+
         return [arr[1], arr[0], arr[2]];
     });
     let val;
@@ -125,8 +127,7 @@ function importFromCsv(csv) {
             counter++;
         }
     }
-    console.log(counter);
-	
+
     return counter;
 }
 
