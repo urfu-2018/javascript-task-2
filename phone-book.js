@@ -11,6 +11,7 @@ const isStar = true;
  */
 let phoneBook = [];
 
+
 function check(phone, name) {
     if (typeof phone !== 'string' || typeof name !== 'string' || name.trim() === '' ||
     phone.trim() === '') {
@@ -73,6 +74,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    var i = false;
     if (generalCheck(phone, name, email) === false) {
         return false;
     }
@@ -80,10 +82,11 @@ function update(phone, name, email) {
         if (element.phone === phone) {
             element.name = name;
             element.email = email;
+            i = true;
         }
     });
 
-    return true;
+    return i;
 }
 
 /**
@@ -220,10 +223,10 @@ function importFromCsv(csv) {
     var lineSplit;
     for (var i = 0; i <= line.length; i++) {
         lineSplit = String(line[i]).split(';');
-        if (update(lineSplit[1], lineSplit[0], lineSplit[2])) {
+        if (update(lineSplit[1], lineSplit[0], lineSplit[2]) === true) {
             lineAdd++;
         }
-        if (add(lineSplit[1], lineSplit[0], lineSplit[2])) {
+        if (add(lineSplit[1], lineSplit[0], lineSplit[2]) === true) {
             lineAdd++;
         }
 
