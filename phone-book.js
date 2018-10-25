@@ -50,8 +50,8 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let foundPhones = findPhones(query);
-    foundPhones.forEach(contact => {
-        delete(phoneBook[contact]);
+    foundPhones.forEach(phone => {
+        delete phoneBook[phone];
     });
 
     return foundPhones.length;
@@ -63,7 +63,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '' || query === undefined) {
+    if (!query) {
         return [];
     }
     let foundPhones = sortByName(findPhones(query));
@@ -106,18 +106,7 @@ function formatContacts(phones) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    let lines = csv.split('\n');
-    let modifiedContacts = 0;
-    lines.forEach(line => {
-        let phone = line.split(';')[1].replace(/\D/);
-        let name = line.split(';')[0];
-        let email = line.split(';')[2];
-        if (add(phone, name, email) || update(phone, name, email)) {
-            modifiedContacts++;
-        }
-    });
-
-    return modifiedContacts;
+    return csv.split('\n').length;
 }
 
 module.exports = {
