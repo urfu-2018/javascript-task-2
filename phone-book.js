@@ -17,22 +17,14 @@ let phoneBook = new Map();
  * @returns {String}
  */
 function toString(phone) {
-    const p1 = phone.slice(0, 3);
-    const p2 = phone.slice(3, 6);
-    const p3 = phone.slice(6, 8);
-    const p4 = phone.slice(8, 10);
-    const p = `+7 (${p1}) ${p2}-${p3}-${p4}`;
+    let p1 = phone.slice(0, 3);
+    let p2 = phone.slice(3, 6);
+    let p3 = phone.slice(6, 8);
+    let p4 = phone.slice(8, 10);
+    let p = `+7 (${p1}) ${p2}-${p3}-${p4}`;
 
     return phoneBook[phone].name + ', ' + p +
     (phoneBook[phone].email !== undefined ? ', ' + phoneBook[phone].email : '');
-}
-
-function isContainsContact(phone) {
-    if (phoneBook.length === 0) {
-        return false;
-    }
-
-    return Object.keys(phoneBook).includes(phone);
 }
 
 /**
@@ -46,7 +38,7 @@ function add(phone, name, email) {
     if (!isCorrect(phone, name)) {
         return false;
     }
-    if (!isContainsContact(phone)) {
+    if (phoneBook.length === 0 || !Object.keys(phoneBook).includes(phone)) {
         phoneBook[phone] = { name, email };
 
         return true;
@@ -75,7 +67,7 @@ function update(phone, name, email) {
     if (name === undefined || name === '') {
         return false;
     }
-    if (isContainsContact(phone)) {
+    if (Object.keys(phoneBook).includes(phone)) {
         phoneBook[phone] = { name, email };
 
         return true;
