@@ -5,12 +5,12 @@
  * Реализован метод importFromCsv
  */
 
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = new Map();
 const phoneTest = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
 /**
@@ -21,39 +21,15 @@ const phoneTest = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
  * @returns {Boolean}
  */
 
-function validPhone(phone) {
-    return phone.length === 10 && phoneTest.test(phone) && !isNaN(Number(phone));
-}
-
-function validString(string) {
-    return typeof string === 'string' && string.length !== 0;
-}
-
 function validDate(phone, name) {
-    return validPhone(phone) && validString(name);
+    return phoneTest.test(phone) && name;
 }
 
-function findPhone(phone) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-function add(phone, name, email) {
-    if (!validDate(phone, name) || findPhone(phone) !== -1) {
+function add(phone, name, email = '') {
+    if (!validDate(phone, name) || phoneBook.has(phone)) {
         return false;
     }
-    let contact = {};
-    if (validString(email)) {
-        contact.email = email;
-    }
-    contact.name = name;
-    contact.phone = phone;
-    phoneBook.push(contact);
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -65,28 +41,13 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-    const necessaryContact = findPhone(phone);
-    if (!validDate(phone, name) || necessaryContact === -1) {
+function update(phone, name, email = '') {
+    if (!validDate(phone, name) || !phoneBook.has(phone)) {
         return false;
     }
-    if (validString(email)) {
-        phoneBook[necessaryContact].email = email;
-    } else {
-        delete phoneBook[necessaryContact].email;
-    }
-    phoneBook[necessaryContact].name = name;
+    phoneBook.set(phone, { name, email });
 
     return true;
-}
-
-function findQueryInContact(contact, query) {
-    let email = false;
-    if (contact.email) {
-        email = contact.email.indexOf(query) !== -1;
-    }
-
-    return email || contact.name.indexOf(query) !== -1 || contact.phone.indexOf(query) !== -1;
 }
 
 /**
@@ -94,74 +55,57 @@ function findQueryInContact(contact, query) {
  * @param {String} query
  * @returns {Number}
  */
+
 function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    const countContact = phoneBook.length;
-    let processed;
     if (query === '*') {
-        phoneBook = [];
+        phoneBook.clear();
 
-        return countContact;
+        return phoneBook.size;
     }
-    processed = phoneBook.filter(contact => findQueryInContact(contact, query) === false);
-    phoneBook = processed;
 
-    return countContact - processed.length;
+    return Array.from(phoneBook).filter(([phone, { name, email = '' }]) =>
+        phone.includes(query) || name.includes(query) || email.includes(query))
+        .map(([phone]) => phoneBook.delete(phone)).length;
 }
 
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
- * @returns {String[]}*/
+ * @returns {String[]}
+ */
 
 function find(query) {
     if (query === '') {
         return [];
     }
-    let processed;
-    if (query === '*') {
-        processed = phoneBook;
-    } else {
-        processed = phoneBook.filter(contact => findQueryInContact(contact, query) === true);
-    }
 
-    return processed.sort((a, b) => a.name.localeCompare(b.name)).map(function (contact) {
-        const formattedPhone = contact.phone.replace(phoneTest, '+7 ($1) $2-$3-$4');
-        let result = contact.name + ', ' + formattedPhone;
-        if (contact.email) {
-            result += ', ' + contact.email;
-        }
-
-        return result;
-    });
+    return Array.from(phoneBook.entries()).filter(([phone, { name, email }]) =>
+        query === '*' || phone.includes(query) || name.includes(query) || email.includes(query))
+        .map(([phone, { name, email }]) =>
+            `${name}, ${phone.replace(phoneTest, '+7 ($1) $2-$3-$4')}${email ? ', ' + email : ''}`)
+        .sort();
 }
 
 /**
  * Импорт записей из csv-формата
  * @star
  * @param {String} csv
- * @returns {Number} – количество добавленных и обновленных записей
+ * @returns {number} – количество добавленных и обновленных записей
  */
+
 function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
 
-    const entries = csv.split('\n');
-    let count = 0;
-    for (let entry of entries) {
-        const contact = entry.split(';');
-        const name = contact[0];
-        const phone = contact[1];
-        const email = contact[2];
-        if (add(phone, name, email) || update(phone, name, email)) {
-            count ++;
-        }
-    }
+    return csv.split('\n').filter(log => {
+        const [name, phone, email] = log.split(';');
 
-    return count;
+        return add(phone, name, email) || update(phone, name, email);
+    }).length;
 }
 
 module.exports = {
