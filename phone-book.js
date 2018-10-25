@@ -19,14 +19,17 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if ((isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) &&
-        !phoneBook.has(phone)) {
+    if (isCorrectData(phone, name, email) && !phoneBook.has(phone)) {
         phoneBook.set(phone, [name, email]);
 
         return true;
     }
 
     return false;
+}
+
+function isCorrectData(phone, name, email) {
+    return isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name);
 }
 
 function isPhone(phone) {
@@ -50,8 +53,7 @@ function isEmail(email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if ((isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name)) &&
-        phoneBook.delete(phone)) {
+    if (isCorrectData(phone, name, email) && phoneBook.delete(phone)) {
         phoneBook.set(phone, [name, email]);
 
         return true;
