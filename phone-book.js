@@ -48,39 +48,39 @@ function update(phone, name, email) {
 
 function convertPhoneNumber(number) {
     const convertedNumber = `+7 (${number.slice(0, 3)})` +
-    ` ${number.slice(3, 6)}` +
-    `-${number.slice(6, 8)}` +
-    `-${number.slice(8, 10)}`;
+        ` ${number.slice(3, 6)}` +
+        `-${number.slice(6, 8)}` +
+        `-${number.slice(8, 10)}`;
 
     return convertedNumber;
 }
 
-function objToArrForSearch(obj) {
-    const arrforSearch = Object.entries(obj);
+function toFormattedStrings(obj) {
+    const unconvertedData = Object.entries(obj);
 
-    return arrforSearch.map(function (item) {
-        const [phone, name, email] = [item[0], item[1][0], item[1][1]];
+    return unconvertedData.map(function (item) {
+        const [phone, [name, email]] = item;
 
         return [name, phone, email].join(', ');
     });
 }
 
-function consvertForShow(arrforSearch) {
-    return arrforSearch.map(function (item) {
+function convertForShow(arr) {
+    return arr.map(function (item) {
         let [name, phone, email] = item.split(', ');
         phone = convertPhoneNumber(phone);
 
         return [name, phone, email].join(', ').replace(/,\s*$/, '');
     });
 }
-function removeFromSearch(arrforSearch, searchParam) {
-    return arrforSearch.filter(function (item) {
+function removeFromSearch(arr, searchParam) {
+    return arr.filter(function (item) {
         const data = item.split(', ');
-        const CanBeSearchedConditions = data[0].indexOf(searchParam) !== -1 ||
-        data[1].indexOf(searchParam) !== -1 ||
-        data[2].indexOf(searchParam) !== -1;
+        const canBeSearchedConditions = data[0].indexOf(searchParam) !== -1 ||
+            data[1].indexOf(searchParam) !== -1 ||
+            data[2].indexOf(searchParam) !== -1;
 
-        return CanBeSearchedConditions;
+        return canBeSearchedConditions;
     });
 
 }
@@ -102,18 +102,18 @@ function findAndRemove(query) {
     }
 
     if (query === '*') {
-        const allsCount = objToArrForSearch(phoneBook).length;
+        const totalCount = toFormattedStrings(phoneBook).length;
         phoneBook = {};
 
-        return allsCount;
+        return totalCount;
     }
     let countOfDeletedItems = 0;
-    const arrforSearch = objToArrForSearch(phoneBook);
-    arrforSearch.forEach(function (item) {
+    const arrForSearch = toFormattedStrings(phoneBook);
+    arrForSearch.forEach(function (item) {
         const data = item.split(', ');
         const CanBeDeleted = data[0].indexOf(query) !== -1 ||
-        data[1].indexOf(query) !== -1 ||
-        data[2].indexOf(query) !== -1;
+            data[1].indexOf(query) !== -1 ||
+            data[2].indexOf(query) !== -1;
         if (CanBeDeleted) {
             countOfDeletedItems ++;
             const phone = data[1];
@@ -135,11 +135,11 @@ function find(query) {
     }
 
     if (query === '*') {
-        const unsortedResult = consvertForShow(objToArrForSearch(phoneBook));
+        const unsortedResult = convertForShow(toFormattedStrings(phoneBook));
 
         return unsortedResult.sort(sortАlphabetically);
     }
-    const unsortedResult = consvertForShow(removeFromSearch(objToArrForSearch(phoneBook), query));
+    const unsortedResult = convertForShow(removeFromSearch(toFormattedStrings(phoneBook), query));
 
     return unsortedResult.sort(sortАlphabetically);
 }
@@ -151,9 +151,6 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
     let csvArr = csv.split('\n');
     let addCount = 0;
     let updatedCount = 0;
