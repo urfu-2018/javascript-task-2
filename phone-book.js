@@ -124,13 +124,13 @@ function find(query) {
 
 function csvAdd(data) {
     let result = false;
-    if (checkAll(data[0], data[1], data[2])) {
-        if (typeof(phoneBook[data[0]]) === 'undefined') {
-            add(data[0], data[1], data[2]);
+    if (checkAll(data[1], data[0], data[2])) {
+        if (typeof(phoneBook[data[1]]) === 'undefined') {
+            add(data[1], data[0], data[2]);
             result = true;
-        } else if (phoneBook[data[0]][0] !== data[1] ||
-                   phoneBook[data[0]][1] !== data[2]) {
-            update(data[0], data[1], data[2]);
+        } else if (phoneBook[data[1]][0] !== data[0] ||
+                   phoneBook[data[1]][1] !== data[2]) {
+            update(data[1], data[0], data[2]);
             result = true;
         }
     }
