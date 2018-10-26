@@ -29,11 +29,11 @@ function add(phone, name, email) {
 }
 
 function isCorrectPhoneNumber(phone) {
-    return typeof(phone) === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
+    return typeof phone === 'string' && phone.length === 10 && /^\d{10}$/.test(phone);
 }
 
 function isCorrectName(name) {
-    return typeof(name) === 'string' && name !== '';
+    return typeof name === 'string' && name !== '';
 }
 
 /**
@@ -60,7 +60,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const keys = findKeysToRemove(query);
-    for (let key of keys) {
+    for (const key of keys) {
         phoneBook.delete(key);
     }
 
@@ -94,42 +94,30 @@ function formatRecord(phone) {
 }
 
 function formatPhoneNumber(phone) {
-    const p1 = phone.slice(0, 3);
-    const p2 = phone.slice(3, 6);
-    const p3 = phone.slice(6, 8);
-    const p4 = phone.slice(8, 10);
+    let arr = [phone.slice(0, 3),
+        phone.slice(3, 6),
+        phone.slice(6, 8),
+        phone.slice(8, 10)];
 
-    return `+7 (${p1}) ${p2}-${p3}-${p4}`;
+    return `+7 (${arr[0]}) ${arr[1]}-${arr[2]}-${arr[3]}`;
 }
 
 function findKeysToRemove(query) {
     if (query === '*') {
-        return getAllKeys();
+        return [...phoneBook.keys()];
     }
     if (query === '' || query === undefined) {
         return [];
     }
 
-    return getAllKeys().filter(phone =>
+    return [...phoneBook.keys()].filter(phone =>
         phone.includes(query) ||
         phoneBook.get(phone).name.includes(query) ||
-        (phoneBook.get(phone).email !== undefined &&
-        phoneBook.get(phone).email.includes(query)));
+        isEmailIncludesQuery(phone, query));
 }
 
-function getAllKeys() {
-    let keys = [];
-    const iterator = phoneBook.keys();
-
-    for (;;) {
-        const result = iterator.next();
-        if (result.done) {
-            break;
-        }
-        keys.push(result.value);
-    }
-
-    return keys;
+function isEmailIncludesQuery(phone, query) {
+    return phoneBook.get(phone).email && phoneBook.get(phone).email.includes(query);
 }
 
 /**
@@ -139,12 +127,7 @@ function getAllKeys() {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
-    // На выходе метод возвращает одно число добавленных/обновленных записей
-
-    if (typeof(csv) !== 'string') {
+    if (typeof csv !== 'string') {
         return 0;
     }
     let count = 0;
