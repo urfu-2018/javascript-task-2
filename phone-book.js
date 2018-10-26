@@ -28,12 +28,12 @@ function phoneFormat(phone) {
 
 function recordFormat(key, record) {
     var result = '';
-    result += record.Name;
+    result += record.name;
     result += ', ';
     result += phoneFormat(key);
-    if (record.Email) {
+    if (record.email) {
         result += ', ';
-        result += record.Email;
+        result += record.email;
     }
 
     return result;
@@ -55,7 +55,7 @@ function add(phone, name, email) {
     if (checkPhone(phone) &&
         !(phone in phoneBook) &&
         checkName(name)) {
-        phoneBook[phone] = { Name: name, Email: email };
+        phoneBook[phone] = { name: name, email: email };
 
         return true;
     }
@@ -72,7 +72,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (phone in phoneBook && checkName(name)) {
-        phoneBook[phone] = { Name: name, Email: email };
+        phoneBook[phone] = { name: name, email: email };
 
         return true;
     }
@@ -97,8 +97,8 @@ function findAndRemove(query) {
 function checkQuery(query, key) {
     return query === '*' ||
         key.indexOf(query) !== -1 ||
-        (phoneBook[key].Name && phoneBook[key].Name.indexOf(query) !== -1) ||
-        (phoneBook[key].Email && phoneBook[key].Email.indexOf(query) !== -1);
+        (phoneBook[key].name && phoneBook[key].name.indexOf(query) !== -1) ||
+        (phoneBook[key].email && phoneBook[key].email.indexOf(query) !== -1);
 }
 
 function findKeys(query) {
@@ -139,21 +139,21 @@ function parseCsv(record) {
         return null;
     }
 
-    var result = { Name: parse[0], Phone: parse[1] };
+    var result = { name: parse[0], phone: parse[1] };
 
     if (parse.length === 3) {
-        result.Email = parse[2];
+        result.email = parse[2];
     }
 
     return result;
 }
 
 function addOrUpdate(record) {
-    if (!phoneBook[record.Phone]) {
-        return add(record.Phone, record.Name, record.Email);
+    if (!phoneBook[record.phone]) {
+        return add(record.phone, record.name, record.email);
     }
 
-    return update(record.Phone, record.Name, record.Email);
+    return update(record.phone, record.name, record.email);
 }
 
 /**
