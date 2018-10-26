@@ -135,13 +135,13 @@ function find(query) {
 
 function parseCsv(record) {
     var parse = record.split(';');
-    if (parse.length < 2 || parse.length > 3) {
+    if (parse.length < 2) {
         return null;
     }
 
     var result = { name: parse[0], phone: parse[1] };
 
-    if (parse.length === 3) {
+    if (parse.length >= 3) {
         result.email = parse[2];
     }
 
