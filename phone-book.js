@@ -42,7 +42,7 @@ function recordFormat(key, record) {
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+let phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -51,9 +51,9 @@ let phoneBook = {};
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name, email = '') {
     if (checkPhone(phone) &&
-        !(phone in phoneBook) &&
+        phoneBook[phone] === undefined &&
         checkName(name)) {
         phoneBook[phone] = { name: name, email: email };
 
@@ -70,7 +70,7 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone, name, email = '') {
     if (phone in phoneBook && checkName(name)) {
         phoneBook[phone] = { name: name, email: email };
 
