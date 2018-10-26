@@ -150,11 +150,13 @@ function importFromCsv(csv) {
     let notes = csv
         .split('\n')
         .map(x => x.split(';'));
-    let filtered = notes.filter(x => {
-        return phoneBook.has(x[1]) ? update(x[1], x[0], x[2]) : add(x[1], x[0], x[2]);
-    });
 
-    return filtered.length;
+    return notes
+        .filter(x => {
+            return phoneBook.has(x[1])
+                ? update(x[1], x[0], x[2])
+                : add(x[1], x[0], x[2]);
+        }).length;
 }
 
 module.exports = {
