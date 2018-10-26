@@ -90,7 +90,7 @@ function getData(data, query) {
     let result = [];
     const keys = Object.keys(data);
     for (let i = 0; i < keys.length; i++) {
-        if (extraChecking(query, data, keys)) {
+        if (extraChecking(query, data, keys[i])) {
             result.push(data[keys[i]][0] + ', ' + transform(keys[i]) +
             (typeof(data[keys[i]][1]) !== 'undefined' ? ', ' + data[keys[i]][1] : ''));
         }
@@ -106,7 +106,7 @@ function getData(data, query) {
  */
 function find(query) {
     let result = [];
-    if (query === '*' || query === '555') {
+    if (query === '*') {
         result = getData(phoneBook);
     } else if (query !== '') {
         if (checkPhone(query) && typeof(phoneBook[query]) !== 'undefined') {
