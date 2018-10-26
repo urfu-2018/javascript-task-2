@@ -82,7 +82,8 @@ function findAndRemove(query) {
 }
 
 function extraChecking(query, data, key) {
-    return typeof(query) === 'undefined' || data[key][0].indexOf(query) !== -1 ||
+    return typeof(query) === 'undefined' || key.indexOf(query) !== -1 ||
+        data[key][0].indexOf(query) !== -1 ||
         typeof(data[key][1]) !== 'undefined' && data[key][1].indexOf(query) !== -1;
 }
 
