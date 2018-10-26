@@ -74,7 +74,8 @@ function findAndRemove(query) {
         return sizePhoneBook;
     }
     let phoneArray = Array.from(phoneBook);
-    const filteredPhoneBook = filterPhoneBookEntries(phoneArray, query).forEach(
+    const filteredPhoneBook = filterPhoneBookEntries(phoneArray, query);
+    filteredPhoneBook.forEach(
         entries => phoneBook.delete(entries[0])
     );
 
