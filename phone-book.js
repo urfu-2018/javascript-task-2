@@ -61,12 +61,12 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const toDelete = findByQuery(query);
+    const toDeleteSize = toDelete.size;
     for (const key of toDelete.keys()) {
         phoneBook.delete(key);
     }
 
-
-    return toDelete.size;
+    return toDeleteSize;
 }
 
 /**
@@ -156,8 +156,6 @@ module.exports = {
     update,
     findAndRemove,
     find,
-
     importFromCsv,
-
     isStar
 };
