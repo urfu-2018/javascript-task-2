@@ -18,13 +18,13 @@ let phoneBook = {};
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
-    if (!isValidPhone(phone) || !isValidContactParam(name) || phoneBook[phone]) {
+function add(phone, name, email = '') {
+    if (!isValidPhone(phone) || !isValidName(name) || phoneBook[phone]) {
         return false;
     }
 
     phoneBook[phone] = {
-        email: isValidContactParam(email) ? email : '',
+        email,
         name
     };
 
@@ -35,8 +35,8 @@ function isValidPhone(phone) {
     return phone && typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
-function isValidContactParam(param) {
-    return param && typeof param === 'string' && param !== '';
+function isValidName(name) {
+    return name && typeof name === 'string' && name !== '';
 }
 
 /**
@@ -46,13 +46,13 @@ function isValidContactParam(param) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-    if (!isValidPhone(phone) || !isValidContactParam(name) || !phoneBook[phone]) {
+function update(phone, name, email = '') {
+    if (!isValidPhone(phone) || !isValidName(name) || !phoneBook[phone]) {
         return false;
     }
 
     phoneBook[phone] = {
-        email: isValidContactParam(email) ? email : '',
+        email,
         name
     };
 
@@ -90,7 +90,7 @@ function getFormatPhone(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isValidContactParam(query)) {
+    if (!query || query === '') {
         return [];
     }
 
@@ -122,7 +122,7 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!isValidContactParam(csv)) {
+    if (!csv || csv === '') {
         return 0;
     }
     const contacts = csv.split('\n');
