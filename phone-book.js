@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (/^\d{10}$/.test(phone) && name && typeof(name) === 'string' &&
+    if (/^\d{10}$/.test(phone) && name &&
     (!phoneBook.reduce((acc, contact) => {
         acc += (contact.phone === phone);
 
@@ -74,6 +74,11 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let requiredPhoneIndexes = [];
+    if (query === '*') {
+        phoneBook = [];
+
+        return 0;
+    }
     phoneBook.forEach((contact, index) => {
         if (!contact.email) {
             if (contact.phone.includes(query) ||
