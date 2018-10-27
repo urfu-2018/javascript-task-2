@@ -123,22 +123,6 @@ function find(query) {
     return result;
 }
 
-function csvAdd(data) {
-    let result = false;
-    if (checkAll(data[1], data[0], data[2])) {
-        if (typeof(phoneBook[data[1]]) === 'undefined') {
-            add(data[1], data[0], data[2]);
-            result = true;
-        } else if (phoneBook[data[1]][0] !== data[0] ||
-                   phoneBook[data[1]][1] !== data[2]) {
-            update(data[1], data[0], data[2]);
-            result = true;
-        }
-    }
-
-    return result;
-}
-
 
 /**
  * Импорт записей из csv-формата
@@ -148,11 +132,11 @@ function csvAdd(data) {
  */
 function importFromCsv(csv) {
     let phones = csv.split('\n');
-    let count = phones.length;
+    let count = 0;
     for (let i = 0; i < phones.length; i++) {
         let data = phones[i].split(';');
-        if (!csvAdd(data)) {
-            count--;
+        if (add(data[1], data[0], data[2]) || update(data[1], data[0], data[2])) {
+            count++;
         }
     }
 
