@@ -20,8 +20,8 @@ function checkName(name) {
 }
 
 function checkEmail(email) {
-    return typeof(email) === 'undefined' || typeof(email) === 'string' &&
-           /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email);
+    return typeof(email) === 'undefined' ||
+           /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test((string)email);
 }
 
 function checkAll(phone, name, email) {
@@ -109,7 +109,7 @@ function find(query) {
     let result = [];
     if (query === '*') {
         result = getData(phoneBook);
-    } else if (query !== '') {
+    } else if (typeof(query) !== 'undefined' && query.length > 0) {
         if (checkPhone(query) && typeof(phoneBook[query]) !== 'undefined') {
             let temp = [];
             temp[query] = [phoneBook[query][0], phoneBook[query][1]];
