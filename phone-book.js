@@ -23,18 +23,17 @@ function add(phone, name, email) {
     if (!name || !checkPhone(phone) || phoneBook.has(phone)) {
         return false;
     }
-    phoneBook.set(phone, { 'phone': transformPhone(phone), name, email });
+    addToPhoneBook(phone, name, email);
 
     return true;
 }
 
-function isString(obj) {
-    return typeof obj === 'string';
+function addToPhoneBook(phone, name, email) {
+    phoneBook.set(phone, { 'phone': transformPhone(phone), name, email });
 }
 
-
 function checkPhone(phone) {
-    return isString(phone) && phoneRe.test(phone);
+    return phoneRe.test(phone);
 }
 
 /**
@@ -45,10 +44,10 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) || !isString(name) || !name) {
+    if (!phoneBook.has(phone) || !name) {
         return false;
     }
-    phoneBook.set(phone, { 'phone': transformPhone(phone), name, email });
+    addToPhoneBook(phone, name, email);
 
     return true;
 }
