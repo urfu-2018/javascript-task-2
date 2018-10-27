@@ -104,7 +104,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     let requiredPhoneIndexes = phoneBook;
-    if (query === '') {
+    if (!query) {
         return [];
     } else if (query !== '*') {
         requiredPhoneIndexes = phoneBook.filter(contact => {
