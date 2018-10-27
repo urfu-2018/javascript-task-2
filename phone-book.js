@@ -11,20 +11,16 @@ const isStar = false;
  */
 let phoneBook = [];
 
-function badName(name) {
-    if (typeof name !== 'string' || name.length < 1) {
-        return true;
-    }
-
-    return false;
+/**
+ * Названия методов - глаголы
+ * Проверки теперь состоят из 1 строки
+ */
+function validateName(name) {
+    return typeof name === 'string' && name.length;
 }
 
-function badNumber(phone) {
-    if (!/^555\d{7}$/.test(phone) || typeof phone !== 'string') {
-        return true;
-    }
-
-    return false;
+function verifyNumber(phone) {
+    return typeof phone === 'string' && /^555\d{7}$/.test(phone);
 }
 
 /**
@@ -35,13 +31,14 @@ function badNumber(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (badNumber(phone) || badName(name) ||
-        arguments.length < 2 || typeof phoneBook[phone] !== 'undefined') {
+    if (!verifyNumber(phone) || !validateName(name) ||
+        phoneBook[parseInt(phone)]) {
         return false;
     }
     if (arguments.length < 3) {
         email = '';
     }
+    phone = parseInt(phone);
     phoneBook[phone] = [name, email];
 
     return true;
@@ -56,13 +53,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (badName(name) || badNumber(phone) ||
-        arguments.length < 2 || typeof phoneBook[phone] === 'undefined') {
+    if (!validateName(name) || !verifyNumber(phone) ||
+        !phoneBook[parseInt(phone)]) {
         return false;
     }
     if (arguments.length === 2) {
         email = '';
     }
+    phone = parseInt(phone);
     phoneBook[phone] = [name, email];
 
     return true;
@@ -98,11 +96,11 @@ function find(query) {
         return [];
     }
     if (query === '*') {
-        return putIntoStr(phoneBook);
+        return formatPhoneBook(phoneBook);
     }
     let map = searchByQuery(query);
 
-    return putIntoStr(map);
+    return formatPhoneBook(map);
 }
 
 function searchByQuery(query) {
@@ -118,7 +116,7 @@ function searchByQuery(query) {
     return array;
 }
 
-function putIntoStr(Book) {
+function formatPhoneBook(Book) {
     const array = [];
     for (let key of Object.keys(Book)) {
         let str = Book[key][0] + ', ' +
