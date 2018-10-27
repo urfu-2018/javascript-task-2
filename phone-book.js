@@ -20,8 +20,8 @@ function checkName(name) {
 }
 
 function checkEmail(email) {
-    return typeof(email) === 'undefined' ||
-           /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test((string)email);
+    return typeof(email) === 'undefined' || email === '' ||
+           /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email);
 }
 
 function checkAll(phone, name, email) {
