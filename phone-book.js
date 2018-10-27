@@ -20,8 +20,7 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (Boolean(name) === false || !checkPhone(phone) ||
-        phoneBook.has(phone) || !isString(name)) {
+    if (!name || !checkPhone(phone) || phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, { name, email });
@@ -46,7 +45,7 @@ function checkPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) || !isString(name) || Boolean(name) === false) {
+    if (!phoneBook.has(phone) || !isString(name) || !name) {
         return false;
     }
     phoneBook.set(phone, { name, email });
@@ -86,19 +85,19 @@ function find(query) {
         result.push(person);
     }
 
-    return result.sort((a, b) => a.name.localeCompare(b.name)).map(x => dataToString(x));
+    return result.sort((a, b) => a.name.localeCompare(b.name)).map(personDataToString);
 }
 
-function dataToString(x) {
+function personDataToString(x) {
     const res = `${x.name}, ${x.phone}`;
-    if (x.email !== undefined) {
+    if (x.email) {
         return `${res}, ${x.email}`;
     }
 
     return res;
 }
 function findByQuery(query) {
-    if (Boolean(query) === false || !isString(query)) {
+    if (!query) {
         return new Map();
     }
     if (query === '*') {
@@ -111,14 +110,15 @@ function findByQuery(query) {
 
     return results;
 }
+
 function tryFindMatchAndUpdate(query, results, phone) {
     const personData = phoneBook.get(phone);
-    if (checkPerson(personData, query, phone)) {
+    if (checkPerson(phone, personData, query)) {
         results.set(phone, personData);
     }
 }
 
-function checkPerson(personData, query, phone) {
+function checkPerson(phone, personData, query) {
     return (Boolean(personData.email) && personData.email.includes(query)) ||
         phone.includes(query) || personData.name.includes(query);
 }
@@ -138,12 +138,8 @@ function importFromCsv(csv) {
     const csvRows = csv.split('\n').map(x => x.split(';'));
     let result = 0;
     for (var i = 0; i < csvRows.length; i++) {
-        const row = csvRows[i];
-        const phone = row[1];
-        const name = row[0];
-        const email = row[2];
-        if (update(phone, name, email) ||
-            add(phone, name, email)) {
+        const [name, phone, email] = csvRows[i];
+        if (update(phone, name, email) || add(phone, name, email)) {
             result += 1;
         }
     }
