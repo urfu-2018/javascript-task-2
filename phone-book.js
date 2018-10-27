@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+const phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -20,13 +20,12 @@ let phoneBook = {};
  */
 
 function add(phone, name, email) {
-    const regExpPhone = /^\d{10}$/;
     name = getEmptyIfNotString(name);
     email = getEmptyIfNotString(email);
     if (typeof phone === 'string' &&
-        regExpPhone.test(phone) &&
-        phoneBook[phone] === undefined &&
-        name !== '') {
+        /^\d{10}$/.test(phone) &&
+        !phoneBook[phone] &&
+        name) {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -39,7 +38,7 @@ function add(phone, name, email) {
 }
 
 function getEmptyIfNotString(str) {
-    return typeof str === 'string' ? str.trim() : '';
+    return typeof str === 'string' ? str : '';
 }
 
 /**
@@ -52,8 +51,7 @@ function getEmptyIfNotString(str) {
 function update(phone, name, email) {
     name = getEmptyIfNotString(name);
     email = getEmptyIfNotString(email);
-    if (phoneBook[phone] !== undefined &&
-        name !== '') {
+    if (phoneBook[phone] && name) {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -71,27 +69,24 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string' || query === '') {
+    if (typeof query !== 'string' || !query) {
         return 0;
     }
-    let countDeleted = 0;
-    for (const phone in phoneBook) {
-        if (query === '*') {
-            delete phoneBook[phone];
-            countDeleted++;
-        } else if (isFind(phone, query)) {
-            delete phoneBook[phone];
-            countDeleted++;
-        }
+    const arrRemoved = Object.keys(phoneBook)
+        .filter(phone => query === '*' || isFind(phone, query));
+    for (const phone of arrRemoved) {
+        delete phoneBook[phone];
     }
 
-    return countDeleted;
+
+    return arrRemoved.length;
 }
 
 function isFind(phone, query) {
-    return phone.indexOf(query) !== -1 ||
-        phoneBook[phone].name.indexOf(query) !== -1 ||
-        phoneBook[phone].email.indexOf(query) !== -1;
+    return query === '*' ||
+        phone.includes(query) ||
+        phoneBook[phone].name.includes(query) ||
+        phoneBook[phone].email.includes(query);
 }
 
 /**
@@ -101,13 +96,11 @@ function isFind(phone, query) {
  */
 function find(query) {
     const arrFindPhones = [];
-    if (typeof query !== 'string' || query === '') {
+    if (typeof query !== 'string' || !query) {
         return arrFindPhones;
     }
     for (const phone in phoneBook) {
-        if (query === '*') {
-            arrFindPhones.push([phoneBook[phone].name, phone, phoneBook[phone].email]);
-        } else if (isFind(phone, query)) {
+        if (query === '*' || isFind(phone, query)) {
             arrFindPhones.push([phoneBook[phone].name, phone, phoneBook[phone].email]);
         }
     }
@@ -116,11 +109,11 @@ function find(query) {
     return getFormatString(arrFindPhones);
 }
 
-function sortedPhonesByName(manA, manB) {
-    if (manA[0] > manB[0]) {
+function sortedPhonesByName(a, b) {
+    if (a[0] > b[0]) {
         return 1;
     }
-    if (manA[0] < manB[0]) {
+    if (a[0] < b[0]) {
         return -1;
     }
 
@@ -129,28 +122,17 @@ function sortedPhonesByName(manA, manB) {
 
 function getFormatString(contacts) {
     const formatForPhone = /(\d{3})(\d{3})(\d{2})(\d{2})/;
-    const arrFormatContacts = [];
-    for (let contact of contacts) {
+    const arrFormatContacts = contacts.map(contact => {
         contact[1] = contact[1].replace(formatForPhone, replacer);
-        arrFormatContacts.push(getConcatContact(contact));
-    }
+
+        return contact.filter(item => item).join(', ');
+    });
 
     return arrFormatContacts;
 }
 
 function replacer() {
     return '+7 (' + arguments[1] + ') ' + [arguments[2], arguments[3], arguments[4]].join('-');
-}
-
-function getConcatContact(contact) {
-    let contactsInStr = contact[0];
-    for (let i = 1; i < contact.length; i++) {
-        if (contact[i] !== '') {
-            contactsInStr += ', ' + contact[i];
-        }
-    }
-
-    return contactsInStr;
 }
 
 /**
