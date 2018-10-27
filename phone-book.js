@@ -49,13 +49,12 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook[phone] && (trueParam(phone, name, email))) {
-        phoneBook[phone] = { name: name, email: email };
-
-        return true;
+    if (phoneBook[phone] || !trueParam(phone, name, email) || !name) {
+        return false;
     }
+    phoneBook[phone] = { name, email };
 
-    return false;
+    return true;
 }
 
 /**
@@ -67,13 +66,28 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
+    var res;
     var count = 0;
-    for (var [key] of Object.entries(phoneBook)) {
-        delete phoneBook[key];
-        count++;
+    for (var phone of Object.keys(phoneBook)) {
+        res = matchSearch(phoneBook[phone], query);
+        if (res !== undefined) {
+            delete phoneBook[phone];
+            count++;
+        }
     }
 
     return count;
+}
+
+function matchSearch(record, query) {
+    if (query === '*') {
+        return record;
+    }
+    if (record[0].indexOf(query) !== -1 || record[1].indexOf(query) !== -1 ||
+        (record[2] && record[2].indexOf(query) !== -1)) {
+
+        return record;
+    }
 }
 
 /**
@@ -85,27 +99,42 @@ function find(query) {
     if (query === '') {
         return [];
     }
-    var phones = Object.keys(phoneBook);
-    if (query === '*') {
-        return phones;
-    }
     const result = [];
-    var res = '';
-    for (var [key, value] of Object.entries(phoneBook)) {
-        var newPhone = newNumber(key);
-        res = value.name + ',' + newPhone;
-        if (value.email !== undefined) {
-            res += ',' + value.email;
+    var res;
+    for (var phone of Object.keys(phoneBook)) {
+        if (phoneBook[phone] === undefined) {
+            return [];
+        }
+        res = matchSearch(phoneBook[phone], query);
+        if (res !== undefined) {
+            result.push(res);
         }
     }
-    result.push(res);
+    var record;
+    record = view(result);
 
-    return result.sort();
+    return record.sort();
 }
 
 function newNumber(phone) {
+    return `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}
+    -${phone.substring(6, 8)}-${phone.substring(8)}`;
+}
 
-    return phone.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
+function view(result) {
+    var recordSought = [];
+    for (let info of result) {
+        if (info[0] === undefined) {
+            return [];
+        }
+        if (info[2] !== undefined) {
+            recordSought.push(info[1] + ',' + newNumber(info[0]) + info[2]);
+        } else {
+            recordSought.push(info[1] + ',' + newNumber(info[0]));
+        }
+    }
+
+    return recordSought;
 }
 
 /**
