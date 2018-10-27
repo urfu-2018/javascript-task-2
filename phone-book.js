@@ -23,7 +23,7 @@ function add(phone, name, email) {
     if (!name || !checkPhone(phone) || phoneBook.has(phone)) {
         return false;
     }
-    phoneBook.set(phone, { name, email });
+    phoneBook.set(phone, { 'phone': transformPhone(phone), name, email });
 
     return true;
 }
@@ -48,7 +48,7 @@ function update(phone, name, email) {
     if (!phoneBook.has(phone) || !isString(name) || !name) {
         return false;
     }
-    phoneBook.set(phone, { name, email });
+    phoneBook.set(phone, { 'phone': transformPhone(phone), name, email });
 
     return true;
 }
@@ -75,15 +75,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     const findResults = findByQuery(query);
-    const result = [];
-    for (const phone of findResults.keys()) {
-        const person = {
-            'phone': transformPhone(phone),
-            'name': findResults.get(phone).name,
-            'email': findResults.get(phone).email
-        };
-        result.push(person);
-    }
+    const result = Array.from(findResults.values());
 
     return result.sort((a, b) => a.name.localeCompare(b.name)).map(personDataToString);
 }
@@ -96,6 +88,7 @@ function personDataToString(x) {
 
     return res;
 }
+
 function findByQuery(query) {
     if (!query) {
         return new Map();
@@ -105,18 +98,15 @@ function findByQuery(query) {
     }
     const results = new Map();
     for (const phone of phoneBook.keys()) {
-        tryFindMatchAndUpdate(query, results, phone);
+        const personData = phoneBook.get(phone);
+        if (checkPerson(phone, personData, query)) {
+            results.set(phone, personData);
+        }
     }
 
     return results;
 }
 
-function tryFindMatchAndUpdate(query, results, phone) {
-    const personData = phoneBook.get(phone);
-    if (checkPerson(phone, personData, query)) {
-        results.set(phone, personData);
-    }
-}
 
 function checkPerson(phone, personData, query) {
     return (Boolean(personData.email) && personData.email.includes(query)) ||
