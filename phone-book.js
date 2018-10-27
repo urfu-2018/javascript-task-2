@@ -10,17 +10,26 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = new Map();
-const checkPhone = (phone) => typeof phone === 'string' && /^\d{10}$/.test(phone);
-const checkName = (name) => typeof name === 'string' && name.length > 0;
+
+function checkPhoneAndName(phone, name) {
+    return typeof phone === 'string' &&
+        /^\d{10}$/.test(phone) &&
+        typeof name === 'string' &&
+        name.length > 0;
+}
+
 function transformPhone(phone) {
     return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
         `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 }
+
 const getAllRecords = () => Array.from(phoneBook.values());
-const getRecordsByQuery = (query) => Array.from(phoneBook.values())
+
+const getRecordsByQuery = query => Array.from(phoneBook.values())
     .filter((contact) => contact.name.indexOf(query) !== -1 ||
             contact.phone.indexOf(query) !== -1 ||
-            (contact.email !== undefined && contact.email.indexOf(query) !== -1));
+            (contact.email && contact.email.indexOf(query) !== -1));
+
 function getRecords(query) {
     if (typeof query !== 'string' || query === '') {
         return [];
@@ -41,7 +50,7 @@ function getRecords(query) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!checkPhone(phone) || !checkName(name) || phoneBook.has(phone)) {
+    if (!checkPhoneAndName(phone, name) || phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, {
@@ -62,12 +71,12 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhone(phone) || !phoneBook.has(phone) || !checkName(name)) {
+    if (!checkPhoneAndName(phone, name) || !phoneBook.has(phone)) {
         return false;
     }
     let contact = phoneBook.get(phone);
     contact.name = name;
-    if (email !== undefined) {
+    if (email && typeof email === 'string') {
         contact.email = email;
     } else {
         delete contact.email;
@@ -85,7 +94,7 @@ function findAndRemove(query) {
     let finded = getRecords(query);
     let count = 0;
     finded.forEach(
-        (contact) => {
+        contact => {
             if (phoneBook.delete(contact.phone)) {
                 count++;
             }
@@ -101,11 +110,13 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let result = getRecords(query).sort((first, second) => first.name > second.name);
+    let result = getRecords(query)
+        .sort((first, second) => first.name > second.name)
+        .map(contact => contact.email
+            ? [contact.name, transformPhone(contact.phone), contact.email]
+            : [contact.name, transformPhone(contact.phone)]);
 
-    return result.map((contact) => contact.email !== undefined
-        ? `${contact.name}, ${transformPhone(contact.phone)}, ${contact.email}`
-        : `${contact.name}, ${transformPhone(contact.phone)}`);
+    return result.map(contact => contact.join(', '));
 }
 
 
@@ -123,13 +134,10 @@ function importFromCsv(csv) {
         return 0;
     }
     let count = 0;
-    csv.split('\n').forEach((record) => {
+    csv.split('\n').forEach(record => {
         let splitted = record.split(';');
-        if (phoneBook.has(splitted[1])) {
-            if (update(splitted[1], splitted[0], splitted[2])) {
-                count++;
-            }
-        } else if (add(splitted[1], splitted[0], splitted[2])) {
+        if (add(splitted[1], splitted[0], splitted[2]) ||
+            update(splitted[1], splitted[0], splitted[2])) {
             count++;
         }
     });
