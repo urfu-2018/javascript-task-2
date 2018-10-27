@@ -53,9 +53,9 @@ let phoneBook = new Map();
  */
 function add(phone, name, email = '') {
     if (checkPhone(phone) &&
-        phoneBook[phone] === undefined &&
+        !phoneBook.has(phone) &&
         checkName(name)) {
-        phoneBook[phone] = { name: name, email: email };
+        phoneBook.set(phone, { name: name, email: email });
 
         return true;
     }
@@ -71,8 +71,8 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    if (phone in phoneBook && checkName(name)) {
-        phoneBook[phone] = { name: name, email: email };
+    if (phoneBook.has(phone) && checkName(name)) {
+        phoneBook.set(phone, { name: name, email: email });
 
         return true;
     }
@@ -88,7 +88,7 @@ function update(phone, name, email = '') {
 function findAndRemove(query) {
     var keys = findKeys(query);
     for (var i = 0; i < keys.length; i++) {
-        delete phoneBook[keys[i]];
+        phoneBook.delete([keys[i]]);
     }
 
     return keys.length;
@@ -97,8 +97,8 @@ function findAndRemove(query) {
 function checkQuery(query, key) {
     return query === '*' ||
         key.indexOf(query) !== -1 ||
-        (phoneBook[key].name && phoneBook[key].name.indexOf(query) !== -1) ||
-        (phoneBook[key].email && phoneBook[key].email.indexOf(query) !== -1);
+        (phoneBook.get(key).name && phoneBook.get(key).name.indexOf(query) !== -1) ||
+        (phoneBook.get(key).email && phoneBook.get(key).email.indexOf(query) !== -1);
 }
 
 function findKeys(query) {
@@ -106,9 +106,8 @@ function findKeys(query) {
     if (!query || query.length === 0) {
         return result;
     }
-    var keys = Object.keys(phoneBook);
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
+    var keys = phoneBook.keys();
+    for (let key of keys) {
         if (checkQuery(query, key)) {
             result.push(key);
         }
@@ -127,7 +126,7 @@ function find(query) {
     var keys = findKeys(query);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        result.push(recordFormat(key, phoneBook[key]));
+        result.push(recordFormat(key, phoneBook.get(key)));
     }
 
     return result.sort(sortPhoneBook);
@@ -149,7 +148,7 @@ function parseCsv(record) {
 }
 
 function addOrUpdate(record) {
-    if (!phoneBook[record.phone]) {
+    if (!phoneBook.has(record.phone)) {
         return add(record.phone, record.name, record.email);
     }
 
