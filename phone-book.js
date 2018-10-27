@@ -22,12 +22,17 @@ function add(phone, name, email) {
     if (!checkFields(phone, name, email)) {
         return false;
     }
+    name = name.trim();
+    phone = phone.trim();
+    if (email !== undefined) {
+        email = email.trim();
+    }
 
     if (phoneBook.some(contact => contact.phone === phone)) {
         return false;
     }
     phoneBook.push({
-        name: name.trim(),
+        name,
         phone,
         email
     });
@@ -74,10 +79,7 @@ function findAndRemove(query) {
 
         return deleteCount;
     }
-
-    phoneBook = phoneBook.filter(contact =>
-        !contact.name.includes(query) && !contact.phone.includes(query) &&
-        (contact.email === undefined || !contact.email.includes(query)));
+    phoneBook = filterContacts(phoneBook, query, true);
 
     return deleteCount - phoneBook.length;
 }
@@ -96,10 +98,7 @@ function find(query) {
         return sortedPhoneBook.map(contactToString);
     }
 
-    return sortedPhoneBook.filter(contact =>
-        contact.name.includes(query) || contact.phone.includes(query) ||
-        (contact.email !== undefined && contact.email.includes(query)))
-        .map(contactToString);
+    return filterContacts(sortedPhoneBook, query, false).map(contactToString);
 }
 
 /**
@@ -135,11 +134,11 @@ function checkName(name) {
 }
 
 function checkEmail(email) {
-    return email === undefined || (typeof email === 'string' && email !== '');
+    return email === undefined || (typeof email === 'string' && email.trim() !== '');
 }
 
 function checkPhone(phone) {
-    return typeof phone === 'string' && /^\d{10}$/.test(phone);
+    return typeof phone === 'string' && /^\d{10}$/.test(phone.trim());
 }
 
 function sortContactsByName(firstContact, secondContact) {
@@ -165,7 +164,12 @@ function contactToString(contact) {
 
 function formatPhone(phone) {
     return phone.replace(/^(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 ($1) $2-$3-$4');
+}
 
+function filterContacts(contacts, query, mode) {
+    return contacts.filter(contact =>
+        mode !== (contact.name.includes(query) || contact.phone.includes(query) ||
+        (contact.email !== undefined && contact.email.includes(query))));
 }
 
 module.exports = {
