@@ -73,12 +73,14 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let requiredPhoneIndexes = [];
+    let requiredPhoneIndexes;
     if (query === '*') {
+        requiredPhoneIndexes = phoneBook.length;
         phoneBook = [];
 
-        return 0;
+        return requiredPhoneIndexes;
     }
+    requiredPhoneIndexes = [];
     phoneBook.forEach((contact, index) => {
         if (!contact.email) {
             if (contact.phone.includes(query) ||
