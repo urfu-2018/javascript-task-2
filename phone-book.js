@@ -58,7 +58,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof(phoneBook[phone]) !== 'undefined' && checkName(name) && checkEmail(email)) {
+    if (typeof(phoneBook[phone]) !== 'undefined' && checkName(name) && checkEmail(email) &&
+        (phoneBook[phone][0] !== name || phoneBook[phone][1] !== email)) {
         phoneBook[phone] = [name, email];
 
         return true;
