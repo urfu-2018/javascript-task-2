@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (/^\d{10}$/.test(phone) && name !== undefined &&
+    if (/^\d{10}$/.test(phone) && name &&
     (!phoneBook.reduce((acc, contact) => {
         acc += (contact.phone === phone);
 
@@ -48,7 +48,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     let requiredPhoneIndex;
-    if (phone !== undefined && (name !== undefined || email !== undefined) &&
+    if (phone && (name || email) &&
     (phoneBook.reduce((acc, contact, index) => {
         acc += (contact.phone === phone);
         if (contact.phone === phone) {
@@ -75,7 +75,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     let requiredPhoneIndexes = [];
     phoneBook.forEach((contact, index) => {
-        if (contact.email === undefined) {
+        if (!contact.email) {
             if (contact.phone.includes(query) ||
             contact.name.includes(query)) {
                 requiredPhoneIndexes.push(index);
@@ -83,7 +83,7 @@ function findAndRemove(query) {
         }
     });
     phoneBook.forEach((contact, index) => {
-        if (contact.email !== undefined && (contact.name.includes(query) ||
+        if (contact.email && (contact.name.includes(query) ||
         contact.phone.includes(query) || contact.email.includes(query))) {
             requiredPhoneIndexes.push(index);
         }
@@ -108,7 +108,7 @@ function find(query) {
         return [];
     } else if (query !== '*') {
         requiredPhoneIndexes = phoneBook.filter(contact => {
-            if (contact.email === undefined) {
+            if (!contact.email) {
                 return contact.phone.includes(query) ||
                 contact.name.includes(query);
             }
@@ -118,7 +118,7 @@ function find(query) {
         });
     }
     requiredPhoneIndexes = requiredPhoneIndexes.map(contact => {
-        if (contact.email === undefined) {
+        if (!contact.email) {
             return contact.name + ', +7 (' + contact.phone.substr(0, 3) +
             ') ' + contact.phone.substr(3, 3) + '-' +
             contact.phone.substr(6, 2) + '-' + contact.phone.substr(8, 2);
