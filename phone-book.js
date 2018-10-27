@@ -12,11 +12,11 @@ const isStar = true;
 let phoneBook = {};
 
 function isCorrectPhone(phone) {
-    return /^\d{10}$/.test(phone) && phone;
+    return /^\d{10}$/.test(phone);
 }
 
 function isCorrectName(name) {
-    return typeof name === 'string' && name;
+    return typeof name === 'string' && name.length > 0;
 }
 
 /**
@@ -27,13 +27,7 @@ function isCorrectName(name) {
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    if (isCorrectPhone(phone) && isCorrectName(name) && !phoneBook[phone]) {
-        phoneBook[phone] = email ? [name, email] : [name];
-
-        return true;
-    }
-
-    return false;
+    return tryToChangeEntries(phone, name, email, !phoneBook[phone]);
 }
 
 /**
@@ -44,7 +38,11 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    if (isCorrectPhone(phone) && isCorrectName(name) && phone in phoneBook) {
+    return tryToChangeEntries(phone, name, email, phone in phoneBook);
+}
+
+function tryToChangeEntries(phone, name, email, condition) {
+    if (condition && isCorrectPhone(phone) && isCorrectName(name)) {
         phoneBook[phone] = email ? [name, email] : [name];
 
         return true;
@@ -59,7 +57,7 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string' || !query) {
+    if (typeof query !== 'string' || query.length === 0) {
         return 0;
     }
     if (query === '*') {
@@ -68,15 +66,11 @@ function findAndRemove(query) {
 
         return result;
     }
-    let count = 0;
-    for (let phone of Object.keys(phoneBook)) {
-        if (containsInBook(query, phone)) {
-            delete phoneBook[phone];
-            count++;
-        }
-    }
 
-    return count;
+    return Object.keys(phoneBook)
+        .filter(phone => containsInBook(query, phone))
+        .map(phone => delete phoneBook[phone])
+        .length;
 }
 
 /**
@@ -85,33 +79,30 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof query !== 'string' || !query) {
+    if (typeof query !== 'string' || query.length === 0) {
         return [];
     }
-    const result = [];
     const isAll = query === '*';
 
-    for (let phone of Object.keys(phoneBook)) {
-        if (isAll || containsInBook(query, phone)) {
-            result.push(convert2Format(phone, phoneBook[phone][0], phoneBook[phone][1]));
-        }
-    }
-
-    return result.sort();
+    return Object.keys(phoneBook)
+        .filter(phone => isAll || containsInBook(query, phone))
+        .map(phone => convertFoundEntryToFormat(phone, phoneBook[phone][0], phoneBook[phone][1]))
+        .sort();
 }
 
 function containsInBook(query, phone) {
-    const name = phoneBook[phone][0];
-    const email = phoneBook[phone][1];
+    const [name, email] = phoneBook[phone];
 
-    return phone.includes(query) || name.includes(query) || (email && email.includes(query));
+    return [phone, name, email].some(e => typeof e !== 'undefined' && e.includes(query));
 }
 
-function convert2Format(phone, name, email) {
+function convertFoundEntryToFormat(phone, name, email) {
     phone =
     `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 
-    return email ? [name, phone, email].join(', ') : [name, phone].join(', ');
+    return [name, phone, email]
+        .filter(element => typeof element !== 'undefined' && element.length > 0)
+        .join(', ');
 }
 
 /**
@@ -122,15 +113,14 @@ function convert2Format(phone, name, email) {
  */
 function importFromCsv(csv) {
     const lines = csv.split('\n');
-    let count = 0;
-    for (let i = 0; i < lines.length; i++) {
-        const contact = lines[i].split(';');
-        if (add(contact[1], contact[0], contact[2]) || update(contact[1], contact[0], contact[2])) {
-            count++;
-        }
-    }
 
-    return count;
+    return lines
+        .filter(line => {
+            const contact = line.split(';');
+
+            return add(contact[1], contact[0], contact[2]) ||
+                update(contact[1], contact[0], contact[2]);
+        }).length;
 }
 
 module.exports = {

@@ -61,7 +61,7 @@ describe('phone-book', () => {
         ]);
     });
 
-    it('должен найти записи по запросу "Валерий"', () => {
+    it('должен искать записи по запросу "Валерий"', () => {
         assert.deepStrictEqual(phoneBook.find('Валерий'), [
             'Валерий, +7 (555) 333-00-33'
         ]);
@@ -100,7 +100,7 @@ describe('phone-book', () => {
             assert.strictEqual(phoneBook.importFromCsv(csv), 4);
         });
 
-        it('не должен экспортировать из cvs', () => {
+        it('не должен экспортировать из cvs некорректные и уже присутствующие данные', () => {
             const csv = [
                 'Алексей;alex@example.com',
                 'Валерий;555333003;valera@example.com',
