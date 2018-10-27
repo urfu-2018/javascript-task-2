@@ -74,6 +74,9 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let requiredPhoneIndexes;
+    if (!query) {
+        return 0;
+    }
     if (query === '*') {
         requiredPhoneIndexes = phoneBook.length;
         phoneBook = [];
