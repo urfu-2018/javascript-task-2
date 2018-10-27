@@ -19,7 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (/^\d{10}$/.test(phone) && name &&
+    if (/^\d{10}$/.test(phone) && name && typeof(name) === string &&
     (!phoneBook.reduce((acc, contact) => {
         acc += (contact.phone === phone);
 
