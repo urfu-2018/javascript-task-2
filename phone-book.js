@@ -24,7 +24,7 @@ function phoneIsValid(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!phoneIsValid(phone) || !name || typeof name !== 'string') {
+    if (typeof name !== 'string' || !name || !phoneIsValid(phone)) {
         return false;
     }
 
@@ -34,7 +34,7 @@ function add(phone, name, email) {
     });
 
     if (!checkPhoned) {
-        phoneBook.push({ 'name': name, 'phone': phone, 'email': email });
+        phoneBook.push({ name, phone, email });
 
         return true;
     }
@@ -77,15 +77,15 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     if (query === '*') {
-        var res1 = phoneBook.length;
+        let result = phoneBook.length;
         phoneBook = [];
 
-        return res1;
+        return result;
     }
     if (query === '') {
         return 0;
     }
-    var result = phoneBook.filter(function (record) {
+    let result = phoneBook.filter(function (record) {
         if (record.name.indexOf(query) !== -1 || record.phone.indexOf(query) !== -1) {
             return true;
         }
@@ -95,11 +95,11 @@ function findAndRemove(query) {
 
         return false;
     });
-    for (var i = 0; i < result.length; i++) {
-        phoneBook.splice(phoneBook.indexOf(result[i]), 1);
-    }
+    result.forEach(element => {
+        phoneBook.splice(phoneBook.indexOf(element), 1);
+    });
 
-    var res = result.length;
+    let res = result.length;
 
     return res;
 }
@@ -120,7 +120,7 @@ function find(query) {
 
         }
     }
-    var res = phoneBook.filter(function (record) {
+    function checkRecord(record) {
         if (record.name.indexOf(query) !== -1 || record.phone.indexOf(query) !== -1) {
             return true;
         }
@@ -129,7 +129,9 @@ function find(query) {
         }
 
         return false;
-    });
+
+    }
+    var res = phoneBook.filter(checkRecord);
     for (var j = 0; j < res.length; j++) {
         result.push(outString(res[j].name, res[j].phone, res[j].email));
     }
