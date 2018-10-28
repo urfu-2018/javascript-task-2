@@ -18,11 +18,11 @@ let phoneBook = {};
  * @param {String?} email
  * @returns {Boolean}
  */
-function trueParam(phone, name, email) {
+function trueParam(phone, name) {
     var tel = /(^[0-9]{10}$)/;
 
     return (typeof phone === 'string') && (tel.test(phone)) && (name !== '') &&
-        (name !== undefined) && (email === undefined || typeof email === 'string');
+        (name !== undefined) && (typeof name === 'string');
 }
 
 /**
@@ -53,7 +53,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook[phone] || !trueParam(phone, name, email) || !name) {
+    if (phoneBook[phone] || !trueParam(phone, name, email)) {
         return false;
     }
     if (email === undefined) {
@@ -104,7 +104,7 @@ function matchSearch(record, query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '') {
+    if (query === '' || typeof(query) !== 'string') {
         return [];
     }
     const result = [];
