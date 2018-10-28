@@ -16,6 +16,14 @@ function checkArgs(phone, name) {
         typeof(phone) !== 'string' || !(/^[0-9]{10}$/.test(phone)));
 }
 
+
+function getFilteredNotes(query) {
+    return Object.keys(phoneBook)
+        .filter((record)=>[record, ...Object.values(phoneBook[record])]
+            .some((rec)=>(query === '*' || rec.indexOf(query) >= 0)));
+}
+
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -46,9 +54,7 @@ function update(phone, name = '', email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return !query || typeof(query) !== 'string' ? 0 : Object.keys(phoneBook)
-        .filter((record)=>[record, ...Object.values(phoneBook[record])]
-            .some((rec)=>(query === '*' || rec.indexOf(query) >= 0)))
+    return !query || typeof(query) !== 'string' ? 0 : getFilteredNotes(query)
         .filter((item)=>delete(phoneBook[item]))
         .length;
 }
@@ -59,9 +65,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    return !query || typeof(query) !== 'string' ? [] : Object.keys(phoneBook)
-        .filter((record)=>[record, ...Object.values(phoneBook[record])]
-            .some((rec)=>(query === '*' || rec.indexOf(query) >= 0)))
+    return !query || typeof(query) !== 'string' ? [] : getFilteredNotes(query)
         .sort((a, b)=>phoneBook[a].name > phoneBook[b].name)
         .map((rec)=>[
             phoneBook[rec].name,
