@@ -82,18 +82,29 @@ function findAndRemove(query) {
     }
     if (query === '*') {
         count = phoneBook.length;
-        for (let i = 0; i < phoneBook.length; i++) {
-            delete phoneBook[i];
-        }
+        phoneBook.length = 0;
     } else {
         let deleted = searchIndexOfDeleted(query);
         count = deleted.length;
-        for (let i = 0; i < deleted.length; i++) {
+        for (let i = 0; i < count; i++) {
             delete phoneBook[deleted[i]];
         }
     }
 
     return count;
+}
+
+function searchIndexOfDeleted(query) {
+    const array = [];
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i][0].indexOf(query) !== -1 ||
+            phoneBook[i][1].indexOf(query) !== -1 ||
+            phoneBook[i][2].indexOf(query) !== -1) {
+            array.push(i);
+        }
+    }
+
+    return array;
 }
 
 /**
@@ -118,19 +129,6 @@ function find(query) {
  * @return {boolean}
  */
 
-function searchIndexOfDeleted(query) {
-    const array = [];
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i][0].indexOf(query) !== -1 ||
-            phoneBook[i][1].indexOf(query) !== -1 ||
-            phoneBook[i][2].indexOf(query) !== -1) {
-            array.push(i);
-        }
-    }
-
-    return array;
-}
-
 function searchByQueryFor(query) {
     const array = [];
     for (let i = 0; i < phoneBook.length; i++) {
@@ -146,7 +144,7 @@ function searchByQueryFor(query) {
 
 function formatPhoneBook(Book) {
     const array = [];
-    for (let i = 0; i < phoneBook.length; i++) {
+    for (let i = 0; i < Book.length; i++) {
         let str = Book[i][1] + ', ' +
             '+7 (' + Book[i][0].substring(0, 3) + ') ' +
             Book[i][0].substring(3, 6) + '-' +
