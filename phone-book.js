@@ -36,7 +36,11 @@ function add(phone, name, email) {
     if (phoneBook[phone] || !trueParam(phone, name, email)) {
         return false;
     }
-    phoneBook[phone] = { name, email };
+    if (email === undefined) {
+        phoneBook[phone] = [phone, name];
+    } else {
+        phoneBook[phone] = [phone, name, email];
+    }
 
     return true;
 }
@@ -52,7 +56,7 @@ function update(phone, name, email) {
     if (phoneBook[phone] || !trueParam(phone, name, email) || !name) {
         return false;
     }
-    phoneBook[phone] = { name, email };
+    phoneBook[phone] = { phone, name, email };
 
     return true;
 }
@@ -124,7 +128,7 @@ function newNumber(phone) {
 function view(result) {
     var recordSought = [];
     for (let info of result) {
-        if (info[0] === undefined) {
+        if (info === undefined) {
             return [];
         }
         if (info[2] !== undefined) {
