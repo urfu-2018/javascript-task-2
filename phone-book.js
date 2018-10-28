@@ -19,33 +19,14 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkEmptyString(name)) {
+    if (!name || !phone ||
+         !((/^\d{10}$/).test(phone)) ||
+          (phoneBook.hasOwnProperty(phone))) {
         return false;
     }
-    if (checkEmptyString(phone)) {
-        return false;
-    }
-    if (!((/^\d{10}$/).test(phone))) {
-        return false;
-    }
-    if (phoneBook.hasOwnProperty(phone)) {
-        return false;
-    }
-    if (checkEmptyString(email)) {
-        phoneBook[phone] = { name: name };
-    }
-    phoneBook[phone] = { name: name, email: email };
+    phoneBook[phone] = { name, email };
 
     return true;
-}
-
-function checkEmptyString(str) {
-    if (str === undefined ||
-         typeof(str) !== 'string' || str.length === 0) {
-        return true;
-    }
-
-    return false;
 }
 
 /**
@@ -56,17 +37,11 @@ function checkEmptyString(str) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkEmptyString(name)) {
+    if (!name) {
         return false;
     }
     if (!(phone in phoneBook)) {
         return false;
-    }
-    if (email === undefined) {
-        phoneBook[phone].name = name;
-        delete phoneBook[phone].email;
-
-        return true;
     }
     phoneBook[phone].name = name;
     phoneBook[phone].email = email;
@@ -80,49 +55,31 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (checkEmptyString(query)) {
+    if (!query) {
         return 0;
     }
     let count = 0;
     if (query === '*') {
         const res = Object.keys(phoneBook).length;
-        deleteAll();
+        phoneBook = {};
 
         return res;
     }
-    for (let phone in phoneBook) {
-        if (phoneBook.hasOwnProperty(phone)) {
-            count = count +
-             deleteContact(phone, phoneBook[phone].name, phoneBook[phone].email, query);
-        }
+    for (const phone of Object.keys(phoneBook)) {
+        count += deleteContact(phone, query);
     }
 
     return count;
 }
 
-function deleteAll() {
-    for (let ph in phoneBook) {
-        if (phoneBook.hasOwnProperty(ph)) {
-            delete phoneBook[ph];
-        }
-    }
-}
+function deleteContact(phone, query) {
+    if (findContacts(phone, query)) {
+        delete phoneBook[phone];
 
-function deleteContact(phone, name, email, query) {
-    let count = 0;
-    if (phone.indexOf(query) > -1) {
-        delete phoneBook[phone];
-        count = 1;
-    } else if (name.indexOf(query) > -1) {
-        delete phoneBook[phone];
-        count = 1;
-    } else if (email !== undefined &&
-         email.indexOf(query) > -1) {
-        delete phoneBook[phone];
-        count = 1;
+        return 1;
     }
 
-    return count;
+    return 0;
 }
 
 /**
@@ -131,7 +88,7 @@ function deleteContact(phone, name, email, query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (checkEmptyString(query)) {
+    if (!query) {
         return [];
     }
     if (query === '*') {
@@ -144,10 +101,8 @@ function find(query) {
 function findQuery(query) {
     let tmpAnswer = [];
     let answer = [];
-    for (let phone in phoneBook) {
-        if (phoneBook.hasOwnProperty(phone)) {
-            tmpAnswer.push(pushContact(phone, query));
-        }
+    for (const phone of Object.keys(phoneBook)) {
+        tmpAnswer.push(pushContact(phone, query));
     }
     for (let i = 0; i < tmpAnswer.length; i++) {
         if (tmpAnswer[i] !== '') {
@@ -159,31 +114,34 @@ function findQuery(query) {
 }
 
 function pushContact(phone, query) {
-    let answer = '';
-    if (phone.indexOf(query) > -1) {
-        answer = (contactAsString(phoneBook[phone], phone));
-    } else if (phoneBook[phone].name.indexOf(query) > -1) {
-        answer = (contactAsString(phoneBook[phone], phone));
-    } else if (phoneBook[phone].email !== undefined &&
-        phoneBook[phone].email.indexOf(query) > -1) {
-        answer = (contactAsString(phoneBook[phone], phone));
+    if (findContacts(phone, query)) {
+        return (contactAsString(phoneBook[phone], phone));
     }
 
-    return answer;
+    return '';
+}
+
+function findContacts(phone, query) {
+    if (phone.includes(query)) {
+        return true;
+    } else if (phoneBook[phone].name.includes(query)) {
+        return true;
+    } else if (phoneBook[phone].email !== undefined &&
+        phoneBook[phone].email.includes(query)) {
+        return true;
+    }
 }
 
 function pushAll() {
     let answer = [];
-    for (var ph in phoneBook) {
-        if (phoneBook.hasOwnProperty(ph)) {
-            answer.push(contactAsString(phoneBook[ph], ph));
-        }
+    for (const ph of Object.keys(phoneBook)) {
+        answer.push(contactAsString(phoneBook[ph], ph));
     }
 
     return answer.sort();
 }
 
-function changePhoneFormat(phone) {
+function formatPhone(phone) {
     let result = '+7 (' + phone.substring(0, 3) +
      ') ' + phone.substring(3, 6) +
       '-' + phone.substring(6, 8) +
@@ -193,7 +151,7 @@ function changePhoneFormat(phone) {
 }
 
 function contactAsString(contact, phone) {
-    var result = contact.name + ', ' + changePhoneFormat(phone);
+    var result = contact.name + ', ' + formatPhone(phone);
     if (contact.email !== undefined) {
         result += ', ' + contact.email;
     }
@@ -208,31 +166,22 @@ function contactAsString(contact, phone) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (checkCSV(csv) === 0) {
+    if (!csv) {
         return 0;
     }
-    const withoutN = csv.split('\n');
-    let newLength = 0;
-    for (let i = 0; i < withoutN.length; i++) {
-        const str = withoutN[i].split(';');
-        const name = str[0];
-        const phone = str[1];
-        const email = str[2];
+    const csvLine = csv.split('\n');
+    let fromCsvLength = 0;
+    for (let i = 0; i < csvLine.length; i++) {
+        const [name, phone, email] = csvLine[i].split(';');
         if (add(phone, name, email) || update(phone, name, email)) {
-            newLength++;
+            fromCsvLength++;
         }
     }
 
-    return newLength;
+    return fromCsvLength;
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-}
-
-function checkCSV(csv) {
-    if (csv === undefined || typeof(csv) !== 'string' || csv === '') {
-        return 0;
-    }
 }
 
 module.exports = {
