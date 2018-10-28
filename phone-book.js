@@ -54,15 +54,16 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (phoneBook[phone] || !trueParam(phone, name, email)) {
-        return false;
-    }
-    if (email === undefined) {
-        phoneBook[phone] = [phone, name];
-    } else {
-        phoneBook[phone] = [phone, name, email];
+        if (email === undefined) {
+            phoneBook[phone] = [phone, name];
+        } else {
+            phoneBook[phone] = [phone, name, email];
+        }
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 /**
@@ -104,7 +105,7 @@ function matchSearch(record, query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '' || typeof(query) !== 'string') {
+    if (query === '' || typeof (query) !== 'string') {
         return [];
     }
     const result = [];
