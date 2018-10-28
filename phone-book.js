@@ -56,7 +56,11 @@ function update(phone, name, email) {
     if (phoneBook[phone] || !trueParam(phone, name, email) || !name) {
         return false;
     }
-    phoneBook[phone] = { phone, name, email };
+    if (email === undefined) {
+        phoneBook[phone] = [phone, name];
+    } else {
+        phoneBook[phone] = [phone, name, email];
+    }
 
     return true;
 }
