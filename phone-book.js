@@ -30,18 +30,21 @@ function correctNameAndPhone(name, phone) {
     return correctPhone(phone) && correctName(name);
 }
 
-
-function add(phone, name, email) {
+function checkAndCorrect(phone, name, email, include) {
     if (!correctNameAndPhone(name, phone)) {
         return false;
     }
-    if (!phoneBook[phone]) {
+    if (include) {
         phoneBook[phone] = { name, email };
 
         return true;
     }
 
     return false;
+}
+
+function add(phone, name, email) {
+    return checkAndCorrect(phone, name, email, !phoneBook[phone]);
 }
 
 /**
@@ -52,16 +55,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!correctNameAndPhone(name, phone)) {
-        return false;
-    }
-    if (phoneBook[phone]) {
-        phoneBook[phone] = { name, email };
-
-        return true;
-    }
-
-    return false;
+    return checkAndCorrect(phone, name, email, phoneBook[phone]);
 }
 
 /**
@@ -89,9 +83,8 @@ function phoneView(phone) {
 }
 
 function contactView(phone) {
-    return phoneBook[phone].email
-        ? [phoneBook[phone].name, phoneView(phone), phoneBook[phone].email].join(', ')
-        : [phoneBook[phone].name, phoneView(phone)].join(', ');
+    return [phoneBook[phone].name, phoneView(phone),
+        phoneBook[phone].email].filter(Boolean).join(', ');
 }
 
 function sortByName(x, y) {
@@ -100,8 +93,8 @@ function sortByName(x, y) {
 
 function propertiesIncludes(phone, query) {
     return phone.includes(query) ||
-    phoneBook[phone].name.includes(query) ||
-    (phoneBook[phone].email && phoneBook[phone].email.includes(query));
+        phoneBook[phone].name.includes(query) ||
+            (phoneBook[phone].email && phoneBook[phone].email.includes(query));
 }
 
 function getProperties(query) {
@@ -145,8 +138,7 @@ function importFromCsv(csv) {
             }
 
             return add(phone, name, email);
-        }
-        )
+        })
         .filter(Boolean)
         .length;
 }
