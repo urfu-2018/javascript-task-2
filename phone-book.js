@@ -26,13 +26,22 @@ function correctName(name) {
     return typeof name === 'string' && name.length > 0;
 }
 
+function correctNameAndPhone(name, phone) {
+    return correctPhone(phone) && correctName(name);
+}
+
+
 function add(phone, name, email) {
-    if (!correctPhone(phone) || phoneBook[phone] || !correctName(name)) {
+    if (!correctNameAndPhone(name, phone)) {
         return false;
     }
-    phoneBook[phone] = { name, email };
+    if (!phoneBook[phone]) {
+        phoneBook[phone] = { name, email };
 
-    return true;
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -43,13 +52,16 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook[phone] || !correctName(name) || !correctPhone(phone)) {
+    if (!correctNameAndPhone(name, phone)) {
         return false;
     }
+    if (phoneBook[phone]) {
+        phoneBook[phone] = { name, email };
 
-    phoneBook[phone] = { name: name, email: email };
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 /**
@@ -58,11 +70,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const foundedContacts = getPropertys(query);
-
-    foundedContacts.forEach(phone => delete phoneBook[phone]);
-
-    return foundedContacts.length;
+    return getProperties(query).map(phone => delete phoneBook[phone]).length;
 }
 
 /**
@@ -81,19 +89,22 @@ function phoneView(phone) {
 }
 
 function contactView(phone) {
-    if (typeof phoneBook[phone].email !== 'undefined') {
-        return `${phoneBook[phone].name}, ${phoneView(phone)}, ${phoneBook[phone].email}`;
-    }
-
-    return `${phoneBook[phone].name}, ${phoneView(phone)}`;
-
+    return phoneBook[phone].email
+        ? [phoneBook[phone].name, phoneView(phone), phoneBook[phone].email].join(', ')
+        : [phoneBook[phone].name, phoneView(phone)].join(', ');
 }
 
 function sortByName(x, y) {
     return phoneBook[x].name > phoneBook[y].name;
 }
 
-function getPropertys(query) {
+function propertiesIncludes(phone, query) {
+    return phone.includes(query) ||
+    phoneBook[phone].name.includes(query) ||
+    (phoneBook[phone].email && phoneBook[phone].email.includes(query));
+}
+
+function getProperties(query) {
     if (!query) {
         return [];
     }
@@ -103,13 +114,11 @@ function getPropertys(query) {
     }
 
     return Object.keys(phoneBook)
-        .filter(phone => phone.includes(query) ||
-            phoneBook[phone].name.includes(query) ||
-            (phoneBook[phone].email && phoneBook[phone].email.includes(query)));
+        .filter(phone => propertiesIncludes(phone, query));
 }
 
 function find(query) {
-    return getPropertys(query)
+    return getProperties(query)
         .sort(sortByName)
         .map(contactView);
 }
@@ -128,18 +137,18 @@ function importFromCsv(csv) {
         return 0;
     }
 
-    return csv.split('\n').map(
-        a => {
-            const contact = a.split(';');
-
-            if (phoneBook[contact[1]]) {
-                return update(contact[1], contact[0], contact[2]);
+    return csv.split('\n')
+        .map(contact => {
+            const [name, phone, email] = contact.split(';');
+            if (phoneBook[phone]) {
+                return update(phone, name, email);
             }
 
-            return add(contact[1], contact[0], contact[2]);
+            return add(phone, name, email);
         }
-    )
-        .filter(b =>b).length;
+        )
+        .filter(Boolean)
+        .length;
 }
 
 module.exports = {
