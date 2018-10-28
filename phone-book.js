@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -22,12 +22,9 @@ function validatePhone(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name, email = '') {
     if (!validatePhone(phone) || phoneBook.has(phone) || !name) {
         return false;
-    }
-    if (!email) {
-        email = '';
     }
     phoneBook.set(phone, [name, email]);
 
@@ -50,13 +47,9 @@ function update(phone, name, email) {
     return add(phone, name, email);
 }
 
-function checkEmptyRequest(query) {
-    return query === '';
-}
-
-function checkItem(item, query) {
-    return (query === '*' || item[0].indexOf(query) > -1 || item[1][0].indexOf(query) > -1 ||
-    item[1][1].indexOf(query) > -1);
+function checkMatch(item, query) {
+    return (query === '*' || item[0].includes(query) || item[1][0].includes(query) ||
+    item[1][1].includes(query));
 }
 
 /** Удаление записей по запросу из телефонной книги
@@ -65,11 +58,11 @@ function checkItem(item, query) {
  */
 function findAndRemove(query) {
     let count = 0;
-    if (checkEmptyRequest(query)) {
-        return count;
+    if (query === '') {
+        return 0;
     }
     for (let i of phoneBook) {
-        if (checkItem(i, query)) {
+        if (checkMatch(i, query)) {
             phoneBook.delete(i[0]);
             count++;
         }
@@ -84,27 +77,31 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let str = [];
-    if (checkEmptyRequest(query)) {
-        return str;
+    let foundContacts = [];
+    if (query === '') {
+        return foundContacts;
     }
     for (let i of phoneBook) {
-        let email = checkEmail(i[1][1]);
-        if (checkItem(i, query)) {
-            str.push(i[1][0] + ', +7 (' + i[0].substr(0, 3) + ') ' + i[0].substr(3, 3) + '-' +
-            i[0].substr(6, 2) + '-' + i[0].substr(8, 2) + email);
+        let email = checkAndConvertEmail(i[1][1]);
+        if (checkMatch(i, query)) {
+            foundContacts.push(formatRecord(i) + email);
         }
     }
-    str.sort();
+    foundContacts.sort();
 
-    return str;
+    return foundContacts;
+}
+
+function formatRecord(item) {
+    return item[1][0] + ', +7 (' + item[0].substr(0, 3) + ') ' + item[0].substr(3, 3) + '-' +
+    item[0].substr(6, 2) + '-' + item[0].substr(8, 2);
 }
 
 /**
  * @param {String} email
  * @returns {String}
  */
-function checkEmail(email) {
+function checkAndConvertEmail(email) {
     if (email) {
         return ', ' + email;
     }
@@ -119,11 +116,17 @@ function checkEmail(email) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    const contacts = csv.split('\n');
+    let numberContacts = 0;
+    for (let i of contacts) {
+        let contactInfo = i.split(';');
+        if (add(contactInfo[1], contactInfo[0], contactInfo[2]) ||
+        update(contactInfo[1], contactInfo[0], contactInfo[2])) {
+            numberContacts++;
+        }
+    }
 
-    return csv.split('\n').length;
+    return numberContacts;
 }
 
 module.exports = {
