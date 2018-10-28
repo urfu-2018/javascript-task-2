@@ -20,7 +20,6 @@ let phoneBook = {};
  */
 function add(phone, name, email) {
     if (!name || !/^\d{10}$/.test(phone) || phoneBook.hasOwnProperty(phone)) {
-
         return false;
     }
     phoneBook[phone] = [name, email];
@@ -37,8 +36,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const canAdd = !phoneBook.hasOwnProperty(phone) || !name;
-    if (canAdd) {
+    const canUpdate = !phoneBook.hasOwnProperty(phone) || !name;
+    if (canUpdate) {
         return false;
     }
     phoneBook[phone] = [name, email];
@@ -58,11 +57,7 @@ function convertPhoneNumber(number) {
 function toFormattedStrings(obj) {
     const unconvertedData = Object.entries(obj);
 
-    return unconvertedData.map(function (item) {
-        const [phone, [name, email]] = item;
-
-        return [name, phone, email].join(', ');
-    });
+    return unconvertedData.map(([phone, [name, email]]) => [name, phone, email].join(', '));
 }
 
 function convertForShow(arr) {
@@ -108,15 +103,14 @@ function findAndRemove(query) {
         return totalCount;
     }
     let countOfDeletedItems = 0;
-    const arrForSearch = toFormattedStrings(phoneBook);
-    arrForSearch.forEach(function (item) {
-        const data = item.split(', ');
-        const CanBeDeleted = data[0].indexOf(query) !== -1 ||
-            data[1].indexOf(query) !== -1 ||
-            data[2].indexOf(query) !== -1;
-        if (CanBeDeleted) {
+    const formattedPhoneBook = toFormattedStrings(phoneBook);
+    formattedPhoneBook.forEach(function (item) {
+        const [name, phone, email] = item.split(', ');
+        const canBeDeleted = name.indexOf(query) !== -1 ||
+            phone.indexOf(query) !== -1 ||
+            email.indexOf(query) !== -1;
+        if (canBeDeleted) {
             countOfDeletedItems ++;
-            const phone = data[1];
             delete phoneBook[phone];
         }
     });
