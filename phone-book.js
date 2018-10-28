@@ -12,7 +12,7 @@ const isStar = true;
 let phoneBook = {};
 const PHONE_REGEX = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
 
-function isCorrect(phone, name) {
+function isValidArgs(phone, name) {
     return PHONE_REGEX.test(phone) && name;
 }
 
@@ -24,7 +24,7 @@ function isCorrect(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isCorrect(phone, name) && !(phone in phoneBook)) {
+    if (isValidArgs(phone, name) && !(phoneBook.hasOwnProperty(phone))) {
         phoneBook[phone] = { name, email };
 
         return true;
@@ -41,7 +41,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isCorrect(phone, name) && phone in phoneBook) {
+    if (isValidArgs(phone, name) && phoneBook.hasOwnProperty(phone)) {
         phoneBook[phone] = { name, email };
 
         return true;
@@ -50,10 +50,9 @@ function update(phone, name, email) {
     return false;
 }
 
-function checkContain(number, query) {
-    return [number, phoneBook[number].email, phoneBook[number].name].some(element => {
-        return element !== undefined && element.includes(query);
-    });
+function includesQuery(number, query) {
+    return [number, phoneBook[number].email, phoneBook[number].name]
+        .some(element => element && element.includes(query));
 }
 
 /**
@@ -69,9 +68,7 @@ function __find(query) {
     }
 
     return Object.keys(phoneBook)
-        .filter(number => {
-            return checkContain(number, query);
-        });
+        .filter(number => includesQuery(number, query));
 }
 
 /**
@@ -81,11 +78,24 @@ function __find(query) {
  */
 function findAndRemove(query) {
     let phonesToDelete = __find(query);
-    phonesToDelete.forEach(phone => {
+    for (let phone of phonesToDelete) {
         delete phoneBook[phone];
-    });
+    }
 
     return phonesToDelete.length;
+}
+
+function formatRecord(record) {
+    let digits = record.number.match(PHONE_REGEX);
+    let str = `${record.name}, +7 (${digits[1]}) ${digits[2]}-${digits[3]}-${digits[4]}`;
+
+    if (!record.email) {
+        record.email = '';
+    } else {
+        record.email = ', ' + record.email;
+    }
+
+    return str + record.email;
 }
 
 /**
@@ -95,22 +105,13 @@ function findAndRemove(query) {
  */
 function find(query) {
     return __find(query)
-        .map(number => {
-            return { name: phoneBook[number].name, number, email: phoneBook[number].email };
-        })
+        .map(number => ({
+            name: phoneBook[number].name,
+            email: phoneBook[number].email,
+            number
+        }))
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map(record => {
-            let digits = record.number.match(PHONE_REGEX);
-            let str = `${record.name}, +7 (${digits[1]}) ${digits[2]}-${digits[3]}-${digits[4]}`;
-            if (record.email === undefined) {
-                record.email = '';
-            } else {
-                record.email = ', ' + record.email;
-            }
-
-            return str + record.email;
-
-        });
+        .map(formatRecord);
 }
 
 /**
@@ -123,11 +124,8 @@ function importFromCsv(csv) {
     return csv.split('\n')
         .map(line => line.split(';'))
         .reduce((count, record) => {
-            if (add(record[1], record[0], record[2])) {
-                count++;
-            } else if (update(record[1], record[0], record[2])) {
-                count++;
-            }
+            const args = [record[1], record[0], record[2]];
+            count += add(...args) || update(...args);
 
             return count;
         }, 0);
