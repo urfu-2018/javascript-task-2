@@ -11,10 +11,6 @@ const isStar = false;
  */
 let phoneBook = [];
 
-/**
- * Названия методов - глаголы
- * Проверки теперь состоят из 1 строки
- */
 function validateName(name) {
     return typeof name === 'string' && name.length;
 }
@@ -32,18 +28,26 @@ function verifyNumber(phone) {
  */
 function add(phone, name, email) {
     if (!verifyNumber(phone) || !validateName(name) ||
-        phoneBook[parseInt(phone)]) {
+        indexOfPhone(phone) !== -1) {
         return false;
     }
     if (arguments.length < 3) {
         email = '';
     }
-    phone = parseInt(phone);
-    phoneBook[phone] = [name, email];
+    phoneBook.push([phone, name, email]);
 
     return true;
 }
 
+function indexOfPhone(phone) {
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i][0] === phone) {
+            return i;
+        }
+    }
+
+    return -1;
+}
 
 /**
  * Обновление записи в телефонной книге
@@ -53,15 +57,15 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    let index = indexOfPhone(phone);
     if (!validateName(name) || !verifyNumber(phone) ||
-        !phoneBook[parseInt(phone)]) {
+        index === -1) {
         return false;
     }
     if (arguments.length === 2) {
         email = '';
     }
-    phone = parseInt(phone);
-    phoneBook[phone] = [name, email];
+    phoneBook[index] = [phone, name, email];
 
     return true;
 }
@@ -72,17 +76,22 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let deleted = find(query);
-    for (let d of deleted) {
-        let array = d.split(', ');
-        let key = array[1].substring(4, 7) +
-            array[1].substring(9, 12) +
-            array[1].substring(13, 15) +
-            array[1].substring(16, 19);
-        delete phoneBook[key];
+    let count;
+    if (query === '') {
+        return 0;
+    }
+    if (query === '*') {
+        count = phoneBook.length;
+        phoneBook.length = 0;
+    } else {
+        let deleted = searchByQuery(query);
+        for (let i = 0; i < deleted.length; i++) {
+            delete phoneBook[deleted[i]];
+        }
+        count = deleted.length;
     }
 
-    return deleted.length;
+    return count;
 }
 
 /**
@@ -98,18 +107,35 @@ function find(query) {
     if (query === '*') {
         return formatPhoneBook(phoneBook);
     }
-    let map = searchByQuery(query);
+    let Array = searchByQueryFor(query);
 
-    return formatPhoneBook(map);
+    return formatPhoneBook(Array);
 }
+
+/**
+ * @return {boolean}
+ */
 
 function searchByQuery(query) {
     const array = [];
-    for (let key of Object.keys(phoneBook)) {
-        if (phoneBook[key][1].indexOf(query) !== -1 ||
-            phoneBook[key][0].indexOf(query) !== -1 ||
-            key.indexOf(query) !== -1) {
-            array[key] = [phoneBook[key][0], phoneBook[key][1]];
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i][0].indexOf(query) !== -1 ||
+            phoneBook[i][1].indexOf(query) !== -1 ||
+            phoneBook[i][2].indexOf(query) !== -1) {
+            array.push(i);
+        }
+    }
+
+    return array;
+}
+
+function searchByQueryFor(query) {
+    const array = [];
+    for (let i = 0; i < phoneBook.length; i++) {
+        if (phoneBook[i][0].indexOf(query) !== -1 ||
+            phoneBook[i][1].indexOf(query) !== -1 ||
+            phoneBook[i][2].indexOf(query) !== -1) {
+            array.push([phoneBook[i][0], phoneBook[i][1], phoneBook[i][2]]);
         }
     }
 
@@ -118,12 +144,13 @@ function searchByQuery(query) {
 
 function formatPhoneBook(Book) {
     const array = [];
-    for (let key of Object.keys(Book)) {
-        let str = Book[key][0] + ', ' +
-            '+7 (' + key.substring(0, 3) + ') ' +
-            key.substring(3, 6) + '-' + key.substring(6, 8) + '-' + key.substring(8, 10);
-        if (Book[key][1].length !== 0) {
-            str = str + ', ' + Book[key][1];
+    for (let i = 0; i < phoneBook.length; i++) {
+        let str = Book[i][1] + ', ' +
+            '+7 (' + Book[i][0].substring(0, 3) + ') ' +
+            Book[i][0].substring(3, 6) + '-' +
+            Book[i][0].substring(6, 8) + '-' + Book[i][0].substring(8, 10);
+        if (Book[i][2].length !== 0) {
+            str = str + ', ' + Book[i][2];
         }
         array.push(str);
     }
