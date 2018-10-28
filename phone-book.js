@@ -23,11 +23,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    phoneBook.set(phone, {
-        phone: phone,
-        name: name,
-        email: email
-    });
+    phoneBook.set(phone, { phone, name, email });
 
     return true;
 }
@@ -44,11 +40,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    phoneBook.set(phone, {
-        phone: phone,
-        name: name,
-        email: email
-    });
+    phoneBook.set(phone, { phone, name, email });
 
     return true;
 }
@@ -88,46 +80,38 @@ function importFromCsv(csv) {
     const lines = csv.split('\n');
     let success = 0;
     for (let i = 0; i < lines.length; ++i) {
-        const parts = lines[i].split(';');
-        const entry = {
-            name: parts[0],
-            phone: parts[1],
-            email: parts.length > 2 ? parts[2] : undefined
-        };
+        const [name, phone, email] = lines[i].split(';');
 
-        const method = phoneBook.has(entry.phone)
-            ? update
-            : add;
+        const method = phoneBook.has(phone) ? update : add;
 
-        success += method(entry.phone, entry.name, entry.email);
+        success += Number(method(phone, name, email));
     }
 
     return success;
 }
 
-function formatEntry(entry) {
-    const phone = entry.phone;
-    const phoneCode = phone.slice(0, 3);
-    const parts = [phone.slice(3, 6), phone.slice(6, 8), phone.slice(8, 10)];
-    const phoneString = `+7 (${phoneCode}) ${parts.join('-')}`;
+/**
+ * Представление записи в виде строки
+ * @param {String} phone
+ * @param {String} name
+ * @param {String?} email
+ * @returns {Boolean}
+ */
+function formatEntry({ name, email, phone }) {
+    const regex = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
+    const parts = phone.match(regex);
+    const phoneString = `+7 (${parts[1]}) ${parts.slice(2).join('-')}`;
 
-    return entry.email
-        ? `${entry.name}, ${phoneString}, ${entry.email}`
-        : `${entry.name}, ${phoneString}`;
+    return email
+        ? `${name}, ${phoneString}, ${email}`
+        : `${name}, ${phoneString}`;
 }
 
-function compare(x, y) {
-    if (x < y) {
-        return -1;
-    }
-
-    if (x > y) {
-        return 1;
-    }
-
-    return 0;
-}
-
+/**
+ * Поиск записей по запросу в телефонной книге
+ * @param {String} query
+ * @returns {Object[]}
+ */
 function findEntries(query) {
     if (!query) {
         return [];
@@ -141,7 +125,7 @@ function findEntries(query) {
 
     return Array.from(phoneBook.values())
         .filter(filter)
-        .sort((x, y) => compare(x.name, y.name));
+        .sort((x, y) => x.name.localeCompare(y.name));
 }
 
 module.exports = {
