@@ -16,7 +16,7 @@ function validateName(name) {
 }
 
 function verifyNumber(phone) {
-    return typeof phone === 'string' && /^555\d{7}$/.test(phone);
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
 /**
@@ -118,45 +118,36 @@ function find(query) {
         return [];
     }
     if (query === '*') {
-        return formatPhoneBook(phoneBook);
+        return phoneBook.map(formatPhoneBook).sort();
     }
-    let Array = searchByQueryFor(query);
+    let resultArray = filterPhoneBook(query);
 
-    return formatPhoneBook(Array);
+    return resultArray.map(formatPhoneBook).sort();
 }
 
 /**
  * @return {boolean}
  */
 
-function searchByQueryFor(query) {
-    const array = [];
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i][0].indexOf(query) !== -1 ||
-            phoneBook[i][1].indexOf(query) !== -1 ||
-            phoneBook[i][2].indexOf(query) !== -1) {
-            array.push([phoneBook[i][0], phoneBook[i][1], phoneBook[i][2]]);
-        }
-    }
-
-    return array;
+function filterPhoneBook(query) {
+    return phoneBook.filter(function (el) {
+        return el[0].indexOf(query) !== -1 ||
+            el[1].indexOf(query) !== -1 ||
+            el[2].indexOf(query) !== -1;
+    });
 }
 
-function formatPhoneBook(Book) {
-    const array = [];
-    for (let i = 0; i < Book.length; i++) {
-        let str = Book[i][1] + ', ' +
-            '+7 (' + Book[i][0].substring(0, 3) + ') ' +
-            Book[i][0].substring(3, 6) + '-' +
-            Book[i][0].substring(6, 8) + '-' +
-            Book[i][0].substring(8, 10);
-        if (Book[i][2].length !== 0) {
-            str = str + ', ' + Book[i][2];
-        }
-        array.push(str);
+function formatPhoneBook(value) {
+    let str = value[1] + ', ' +
+        '+7 (' + value[0].substring(0, 3) + ') ' +
+        value[0].substring(3, 6) + '-' +
+        value[0].substring(6, 8) + '-' +
+        value[0].substring(8, 10);
+    if (value[2].length !== 0) {
+        str = str + ', ' + value[2];
     }
 
-    return array.sort();
+    return str;
 }
 
 /**
