@@ -15,7 +15,7 @@ function validateName(name) {
     return typeof name === 'string' && name.length;
 }
 
-function verifyNumber(phone) {
+function validateNumber(phone) {
     return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
@@ -26,10 +26,13 @@ function verifyNumber(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email = '') {
-    if (!verifyNumber(phone) || !validateName(name) ||
+function add(phone, name, email) {
+    if (!validateNumber(phone) || !validateName(name) ||
         indexOfPhone(phone) !== -1) {
         return false;
+    }
+    if (arguments.length < 3) {
+        email = '';
     }
     phoneBook.push([phone, name, email]);
 
@@ -53,11 +56,14 @@ function indexOfPhone(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email = '') {
+function update(phone, name, email) {
     let index = indexOfPhone(phone);
-    if (!validateName(name) || !verifyNumber(phone) ||
+    if (!validateName(name) || !validateNumber(phone) ||
         index === -1) {
         return false;
+    }
+    if (arguments.length === 2) {
+        email = '';
     }
     phoneBook[index] = [phone, name, email];
 
@@ -89,16 +95,16 @@ function findAndRemove(query) {
 }
 
 function searchIndexOfDeleted(query) {
-    const array = [];
+    const indexes = [];
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i][0].indexOf(query) !== -1 ||
             phoneBook[i][1].indexOf(query) !== -1 ||
             phoneBook[i][2].indexOf(query) !== -1) {
-            array.push(i);
+            indexes.push(i);
         }
     }
 
-    return array;
+    return indexes;
 }
 
 /**
