@@ -161,15 +161,14 @@ function importFromCsv(csv) {
     }
     const newCsv = csv.split('\n');
     var count = 0;
-    for (var i = 0; i < newCsv.length; i++) {
-        var text = newCsv[i].split(';');
-        var name = text[0];
-        var phone = text[1];
-        var email = text[2];
+    newCsv.forEach(each => {
+        let phone = each.split(';')[1];
+        let name = each.split(';')[0];
+        let email = each.split(';')[2];
         if (add(phone, name, email) || update(phone, name, email)) {
             count++;
         }
-    }
+    });
 
     return count;
 }
