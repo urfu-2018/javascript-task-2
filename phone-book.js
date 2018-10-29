@@ -96,13 +96,13 @@ function findAndRemove(query) {
 
 function searchIndexOfDeleted(query) {
     const indexes = [];
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i][0].indexOf(query) !== -1 ||
-            phoneBook[i][1].indexOf(query) !== -1 ||
-            phoneBook[i][2].indexOf(query) !== -1) {
-            indexes.push(i);
-        }
-    }
+    phoneBook.forEach((item, index) => {
+        item.forEach((element) => {
+            if (element.indexOf(query) !== -1) {
+                indexes.push(index);
+            }
+        });
+    });
 
     return indexes;
 }
