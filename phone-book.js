@@ -26,7 +26,7 @@ function validateNumber(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name, email = '') {
     if (!validateNumber(phone) || !validateName(name) ||
         indexOfPhone(phone) !== -1) {
         return false;
@@ -56,7 +56,7 @@ function indexOfPhone(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone, name, email = '') {
     let index = indexOfPhone(phone);
     if (!validateName(name) || !validateNumber(phone) ||
         index === -1) {
