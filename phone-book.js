@@ -21,12 +21,7 @@ let phoneBook = [];
 function add(phone, name, email) {
 
     // Проверить валидность входных данных
-    if (!validateInput(phone, name, email)) {
-        return false;
-    }
-
-    // Если запись с таким номером уже существует, не добавлять её
-    if (getEntryByPhone(phone) !== undefined) {
+    if (!validateInput(phone, name, email) || getEntryByPhone(phone) !== undefined) {
         return false;
     }
 
@@ -47,13 +42,8 @@ function add(phone, name, email) {
 function update(phone, name, email) {
 
     // Проверить валидность входных данных
-    if (!validateInput(phone, name, email)) {
-        return false;
-    }
-
-    // Если записи не существует, обновлять нечего
     let entry = getEntryByPhone(phone);
-    if (entry === undefined) {
+    if (!validateInput(phone, name, email) || entry === undefined) {
         return false;
     }
 
@@ -93,14 +83,10 @@ function findAndRemove(query) {
  */
 function find(query) {
 
-    // Найти все подходящие записи в виде объектов
+    // Найти все подходящие записи
     const matchingEntries = findMatchingEntries(query);
 
-    // Преобразовать записи в нужный формат
-    const matchingEntryStrings = matchingEntries.map(toString);
-    matchingEntryStrings.sort();
-
-    return matchingEntryStrings;
+    return matchingEntries.map(toString).sort();
 }
 
 /**
@@ -114,10 +100,7 @@ function importFromCsv(csv) {
     // Парсим csv и составляем список записей
     const entries = parseCsv(csv);
 
-    // Импорт записей в телефонную книгу
-    const importedCount = importEntries(entries);
-
-    return importedCount;
+    return importEntries(entries);
 }
 
 /*
@@ -137,10 +120,7 @@ function validateInput(phone, name, email) {
  */
 function validatePhone(phone) {
 
-    // Телефон должен быть строкой в указанном формате
-    const phoneRegex = /^(\d)\1\1(\d)\2\2(\d)\3(\d)\4$/;
-
-    return (typeof phone === 'string' && phoneRegex.test(phone));
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
 /*
@@ -148,7 +128,7 @@ function validatePhone(phone) {
  */
 function validateName(name) {
 
-    return (typeof name === 'string' && name.length !== 0);
+    return typeof name === 'string' && name.length !== 0;
 }
 
 /*
@@ -156,7 +136,7 @@ function validateName(name) {
  */
 function validateEmail(email) {
 
-    return (email === undefined || typeof email === 'string');
+    return email === undefined || typeof email === 'string';
 }
 
 /*
@@ -270,12 +250,9 @@ function importEntries(entries) {
     for (let entry of entries) {
         let result;
         // Если такой записи ещё не существует, добавляем её
-        if (getEntryByPhone(entry.phone) === undefined) {
-            result = add(entry.phone, entry.name, entry.email);
-        } else {
-            // Иначе обновляем запись
-            result = update(entry.phone, entry.name, entry.email);
-        }
+        result = getEntryByPhone(entry.phone) === undefined
+            ? add(entry.phone, entry.name, entry.email)
+            : update(entry.phone, entry.name, entry.email);
 
         // Если операция успешна, увеличить счётчик
         if (result === true) {
