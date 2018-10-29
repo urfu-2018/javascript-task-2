@@ -26,11 +26,12 @@ function add(phone, name, email) {
     if (!isString(phone) || !isString(name) || !/^\d{10}$/.test(phone)) {
         return false;
     }
+
     if (phoneBook.has(phone) || name.trim().length === 0) {
         return false;
     }
 
-    phoneBook.set(phone, { name: name, email: email });
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -46,11 +47,12 @@ function update(phone, name, email) {
     if (!isString(phone) || !isString(name) || !/^\d{10}$/.test(phone)) {
         return false;
     }
+
     if (!phoneBook.has(phone) || name.trim().length === 0) {
         return false;
     }
 
-    phoneBook.set(phone, { name: name, email: email });
+    phoneBook.set(phone, { name, email });
 
     return true;
 }
@@ -62,7 +64,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     const foundRecords = findRecords(query);
-    foundRecords.forEach(v => phoneBook.delete(v.phone));
+    foundRecords.forEach(record => phoneBook.delete(record.phone));
 
     return foundRecords.length;
 }
@@ -86,17 +88,24 @@ function findRecords(query) {
     }
 
     return [...phoneBook.keys()]
-        .map(k => ({ phone: k, name: phoneBook.get(k).name, email: phoneBook.get(k).email }))
-        .sort((x, y) => x.name.localeCompare(y.name))
+        .map(phone =>
+            ({
+                phone: phone,
+                name: phoneBook.get(phone).name,
+                email: phoneBook.get(phone).email
+            }))
         .filter(
-            k => {
+            record => {
                 const isWildcard = query === '*';
-                const isInPhone = k.phone.indexOf(query) !== -1;
-                const isInName = k.name.indexOf(query) !== -1;
-                const isInEmail = k.email === undefined ? false : k.email.indexOf(query) !== -1;
+                const isInPhone = record.phone.includes(query);
+                const isInName = record.name.includes(query);
+                const isInEmail = record.email === undefined
+                    ? false
+                    : record.email.includes(query);
 
                 return isWildcard || isInPhone || isInName || isInEmail;
-            });
+            })
+        .sort((x, y) => x.name.localeCompare(y.name));
 }
 
 /**
