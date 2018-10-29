@@ -10,7 +10,6 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = [];
-
 function correctPhone(phone) {
 
     return typeof phone === 'string' && /^\d{10}$/.test(phone);
@@ -29,15 +28,14 @@ function correctName(name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!correctPhone(phone) || !correctName(name) ||
-    phoneBook.some(contact => contact.phone === phone)) {
+    if (!correctPhone(phone) || !correctName(name) || phoneBook.some(c => c.phone === phone)) {
 
         return false;
     }
 
     const contact = {
-        phone: phone,
-        name: name,
+        phone,
+        name,
         email: email && typeof email === 'string' ? email : ''
     };
 
@@ -54,13 +52,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!correctName(name) ||
-    !phoneBook.some(contact => contact.phone === phone)) {
+    if (!correctName(name) || !phoneBook.some(c => c.phone === phone)) {
 
         return false;
     }
 
     const index = phoneBook.findIndex(contact => contact.phone === phone);
+
     phoneBook[index].name = name;
     phoneBook[index].email = email && typeof email === 'string' ? email : '';
 
@@ -75,6 +73,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     const contactToRemove = queryPhoneBook(query);
     const newPhoneBook = phoneBook.filter(contact => !contactToRemove.includes(contact));
+
     phoneBook = newPhoneBook;
 
     return contactToRemove.length;
@@ -91,8 +90,7 @@ function find(query) {
 }
 
 function queryPhoneBook(query) {
-
-    if (! typeof query === 'string' || query === '') {
+    if (typeof query !== 'string' || query === '') {
         return [];
     }
 
@@ -103,7 +101,8 @@ function queryPhoneBook(query) {
     return phoneBook.filter(contact =>
         contact.name.includes(query) ||
         contact.phone.includes(query) ||
-        contact.email.includes(query));
+        contact.email.includes(query)
+    );
 }
 
 function formatPhoneBook(pBook) {
@@ -139,8 +138,10 @@ function importFromCsv(csv) {
     }
 
     let count = 0;
+
     csv.split('\n').forEach(contact => {
         let [name, number, email] = contact.split(';');
+
         if (add(number, name, email) || update(number, name, email)) {
             count = count + 1;
         }
