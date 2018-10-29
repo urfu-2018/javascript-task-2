@@ -127,8 +127,7 @@ function find(query) {
 }
 
 function newNumber(phone) {
-    return `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}
-    -${phone.substring(6, 8)}-${phone.substring(8)}`;
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
 }
 
 function view(result) {
@@ -138,9 +137,9 @@ function view(result) {
             return [];
         }
         if (info[2] !== undefined) {
-            recordSought.push(info[1] + ',' + newNumber(info[0]) + info[2]);
+            recordSought.push(info[1] + ', ' + newNumber(info[0]) + ', ' + info[2]);
         } else {
-            recordSought.push(info[1] + ',' + newNumber(info[0]));
+            recordSought.push(info[1] + ', ' + newNumber(info[0]));
         }
     }
 
