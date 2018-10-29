@@ -87,7 +87,7 @@ function findAndRemove(query) {
         let deleted = searchIndexOfDeleted(query);
         count = deleted.length;
         for (let i = 0; i < count; i++) {
-            phoneBook.splice(i, 1);
+            phoneBook.splice(deleted[i], 1);
         }
     }
 
