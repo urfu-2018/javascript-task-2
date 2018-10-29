@@ -57,18 +57,18 @@ function checkMatch(item, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let count = 0;
     if (query === '') {
         return 0;
     }
+    let deletedContacts = new Map();
     for (let i of phoneBook) {
         if (checkMatch(i, query)) {
             phoneBook.delete(i[0]);
-            count++;
+            deletedContacts.set(i);
         }
     }
 
-    return count;
+    return deletedContacts.size;
 }
 
 /**
