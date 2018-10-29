@@ -21,7 +21,7 @@ let phoneBook = {};
 function trueParam(phone, name) {
     var tel = /(^[0-9]{10}$)/;
 
-    return (typeof phone === 'string') && (tel.test(phone)) && (name !== '') &&
+    return (typeof phone !== undefined) && (tel.test(phone)) && (name !== '') &&
         (name !== undefined) && (typeof name === 'string');
 }
 
@@ -33,7 +33,7 @@ function trueParam(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!phoneBook[phone] || trueParam(phone, name, email)) {
+    if (!(phone in phoneBook) && trueParam(phone, name, email)) {
         if (email === undefined) {
             phoneBook[phone] = [phone, name];
         } else {
