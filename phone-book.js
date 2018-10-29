@@ -26,13 +26,10 @@ function verifyNumber(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
+function add(phone, name, email = '') {
     if (!verifyNumber(phone) || !validateName(name) ||
         indexOfPhone(phone) !== -1) {
         return false;
-    }
-    if (arguments.length < 3) {
-        email = '';
     }
     phoneBook.push([phone, name, email]);
 
@@ -56,14 +53,11 @@ function indexOfPhone(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
+function update(phone, name, email = '') {
     let index = indexOfPhone(phone);
     if (!validateName(name) || !verifyNumber(phone) ||
         index === -1) {
         return false;
-    }
-    if (arguments.length === 2) {
-        email = '';
     }
     phoneBook[index] = [phone, name, email];
 
