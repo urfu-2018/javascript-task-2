@@ -28,7 +28,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    let checkPhoned = phoneBook.some(function (record) {
+    const checkPhoned = phoneBook.some(function (record) {
 
         return record.phone === phone;
     });
@@ -50,7 +50,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof name !== 'string' || !name) {
+    if (typeof name !== 'string' || !(name.length > 0)) {
         return false;
     }
     let indexPhoned = -1;
@@ -99,9 +99,7 @@ function findAndRemove(query) {
         phoneBook.splice(phoneBook.indexOf(element), 1);
     });
 
-    let res = result.length;
-
-    return res;
+    return result.length;
 }
 
 /**
@@ -110,51 +108,65 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    var result = [];
+    let result = [];
     if (query === '') {
         return result;
     }
     if (query === '*') {
-        for (var i = 0; i < phoneBook.length; i++) {
+        for (let i = 0; i < phoneBook.length; i++) {
             result.push(outString(phoneBook[i].name, phoneBook[i].phone, phoneBook[i].email));
 
         }
     }
     function checkRecord(record) {
-        if (record.name.indexOf(query) !== -1 || record.phone.indexOf(query) !== -1) {
+        if (record.name.indexOf(query) > -1 || record.phone.indexOf(query) > -1) {
             return true;
         }
-        if (record.email) {
-            return record.email.indexOf(query) !== -1;
+        if (record.email > -1) {
+            return record.email.indexOf(query) > -1;
         }
 
         return false;
 
     }
-    var res = phoneBook.filter(checkRecord);
-    for (var j = 0; j < res.length; j++) {
+    let res = phoneBook.filter(checkRecord);
+    for (let j = 0; j < res.length; j++) {
         result.push(outString(res[j].name, res[j].phone, res[j].email));
     }
 
-    return (result.sort());
+    return result.sort();
 }
 
 function outString(name, phone, email) {
     let result = name;
     if (phone !== undefined) {
-        result = result + ', ' + isFormatPhone(phone);
+        result = `${result}, ${makeFormatPhone(phone)}`;
     }
     if (email !== undefined) {
-        result = result + ', ' + email;
+        result = `${result}, ${email}`;
     }
 
     return result;
 }
 
-function isFormatPhone(phone) {
+function makeFormatPhone(phone) {
     return '+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) + '-' +
      phone.slice(6, 8) + '-' + phone.slice(8, 10);
 }
+
+function addRecordInBook(record) {
+    const cont = record.split(';');
+    const name = cont[0];
+    const phone = cont[1];
+    const email = cont[2];
+    if (add(phone, name, email) ||
+        update(phone, name, email)) {
+        return true;
+    }
+
+    return false;
+}
+
 
 /**
  * Импорт записей из csv-формата
@@ -163,25 +175,11 @@ function isFormatPhone(phone) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    function addRecordInBook(record) {
-        let cont = record.split(';');
-        let name = cont[0];
-        let phone = cont[1];
-        let email = cont[2];
-        if (add(phone, name, email) ||
-            update(phone, name, email)) {
-            return true;
-        }
 
-        return false;
-    }
-
-    let book = csv.split('\n');
-    let addRecord = 0;
-    for (let i = 0; i < book.length; i++) {
-        let record = book[i];
-        addRecord += addRecordInBook(record);
-    }
+    const book = csv.split('\n');
+    const addRecord = book.reduce((accum, elem) => {
+        return accum + addRecordInBook(elem);
+    }, 0);
 
     return addRecord;
 }
