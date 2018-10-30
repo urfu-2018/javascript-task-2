@@ -10,7 +10,6 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = new Map();
-let phoneBookByQuery = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -24,7 +23,7 @@ function add(phone, name, email) {
         return false;
     }
     if (!phoneBook.get(phone)) {
-        let preparedParams = prepareInputParams([phone, name, email || undefined]);
+        let preparedParams = prepareInputParams({ phone, name, email });
         phoneBook.set(preparedParams[0], [preparedParams[1], preparedParams[2]]);
         phoneBook = mapSort(phoneBook);
 
@@ -46,7 +45,7 @@ function update(phone, name, email) {
         return false;
     }
     if (phoneBook.get(phone)) {
-        let preparedParams = prepareInputParams([phone, name, email || undefined]);
+        let preparedParams = prepareInputParams({ phone, name, email });
         phoneBook.set(preparedParams[0], [preparedParams[1], preparedParams[2]]);
 
         return true;
@@ -61,20 +60,18 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let phoneBookSize = phoneBook.size;
     if (validateQuery(query)) {
         return 0;
     }
     if (query === '*') {
         query = '';
     }
-    phoneBookByQuery = [];
+    findByQuery(query).forEach((key) => {
+        phoneBook.delete(key);
+    });
 
-    phoneBookByQuery = findByQuery (query);
-    for (let i = 0; i < phoneBookByQuery.length; i++) {
-        phoneBook.delete(phoneBookByQuery[i]);
-    }
-
-    return phoneBookByQuery.length;
+    return phoneBookSize - phoneBook.size;
 }
 
 /**
@@ -83,7 +80,6 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    phoneBookByQuery = [];
     if (validateQuery(query)) {
         return [];
     }
@@ -91,11 +87,11 @@ function find(query) {
         query = '';
     }
     let res = [];
-    phoneBookByQuery = findByQuery (query);
-    for (let i = 0; i < phoneBookByQuery.length; i++) {
-        res.push(arrayToString([phoneBook.get(phoneBookByQuery[i])[0],
-            formattingPhone(phoneBookByQuery[i]), phoneBook.get(phoneBookByQuery[i])[1]]));
-    }
+    let lul = findByQuery(query);
+    lul.forEach((value) => {
+        res.push(arrayToString([phoneBook.get(value)[0], formattingPhone(value),
+            phoneBook.get(value)[1]]));
+    });
 
     return res;
 }
@@ -104,10 +100,7 @@ function findByQuery(query) {
     let res = [];
     phoneBook.forEach((value, key) => {
         let phone = key;
-        let email = '';
-        if (value[1]) {
-            email = value[1];
-        }
+        let email = value[1] || '';
         if (isInclude(phone, value[0], email, query)) {
             res.push(phone);
         }
@@ -115,17 +108,6 @@ function findByQuery(query) {
 
     return res;
 }
-
-// function findByQuery(value, key, query) {
-//     let phone = key;
-//     let email = '';
-//     if (value[1]) {
-//         email = value[1];
-//     }
-//     if (isInclude(phone, value[0], email, query)) {
-//         phoneBookByQuery.push(phone);
-//     }
-// }
 
 /**
  * Импорт записей из csv-формата
@@ -189,8 +171,11 @@ function validateQuery(query) {
 }
 
 function prepareInputParams(arr) {
+    if (arr.email) {
+        return [arr.phone.trim(), arr.name.trim(), arr.email.trim()];
+    }
 
-    return [arr[0].trim(), arr[1].trim(), arr[2]];
+    return [arr.phone.trim(), arr.name.trim(), arr.email];
 }
 
 module.exports = {

@@ -9,16 +9,16 @@ phoneBook.add('5551110011', 'Алекс');
 phoneBook.add('5553330033', 'Валерий', 'valera@example.com');
 
 // Эти записи не добавятся, вернется `false`
-phoneBook.add('3330033', 'Неизвестный', 'unknown@example.com');
-phoneBook.add('5551110011', 'Алексей');
-phoneBook.add('5555550055');
+// phoneBook.add('3330033', 'Неизвестный', 'unknown@example.com');
+// phoneBook.add('5551110011', 'Алексей');
+// phoneBook.add('5555550055');
 
-// Обновление ранее добавленных записей
+// // Обновление ранее добавленных записей
 phoneBook.update('5551110011', 'Алексей', 'alex@example.com');
 phoneBook.update('5553330033', 'Валерий');
 
 // В следующих примерах вернутся все записи
-console.info(phoneBook.find('55'));
+console.info(phoneBook.find(''));
 console.info(phoneBook.find('555'));
 // В обоих случаях вывод будет следующий
 // [
