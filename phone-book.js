@@ -123,8 +123,8 @@ function find(query) {
         let name = phoneBook.get(phone)[0];
         let email = (phoneBook.get(phone)[1])
             ? phoneBook.get(phone)[1] : '';
-        phone = convertPhone(phone);
         if (isInclude(phone, name, email, query)) {
+            phone = convertPhone(phone);
             array[i] = leadStr(phone, name, email);
             i++;
         }
