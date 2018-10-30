@@ -50,7 +50,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof name !== 'string' || !(name.length > 0)) {
+    if (typeof name !== 'string' || !name) {
         return false;
     }
     let indexPhoned = -1;
