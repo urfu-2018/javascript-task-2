@@ -13,21 +13,16 @@ let phoneBook = {};
 
 /* Хелперы */
 /**
- * Валидирование номера телефона
+ * Валидирование телефонного номера и имени
  * @param {String} phone
- * @returns {Boolean}
- */
-function validatePhone(phone) {
-    return typeof phone === 'string' && /^\d{10}$/.test(phone);
-}
-
-/**
- * Валидирование имени
  * @param {String} name
  * @returns {Boolean}
  */
-function validateName(name) {
-    return typeof name === 'string' && name !== '';
+function validatePhoneAndName(phone, name) {
+    return (
+        typeof phone === 'string' && /^\d{10}$/.test(phone) &&
+        typeof name === 'string' && name !== ''
+    );
 }
 
 /**
@@ -45,7 +40,9 @@ function getFilteredPhones(query) {
     }
 
     return Object.keys(phoneBook)
-        .filter(phone => phone.includes(query) || phoneBook[phone].name.includes(query) ||
+        .filter(
+            phone => phone.includes(query) ||
+            phoneBook[phone].name.includes(query) ||
             (phoneBook[phone].email && phoneBook[phone].email.includes(query))
         );
 }
@@ -56,7 +53,7 @@ function getFilteredPhones(query) {
  * @returns {String}
  */
 function getFormattedPhone(phone) {
-    var groups = /(\d{3})(\d{3})(\d{2})(\d{2})/.exec(phone);
+    const groups = /(\d{3})(\d{3})(\d{2})(\d{2})/.exec(phone);
 
     return `+7 (${groups[1]}) ${groups[2]}-${groups[3]}-${groups[4]}`;
 }
@@ -67,19 +64,24 @@ function getFormattedPhone(phone) {
  * @returns {String}
  */
 function getFormattedEntry(phone) {
-    var data = phoneBook[phone];
+    const data = phoneBook[phone];
 
-    var entry = `${data.name}, ${getFormattedPhone(phone)}`;
+    let entry = [];
+
+    entry.push(data.name);
+    entry.push(getFormattedPhone(phone));
 
     if (data.email) {
-        entry = entry + `, ${data.email}`;
+        entry.push(data.email);
     }
 
-    return entry;
+    return entry.join(', ');
 }
 
 function compare(a, b) {
-    return phoneBook[a].name.localeCompare(phoneBook[b].name);
+    return phoneBook[a]
+        .name
+        .localeCompare(phoneBook[b].name);
 }
 
 /**
@@ -90,7 +92,7 @@ function compare(a, b) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!validatePhone(phone) || !validateName(name) || phoneBook[phone]) {
+    if (!validatePhoneAndName(phone, name) || phoneBook[phone]) {
         return false;
     }
 
@@ -107,7 +109,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!validatePhone(phone) || !validateName(name) || !phoneBook[phone]) {
+    if (!validatePhoneAndName(phone, name) || !phoneBook[phone]) {
         return false;
     }
 
@@ -122,7 +124,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    var phones = getFilteredPhones(query);
+    const phones = getFilteredPhones(query);
 
     phones.forEach(phone => {
         delete phoneBook[phone];
@@ -137,7 +139,8 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    return getFilteredPhones(query).sort(compare)
+    return getFilteredPhones(query)
+        .sort(compare)
         .map(getFormattedEntry);
 }
 
@@ -153,12 +156,12 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
 
     return csv.split('\n')
-        .map(entry => {
-            var [name, phone, email] = entry.split(';');
+        .filter(entry => {
+            const [name, phone, email] = entry.split(';');
 
-            return phoneBook[phone] ? update(phone, name, email) : add(phone, name, email);
+            return update(phone, name, email) || add(phone, name, email);
         })
-        .reduce((total, imported) => total + imported);
+        .length;
 }
 
 module.exports = {
