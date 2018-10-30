@@ -99,14 +99,10 @@ function find(query) {
 }
 
 function findQuery(query) {
-    let tmpAnswer = [];
     let answer = [];
     for (const phone of Object.keys(phoneBook)) {
-        tmpAnswer.push(pushContact(phone, query));
-    }
-    for (let i = 0; i < tmpAnswer.length; i++) {
-        if (tmpAnswer[i] !== '') {
-            answer.push(tmpAnswer[i]);
+        if (pushContact(phone, query) !== '') {
+            answer.push(pushContact(phone, query));
         }
     }
 
@@ -122,14 +118,10 @@ function pushContact(phone, query) {
 }
 
 function findContacts(phone, query) {
-    if (phone.includes(query)) {
-        return true;
-    } else if (phoneBook[phone].name.includes(query)) {
-        return true;
-    } else if (phoneBook[phone].email !== undefined &&
-        phoneBook[phone].email.includes(query)) {
-        return true;
-    }
+    return phone.includes(query) ||
+     phoneBook[phone].name.includes(query) ||
+      (phoneBook[phone].email !== undefined &&
+        phoneBook[phone].email.includes(query));
 }
 
 function pushAll() {
