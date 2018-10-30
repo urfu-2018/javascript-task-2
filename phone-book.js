@@ -20,7 +20,7 @@ let phoneBook = [];
  */
 function add(phone, name, email) {
     if (((/^[0-9]{10}$/).test(phone)) && (name !== '') && (name !== undefined) &&
-    (!phoneBook.some(e => e.phone === phone))) {
+     (find(phone).length === 0)) {
         phoneBook.push(new Phone(phone, name, email));
 
         return true;
