@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+const phoneBook = [];
 
 function isString(str) {
     return typeof str === 'string';
@@ -62,7 +62,7 @@ function update(phone, name, email) {
         return false;
     }
 
-    let contactToResult = getContactsBy(phone)[0];
+    const contactToResult = getContactsBy(phone)[0];
     contactToResult.name = name;
     contactToResult.email = email;
 
@@ -102,7 +102,7 @@ function find(query) {
 }
 
 function contactToString(contact) {
-    let parts = [
+    const parts = [
         contact.name,
         formatPhone(contact.phone),
         contact.email
@@ -113,10 +113,10 @@ function contactToString(contact) {
 }
 
 function formatPhone(phone) {
-    let first = phone.substr(0, 3);
-    let second = phone.substr(3, 3);
-    let third = phone.substr(6, 2);
-    let fourth = phone.substr(8, 2);
+    const first = phone.substr(0, 3);
+    const second = phone.substr(3, 3);
+    const third = phone.substr(6, 2);
+    const fourth = phone.substr(8, 2);
 
     return `+7 (${first}) ${second}-${third}-${fourth}`;
 }
@@ -154,9 +154,9 @@ function importFromCsv(csv) {
 }
 
 function countAddedAndUpdated(acc, item) {
-    let name = item[0];
-    let phone = item[1];
-    let email = item[2];
+    const name = item[0];
+    const phone = item[1];
+    const email = item[2];
 
     if (update(phone, name, email) || add(phone, name, email)) {
         acc += 1;
