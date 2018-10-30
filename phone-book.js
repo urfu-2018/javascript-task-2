@@ -19,8 +19,8 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if ((/^[0-9]{10}$/).test(phone) && name !== '' && name !== undefined &&
-    !phoneBook.some(e => e.phone === phone)) {
+    if (((/^[0-9]{10}$/).test(phone)) && (name !== '') && (name !== undefined) &&
+    (!phoneBook.some(e => e.phone === phone))) {
         phoneBook.push(new Phone(phone, name, email));
 
         return true;
@@ -65,45 +65,21 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let count = 0;
     phoneBook.sort(sortAr);
-    if (query === '*') {
-
-        return findAndRemoveAll();
-    }
     if (query === '' || query === undefined) {
 
         return 0;
     }
-    count = findAndRemoveOne(query);
-
-    return count;
-}
-
-function findAndRemoveOne(query) {
     let count = 0;
     let length = phoneBook.length;
     for (let i = 0; i < length; i++) {
         let { phone, name, email } = phoneBook[i];
-        if (findElement(phone, name, email, query)) {
+        if (findElement(phone, name, email, query) || query === '*') {
             phoneBook.splice(i, 1);
             length = length - 1;
             count++;
             i--;
         }
-    }
-
-    return count;
-}
-
-function findAndRemoveAll() {
-    let count = 0;
-    let length = phoneBook.length;
-    for (let i = 0; i < length; i++) {
-        phoneBook.splice(i, 1);
-        length = length - 1;
-        count++;
-        i--;
     }
 
     return count;
