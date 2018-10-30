@@ -13,7 +13,7 @@ let phoneBook = [];
 
 function phoneIsValid(phone) {
 
-    return phone && phone.length === 10 && !phone.match(/[^0-9]/gi) && !isNaN(Number(phone));
+    return phone && phone.match(/^\d{10}$/);
 }
 
 /**
