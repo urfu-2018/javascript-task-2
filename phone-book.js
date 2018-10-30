@@ -83,22 +83,12 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    let result = 0;
-    phoneBook.filter(elem => {
-        if (checkRecord(elem, query)) {
-            result = result + 1;
-
-            return true;
-        }
-
-        return false;
+    let result = phoneBook.filter(elem => checkRecord(elem, query));
+    result.forEach(element => {
+        phoneBook.splice(phoneBook.indexOf(element), 1);
     });
 
-    /* result.forEach(element => {
-        phoneBook.splice(phoneBook.indexOf(element), 1);
-    });*/
-
-    return result;
+    return result.length;
 }
 
 function checkRecord(record, query) {
