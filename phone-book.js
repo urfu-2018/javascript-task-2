@@ -50,7 +50,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof name !== 'string' || !name) {
+    if (typeof name !== 'string' || !(name.length > 0)) {
         return false;
     }
     let indexPhoned = -1;
@@ -177,9 +177,14 @@ function addRecordInBook(record) {
 function importFromCsv(csv) {
 
     const book = csv.split('\n');
-    const addRecord = book.reduce((accum, elem) => {
+    let addRecord = 0;
+    for (let i = 0; i < book.length; i++) {
+        addRecord += addRecordInBook(book[i]);
+    }
+
+    /* const addRecord = book.reduce((accum, elem) => {
         return accum + addRecordInBook(elem);
-    }, 0);
+    }, 0); */
 
     return addRecord;
 }
