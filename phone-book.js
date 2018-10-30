@@ -65,21 +65,6 @@ function update(phone, name, email) {
         return elem;
     });
 
-    /* let indexPhoned = -1;
-    let findPhoned = phoneBook.some(function (record, index) {
-
-        indexPhoned = index;
-
-        return record.phone === phone;
-    });
-    if (findPhoned && name) {
-        phoneBook[indexPhoned].name = name;
-        phoneBook[indexPhoned].phone = phone;
-        phoneBook[indexPhoned].email = email;
-
-        return true;
-    } */
-
     return f;
 }
 
@@ -98,22 +83,36 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    let result = phoneBook.filter(function (record) {
-        if (record.name.indexOf(query) !== -1 || record.phone.indexOf(query) !== -1) {
+    let result = 0;
+    phoneBook.filter(elem => {
+        if (checkRecord(elem, query)) {
+            result = result + 1;
+
             return true;
-        }
-        if (record.email) {
-            return record.email.indexOf(query) !== -1;
         }
 
         return false;
     });
-    result.forEach(element => {
-        phoneBook.splice(phoneBook.indexOf(element), 1);
-    });
 
-    return result.length;
+    /* result.forEach(element => {
+        phoneBook.splice(phoneBook.indexOf(element), 1);
+    });*/
+
+    return result;
 }
+
+function checkRecord(record, query) {
+    if (record.name.indexOf(query) > -1 || record.phone.indexOf(query) > -1) {
+        return true;
+    }
+    if (record.email) {
+        return record.email.indexOf(query) > -1;
+    }
+
+    return false;
+
+}
+
 
 /**
  * Поиск записей по запросу в телефонной книге
@@ -131,21 +130,15 @@ function find(query) {
 
         }
     }
-    function checkRecord(record) {
-        if (record.name.indexOf(query) > -1 || record.phone.indexOf(query) > -1) {
-            return true;
-        }
-        if (record.email) {
-            return record.email.indexOf(query) > -1;
-        }
+    phoneBook.filter(elem => checkRecord(elem, query)).map(elem => {
+        result.push(outString(elem.name, elem.phone, elem.email));
 
-        return false;
+        return elem;
+    });
 
-    }
-    let res = phoneBook.filter(checkRecord);
-    for (let j = 0; j < res.length; j++) {
+    /* for (let j = 0; j < res.length; j++) {
         result.push(outString(res[j].name, res[j].phone, res[j].email));
-    }
+    }*/
 
     return result.sort();
 }
