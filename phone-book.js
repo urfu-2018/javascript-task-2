@@ -19,8 +19,7 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (((/^[0-9]{10}$/).test(phone)) && (name !== '') && (name !== undefined) &&
-     (find(phone).length === 0)) {
+    if ((/^[0-9]{10}$/).test(phone) && name && find(phone).length === 0) {
         phoneBook.push(new Phone(phone, name, email));
 
         return true;
@@ -65,8 +64,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    phoneBook.sort(sortAr);
-    if (query === '' || query === undefined) {
+    if (!query) {
 
         return 0;
     }
@@ -96,7 +94,7 @@ function find(query) {
         return [];
     }
     let resultArray = [];
-    phoneBook.sort(sortAr);
+    phoneBook.sort(sortByName);
     for (let i = 0; i < phoneBook.length; i++) {
         let x = findAll(i, query);
         if (x !== '') {
@@ -107,12 +105,12 @@ function find(query) {
     return resultArray;
 }
 
-function sortAr(a, b) {
+function sortByName(a, b) {
     return a.name > b.name;
 }
 
 function findElement(ph, nm, em = '', query) {
-    if (ph.indexOf(query) !== -1 || nm.indexOf(query) !== -1 || em.indexOf(query) !== -1) {
+    if (ph.includes(query) || nm.includes(query) || em.includes(query)) {
         return true;
     }
 
