@@ -119,50 +119,23 @@ function find(query) {
 
         return [];
     }
-    let findElements = [];
+    let resultArray = [];
     phoneBook.sort(sortAr);
-    if (query === '*') {
-        let str = findAll();
-
-        return str;
-    }
     for (let i = 0; i < phoneBook.length; i++) {
-        let x = process(i, query);
+        let x = findAll(i, query);
         if (x !== '') {
-            findElements.push(x);
+            resultArray.push(x);
         }
     }
 
-    return findElements;
+    return resultArray;
 }
 
-function process(i, query) {
-    let x = '';
-    if (findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query)) {
-        x = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
-            phoneBook[i].phone.substring(3, 6) + '-' + phoneBook[i].phone.substring(6, 8) +
-             '-' + phoneBook[i].phone.substring(8) + ', ' + phoneBook[i].email;
-        if (phoneBook[i].email === undefined) {
-            x = x.substring(0, x.length - 11);
-        }
-        if (phoneBook[i].email === '') {
-            x = x.substring(0, x.length - 2);
-        }
-
-        return x;
-    }
-
-    return '';
-
-}
 function sortAr(a, b) {
     return a.name > b.name;
 }
 
-function findElement(ph, nm, em, query) {
-    if (em === undefined) {
-        em = '';
-    }
+function findElement(ph, nm, em = '', query) {
     if (ph.indexOf(query) !== -1 || nm.indexOf(query) !== -1 || em.indexOf(query) !== -1) {
         return true;
     }
@@ -170,10 +143,11 @@ function findElement(ph, nm, em, query) {
     return false;
 }
 
-function findAll() {
-    let str = [];
-    for (let i = 0; i < phoneBook.length; i++) {
-        let strg = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
+function findAll(i, query) {
+    let strg = '';
+    if (findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query) ||
+    query === '*') {
+        strg = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
         phoneBook[i].phone.substring(3, 6) + '-' + phoneBook[i].phone.substring(6, 8) + '-' +
         phoneBook[i].phone.substring(8) + ', ' + phoneBook[i].email;
         if (phoneBook[i].email === undefined) {
@@ -182,10 +156,9 @@ function findAll() {
         if (phoneBook[i].email === '') {
             strg = strg.substring(0, strg.length - 2);
         }
-        str.push(strg);
     }
 
-    return str;
+    return strg;
 }
 
 /**
