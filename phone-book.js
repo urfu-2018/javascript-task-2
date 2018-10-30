@@ -28,7 +28,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    let checkPhoned = phoneBook.some(function (record) {
+    const checkPhoned = phoneBook.some(function (record) {
 
         return record.phone === phone;
     });
