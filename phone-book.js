@@ -43,32 +43,20 @@ function Phone(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    let ch = 0;
+    let countUpdateElements = 0;
     if (name === '' || name === undefined) {
         return false;
     }
     for (let i = 0; i < phoneBook.length; i++) {
-        ch = ch + update2(phone, name, email, i);
-    }
-    if (ch >= 1) {
-        return true;
-    }
+        if (phoneBook[i].phone === phone) {
+            phoneBook[i].name = name;
+            phoneBook[i].email = email;
+            countUpdateElements++;
+        }
 
-    return false;
-}
-
-function update2(phone, name, email, i) {
-    if (email === undefined) {
-        email = '';
-    }
-    if (phoneBook[i].phone === phone) {
-        phoneBook[i].name = name;
-        phoneBook[i].email = email;
-
-        return 1;
     }
 
-    return 0;
+    return countUpdateElements >= 1;
 }
 
 /**
@@ -80,9 +68,8 @@ function findAndRemove(query) {
     let count = 0;
     phoneBook.sort(sortAr);
     if (query === '*') {
-        count = findAndRemoveAll();
 
-        return count;
+        return findAndRemoveAll();
     }
     if (query === '' || query === undefined) {
 
@@ -97,10 +84,8 @@ function findAndRemoveOne(query) {
     let count = 0;
     let length = phoneBook.length;
     for (let i = 0; i < length; i++) {
-        let ph = phoneBook[i].phone;
-        let nm = phoneBook[i].name;
-        let em = phoneBook[i].email;
-        if (findElement(ph, nm, em, query)) {
+        let { phone, name, email } = phoneBook[i];
+        if (findElement(phone, name, email, query)) {
             phoneBook.splice(i, 1);
             length = length - 1;
             count++;
@@ -130,11 +115,11 @@ function findAndRemoveAll() {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '' || query === undefined) {
+    if (!query) {
 
         return [];
     }
-    let array = [];
+    let findElements = [];
     phoneBook.sort(sortAr);
     if (query === '*') {
         let str = findAll();
@@ -144,11 +129,11 @@ function find(query) {
     for (let i = 0; i < phoneBook.length; i++) {
         let x = process(i, query);
         if (x !== '') {
-            array.push(x);
+            findElements.push(x);
         }
     }
 
-    return array;
+    return findElements;
 }
 
 function process(i, query) {
