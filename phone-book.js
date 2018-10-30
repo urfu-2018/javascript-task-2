@@ -53,8 +53,21 @@ function update(phone, name, email) {
     if (typeof name !== 'string' || !(name.length > 0)) {
         return false;
     }
-    let indexPhoned = -1;
+    let f = false;
+    phoneBook.map(elem => {
+        if (elem.phone === phone && name) {
+            elem.name = name;
+            elem.phone = phone;
+            elem.email = email;
+            f = true;
+        }
+
+        return elem;
+    });
+
+    /* let indexPhoned = -1;
     let findPhoned = phoneBook.some(function (record, index) {
+
         indexPhoned = index;
 
         return record.phone === phone;
@@ -65,9 +78,9 @@ function update(phone, name, email) {
         phoneBook[indexPhoned].email = email;
 
         return true;
-    }
+    } */
 
-    return false;
+    return f;
 }
 
 /**
