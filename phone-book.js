@@ -28,7 +28,7 @@ function add(phone, name, email) {
         return false;
     }
 
-    const checkPhoned = phoneBook.some(function (record) {
+    let checkPhoned = phoneBook.some(function (record) {
 
         return record.phone === phone;
     });
@@ -122,7 +122,7 @@ function find(query) {
         if (record.name.indexOf(query) > -1 || record.phone.indexOf(query) > -1) {
             return true;
         }
-        if (record.email > -1) {
+        if (record.email) {
             return record.email.indexOf(query) > -1;
         }
 
@@ -177,14 +177,9 @@ function addRecordInBook(record) {
 function importFromCsv(csv) {
 
     const book = csv.split('\n');
-    let addRecord = 0;
-    for (let i = 0; i < book.length; i++) {
-        addRecord += addRecordInBook(book[i]);
-    }
-
-    /* const addRecord = book.reduce((accum, elem) => {
+    const addRecord = book.reduce((accum, elem) => {
         return accum + addRecordInBook(elem);
-    }, 0); */
+    }, 0);
 
     return addRecord;
 }
