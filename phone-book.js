@@ -10,14 +10,13 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = [];
-function correctPhone(phone) {
 
+function correctPhone(phone) {
     return typeof phone === 'string' && /^\d{10}$/.test(phone);
 }
 
 function correctName(name) {
-
-    return name && typeof name === 'string' && name.trim() !== '';
+    return typeof name === 'string' && name.trim() !== '';
 }
 
 /**
@@ -29,7 +28,6 @@ function correctName(name) {
  */
 function add(phone, name, email) {
     if (!correctPhone(phone) || !correctName(name) || phoneBook.some(c => c.phone === phone)) {
-
         return false;
     }
 
@@ -53,7 +51,6 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (!correctName(name) || !phoneBook.some(c => c.phone === phone)) {
-
         return false;
     }
 
@@ -85,7 +82,6 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-
     return formatPhoneBook(queryPhoneBook(query));
 }
 
@@ -109,7 +105,7 @@ function formatPhoneBook(pBook) {
     let newContact = '';
 
     return pBook.reduce((acc, contact) => {
-        newContact = contact.name + ', ' + formatPhoneNumber(contact.phone) +
+        newContact = `${contact.name}, ${formatPhoneNumber(contact.phone)}` +
          ((contact.email) ? ', ' + contact.email : '');
 
         return acc.concat(newContact);
@@ -117,9 +113,7 @@ function formatPhoneBook(pBook) {
 }
 
 function formatPhoneNumber(phone) {
-    const groups = /(\d{3})(\d{3})(\d{2})(\d{2})/.exec(phone);
-
-    return `+7 (${groups[1]}) ${groups[2]}-${groups[3]}-${groups[4]}`;
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
 }
 
 /**
@@ -133,7 +127,6 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
     if (!csv || typeof csv !== 'string') {
-
         return 0;
     }
 
