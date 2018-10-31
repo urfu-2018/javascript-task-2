@@ -11,23 +11,16 @@ const isStar = true;
  */
 const phoneBook = [];
 
+const phoneMatcher = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
+
 function formatPhone(phone) {
-    const phoneLength = 10;
-    if (phone === undefined || phone.toString() !== phone || phone.length !== phoneLength) {
+    if (!phone || phone.toString() !== phone) {
         return null;
     }
 
-    const matcher = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
-    if (!matcher.test(phone)) {
-        return null;
-    }
+    const tokens = phone.match(phoneMatcher);
 
-    // noinspection JSCheckFunctionSignatures
-    const tokens = [[0, 3], [3, 3], [6, 2], [8, 2]]
-        .map(pair => phone.substr(...pair));
-
-    return `+7 (${tokens[0]}) ` + tokens.slice(1)
-        .join('-');
+    return !tokens ? null : `+7 (${tokens[1]}) ` + tokens.slice(2).join('-');
 }
 
 function findEntryByPhone(phone) {
@@ -79,13 +72,6 @@ function update(phone, name, email) {
 }
 
 function searchPredicate(entry, query) {
-    if (!query) {
-        return false;
-    }
-    if (query === '*') {
-        return true;
-    }
-
     return Object.values(entry)
         .filter(x => x)
         .some(string => string.includes(query));
@@ -101,6 +87,14 @@ function searchBy(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (!query) {
+        return 0;
+    }
+
+    if (query === '*') {
+        return phoneBook.splice(0, phoneBook.length).length;
+    }
+
     const indexSupplier = () => phoneBook.findIndex(searchBy(query));
     let currentIndex = indexSupplier();
     let removedCount = 0;
@@ -119,12 +113,15 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (!query) {
+        return [];
+    }
+
     const formatEntry = (entry) => [entry.name, formatPhone(entry.phone), entry.email]
         .filter(x => x)
         .join(', ');
 
-    return phoneBook
-        .filter(searchBy(query))
+    return (query === '*' ? phoneBook : phoneBook.filter(searchBy(query)))
         .sort((first, second) => first.name.localeCompare(second.name))
         .map(formatEntry);
 }
@@ -146,10 +143,11 @@ function importFromCsv(csv) {
         .map(line => line.split(';'))
         .map(changeOrder)
         .map(line => update(...line) ? true : add(...line))
-        .filter(x => x)
+        .filter(Boolean)
         .length;
 }
 
+// noinspection JSUnresolvedVariable
 module.exports = {
     add,
     update,
