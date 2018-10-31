@@ -63,21 +63,6 @@ function update(phone, name, email) {
     elem.email = email;
 
     return true;
-
-
-    /* let f = false;
-    phoneBook.map(elem => {
-        if (elem.phone === phone && name) {
-            elem.name = name;
-            elem.phone = phone;
-            elem.email = email;
-            f = true;
-        }
-
-        return elem;
-    });*/
-
-    // return f;
 }
 
 /**
