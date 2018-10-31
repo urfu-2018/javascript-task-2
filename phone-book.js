@@ -9,18 +9,14 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+const phoneBook = [];
 
 function containsPhone(phone) {
-    return phoneBook.find(contact => contact.phone === phone);
+    return phoneBook.some(contact => contact.phone === phone);
 }
 
-function validName(name) {
-    return name !== '' && typeof name === 'string';
-}
-
-function validPhone(phone) {
-    return /^\d{10}$/.test(phone) && typeof phone === 'string';
+function validArguments(phone, name) {
+    return typeof phone === 'string' && /^\d{10}$/.test(phone) && name;
 }
 
 function toNewFormatPhone(phone) {
@@ -42,42 +38,61 @@ function toDefaultFormat(phone) {
 }
 
 function returnAllBook(sortBook) {
-    const res = [];
 
-    for (let i = 0; i < sortBook.length; i++) {
-        const newPhone = toNewFormatPhone(sortBook[i].phone);
+    /* const element = [];
 
-        if (typeof sortBook[i].email === 'undefined') {
-            res.push(`${sortBook[i].name}, ${newPhone}`);
+    sortBook.map(contact => {
+        const newPhone = toNewFormatPhone(contact.phone);
+
+        if (!contact.email) {
+            element.push(`${contact.name}, ${newPhone}`);
         } else {
-            res.push(`${sortBook[i].name}, ${newPhone}, ${sortBook[i].email}`);
+            element.push(`${contact.name}, ${newPhone}, ${contact.email}`);
         }
-    }
 
-    return res;
+        return element;
+    });
+
+    return element;*/
+
+    return sortBook.map(contact => {
+        const newPhone = toNewFormatPhone(contact.phone);
+        let element;
+
+        if (!contact.email) {
+            element = (`${contact.name}, ${newPhone}`);
+        } else {
+            element = (`${contact.name}, ${newPhone}, ${contact.email}`);
+        }
+
+        return element;
+    });
 }
 
 function findElement(query, sortBook) {
-    const res = [];
+    return sortBook.map(contact => {
+        const newPhone = toNewFormatPhone(contact.phone);
+        const formatContact = toFormat(contact.phone, contact.name, contact.email);
+        let element;
 
-    for (let i = 0; i < sortBook.length; i++) {
-        const newPhone = toNewFormatPhone(sortBook[i].phone);
-        const contact = toFormat(sortBook[i].phone, sortBook[i].name, sortBook[i].email);
-
-        if (contact.indexOf(query) > -1 && typeof sortBook[i].email !== 'undefined') {
-            res.push(`${sortBook[i].name}, ${newPhone}, ${sortBook[i].email}`);
-        } else if (contact.indexOf(query) > -1) {
-            res.push(`${sortBook[i].name}, ${newPhone}`);
+        if (formatContact.includes(query) && contact.email) {
+            element = `${contact.name}, ${newPhone}, ${contact.email}`;
+        } else if (formatContact.includes(query)) {
+            element = `${contact.name}, ${newPhone}`;
         }
-    }
 
-    return res;
+        return element;
+    });
+}
+
+function removeElements(book) {
+    return book.filter(contact => contact);
 }
 
 function sort() {
     const temp = phoneBook.slice();
 
-    return temp.sort((contact, anotherContact) => contact.name > anotherContact.name);
+    return temp.sort((contact, anotherContact) => contact.name > anotherContact.name ? 1 : 0);
 }
 
 /**
@@ -88,7 +103,7 @@ function sort() {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!validPhone(phone) || !validName(name) || containsPhone(phone)) {
+    if (!validArguments(phone, name) || containsPhone(phone)) {
         return false;
     }
 
@@ -101,6 +116,11 @@ function add(phone, name, email) {
     return true;
 }
 
+function contains(anotherContact) {
+    return phoneBook.some(contact => contact.name === anotherContact.name &&
+        contact.phone === anotherContact.phone && contact.email === anotherContact.email);
+}
+
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -109,26 +129,20 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!validName(name)) {
+    if (!validArguments(phone, name)) {
         return false;
     }
 
     const newContact = { phone, name, email };
 
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (JSON.stringify(phoneBook[i]) === JSON.stringify(newContact)) {
-            return false;
-        }
-
-        if (phoneBook[i].phone === phone) {
-            phoneBook[i].name = name;
-            phoneBook[i].email = email;
-
-            return true;
-        }
+    if (contains(newContact)) {
+        return false;
     }
 
-    return false;
+    const index = phoneBook.findIndex(contact => contact.phone === phone);
+    phoneBook[index] = newContact;
+
+    return true;
 }
 
 /**
@@ -139,17 +153,17 @@ function update(phone, name, email) {
 function find(query) {
     let sortBook = [];
 
-    if (query === '' || typeof query !== 'string') {
+    if (!query) {
         return sortBook;
     }
 
     sortBook = sort();
 
     if (query === '*') {
-        return returnAllBook(sortBook);
+        return removeElements(returnAllBook(sortBook));
     }
 
-    return findElement(query, sortBook);
+    return removeElements(findElement(query, sortBook));
 }
 
 /**
@@ -190,24 +204,22 @@ function importFromCsv(csv) {
         return 0;
     }
 
-    const contact = csv.split('\n');
+    const contacts = csv.split('\n');
     let count = 0;
 
-    // console.log(phoneBook)
-
-    for (let i = 0; i < contact.length; i++) {
-        const temp = contact[i].split(';');
-        const data = {
-            phone: temp[1],
-            name: temp[0]
+    for (let i = 0; i < contacts.length; i++) {
+        const data = contacts[i].split(';');
+        const contact = {
+            phone: data[1],
+            name: data[0]
         };
 
-        if (typeof temp[2] !== 'undefined') {
-            data.email = temp[2];
+        if (typeof data[2] !== 'undefined') {
+            contact.email = data[2];
         }
 
-        if (update(data.phone, data.name, data.email) ||
-            add(data.phone, data.name, data.email)) {
+        if (update(contact.phone, contact.name, contact.email) ||
+            add(contact.phone, contact.name, contact.email)) {
             count++;
         }
     }
