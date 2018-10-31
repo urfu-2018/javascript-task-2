@@ -113,25 +113,21 @@ function checkRecord(record, query) {
  * @returns {String[]}
  */
 function find(query) {
-    let result = [];
+    // let result = [];
     if (query === '') {
-        return result;
+        return [];
     }
     if (query === '*') {
-        for (let i = 0; i < phoneBook.length; i++) {
-            result.push(outString(phoneBook[i].name, phoneBook[i].phone, phoneBook[i].email));
-
-        }
+        return phoneBook.map(elem => outString(elem.name, elem.phone, elem.email)).sort();
     }
-    phoneBook.filter(elem => checkRecord(elem, query)).map(elem => {
+    let result = phoneBook.filter(elem => checkRecord(elem, query))
+        .map(elem => outString(elem.name, elem.phone, elem.email));
+
+    /* {
         result.push(outString(elem.name, elem.phone, elem.email));
 
         return elem;
-    });
-
-    /* for (let j = 0; j < res.length; j++) {
-        result.push(outString(res[j].name, res[j].phone, res[j].email));
-    }*/
+    }); */
 
     return result.sort();
 }
