@@ -86,12 +86,7 @@ function findAndRemove(query) {
     if (!isString(query) || !query) {
         return 0;
     }
-    if (query === '*') {
-        let count = phoneBook.size;
-        phoneBook.clear();
 
-        return count;
-    }
     let found = findQueryInSorted(query);
     for (let i = 0; i < found.length; i++) {
         phoneBook.delete(found[i].phone);
@@ -109,10 +104,6 @@ function find(query) {
     if (!isString(query) || !query) {
         return [];
     }
-    if (query === '*') {
-        return sortedBook()
-            .map(x=> formatNote(x));
-    }
 
     return findQueryInSorted(query)
         .map(x=>formatNote(x));
@@ -121,8 +112,10 @@ function find(query) {
 
 
 function findQueryInSorted(query) {
+    let isAll = query === '*';
+
     return sortedBook().filter(x => {
-        return x.name.includes(query) ||
+        return isAll || x.name.includes(query) ||
             x.phone.includes(query) ||
             (x.email && x.email.includes(query));
     });
