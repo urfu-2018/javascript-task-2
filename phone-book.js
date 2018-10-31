@@ -11,9 +11,14 @@ const isStar = true;
  */
 let phoneBook = {};
 
-function changePhoneFormat(str) {
-    return '+7 (' + str.slice(0, 3) + ') ' +
-        str.slice(3, 6) + '-' + str.slice(6, 8) + '-' + str.slice(8);
+function formatPhone(record) {
+    let phone = record.phone;
+    const value = record.value;
+    phone = '+7 (' + phone.slice(0, 3) + ') ' +
+        phone.slice(3, 6) + '-' + phone.slice(6, 8) + '-' + phone.slice(8);
+
+    return value.name + ', ' +
+        phone + (value.email ? ', ' + value.email : '');
 }
 
 function contains(phone, name, email, query) {
@@ -37,7 +42,7 @@ function revertPhoneFormat(record) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^\d{10}$/.test(phone) || phoneBook.hasOwnProperty(phone) || !name) {
+    if (!/^\d{10}$/.test(phone) || phoneBook[phone] || !name) {
         return false;
     }
     phoneBook[phone] = email ? { name, email } : { name };
@@ -87,17 +92,16 @@ function findAndRemove(query) {
 function find(query) {
     const keys = Object.keys(phoneBook);
     const result = {};
-    for (let i = 0; i < keys.length; ++i) {
-        const phone = keys[i];
+    keys.forEach(phone => {
         const value = phoneBook[phone];
         if (contains(phone, value.name, value.email, query)) {
-            result[value.name] = value.name + ', ' +
-                changePhoneFormat(phone) + (value.email ? ', ' + value.email : '');
+            result[value.name] = { phone, value };
         }
-    }
-    const ans = Object.keys(result).sort()
+    });
+    const ans = Object.keys(result)
+        .sort()
         .map(function (key) {
-            return result[key];
+            return formatPhone(result[key]);
         });
 
     return ans;
