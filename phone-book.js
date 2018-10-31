@@ -119,7 +119,7 @@ function update(phone, name, email) {
 
     const newContact = { phone, name, email };
 
-    if (contains(newContact)) {
+    if (contains(newContact) || !containsPhone(phone)) {
         return false;
     }
 
