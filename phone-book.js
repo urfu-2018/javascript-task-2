@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
@@ -38,22 +38,6 @@ function toDefaultFormat(phone) {
 }
 
 function returnAllBook(sortBook) {
-
-    /* const element = [];
-
-    sortBook.map(contact => {
-        const newPhone = toNewFormatPhone(contact.phone);
-
-        if (!contact.email) {
-            element.push(`${contact.name}, ${newPhone}`);
-        } else {
-            element.push(`${contact.name}, ${newPhone}, ${contact.email}`);
-        }
-
-        return element;
-    });
-
-    return element;*/
 
     return sortBook.map(contact => {
         const newPhone = toNewFormatPhone(contact.phone);
