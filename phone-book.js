@@ -110,29 +110,29 @@ function find(query) {
     }
     if (query === '*') {
         return sortedBook()
-            .map(x=> formatForOutput(x));
+            .map(x=> formatNote(x));
     }
 
     return findQueryInSorted(query)
-        .map(x=>formatForOutput(x));
+        .map(x=>formatNote(x));
 
 }
 
 
 function findQueryInSorted(query) {
     return sortedBook().filter(x => {
-        return x.name.indexOf(query) + 1 ||
-            x.phone.indexOf(query) + 1 ||
-            (x.email && x.email.indexOf(query) + 1);
+        return x.name.includes(query) ||
+            x.phone.includes(query) ||
+            (x.email && x.email.includes(query));
     });
 }
 
-function formatForOutput(note) {
-    if (!note.email) {
-        return note.name + ', ' + rightFormatForPhone(note.phone);
+function formatNote(note) {
+    if (note.email) {
+        return `${note.name}, ${formatPhone(note.phone)}, ${note.email}`;
     }
 
-    return note.name + ', ' + rightFormatForPhone(note.phone) + ', ' + note.email;
+    return `${note.name}, ${formatPhone(note.phone)}`;
 }
 function sortedBook() {
     return [...phoneBook.values()]
@@ -141,7 +141,7 @@ function sortedBook() {
         });
 }
 
-function rightFormatForPhone(phone) {
+function formatPhone(phone) {
     return '+7 (' + phone.slice(0, 3) +
         ') ' + phone.slice(3, 6) + '-' +
         phone.slice(6, 8) +
