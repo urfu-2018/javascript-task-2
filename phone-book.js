@@ -20,15 +20,12 @@ function isValidPhone(phone) {
 }
 
 function hasPartialMatch(query, phone, name, email) {
-    return phone.indexOf(query) >= 0 || email.indexOf(query) >= 0 ||
+    return phone.includes(query) || email.includes(query) ||
      name.indexOf(query) >= 0;
 }
 
 function toPhoneFormat(phone) {
-    const splited = phone.split(/(...)(...)(..)(..)/)
-        .slice(1, 6);
-
-    return `+7 (${splited[0]}) ${splited[1]}-${splited[2]}-${splited[3]}`;
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8)}`;
 }
 
 /**
@@ -82,10 +79,9 @@ function findAndRemove(query) {
     let wereDeleted = 0;
 
     phoneBook.forEach((contacts, phone) => {
-        const email = contacts.email;
-        const name = contacts.name;
+        const { email, name } = contacts;
         if (query === '*' || hasPartialMatch(query, phone, name, email)) {
-            wereDeleted += phoneBook.delete(phone);
+            wereDeleted += phoneBook.delete(phone) ? 1 : 0;
         }
     });
 
@@ -136,7 +132,11 @@ function importFromCsv(csv) {
         const name = splitedLine[0];
         const phone = splitedLine[1];
         const email = splitedLine[2];
-        countUpdatedOrAdded += add(phone, name, email) || update(phone, name, email);
+        if (phoneBook.has(phone)) {
+            countUpdatedOrAdded += update(phone, name, email) ? 1 : 0;
+        } else {
+            countUpdatedOrAdded += add(phone, name, email) ? 1 : 0;
+        }
     });
 
     return countUpdatedOrAdded;
