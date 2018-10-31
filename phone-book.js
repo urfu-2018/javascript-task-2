@@ -106,7 +106,7 @@ function find(query) {
     }
 
     return findQueryInSorted(query)
-        .map(x=>formatNote(x));
+        .map(formatNote);
 
 }
 
@@ -115,7 +115,8 @@ function findQueryInSorted(query) {
     let isAll = query === '*';
 
     return sortedBook().filter(x => {
-        return isAll || x.name.includes(query) ||
+        return isAll ||
+            x.name.includes(query) ||
             x.phone.includes(query) ||
             (x.email && x.email.includes(query));
     });
@@ -152,17 +153,13 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
     let notes = csv
         .split('\n')
-        .map(x=>x.split(';'));
-    let count = 0;
-    for (let i = 0; i < notes.length; i++) {
-        if (phoneBook.has(notes[i][1])) {
-            count = update(notes[i][1], notes[i][0], notes[i][2]) ? count + 1 : count;
-        } else {
-            count = add(notes[i][1], notes[i][0], notes[i][2]) ? count + 1 : count;
-        }
-    }
+        .map(x => x.split(';'));
+    let _notes = notes.filter(x => {
+        return update(x[1], x[0], x[2]) ||
+            add(x[1], x[0], x[2]);
+    });
 
-    return count;
+    return _notes.length;
 }
 
 module.exports = {
