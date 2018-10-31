@@ -56,7 +56,7 @@ function update(phone, name, email) {
         email = '';
     }
 
-    if (!phoneBook.some(record => record.phone === phone)) {
+    if (!hasPhone(phone)) {
         return false;
     }
 
@@ -70,6 +70,14 @@ function update(phone, name, email) {
     return true;
 }
 
+function hasPhone(phone) {
+    if (phoneBook.some(record => record.phone === phone)) {
+        return true;
+    }
+
+    return false;
+}
+
 function validationOfParameters(phone, name) {
     if (typeof(phone) !== 'string' || typeof(name) !== 'string') {
         return false;
@@ -80,6 +88,8 @@ function validationOfParameters(phone, name) {
     if (!regPhone.test(phone)) {
         return false;
     }
+
+    name = name.trim();
 
     if (name.length === 0) {
         return false;
@@ -107,7 +117,7 @@ function findAndRemove(query) {
         return countDeleteRecords;
     }
 
-    const arrayRecords = phoneBook
+    const foundRecords = phoneBook
         .filter(note => {
             for (let key in note) {
                 if (note[key].includes(query)) {
@@ -117,9 +127,9 @@ function findAndRemove(query) {
 
             return false;
         });
-    countDeleteRecords = arrayRecords.length;
+    countDeleteRecords = foundRecords.length;
 
-    arrayRecords.forEach(record => {
+    foundRecords.forEach(record => {
         phoneBook.splice(phoneBook.indexOf(record), 1);
     });
 
