@@ -9,21 +9,21 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+const phoneBook = {};
 
-let isCorrectNumber = (phone) =>
+const isCorrectNumber = (phone) =>
     typeof(phone) === 'string' && /^\d{10}$/.test(phone);
 
-let phoneFormat = (phone) =>
+const phoneFormat = (phone) =>
     `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 
-let notesByQuery = (query) =>
+const notesByQuery = (query) =>
     typeof(query) !== 'string' || query === ''
         ? 0
         : Object.keys(phoneBook)
             .map(phone => [phoneBook[phone].name, phone, phoneBook[phone].email])
-            .filter(x =>
-                x.some(str => query === '*' || str.indexOf(query) + 1));
+            .filter(note => note
+                .some(str => query === '*' || str.indexOf(query) + 1));
 
 /**
  * Добавление записи в телефонную книгу
@@ -36,7 +36,7 @@ function add(phone, name, email = '') {
     if (!isCorrectNumber(phone) || !name || phone in phoneBook) {
         return false;
     }
-    phoneBook[phone] = { 'name': name, 'email': email };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -52,7 +52,7 @@ function update(phone, name, email = '') {
     if (!(phone in phoneBook) || !name) {
         return false;
     }
-    phoneBook[phone] = { 'name': name, 'email': email };
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -64,7 +64,7 @@ function update(phone, name, email = '') {
  */
 function findAndRemove(query) {
     return notesByQuery(query)
-        .filter(x => delete(phoneBook[x[1]]))
+        .filter(note => delete(phoneBook[note[1]]))
         .length;
 }
 
@@ -75,8 +75,8 @@ function findAndRemove(query) {
  */
 function find(query) {
     return notesByQuery(query)
-        .map(x => [x[0], phoneFormat(x[1]), x[2]]
-            .filter(el => el)
+        .map(note => [note[0], phoneFormat(note[1]), note[2]]
+            .filter(field => field)
             .join(', '))
         .sort();
 }
@@ -90,8 +90,9 @@ function find(query) {
 function importFromCsv(csv) {
     return csv
         .split('\n')
-        .map(x => x.split(';'))
-        .filter(x => add(x[1], x[0], x[2]) || update(x[1], x[0], x[2]))
+        .map(line => line.split(';'))
+        .filter(fields => add(fields[1], fields[0], fields[2]) ||
+                          update(fields[1], fields[0], fields[2]))
         .length;
 }
 
