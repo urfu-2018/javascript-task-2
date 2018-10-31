@@ -113,7 +113,6 @@ function checkRecord(record, query) {
  * @returns {String[]}
  */
 function find(query) {
-    // let result = [];
     if (query === '') {
         return [];
     }
@@ -122,12 +121,6 @@ function find(query) {
     }
     let result = phoneBook.filter(elem => checkRecord(elem, query))
         .map(elem => outString(elem.name, elem.phone, elem.email));
-
-    /* {
-        result.push(outString(elem.name, elem.phone, elem.email));
-
-        return elem;
-    }); */
 
     return result.sort();
 }
