@@ -9,10 +9,10 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = {};
 
 function isString(value) {
-    return typeof(value) === 'string';
+    return typeof (value) === 'string';
 }
 
 function isCorrectPhone(value) {
@@ -23,9 +23,9 @@ function isCorrectName(value) {
     return isString(value) && value !== '';
 }
 
-function checkInput(phone, name) {
+function isCorrectInput(phone, name) {
     return isCorrectPhone(phone) &&
-    isCorrectName(name);
+        isCorrectName(name);
 }
 
 /**
@@ -35,9 +35,9 @@ function checkInput(phone, name) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
-    if (checkInput(phone, name) &&
-        typeof(phoneBook[phone]) === 'undefined') {
+function add(phone, name, email = '') {
+    if (isCorrectInput(phone, name) &&
+        !phoneBook[phone]) {
         phoneBook[phone] = [name, email];
 
         return true;
@@ -53,9 +53,9 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-    if (checkInput(phone, name) &&
-        typeof(phoneBook[phone]) !== 'undefined') {
+function update(phone, name, email = '') {
+    if (isCorrectInput(phone, name) &&
+        phoneBook[phone]) {
         phoneBook[phone] = [name, email];
 
         return true;
@@ -71,21 +71,22 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let dataToDelete = find(query);
-    for (let data of dataToDelete) {
+    console.info(dataToDelete);
+    for (const data of dataToDelete) {
         // приведём номер к простому виду и избавимся в начале строки от 7
-        let phone = data.split(', ')[1].replace(/[- +()]/g, '').substring(1);
-        delete phoneBook[phone];
+        const phone = data.split(', ')[1].replace(/[- +()]/g, '').substring(1);
+        phoneBook[phone] = undefined;
     }
 
     return dataToDelete.length;
 }
 
-function everythingFrom(array) {
+function getAllFrom(array) {
     let result = [];
-    for (let key of Object.keys(array)) {
+    for (const key of Object.keys(array)) {
         let element = `${array[key][0]}, +7 (${key.substring(0, 3)}) ` +
-        `${key.substring(3, 6)}-${key.substring(6, 8)}-${key.substring(8, 10)}`;
-        if (array[key][1] !== undefined) {
+            `${key.substring(3, 6)}-${key.substring(6, 8)}-${key.substring(8, 10)}`;
+        if (array[key][1]) {
             element = `${element}, ${array[key][1]}`;
         }
         result.push(element);
@@ -95,11 +96,11 @@ function everythingFrom(array) {
     return result;
 }
 
-function getAllBy(element) {
+function getAllBy(query) {
     let result = [];
-    for (let key of Object.keys(phoneBook)) {
-        if (phoneBook[key][0].indexOf(element) !== -1 || key.indexOf(element) !== -1 ||
-        (phoneBook[key][1] !== undefined && phoneBook[key][1].indexOf(element) !== -1)) {
+    for (const key of Object.keys(phoneBook)) {
+        if (phoneBook[key][0].includes(query) || key.includes(query) ||
+            (phoneBook[key][1] && phoneBook[key][1].includes(query))) {
             result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
@@ -117,10 +118,11 @@ function find(query) {
         return [];
     }
     if (query === '*') {
-        return everythingFrom(phoneBook);
+        return getAllFrom(phoneBook);
     }
+    const allRecords = getAllBy(query);
 
-    return everythingFrom(getAllBy(query));
+    return getAllFrom(allRecords);
 }
 
 /**
@@ -134,19 +136,19 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
     const contacts = csv.split('\n');
-    let kills = 0;
-    for (let contact of contacts) {
-        contact = contact.split(';');
+    let passed = 0;
+    for (const contact of contacts) {
+        const [name, phone, email] = contact.split(';');
         let data = {
-            name: contact[0],
-            phone: contact[1],
-            email: contact[2]
+            name: name,
+            phone: phone,
+            email: email
         };
-        kills = update(data.phone, data.name, data.email) ||
-        add(data.phone, data.name, data.email) ? kills + 1 : kills;
+        passed = update(data.phone, data.name, data.email) ||
+            add(data.phone, data.name, data.email) ? passed + 1 : passed;
     }
 
-    return kills;
+    return passed;
 }
 
 module.exports = {
