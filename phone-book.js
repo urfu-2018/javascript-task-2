@@ -73,7 +73,7 @@ function update(phone, name, email) {
 
 function searchPredicate(entry, query) {
     return Object.values(entry)
-        .filter(x => x)
+        .filter(Boolean)
         .some(string => string.includes(query));
 }
 
@@ -118,7 +118,7 @@ function find(query) {
     }
 
     const formatEntry = (entry) => [entry.name, formatPhone(entry.phone), entry.email]
-        .filter(x => x)
+        .filter(Boolean)
         .join(', ');
 
     return (query === '*' ? phoneBook : phoneBook.filter(searchBy(query)))
