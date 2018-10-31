@@ -50,9 +50,10 @@ function update(phone, name, email) {
 }
 
 function addNote(name, phone, email) {
-    phoneBook.set(phone, { name: name, phone: phone });
     if (email) {
-        phoneBook.set(phone, { name: name, phone: phone, email: email });
+        phoneBook.set(phone, { name, phone, email });
+    } else {
+        phoneBook.set(phone, { name, phone });
     }
 }
 
@@ -82,7 +83,7 @@ function isString(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!(isString(query) && query)) {
+    if (!isString(query) || !query) {
         return 0;
     }
     if (query === '*') {
@@ -105,7 +106,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!(isString(query) && query)) {
+    if (!isString(query) || !query) {
         return [];
     }
     if (query === '*') {
@@ -135,17 +136,15 @@ function formatNote(note) {
     return `${note.name}, ${formatPhone(note.phone)}`;
 }
 function sortedBook() {
-    return [...phoneBook.values()]
+    return Array.from(phoneBook.values())
         .sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
 }
 
 function formatPhone(phone) {
-    return '+7 (' + phone.slice(0, 3) +
-        ') ' + phone.slice(3, 6) + '-' +
-        phone.slice(6, 8) +
-        '-' + phone.slice(8, 10);
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}` +
+        `-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
 }
 
 /**
