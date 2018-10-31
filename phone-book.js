@@ -11,6 +11,8 @@ const isStar = false;
  */
 let phoneBook = [];
 
+const regexp = /^\d{10}$/;
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,10 +21,9 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const regexp = /^\d{10}$/;
-    name = checkName(name);
-    if (typeof phone === 'string' && regexp.test(phone) && name !== '' &&
-    phoneBook[phone] === undefined) {
+    name = validateName(name);
+    phone = validatePhone(phone);
+    if (name && phone && phoneBook[phone] === undefined) {
         if (email) {
             phoneBook[phone] = {
                 name: name,
@@ -41,8 +42,28 @@ function add(phone, name, email) {
     return false;
 }
 
-function checkName(name) {
-    return name === undefined ? '' : name;
+function validateName(name) {
+    if (name === undefined || name === '') {
+        return undefined;
+    }
+
+    return name;
+}
+
+function validatePhone(phone) {
+    if (typeof phone === 'string' && regexp.test(phone)) {
+        return phone;
+    }
+
+    return undefined;
+}
+
+function validateQuery(query) {
+    if (typeof query !== 'string' || query === '') {
+        return undefined;
+    }
+
+    return query;
 }
 
 /**
@@ -53,10 +74,9 @@ function checkName(name) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const regexp = /^\d{10}$/;
-    name = checkName(name);
-    if (typeof phone === 'string' && regexp.test(phone) && name !== '' &&
-    phoneBook[phone] !== undefined) {
+    name = validateName(name);
+    phone = validatePhone(phone);
+    if (name && phone && phoneBook[phone] !== undefined) {
         if (email) {
             phoneBook[phone] = {
                 name: name,
@@ -81,27 +101,23 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof query !== 'string' || query === '') {
+    query = validateQuery(query);
+    let deletedQuantity = 0;
+    if (!query) {
         return 0;
     } else if (query === '*') {
-        const deletedQuantity = Object.keys(phoneBook).length;
+        deletedQuantity = Object.keys(phoneBook).length;
         phoneBook = [];
 
         return deletedQuantity;
     }
-
-    return deleteAndCount(query);
-}
-
-function deleteAndCount(query) {
-    let deletedQuantity = 0;
-    for (let phone in phoneBook) {
+    Object.keys(phoneBook).forEach(function (phone) {
         if (phone.includes(query) || phoneBook[phone].name.includes(query) ||
         phoneBook[phone].email.includes(query)) {
             delete phoneBook[phone];
             deletedQuantity++;
         }
-    }
+    });
 
     return deletedQuantity;
 }
@@ -112,18 +128,19 @@ function deleteAndCount(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let formatArray = [];
-    if (typeof(query) !== 'string' || query === '') {
-        return formatArray;
+    query = validateQuery(query);
+    let formatEntry = [];
+    if (!query) {
+        return formatEntry;
     } else if (query === '*') {
-        for (let i = 0; i < Object.keys(phoneBook).length; i++) {
-            formatArray.push(rewriteInString(Object.keys(phoneBook)[i]));
-        }
+        Object.keys(phoneBook).forEach(function (phone) {
+            formatEntry.push(rewriteInString(phone));
+        });
     } else {
-        formatArray = findMatching(query, formatArray);
+        formatEntry = findMatches(query, formatEntry);
     }
 
-    return formatArray.sort(sortByName);
+    return formatEntry.sort(sortByName);
 }
 
 function rewriteInString(phone) {
@@ -136,14 +153,14 @@ function rewriteInString(phone) {
     return (phoneBook[phone].name + ', ' + fixPhone);
 }
 
-function findMatching(query, formatArray) {
-    for (let i = 0; i < Object.keys(phoneBook).length; i++) {
-        if (Object.keys(phoneBook)[i].includes(query) ||
-        phoneBook[Object.keys(phoneBook)[i]].name.includes(query) ||
-        phoneBook[Object.keys(phoneBook)[i]].email.includes(query)) {
-            formatArray.push(rewriteInString(Object.keys(phoneBook)[i]));
+function findMatches(query, formatArray) {
+    Object.keys(phoneBook).forEach(function (phone) {
+        if (phone.includes(query) ||
+        phoneBook[phone].name.includes(query) ||
+        phoneBook[phone].email.includes(query)) {
+            formatArray.push(rewriteInString(phone));
         }
-    }
+    });
 
     return formatArray;
 }
