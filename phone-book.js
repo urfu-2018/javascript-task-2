@@ -22,7 +22,7 @@ function hasMatches(query, phone, name, email) {
 }
 
 function isValidPhone(phone) {
-    return isValidContact(phone) && /^\d{10}$/.test(phone);
+    return typeof(phone) === 'string' && phone.trim() && /^\d{10}$/.test(phone);
 }
 
 /**
@@ -39,7 +39,7 @@ function add(phone, name, email) {
 
     phoneBook.set(phone, {
         name,
-        email: isValidContact(email) ? email : undefined
+        email: isValidContact(email) ? email : ''
     });
 
     return true;
@@ -59,7 +59,7 @@ function update(phone, name, email) {
 
     phoneBook.set(phone, {
         name,
-        email: isValidContact(email) ? email : undefined
+        email: isValidContact(email) ? email : ''
     });
 
     return true;
@@ -131,10 +131,19 @@ function find(query) {
         .sort((firstContact, secondContact) =>
             firstContact.name.localeCompare(secondContact.name)
         )
-        .map(contact =>
-            `${contact.name}, ${contact.phone}${contact.email ? `, ${contact.email}` : ''}`
-        );
+        .map(contact =>{
+            const { name, phone, email } = contact;
+
+            return [
+                name,
+                phone,
+                email
+            ]
+                .filter(value => Boolean(value))
+                .join(', ');
+        });
 }
+
 
 /**
  * Импорт записей из csv-формата
