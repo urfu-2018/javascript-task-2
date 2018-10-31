@@ -69,12 +69,16 @@ function findAndRemove(query) {
         return 0;
     }
     let count = 0;
-    let length = phoneBook.length;
-    for (let i = 0; i < length; i++) {
+    if (query === '*') {
+        count = phoneBook.length;
+        phoneBook.splice(0, phoneBook.length);
+
+        return count;
+    }
+    for (let i = 0; i < phoneBook.length; i++) {
         let { phone, name, email } = phoneBook[i];
-        if (findElement(phone, name, email, query) || query === '*') {
+        if (findElement(phone, name, email, query)) {
             phoneBook.splice(i, 1);
-            length = length - 1;
             count++;
             i--;
         }
