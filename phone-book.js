@@ -85,7 +85,7 @@ function getAllFrom(array) {
     for (const key of Object.keys(array)) {
         let element = `${array[key][0]}, +7 (${key.substring(0, 3)}) ` +
             `${key.substring(3, 6)}-${key.substring(6, 8)}-${key.substring(8, 10)}`;
-        if (array[key][1]) {
+        if (array[key][1] !== '') {
             element = `${element}, ${array[key][1]}`;
         }
         result.push(element);
@@ -99,7 +99,7 @@ function getAllBy(query) {
     let result = {};
     for (const key of Object.keys(phoneBook)) {
         if (phoneBook[key][0].includes(query) || key.includes(query) ||
-            (phoneBook[key][1] && phoneBook[key][1].includes(query))) {
+            phoneBook[key][1].includes(query)) {
             result[key] = [phoneBook[key][0], phoneBook[key][1]];
         }
     }
@@ -137,7 +137,7 @@ function importFromCsv(csv) {
     const contacts = csv.split('\n');
     let passed = 0;
     for (const contact of contacts) {
-        const [name, phone, email] = contact.split(';');
+        const [name, phone, email = ''] = contact.split(';');
         const data = {
             name: name,
             phone: phone,
