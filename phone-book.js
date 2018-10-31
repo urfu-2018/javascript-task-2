@@ -117,7 +117,7 @@ function getAllBy(query) {
  */
 function find(query) {
     if (query === '') {
-        return {};
+        return [];
     }
     if (query === '*') {
         return getAllFrom(phoneBook);
