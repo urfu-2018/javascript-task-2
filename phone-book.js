@@ -70,12 +70,11 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let dataToDelete = find(query);
-    console.info(dataToDelete);
+    const dataToDelete = find(query);
     for (const data of dataToDelete) {
         // приведём номер к простому виду и избавимся в начале строки от 7
         const phone = data.split(', ')[1].replace(/[- +()]/g, '').substring(1);
-        phoneBook[phone] = undefined;
+        delete phoneBook[phone];
     }
 
     return dataToDelete.length;
@@ -97,7 +96,7 @@ function getAllFrom(array) {
 }
 
 function getAllBy(query) {
-    let result = [];
+    let result = {};
     for (const key of Object.keys(phoneBook)) {
         if (phoneBook[key][0].includes(query) || key.includes(query) ||
             (phoneBook[key][1] && phoneBook[key][1].includes(query))) {
@@ -115,7 +114,7 @@ function getAllBy(query) {
  */
 function find(query) {
     if (query === '') {
-        return [];
+        return {};
     }
     if (query === '*') {
         return getAllFrom(phoneBook);
@@ -139,7 +138,7 @@ function importFromCsv(csv) {
     let passed = 0;
     for (const contact of contacts) {
         const [name, phone, email] = contact.split(';');
-        let data = {
+        const data = {
             name: name,
             phone: phone,
             email: email
