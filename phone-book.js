@@ -10,6 +10,7 @@ const isStar = true;
  * Телефонная книга
  */
 let phoneBook = new Map();
+let phoneRegExp = /^\d{10}$/;
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,9 +20,7 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkNameFormat(name) &&
-        checkPhoneFormat(phone) &&
-        checkEmailFormat(email) &&
+    if (isValidInput(name, phone, email) &&
         !phoneBook.has(phone)) {
         addNote(name, phone, email);
 
@@ -31,9 +30,6 @@ function add(phone, name, email) {
     return false;
 }
 
-function checkPhoneFormat(phone) {
-    return phone && isString(phone) && (/^(\d){10}$/).test(phone);
-}
 
 /**
  * Обновление записи в телефонной книге
@@ -43,9 +39,7 @@ function checkPhoneFormat(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkNameFormat(name) &&
-        checkPhoneFormat(phone) &&
-        checkEmailFormat(email) &&
+    if (isValidInput(name, phone, email) &&
         phoneBook.has(phone)) {
         addNote(name, phone, email);
 
@@ -61,12 +55,25 @@ function addNote(name, phone, email) {
         phoneBook.set(phone, { name: name, phone: phone, email: email });
     }
 }
-function checkNameFormat(name) {
+
+function isValidInput(name, phone, email) {
+    return isCorrectPhone(phone) && isCorrectEmail(email) && isCorrectName(name);
+}
+
+function isCorrectName(name) {
     return name && isString(name);
 }
 
-function checkEmailFormat(email) {
+function isCorrectEmail(email) {
     return typeof email === 'string' || email === undefined;
+}
+
+function isCorrectPhone(phone) {
+    return phone && isString(phone) && (phoneRegExp).test(phone);
+}
+
+function isString(query) {
+    return typeof query === 'string' && query !== '';
 }
 
 /**
@@ -111,9 +118,6 @@ function find(query) {
 
 }
 
-function isString(query) {
-    return typeof query === 'string' && query !== '';
-}
 
 function findQueryInSorted(query) {
     return sortedBook().filter(x => {
