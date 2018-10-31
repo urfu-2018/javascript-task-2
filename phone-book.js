@@ -70,6 +70,9 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    if (query === '') {
+        return 0;
+    }
     const dataToDelete = find(query);
     for (const data of dataToDelete) {
         // приведём номер к простому виду и избавимся в начале строки от 7
