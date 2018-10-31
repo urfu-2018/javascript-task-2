@@ -19,7 +19,7 @@ const phoneFormat = (phone) =>
 
 const notesByQuery = (query) =>
     typeof(query) !== 'string' || query === ''
-        ? 0
+        ? []
         : Object.keys(phoneBook)
             .map(phone => [phoneBook[phone].name, phone, phoneBook[phone].email])
             .filter(note => note
