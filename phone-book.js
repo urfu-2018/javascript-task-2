@@ -9,14 +9,10 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = {};
 
 function isString(field) {
-    if (typeof field === 'string') {
-        return true;
-    }
-
-    return false;
+    return typeof field === 'string';
 }
 
 function isCorrectedPhone(phone) {
@@ -28,11 +24,22 @@ function isCorrectedPhone(phone) {
 }
 
 function isCorrectedName(name) {
-    if (isString(name) && name !== '') {
-        return true;
-    }
+    return isString(name) && name !== '';
+}
 
-    return false;
+function isUndefined(field) {
+    return typeof field === 'undefined';
+}
+
+// Собираем нужный формат номера из полного номера
+function getPhone(fullPhone) {
+    return fullPhone.substring(4, 7) + fullPhone.substring(9, 12) +
+    fullPhone.substring(13, 15) + fullPhone.substring(16, 19);
+}
+
+function getNeedFormat(records, phone) {
+    return records[phone].name + ', +7 (' + phone.substring(0, 3) + ') ' + phone.substring(3, 6) +
+    '-' + phone.substring(6, 8) + '-' + phone.substring(8, 10);
 }
 
 /**
@@ -43,15 +50,19 @@ function isCorrectedName(name) {
  * @returns {Boolean}
  */
 
+let incorrectedData = (name, phone) => {
+    return !isCorrectedName(name) || !isCorrectedPhone(phone) || isUndefined(name);
+};
+
 function add(phone, name, email) {
-    if (!isCorrectedName(name) || !isCorrectedPhone(phone) ||
-    typeof phoneBook[phone] !== 'undefined' || arguments.length === 1) {
+    if (incorrectedData(name, phone) || !isUndefined(phoneBook[phone])) {
         return false;
     }
-    if (arguments.length === 2) {
-        email = '';
-    }
-    phoneBook[phone] = [name, email];
+    email = email || '';
+    phoneBook[phone] = {
+        name: name,
+        email: email
+    };
 
     return true;
 }
@@ -64,14 +75,14 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrectedName(name) || !isCorrectedPhone(phone) ||
-    typeof phoneBook[phone] === 'undefined' || arguments.length === 1) {
+    if (incorrectedData(name, phone) || isUndefined(phoneBook[phone])) {
         return false;
     }
-    if (arguments.length === 2) {
-        email = '';
-    }
-    phoneBook[phone] = [name, email];
+    email = email || '';
+    phoneBook[phone] = {
+        name: name,
+        email: email
+    };
 
     return true;
 }
@@ -82,15 +93,14 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let removes = find(query);
-    for (let p of removes) {
-        let str = p.split(', ');
-        str[1] = str[1].substring(4, 7) + str[1].substring(9, 12) +
-        str[1].substring(13, 15) + str[1].substring(16, 19);
-        delete phoneBook[str[1]];
+    let removable = find(query);
+    for (let record of removable) {
+        let str = record.split(', ');
+        let phone = getPhone(str[1]);
+        delete phoneBook[phone];
     }
 
-    return removes.length;
+    return removable.length;
 }
 
 /**
@@ -104,35 +114,36 @@ function find(query) {
         return [];
     }
     if (query === '*') {
-        return give(phoneBook);
+        return getFormattedRecors(phoneBook);
     }
     let bookRecords = [];
-    bookRecords = existInBook(query);
+    bookRecords = getRecordsByQuery(query);
 
-    return give(bookRecords);
+    return getFormattedRecors(bookRecords);
 }
 
 //  Проверка на существование записей в книге
-function existInBook(query) {
+function getRecordsByQuery(query) {
     let result = [];
-    for (let key of Object.keys(phoneBook)) {
-        if (key.indexOf(query) !== -1 || phoneBook[key][0].indexOf(query) !== -1 ||
-            phoneBook[key][1].indexOf(query) !== -1) {
-            result[key] = [phoneBook[key][0], phoneBook[key][1]];
+    for (let phone of Object.keys(phoneBook)) {
+        if (phone.indexOf(query) !== -1 || phoneBook[phone].name.indexOf(query) !== -1 ||
+            phoneBook[phone].email.indexOf(query) !== -1) {
+            result[phone] = {
+                name: phoneBook[phone].name,
+                email: phoneBook[phone].email
+            };
         }
     }
-    result.sort();
 
     return result;
 }
-//  Получение записей из книги
-function give(records) {
+//  Получение форматированных записей из книги
+function getFormattedRecors(records) {
     let result = [];
-    for (let key of Object.keys(records)) {
-        let record = records[key][0] + ', +7 (' + key.substring(0, 3) + ') ' + key.substring(3, 6) +
-        '-' + key.substring(6, 8) + '-' + key.substring(8, 10);
-        if (records[key][1].length !== 0) {
-            record = record + ', ' + records[key][1];
+    for (let phone of Object.keys(records)) {
+        let record = getNeedFormat(records, phone);
+        if (records[phone].email.length !== 0) {
+            record = record + ', ' + records[phone].email;
         }
         if (record.length !== 0) {
             result.push(record);
@@ -157,10 +168,8 @@ function importFromCsv(csv) {
         let phone = str[1];
         let name = str[0];
         let email = str[2];
-        if (typeof email === 'undefined') {
-            email = '';
-        }
-        if (typeof phoneBook[phone] !== 'undefined') {
+        email = email || '';
+        if (!isUndefined(phoneBook[phone])) {
             if (update(phone, name, email)) {
                 count++;
             }
