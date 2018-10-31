@@ -53,7 +53,19 @@ function update(phone, name, email) {
     if (typeof name !== 'string' || !(name.length > 0)) {
         return false;
     }
-    let f = false;
+    let elem = phoneBook.find(record => record.phone === phone && name);
+    if (elem === undefined) {
+
+        return false;
+    }
+    elem.name = name;
+    elem.phone = phone;
+    elem.email = email;
+
+    return true;
+
+
+    /* let f = false;
     phoneBook.map(elem => {
         if (elem.phone === phone && name) {
             elem.name = name;
@@ -63,9 +75,9 @@ function update(phone, name, email) {
         }
 
         return elem;
-    });
+    });*/
 
-    return f;
+    // return f;
 }
 
 /**
