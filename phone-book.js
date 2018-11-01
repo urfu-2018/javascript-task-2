@@ -142,11 +142,11 @@ function importFromCsv(csv) {
             let name = arr[0];
             let phone = arr[1];
             let email = arr[2];
-            if (checkValid(phone, name)) {
+            if (checkValid(phone, name, email)) {
                 phoneBook[phone] = [name];
                 count++;
             }
-            if (checkValid(phone, name) && email !== undefined) {
+            if (checkValid(phone, name, email) && email) {
                 phoneBook[phone][1] = email;
             }
         }
@@ -154,6 +154,7 @@ function importFromCsv(csv) {
 
     return count;
 }
+
 
 module.exports = {
     add,
