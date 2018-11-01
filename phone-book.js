@@ -132,21 +132,19 @@ function find(query) {
         return [];
     }
     var value;
-    // var notSortedList = Object.keys(phoneBook).map((phone) => {
-    //     value = search(query, phoneBook[phone]);
-    //     if (value !== undefined) {
-    //         return value;
-    //     }
-
-    //     return notSortedList;
-    // });
-    var notSortedList = [];
-    for (var phone of Object.keys(phoneBook)) {
+    var notSortedList = Object.keys(phoneBook).map((phone) => {
         value = search(query, phoneBook[phone]);
         if (value !== undefined) {
-            notSortedList.push(value);
+            return value;
         }
-    }
+    });
+    // var notSortedList = [];
+    // for (var phone of Object.keys(phoneBook)) {
+    //     value = search(query, phoneBook[phone]);
+    //     if (value !== undefined) {
+    //         notSortedList.push(value);
+    //     }
+    // }
 
     return sorts(notSortedList);
 }
