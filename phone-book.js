@@ -22,7 +22,7 @@ const phonePattern = /^\d{10}$/;
  */
 function add(phone, name, email) {
     if (typeof(phone) === 'string' &&
-        typeof(name) !== 'undefined' &&
+        typeof(name) === 'string' &&
         phonePattern.test(phone) &&
         phoneBook[phone] === undefined) {
         phoneBook[phone] = {
