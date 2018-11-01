@@ -69,9 +69,9 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let count = 0;
-    if (query === '' || query || typeof query !== 'string') {
+    if (query === '') {
 
-        return [];
+        return count;
     }
     Object.keys(phoneBook).map(
         function (objectKey) {
@@ -99,7 +99,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '') {
+    if (query === '' || query === undefined || typeof query !== 'string') {
 
         return false;
     }
