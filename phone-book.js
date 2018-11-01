@@ -77,7 +77,7 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    let res;
+    var res;
     var count = 0;
     for (var phone of Object.keys(phoneBook)) {
         res = matchSearch(phoneBook[phone], query);
