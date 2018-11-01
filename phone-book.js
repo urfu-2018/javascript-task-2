@@ -31,7 +31,7 @@ function checkValid(phone, name) {
 function add(phone, name, email) {
     if (checkValid(phone, name) && !(phone.replace(/[^0-9]+/, '') in phoneBook)) {
         phoneBook[phone] = [name];
-        if (email !== '' && email !== undefined) {
+        if (email !== '' && email) {
             phoneBook[phone][1] = email;
         }
 
@@ -52,7 +52,7 @@ function update(phone, name, email) {
     if (checkValid(phone, name) && (phone.replace(/[^0-9]+/, '') in phoneBook)) {
         phoneBook[phone][0] = name;
         phoneBook[phone][1] = email;
-        if (email !== '' && email !== undefined) {
+        if (email !== '' && email) {
             phoneBook[phone][1] = email;
         } else {
             phoneBook[phone].splice(1, 1);
