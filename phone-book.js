@@ -94,8 +94,8 @@ function matchSearch(record, query) {
     if (query === '*') {
         return record;
     }
-    if (record[0].includes(query) === true || record[1].includes(query) === true ||
-        (record[2] && record[2].includes(query) === true)) {
+    if (record[0].indexOf(query) !== -1 || record[1].indexOf(query) !== -1 ||
+        (record[2] && record[2].indexOf(query) !== -1)) {
 
         return record;
     }
