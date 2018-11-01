@@ -11,14 +11,13 @@ const isStar = true;
  */
 let phoneBook = {};
 
-function checkValid(phone, name) {
-    let number = phone.replace(/[^0-9]+/, '');
-    if (number === phone && number.length === 10 && name !== '' && name !== undefined) {
+function checkValid(phone, name, email) {
+    let phonePattern = new RegExp('^\\d{10}$');
+    let phoneValid = typeof phone === 'string' && phonePattern.test(phone);
+    let nameValid = typeof name === 'string' && name !== '';
+    let emailValid = (email !== undefined) ? typeof email === 'string' : true;
 
-        return true;
-    }
-
-    return false;
+    return phoneValid && nameValid && emailValid;
 }
 
 /**
@@ -29,7 +28,7 @@ function checkValid(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkValid(phone, name) && !(phone.replace(/[^0-9]+/, '') in phoneBook)) {
+    if (checkValid(phone, name, email) && !(phone.replace(/[^0-9]+/, '') in phoneBook)) {
         phoneBook[phone] = [name];
         if (email !== '' && email) {
             phoneBook[phone][1] = email;
@@ -49,9 +48,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (checkValid(phone, name) && (phone.replace(/[^0-9]+/, '') in phoneBook)) {
+    if (checkValid(phone, name, email) && (phone.replace(/[^0-9]+/, '') in phoneBook)) {
         phoneBook[phone][0] = name;
-        phoneBook[phone][1] = email;
         if (email !== '' && email) {
             phoneBook[phone][1] = email;
         } else {
