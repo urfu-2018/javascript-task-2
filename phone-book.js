@@ -13,8 +13,8 @@ var phoneBook = {};
 // exports.phoneBook = phoneBook;
 
 function test(phone, name) {
-    if (name !== '' && typeof(name) === 'string') {
-        if (/^\d{10}$/.test(phone)) {
+    if (name !== '' && typeof(name) === 'string' && name !== undefined) {
+        if (/^\d{10}$/.test(phone) && phone !== undefined) {
             return true;
         }
     }
