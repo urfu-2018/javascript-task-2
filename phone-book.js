@@ -96,27 +96,27 @@ function formatPhone(phone) {
 }
 
 function sorts(notSortedList) {
-    // var finalStrings = notSortedList.map((entry) => {
-    //     if (entry === undefined) {
-    //         return [];
-    //     }
-    //     if (entry[2] !== undefined) {
-    //         return `${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`;
-    //     }
-
-    //     return `${entry[1]}, ${formatPhone(entry[0])}`;
-    // });
-    var finalStrings = [];
-    for (var entry of notSortedList) {
+    var finalStrings = notSortedList.map((entry) => {
         if (entry === undefined) {
             return [];
         }
         if (entry[2] !== undefined) {
-            finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`);
-        } else {
-            finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}`);
+            return `${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`;
         }
-    }
+
+        return `${entry[1]}, ${formatPhone(entry[0])}`;
+    });
+    // var finalStrings = [];
+    // for (var entry of notSortedList) {
+    //     if (entry === undefined) {
+    //         return [];
+    //     }
+    //     if (entry[2] !== undefined) {
+    //         finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`);
+    //     } else {
+    //         finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}`);
+    //     }
+    // }
 
     return finalStrings.sort();
 }
@@ -131,22 +131,13 @@ function find(query) {
 
         return [];
     }
-    var value;
-    var notSortedList = Object.keys(phoneBook).map((phone) => {
-        value = search(query, phoneBook[phone]);
-        if (value !== undefined) {
-            return value;
-        }
-
-        return '';
-    });
-    // var notSortedList = [];
-    // for (var phone of Object.keys(phoneBook)) {
-    //     value = search(query, phoneBook[phone]);
-    //     if (value !== undefined) {
-    //         notSortedList.push(value);
-    //     }
-    // }
+    var notSortedList = Object.keys(phoneBook)
+        .map((phone) => {
+            return search(query, phoneBook[phone]);
+        })
+        .filter(item => {
+            return item !== undefined;
+        });
 
     return sorts(notSortedList);
 }
