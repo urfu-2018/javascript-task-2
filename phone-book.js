@@ -4,12 +4,86 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Телефонная книга
  */
 let phoneBook;
+
+function checkParameterTypes(...params) {
+    if (params.length % 2 !== 0) {
+        throw new TypeError();
+    }
+
+    for (let i = 0; i < params.length; i += 2) {
+        if (typeof params[i - 1] === params[i]) {
+            throw new TypeError();
+        }
+    }
+}
+
+function isValidPhone(phone) {
+    return /^\d{10}$/.test(phone);
+}
+
+function isValidName(name) {
+    return /^[A-ZА-Я][a-zа-я]*$/.test(name) && name.length !== 0;
+}
+
+function initPhoneBook() {
+    if (typeof phoneBook === 'undefined') {
+        phoneBook = {};
+    }
+}
+
+function contains(substring, sources) {
+    if (substring === '*') {
+        return true;
+    }
+
+    return sources.filter(s => typeof s === 'string' && s.indexOf(substring) !== -1).length > 0;
+}
+
+function findNecessaryRecords(query) {
+    if (query.length === 0) {
+        return [];
+    }
+
+    const records = Object.entries(phoneBook)
+        .map(entry => [entry[0]].concat(Object.values(entry[1])))
+        .filter(entry => contains(query, entry));
+
+    records.sort(function (a, b) {
+        const firstName = a[1];
+        const secondName = b[1];
+
+        if (secondName === firstName) {
+            return 0;
+        }
+
+        return firstName > secondName ? 1 : -1;
+    });
+
+    return records;
+}
+
+function phoneToNormalFormat(str) {
+    const code = str.substring(0, 3);
+    const firstPart = str.substring(3, 6);
+    const secondPart = str.substring(6, 8);
+    const thirdPart = str.substring(8, 10);
+
+    return `+7 (${code}) ${firstPart}-${secondPart}-${thirdPart}`;
+}
+
+function recordToNormalFormat(record) {
+    const name = record[1];
+    const phone = phoneToNormalFormat(record[0]);
+    const email = record[2];
+
+    return `${name}, ${phone}${email ? ', ' + email : ''}`;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +93,20 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    checkParameterTypes(phone, 'string', name, 'string');
+    if (email) {
+        checkParameterTypes(email, 'string');
+    }
 
+    initPhoneBook();
+
+    if (!isValidPhone(phone) || !isValidName(name) || phone in phoneBook) {
+        return false;
+    }
+
+    phoneBook[phone] = { 'name': name, 'email': email };
+
+    return true;
 }
 
 /**
@@ -30,7 +117,20 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    checkParameterTypes(phone, 'string', name, 'string');
+    if (email) {
+        checkParameterTypes(email, 'string');
+    }
 
+    initPhoneBook();
+
+    if (!isValidPhone(phone) || !isValidName(name)) {
+        return false;
+    }
+
+    phoneBook[phone] = { 'name': name, 'email': email };
+
+    return true;
 }
 
 /**
@@ -39,7 +139,15 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    let count = 0;
 
+    const records = findNecessaryRecords(query);
+    for (let i = 0; i < records.length; i++) {
+        phoneBook[records[i][0]] = undefined;
+        count++;
+    }
+
+    return count;
 }
 
 /**
@@ -48,7 +156,9 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    checkParameterTypes(query, 'string');
 
+    return findNecessaryRecords(query).map(recordToNormalFormat);
 }
 
 /**
