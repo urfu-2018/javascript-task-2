@@ -10,7 +10,6 @@ const isStar = true;
  * Телефонная книга
  */
 var phoneBook = {};
-// exports.phoneBook = phoneBook;
 
 function test(phone, name) {
     if (name !== '' && typeof(name) === 'string') {
@@ -106,17 +105,6 @@ function sorts(notSortedList) {
 
         return `${entry[1]}, ${formatPhone(entry[0])}`;
     });
-    // var finalStrings = [];
-    // for (var entry of notSortedList) {
-    //     if (entry === undefined) {
-    //         return [];
-    //     }
-    //     if (entry[2] !== undefined) {
-    //         finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`);
-    //     } else {
-    //         finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}`);
-    //     }
-    // }
 
     return finalStrings.sort();
 }
