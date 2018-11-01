@@ -69,7 +69,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     let count = 0;
-    if (query === '') {
+    if (query === '' || query === undefined || typeof query !== 'string') {
 
         return count;
     }
@@ -77,11 +77,11 @@ function findAndRemove(query) {
         function (objectKey) {
             let p = objectKey.indexOf(query);
             let n = phoneBook[objectKey][0].indexOf(query);
-            let e = 0;
-            if (phoneBook[objectKey][1] !== undefined) {
+            let e = -1;
+            if (phoneBook[objectKey][1]) {
                 e = phoneBook[objectKey][1].indexOf(query);
             }
-            if (p !== -1 || n !== -1 || e !== 0) {
+            if (p !== -1 || n !== -1 || e !== -1) {
                 delete phoneBook[objectKey];
                 count++;
             }
