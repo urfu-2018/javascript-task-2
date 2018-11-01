@@ -29,7 +29,7 @@ function checkValid(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (checkValid(phone, name) && !(phone in phoneBook)) {
+    if (checkValid(phone, name) && !(phone.replace(/[^0-9]+/, '') in phoneBook)) {
         phoneBook[phone] = [name];
         if (email !== '' && email !== undefined) {
             phoneBook[phone][1] = email;
