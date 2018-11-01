@@ -18,11 +18,11 @@ let phoneBook = {};
  * @param {String?} email
  * @returns {Boolean}
  */
-function trueParam(phone, name) {
+function trueData(phone, name) {
     var tel = /(^[0-9]{10}$)/;
 
     return (typeof phone !== undefined) && (tel.test(phone)) && (name !== '') &&
-        (name !== undefined) && (typeof name === 'string');
+        (!name) && (typeof name === 'string');
 }
 
 /**
@@ -33,8 +33,8 @@ function trueParam(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!(phone in phoneBook) && trueParam(phone, name, email)) {
-        if (email === undefined) {
+    if (!(phone in phoneBook) && trueData(phone, name, email)) {
+        if ((email) && (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -55,8 +55,8 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook[phone] && trueParam(phone, name, email)) {
-        if (email === undefined) {
+    if (phoneBook[phone] && trueData(phone, name, email)) {
+        if ((email) && (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -77,7 +77,7 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    var res;
+    let res;
     var count = 0;
     for (var phone of Object.keys(phoneBook)) {
         res = matchSearch(phoneBook[phone], query);
@@ -94,8 +94,8 @@ function matchSearch(record, query) {
     if (query === '*') {
         return record;
     }
-    if (record[0].indexOf(query) !== -1 || record[1].indexOf(query) !== -1 ||
-        (record[2] && record[2].indexOf(query) !== -1)) {
+    if (record[0].includes(query) === true || record[1].includes(query) === true ||
+        (record[2] && record[2].includes(query) === true)) {
 
         return record;
     }
@@ -162,8 +162,8 @@ function importFromCsv(csv) {
     }
     const newCsv = csv.split('\n');
     var count = 0;
-    for (let value of newCsv) {
-        let contact = value.split(';');
+    for (let line of newCsv) {
+        let contact = line.split(';');
         var phone = contact[1];
         var name = contact[0];
         var email = contact[2];
