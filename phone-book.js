@@ -96,16 +96,26 @@ function formatPhone(phone) {
 }
 
 function sorts(notSortedList) {
-    var finalStrings = notSortedList.map((entry) => {
+    // var finalStrings = notSortedList.map((entry) => {
+    //     if (entry === undefined) {
+    //         return [];
+    //     }
+    //     if (entry[2] !== undefined) {
+    //         return `${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`;
+    //     }
+
+    //     return `${entry[1]}, ${formatPhone(entry[0])}`;
+    // });
+    var finalStrings = [];
+    for (var entry of notSortedList) {
         if (entry === undefined) {
             return [];
         }
         if (entry[2] !== undefined) {
-            return `${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`;
+            finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`);
         }
-
-        return `${entry[1]}, ${formatPhone(entry[0])}`;
-    });
+        finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}`);
+    }
 
     return finalStrings.sort();
 }
