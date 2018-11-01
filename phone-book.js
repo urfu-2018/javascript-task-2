@@ -107,15 +107,18 @@ function sorts(notSortedList) {
     //     return `${entry[1]}, ${formatPhone(entry[0])}`;
     // });
     var finalStrings = [];
+    console.info(notSortedList);
     for (var entry of notSortedList) {
         if (entry === undefined) {
             return [];
         }
         if (entry[2] !== undefined) {
             finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}, ${entry[2]}`);
+        } else {
+            finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}`);
         }
-        finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}`);
     }
+    console.info(finalStrings);
 
     return finalStrings.sort();
 }
