@@ -9,7 +9,7 @@ const isStar = false;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {};
 
 function checkParameterTypes(...params) {
     if (params.length % 2 !== 0) {
@@ -29,12 +29,6 @@ function isValidPhone(phone) {
 
 function isValidName(name) {
     return /^[A-ZА-Я][a-zа-я]*$/.test(name) && name.length !== 0;
-}
-
-function initPhoneBook() {
-    if (typeof phoneBook === 'undefined') {
-        phoneBook = {};
-    }
 }
 
 function contains(substring, sources) {
@@ -98,8 +92,6 @@ function add(phone, name, email) {
         checkParameterTypes(email, 'string');
     }
 
-    initPhoneBook();
-
     if (!isValidPhone(phone) || !isValidName(name) || phone in phoneBook) {
         return false;
     }
@@ -122,8 +114,6 @@ function update(phone, name, email) {
         checkParameterTypes(email, 'string');
     }
 
-    initPhoneBook();
-
     if (!isValidPhone(phone) || !isValidName(name)) {
         return false;
     }
@@ -139,6 +129,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
+    checkParameterTypes(query, 'string');
     let count = 0;
 
     const records = findNecessaryRecords(query);
