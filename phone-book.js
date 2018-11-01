@@ -137,6 +137,8 @@ function find(query) {
         if (value !== undefined) {
             return value;
         }
+
+        return '';
     });
     // var notSortedList = [];
     // for (var phone of Object.keys(phoneBook)) {
