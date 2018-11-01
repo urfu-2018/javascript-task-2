@@ -81,7 +81,8 @@ function findAndRemove(query) {
  */
 function find(query) {
     var matchingArray = [];
-    if (typeof(query) !== 'string') {
+    if (typeof(query) !== 'string' ||
+        query === '') {
         return;
     } else if (query === '*') {
         for (let i = 0; i < Object.keys(phoneBook).length; i++) {
