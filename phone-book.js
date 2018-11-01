@@ -48,10 +48,9 @@ function update(phone, name, email) {
         typeof(name) === 'string' &&
         phonePattern.test(phone) &&
         phoneBook[phone] !== undefined) {
-        phoneBook[phone] = {
-            name: name,
-            email: email === undefined ? '' : email
-        };
+        email = email === undefined ? '' : email;
+        phoneBook[phone].email = email;
+        phoneBook[phone].name = name;
 
         return true;
     }
