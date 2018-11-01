@@ -11,6 +11,11 @@ const isStar = true;
  */
 let phoneBook = new Map();
 
+function isCorrectRecord(phone, name) {
+    return (/^\d{10}$/.test(phone) && typeof(name) === 'string' &&
+            name !== undefined && name !== null && name !== '');
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,7 +24,7 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/^\d{10}$/.test(phone) || phoneBook.has(phone) || name === undefined || name === '') {
+    if (!isCorrectRecord(phone, name) || phoneBook.has(phone)) {
         return false;
     }
 
@@ -36,7 +41,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!phoneBook.has(phone) || name === undefined) {
+    if (!isCorrectRecord(phone, name) || !phoneBook.has(phone)) {
         return false;
     }
 
@@ -45,13 +50,20 @@ function update(phone, name, email) {
     return true;
 }
 
-function checkQuery(query, phone, name, email) {
+function findRecordsByQuery(query) {
     if (query === '') {
-        return false;
+        return [];
     }
 
-    return query === '*' || phone.includes(query) || name.includes(query) ||
-           email !== undefined && email.includes(query);
+    const neededRecords = [];
+    phoneBook.forEach(function ({ name, email }, phone) {
+        if (query === '*' || phone.includes(query) || name.includes(query) ||
+        (email !== undefined && email.includes(query))) {
+            neededRecords.push({ phone, name, email });
+        }
+    });
+
+    return neededRecords;
 }
 
 /**
@@ -60,29 +72,24 @@ function checkQuery(query, phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const badPhones = [];
+    const neededRecords = findRecordsByQuery(query);
+    neededRecords.forEach(function (record) {
+        phoneBook.delete(record.phone);
+    });
 
-    for (const [phone, { name, email }] of phoneBook) {
-        if (checkQuery(query, phone, name, email)) {
-            badPhones.push(phone);
-        }
-    }
-
-    for (let i = 0; i < badPhones.length; i++) {
-        phoneBook.delete(badPhones[i]);
-    }
-
-    return badPhones.length;
+    return neededRecords.length;
 }
 
 function createRecord(name, phone, email) {
-    let record = name + ', +7 (' + phone.slice(0, 3) + ') ';
-    record += phone.slice(3, 6) + '-' + phone.slice(6, 8) + '-' + phone.slice(8, 10);
+    const phoneString = `+7 (${phone.slice(0, 3)}) \
+${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+
+    const record = [name, phoneString];
     if (email !== undefined) {
-        record += ', ' + email;
+        record.push(email);
     }
 
-    return record;
+    return record.join(', ');
 }
 
 /**
@@ -91,15 +98,11 @@ function createRecord(name, phone, email) {
  * @returns {String[]}
  */
 function find(query) {
-    const result = [];
-
-    for (const [phone, { name, email }] of phoneBook) {
-        if (checkQuery(query, phone, name, email)) {
-            result.push(createRecord(name, phone, email));
-        }
-    }
-
-    return result.sort();
+    return findRecordsByQuery(query)
+        .map(function (record) {
+            return createRecord(record.name, record.phone, record.email);
+        })
+        .sort();
 }
 
 /**
@@ -115,12 +118,12 @@ function importFromCsv(csv) {
 
     const records = csv.split('\n');
     let goodRecordsCount = 0;
-    for (let i = 0; i < records.length; i++) {
-        const [name, phone, email] = records[i].split(';');
+    records.forEach(function (record) {
+        const [name, phone, email] = record.split(';');
         if (add(phone, name, email) || update(phone, name, email)) {
             goodRecordsCount++;
         }
-    }
+    });
 
     return goodRecordsCount;
 }
