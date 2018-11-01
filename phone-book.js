@@ -74,6 +74,19 @@ function findAndRemove(query) {
     return getAllMatching(query, matchingArray).length;
 }
 
+
+function nameCompare(name1, name2) {
+    if (name1 > name2) {
+        return 1;
+    } else if (name1 > name2) {
+
+        return -1;
+    }
+
+    return 0;
+}
+
+
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
@@ -92,9 +105,7 @@ function find(query) {
         matchingArray = getAllMatching(query, matchingArray);
     }
 
-    return matchingArray.sort(function (a, b) {
-        return a[0].toLowerCase() >= b[0].toLowerCase();
-    });
+    return matchingArray.sort(nameCompare);
 }
 
 function getRepresentation(phone) {
