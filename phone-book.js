@@ -13,8 +13,8 @@ var phoneBook = {};
 // exports.phoneBook = phoneBook;
 
 function test(phone, name) {
-    if (name !== '' && typeof(name) === 'string' && name !== undefined) {
-        if (/^\d{10}$/.test(phone) && phone !== undefined) {
+    if (name !== '' && typeof(name) === 'string') {
+        if (/^\d{10}$/.test(phone)) {
             return true;
         }
     }
@@ -68,13 +68,14 @@ function findAndRemove(query) {
 
         return 0;
     }
-    for (var phone of Object.keys(phoneBook)) {
+
+    Object.keys(phoneBook).forEach(function (phone) {
         var value = search(query, phoneBook[phone]);
         if (value !== undefined) {
             delete phoneBook[phone];
             countDelete++;
         }
-    }
+    });
 
     return countDelete;
 
