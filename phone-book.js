@@ -22,7 +22,7 @@ function trueData(phone, name) {
     var tel = /(^[0-9]{10}$)/;
 
     return (typeof phone !== undefined) && (tel.test(phone)) && (name !== '') &&
-        (!name) && (typeof name === 'string');
+        (name) && (typeof name === 'string');
 }
 
 /**
