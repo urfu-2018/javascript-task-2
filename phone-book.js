@@ -107,7 +107,6 @@ function sorts(notSortedList) {
     //     return `${entry[1]}, ${formatPhone(entry[0])}`;
     // });
     var finalStrings = [];
-    console.info(notSortedList);
     for (var entry of notSortedList) {
         if (entry === undefined) {
             return [];
@@ -118,7 +117,6 @@ function sorts(notSortedList) {
             finalStrings.push(`${entry[1]}, ${formatPhone(entry[0])}`);
         }
     }
-    console.info(finalStrings);
 
     return finalStrings.sort();
 }
@@ -134,14 +132,21 @@ function find(query) {
         return [];
     }
     var value;
-    var notSortedList = Object.keys(phoneBook).map((phone) => {
+    // var notSortedList = Object.keys(phoneBook).map((phone) => {
+    //     value = search(query, phoneBook[phone]);
+    //     if (value !== undefined) {
+    //         return value;
+    //     }
+
+    //     return notSortedList;
+    // });
+    var notSortedList = [];
+    for (var phone of Object.keys(phoneBook)) {
         value = search(query, phoneBook[phone]);
         if (value !== undefined) {
-            return value;
+            notSortedList.push(value);
         }
-
-        return notSortedList;
-    });
+    }
 
     return sorts(notSortedList);
 }
