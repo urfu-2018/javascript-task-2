@@ -30,7 +30,10 @@ function checkValid(phone, name) {
  */
 function add(phone, name, email) {
     if (checkValid(phone, name) && !(phone in phoneBook)) {
-        phoneBook[phone] = [name, email];
+        phoneBook[phone] = [name];
+        if (email !== '' && email !== undefined) {
+            phoneBook[phone][1] = email;
+        }
 
         return true;
     }
