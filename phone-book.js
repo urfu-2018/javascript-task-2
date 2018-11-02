@@ -20,7 +20,7 @@ function checkName(name) {
 }
 
 function checkEmail(email) {
-    return typeof(email) === 'undefined' || email === '' ||
+    return typeof(email) === 'undefined' || email.length === 0 ||
            /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email);
 }
 
@@ -110,11 +110,6 @@ function find(query) {
     if (query === '*') {
         result = getData(phoneBook);
     } else if (typeof(query) !== 'undefined' && query.length > 0) {
-        if (checkPhone(query) && typeof(phoneBook[query]) !== 'undefined') {
-            let temp = [];
-            temp[query] = [phoneBook[query][0], phoneBook[query][1]];
-            result = getData(temp);
-        } else {
             result = getData(phoneBook, query);
         }
     }
