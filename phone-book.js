@@ -110,8 +110,7 @@ function find(query) {
     if (query === '*') {
         result = getData(phoneBook);
     } else if (typeof(query) !== 'undefined' && query.length > 0) {
-            result = getData(phoneBook, query);
-        }
+        result = getData(phoneBook, query);
     }
     result.sort();
 
