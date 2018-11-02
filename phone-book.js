@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Телефонная книга
@@ -19,13 +19,8 @@ function checkName(name) {
     return typeof(name) === 'string' && name.length > 0;
 }
 
-function checkEmail(email) {
-    return typeof(email) === 'undefined' || email.length === 0 ||
-           /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email);
-}
-
-function checkAll(phone, name, email) {
-    return checkPhone(phone) && checkName(name) && checkEmail(email);
+function checkAll(phone, name) {
+    return checkPhone(phone) && checkName(name);
 }
 
 function transform(phone) {
@@ -41,7 +36,7 @@ function transform(phone) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof(phoneBook[phone]) === 'undefined' && checkAll(phone, name, email)) {
+    if (checkAll(phone, name) && typeof(phoneBook[phone]) === 'undefined') {
         phoneBook[phone] = [name, email];
 
         return true;
@@ -58,7 +53,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof(phoneBook[phone]) !== 'undefined' && checkName(name) && checkEmail(email)) {
+    if (checkAll(phone, name) && typeof(phoneBook[phone]) !== 'undefined') {
         phoneBook[phone] = [name, email];
 
         return true;
