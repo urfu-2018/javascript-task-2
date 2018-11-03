@@ -125,9 +125,7 @@ function findAll(i, query) {
     let strg = '';
     if (findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query) ||
     query === '*') {
-        strg = phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
-        phoneBook[i].phone.substring(3, 6) + '-' + phoneBook[i].phone.substring(6, 8) + '-' +
-        phoneBook[i].phone.substring(8) + ', ' + phoneBook[i].email;
+        strg = phoneBook[i].name + processPhone(i) + phoneBook[i].email;
         if (phoneBook[i].email === undefined) {
             strg = strg.substring(0, strg.length - 11);
         }
@@ -137,6 +135,13 @@ function findAll(i, query) {
     }
 
     return strg;
+}
+
+function processPhone(i) {
+    return ', +7 (' + phoneBook[i].phone.substring(0, 3) + ') ' +
+    phoneBook[i].phone.substring(3, 6) + '-' +
+    phoneBook[i].phone.substring(6, 8) + '-' +
+    phoneBook[i].phone.substring(8) + ', ';
 }
 
 /**
