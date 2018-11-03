@@ -100,7 +100,7 @@ function find(query) {
     let resultArray = [];
     phoneBook.sort(sortByName);
     for (let i = 0; i < phoneBook.length; i++) {
-        let x = findAll(i, query);
+        let x = findElementAndFormat(i, query);
         if (x !== '') {
             resultArray.push(x);
         }
@@ -121,17 +121,22 @@ function findElement(ph, nm, em = '', query) {
     return false;
 }
 
-function findAll(i, query) {
-    let strg = '';
-    if (findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query) ||
-    query === '*') {
-        strg = phoneBook[i].name + processPhone(i) + phoneBook[i].email;
-        if (phoneBook[i].email === undefined) {
-            strg = strg.substring(0, strg.length - 11);
-        }
-        if (phoneBook[i].email === '') {
-            strg = strg.substring(0, strg.length - 2);
-        }
+function findElementAndFormat(i, query) {
+    let element = findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query);
+    if ((element) || query === '*') {
+        return formatElement(i);
+    }
+
+    return '';
+}
+
+function formatElement(i) {
+    let strg = phoneBook[i].name + processPhone(i) + phoneBook[i].email;
+    if (phoneBook[i].email === undefined) {
+        strg = strg.substring(0, strg.length - 11);
+    }
+    if (phoneBook[i].email === '') {
+        strg = strg.substring(0, strg.length - 2);
     }
 
     return strg;
