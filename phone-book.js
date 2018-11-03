@@ -11,8 +11,7 @@ const isStar = true;
  */
 let phoneBook = [];
 
-function getPhoneBookRecord(phone, name, email) {
-
+function buildPhoneBookRecord(phone, name, email) {
     return {
         phone: phone,
         name: name,
@@ -21,46 +20,30 @@ function getPhoneBookRecord(phone, name, email) {
 }
 
 function findIndexOfPhone(phone) {
-
     return phoneBook
         .findIndex(record => record.phone === phone);
 }
 
-function isQueryContainsInRecordFields(query, record) {
-
+function containsInRecord(query, record) {
     return query === '*' ||
         record.phone.includes(query) ||
         record.name.includes(query) ||
-        !isNullOrUndefined(record.email) &&
-        record.email.includes(query);
+        (record.email &&
+        record.email.includes(query));
 }
 
 function isBadNameOrPhone(phone, name) {
-
-    return isNullOrUndefinedOrEmptyString(name) || !isValidPhone(phone);
-}
-
-function isNullOrUndefinedOrEmptyString(query) {
-    return isNullOrUndefined(query) ||
-        typeof query === 'string' &&
-        query === '';
+    return !name || !isValidPhone(phone);
 }
 
 function isValidPhone(phone) {
-    if (isNullOrUndefined(phone)) {
-
+    if (!phone) {
         return false;
     }
     const PHONE_REGEX = /^\d{10}$/;
 
     return PHONE_REGEX.test(phone);
 }
-
-function isNullOrUndefined(variable) {
-
-    return variable === null || variable === undefined;
-}
-
 
 /**
  * Добавление записи в телефонную книгу
@@ -74,14 +57,13 @@ function add(phone, name, email) {
         return false;
     }
 
-    let indexOfRecord = findIndexOfPhone(phone);
+    const indexOfRecord = findIndexOfPhone(phone);
 
     if (indexOfRecord !== -1) {
-
         return false;
     }
 
-    phoneBook.push(getPhoneBookRecord(phone, name, email));
+    phoneBook.push(buildPhoneBookRecord(phone, name, email));
 
     return true;
 }
@@ -98,14 +80,13 @@ function update(phone, name, email) {
         return false;
     }
 
-    let indexOfRecord = findIndexOfPhone(phone);
+    const indexOfRecord = findIndexOfPhone(phone);
 
     if (indexOfRecord === -1) {
-
         return false;
     }
 
-    phoneBook[indexOfRecord] = getPhoneBookRecord(phone, name, email);
+    phoneBook[indexOfRecord] = buildPhoneBookRecord(phone, name, email);
 
     return true;
 }
@@ -116,16 +97,15 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (isNullOrUndefinedOrEmptyString(query)) {
+    if (!query) {
         return 0;
     }
 
-    let phoneBookBeforeDeleteLength = phoneBook.length;
-    let phoneBookAfterDelete = phoneBook
-        .filter(record => !isQueryContainsInRecordFields(query, record));
-    phoneBook = phoneBookAfterDelete;
+    const prevLength = phoneBook.length;
+    phoneBook = phoneBook
+        .filter(record => !containsInRecord(query, record));
 
-    return phoneBookBeforeDeleteLength - phoneBook.length;
+    return prevLength - phoneBook.length;
 }
 
 /**
@@ -134,29 +114,28 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (isNullOrUndefinedOrEmptyString(query)) {
+    if (!query) {
         return [];
     }
 
     const PHONE_REGEX = /^(\d{3})(\d{3})(\d{2})(\d{2})$/;
-    let result = phoneBook
-        .filter(record => isQueryContainsInRecordFields(query, record))
+
+    return phoneBook
+        .filter(record => containsInRecord(query, record))
         .sort((a, b) => {
             return a.name > b.name;
+        })
+        .map((record) => {
+            const parts = record.phone.match(PHONE_REGEX);
+            const phone = `+7 (${parts[1]}) ${parts[2]}-${parts[3]}-${parts[4]}`;
+            let string = `${record.name}, ${phone}`;
+
+            if (record.email) {
+                string = string + `, ${record.email}`;
+            }
+
+            return string;
         });
-
-    return result.map((record) => {
-        let matches = record.phone.match(PHONE_REGEX);
-        let phone = `+7 (${matches[1]}) ${matches[2]}-${matches[3]}-${matches[4]}`;
-
-        let string = `${record.name}, ${phone}`;
-
-        if (!isNullOrUndefined(record.email)) {
-            string = string + `, ${record.email}`;
-        }
-
-        return string;
-    });
 }
 
 /**
@@ -168,14 +147,12 @@ function find(query) {
 function importFromCsv(csv) {
     let counter = 0;
 
-    let stringsFromCsv = csv.split(/[\r\n]+/);
-    stringsFromCsv.forEach(record => {
-        let values = record.split(';');
-        let name = values[0];
-        let phone = values[1];
-        let email = values[2];
+    const records = csv.split(/[\r\n]+/);
+    records.forEach(record => {
+        const values = record.split(';');
+        const [name, phone, email] = values;
 
-        let result = add(phone, name, email) ||
+        const result = add(phone, name, email) ||
             update(phone, name, email);
 
         if (result) {
