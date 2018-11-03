@@ -11,18 +11,32 @@ const isStar = true;
  */
 let phoneBook = new Map();
 
-function isNameCorrect(name) {
-    if (typeof (name) !== 'string' || name === '') {
-        return false;
-    }
+function checkIncludingOfQueryInEmail(email, query) {
+    return typeof email !== 'undefined' && email.includes(query);
+}
 
-    return true;
+function chechIncludingOfQueryInRecord(phone, record, query) {
+    const anySymbol = '*';
+
+    return query === anySymbol ||
+            record.name.includes(query) ||
+            checkIncludingOfQueryInEmail(record.email, query) ||
+            phone.includes(query);
+}
+
+function checkNameAndPhone(name, phone) {
+    return !isNameCorrect(name) || !isPhoneCorrect(phone);
+}
+
+function isNameCorrect(name) {
+    return typeof name === 'string' && name !== '';
 }
 
 function isPhoneCorrect(phone) {
-    if (typeof (phone) !== 'string' || phone === '') {
+    if (typeof phone !== 'string' || phone === '') {
         return false;
     }
+
     const phonePattern = new RegExp(/^\d{10}$/);
 
     return phonePattern.test(phone);
@@ -34,12 +48,13 @@ function isPhoneCorrect(phone) {
  * @returns {Any[]}
  */
 function parseCsv(csvStrings) {
+    return csvStrings
+        .split('\n')
+        .map(csvString => {
+            const splittedString = csvString.split(';');
 
-    return csvStrings.split('\n').map(csvString => {
-        const splittedString = csvString.split(';');
-
-        return [splittedString[1], splittedString[0], splittedString[2]];
-    });
+            return { phone: splittedString[1], name: splittedString[0], email: splittedString[2] };
+        });
 }
 
 /**
@@ -50,7 +65,7 @@ function parseCsv(csvStrings) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || phoneBook.has(phone)) {
+    if (checkNameAndPhone(name, phone) || phoneBook.has(phone)) {
 
         return false;
     }
@@ -67,7 +82,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isNameCorrect(name) || !isPhoneCorrect(phone) || !phoneBook.has(phone)) {
+    if (checkNameAndPhone(name, phone) || !phoneBook.has(phone)) {
 
         return false;
     }
@@ -91,18 +106,14 @@ function convertPhoneToNormalFormat(phone) {
  * @returns {Any[]}
  */
 function search(query) {
-    const resultBook = [];
-
-    phoneBook.forEach((value, phone) => {
-        if (query === '*' ||
-            value.name.includes(query) ||
-            (typeof(value.email) !== 'undefined' && value.email.includes(query)) ||
-            phone.includes(query)) {
-            resultBook.push([value.name, phone, value.email]);
+    const result = [];
+    phoneBook.forEach((record, phone) => {
+        if (chechIncludingOfQueryInRecord(phone, record, query)) {
+            result.push({ name: record.name, phone: phone, email: record.email });
         }
     });
 
-    return resultBook;
+    return result;
 }
 
 /**
@@ -111,13 +122,13 @@ function search(query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof (query) !== 'string' || !query) {
+    if (typeof query !== 'string' || !query) {
         return 0;
     }
 
     const foundRecords = search(query);
     foundRecords.forEach(record => {
-        phoneBook.delete(record[1]);
+        phoneBook.delete(record.phone);
     });
 
     return foundRecords.length;
@@ -129,21 +140,21 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (typeof (query) !== 'string' || !query) {
+    if (!query) {
         return [];
     }
 
     const foundRecords = search(query);
-    foundRecords.sort((firstElement, secondElement) => {
-        return firstElement[0].localeCompare(secondElement[0]);
+    foundRecords.sort((firstRecord, secondRecord) => {
+        return firstRecord.name.localeCompare(secondRecord.name);
     });
 
     return foundRecords.map(record => {
-        if (typeof (record[2]) === 'undefined') {
-            return `${record[0]}, ${convertPhoneToNormalFormat(record[1])}`;
+        if (typeof record.email === 'undefined') {
+            return `${record.name}, ${convertPhoneToNormalFormat(record.phone)}`;
         }
 
-        return `${record[0]}, ${convertPhoneToNormalFormat(record[1])}, ${record[2]}`;
+        return `${record.name}, ${convertPhoneToNormalFormat(record.phone)}, ${record.email}`;
     });
 }
 
@@ -161,7 +172,8 @@ function importFromCsv(csv) {
     const parsedCsv = parseCsv(csv);
 
     return parsedCsv.reduce((acc, record) => {
-        if (update(record[0], record[1], record[2]) || add(record[0], record[1], record[2])) {
+        if (update(record.phone, record.name, record.email) ||
+            add(record.phone, record.name, record.email)) {
             acc++;
         }
 
