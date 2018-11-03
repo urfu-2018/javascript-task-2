@@ -15,32 +15,26 @@ function checkPhoneFormat(phone) {
     return /^\d{10}$/.test(phone);
 }
 
-function checkNameFormat(name) {
-    return (String(name) !== name || name === '');
+function checkStrFormat(str) {
+    return (typeof(str) !== 'string' || str.trim() === '');
 }
 
 function convertPhone(phone) {
-    phone = '+7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) +
+    return '+7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) +
     '-' + phone.substr(6, 2) + '-' + phone.substr(8, 2);
-
-    return phone;
 }
 
-function isInclude(t1, t2, t3, query) {
-    return (t1.includes(query) || t2.includes(query) || t3.includes(query));
+function isInclude(phone, name, email, query) {
+    return (phone.includes(query) || name.includes(query) || email.includes(query));
 }
 
 function leadStr(phone, name, email) {
-    return (email === '' || String(email) !== email)
+    return (checkStrFormat(email))
         ? name + ', ' + phone : name + ', ' + phone + ', ' + email;
 }
 
-function checkQuery(query) {
-    return (query === '' || String(query) !== query);
-}
-
 function justAdd(phone, name, email) {
-    if (String(email) !== email || email === ' ') {
+    if (checkStrFormat(email)) {
         phoneBook.set(phone, [name]);
     } else {
         phoneBook.set(phone, [name, email]);
@@ -55,7 +49,7 @@ function justAdd(phone, name, email) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!checkPhoneFormat(phone) || phoneBook.has(phone) || checkNameFormat(name)) {
+    if (!checkPhoneFormat(phone) || phoneBook.has(phone) || checkStrFormat(name)) {
         return false;
     }
     justAdd(phone, name, email);
@@ -71,7 +65,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!checkPhoneFormat(phone) || !phoneBook.has(phone) || checkNameFormat(name)) {
+    if (!checkPhoneFormat(phone) || !phoneBook.has(phone) || checkStrFormat(name)) {
         return false;
     }
     justAdd(phone, name, email);
@@ -85,14 +79,14 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (checkQuery(query)) {
+    if (checkStrFormat(query)) {
         return 0;
     }
     if (query === '*') {
         query = '';
     }
     let i = 0;
-    for (var phone of phoneBook.keys()) {
+    for (let phone of phoneBook.keys()) {
         let name = phoneBook.get(phone)[0];
         let email = (phoneBook.get(phone)[1])
             ? phoneBook.get(phone)[1] : '';
@@ -112,21 +106,18 @@ function findAndRemove(query) {
  */
 function find(query) {
     let array = [];
-    let i = 0;
-    if (checkQuery(query)) {
+    if (checkStrFormat(query)) {
         return [];
     }
     if (query === '*') {
         query = '';
     }
-    for (var phone of phoneBook.keys()) {
+    for (let phone of phoneBook.keys()) {
         let name = phoneBook.get(phone)[0];
         let email = (phoneBook.get(phone)[1])
             ? phoneBook.get(phone)[1] : '';
         if (isInclude(phone, name, email, query)) {
-            phone = convertPhone(phone);
-            array[i] = leadStr(phone, name, email);
-            i++;
+            array.push(leadStr(convertPhone(phone), name, email));
         }
     }
 
@@ -143,8 +134,8 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    var arr = csv.split('\n');
-    var count = 0;
+    let arr = csv.split('\n');
+    let count = 0;
     for (let i = 0; i < arr.length; i++) {
         let str = arr[i];
         let name = str.substring(0, str.indexOf(';'));
