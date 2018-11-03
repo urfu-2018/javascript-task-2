@@ -13,9 +13,7 @@ let phoneBook = [];
 const regextel = /^\d{10}$/;
 
 function check(phone, name) {
-
-    return (!name || !phone || typeof name !== 'string' || typeof phone !== 'string' ||
-    !phone.match(regextel));
+    return (name && phone && phone.match(regextel));
 }
 
 /**
@@ -28,13 +26,13 @@ function check(phone, name) {
 
 function add(phone, name, email) {
     let record;
-    if (check(phone, name) || phoneBook.some((rec)=>rec.tel === phone)) {
+    if (!check(phone, name) || phoneBook.some(phones=>phones.phone === phone)) {
         return false;
     }
     if (email !== undefined) {
-        record = { name: name, tel: phone, email: email };
+        record = { name, phone, email };
     } else {
-        record = { name: name, tel: phone };
+        record = { name, phone };
     }
     phoneBook.push(record);
 
@@ -49,18 +47,34 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    let ind = phoneBook.findIndex(x => x.tel === phone);
-    if (check(phone, name) || ind === -1) {
+    let searchResult = phoneBook.find(x => x.phone === phone);
+    if (!check(phone, name) || searchResult === undefined) {
         return false;
     }
     if (email !== undefined) {
-        phoneBook[ind] = { name: name, tel: phone, email: email };
+        phoneBook[phoneBook.indexOf(searchResult)] = { name, phone, email };
     } else {
-        phoneBook[ind] = { name: name, tel: phone };
-        delete phoneBook[ind].email;
+        phoneBook[phoneBook.indexOf(searchResult)] = { name, phone };
     }
 
     return true;
+}
+
+function searchString(query) {
+    let result = phoneBook.filter(function (record) {
+        if (record.hasOwnProperty('email')) {
+            return (record.phone.includes(query)) ||
+            (record.name.includes(query)) ||
+            (record.email.includes(query));
+        }
+
+        return (record.phone.includes(query) ||
+    record.name.includes(query));
+    }).sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+    });
+
+    return result;
 }
 
 /**
@@ -69,40 +83,19 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let stroka = query;
-    let itt = 0;
-    if (stroka === undefined || stroka === '') {
-        return itt;
+    let firstLength = phoneBook.length;
+    if (!query) {
+        return 0;
     }
-    if (stroka === '*') {
-        stroka = '';
+    if (query === '*') {
+        query = '';
     }
-    let search = phoneBook.filter(function (rec) {
-        if (rec.hasOwnProperty('email')) {
-            return (rec.tel.indexOf(stroka)) !== -1 ||
-            (rec.name.indexOf(stroka)) !== -1 ||
-            (rec.email.indexOf(stroka) !== -1);
-        }
-
-        return ((rec.tel.indexOf(stroka)) !== -1 ||
-    (rec.name.indexOf(stroka) !== -1));
-    }).sort(function (a, b) {
-        return a.name.localeCompare(b.name);
-
-    });
-    phoneBook = phoneBook.filter(function (rec) {
-        return !search.some(function (recsearch) {
-            if (rec === recsearch) {
-                itt++;
-
-                return true;
-            }
-
-            return false;
-        });
+    let search = searchString(query);
+    phoneBook = phoneBook.filter(function (record) {
+        return !search.includes(record);
     });
 
-    return itt;
+    return firstLength - phoneBook.length;
 }
 
 /**
@@ -111,33 +104,23 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let stroka = query;
-    if (stroka === undefined || stroka === '') {
+    if (!query) {
         return [];
     }
-    if (stroka === '*') {
-        stroka = '';
+    if (query === '*') {
+        query = '';
     }
-    let search = phoneBook.filter(function (rec) {
-        if (rec.hasOwnProperty('email')) {
-            return (rec.tel.indexOf(stroka)) !== -1 ||
-        (rec.name.indexOf(stroka)) !== -1 ||
-        (rec.email.indexOf(stroka) !== -1);
-        }
+    let search = searchString(query);
+    let resultat = search.map(function (record) {
+        let firstThree = record.phone.slice(0, 3);
+        let secThree = record.phone.slice(3, 6);
+        let firstTwo = record.phone.slice(6, 8);
+        let secTwo = record.phone.slice(8, 10);
 
-        return ((rec.tel.indexOf(stroka)) !== -1 ||
-        (rec.name.indexOf(stroka) !== -1));
-    }).sort(function (a, b) {
-        return a.name.localeCompare(b.name);
-
-    });
-    let resultat = search.map(function (rec) {
-        let telprob = '+7 (' + rec.tel.slice(0, 3) + ') ' +
-    rec.tel.slice(3, 6) + '-' + rec.tel.slice(6, 8) +
-    '-' + rec.tel.slice(8, 10);
-        let resulstr = [rec.name, telprob];
-        if (rec.email !== undefined) {
-            resulstr.push(rec.email);
+        let telprob = `+7 (${firstThree}) ${secThree}-${firstTwo}-${secTwo}`;
+        let resulstr = [record.name, telprob];
+        if (record.email !== undefined) {
+            resulstr.push(record.email);
 
             return (resulstr.join(', '));
         }
@@ -158,11 +141,11 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    let recs = csv.split('\n');
+    let records = csv.split('\n');
     let count = 0;
-    for (let i = 0; i < recs.length; i++) {
-        let rec = recs[i].split(';');
-        if (add(rec[1], rec[0], rec[2]) || update(rec[1], rec[0], rec[2])) {
+    for (let i = 0; i < records.length; i++) {
+        let record = records[i].split(';');
+        if (add(record[1], record[0], record[2]) || update(record[1], record[0], record[2])) {
             count++;
         }
     }
