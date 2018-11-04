@@ -32,9 +32,9 @@ function isCorrectRecord(phone, name, email) {
     return isCorrectPhone(phone) && isCorrectName(name) && isCorrectEmail(email);
 }
 
-// function containsQuery(field, query) {
-//     return query === '*' || (field && field.includes(query));
-// }
+function containsQuery(field, query) {
+    return query === '*' || (field && field.includes(query));
+}
 
 function hasRecord(phoneRecord) {
     return phoneBook.some(element => element.phone === phoneRecord.phone);
@@ -138,42 +138,16 @@ function formatRecord(phone, name, email) {
  * @param {String} query
  * @returns {String[]}
  */
-// function find(query) {
-//     if (!isCorrectQuery(query)) {
-//         return [];
-//     }
-//     const result = [];
-//     for (let i = 0; i < phoneBook.length; i++) {
-//         const newPhone = formatPhone(phoneBook[i].phone);
-//         const record = [phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email];
-//         if (record.some(field => containsQuery(field, query))) {
-//             result.push(formatRecord(newPhone, phoneBook[i].name, phoneBook[i].email));
-//         }
-//     }
-
-//     return result.sort();
-// }
-
 function find(query) {
     if (!isCorrectQuery(query)) {
         return [];
     }
     const result = [];
-
-    if (query === '*') {
-        for (let i = 0; i < phoneBook.length; i++) {
-            const newPhone = formatPhone(phoneBook[i].phone);
-            result.push(formatRecord(newPhone, phoneBook[i].name, phoneBook[i].email));
-        }
-
-        return result.sort();
-
-    }
     for (let i = 0; i < phoneBook.length; i++) {
         const newPhone = formatPhone(phoneBook[i].phone);
-        const record = formatRecord(newPhone, phoneBook[i].name, phoneBook[i].email);
-        if (record.includes(query)) {
-            result.push(record);
+        const record = [phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email];
+        if (record.some(field => containsQuery(field, query))) {
+            result.push(formatRecord(newPhone, phoneBook[i].name, phoneBook[i].email));
         }
     }
 
