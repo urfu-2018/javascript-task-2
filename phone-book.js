@@ -9,7 +9,7 @@ const isStar = false;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+const phoneBook = [];
 const phoneRegExp = /^\d{10}$/;
 
 function isCorrectPhone(phone) {
@@ -17,30 +17,27 @@ function isCorrectPhone(phone) {
 }
 
 function isCorrectName(name) {
-    return (typeof name === 'string' || name instanceof String) && name.trim() !== '';
+    return typeof name === 'string' && name.trim() !== '';
+}
+
+function isCorrectEmail(email) {
+    return typeof email === 'string' || email === undefined;
 }
 
 function isCorrectQuery(query) {
     return typeof(query) === 'string' && query;
 }
 
-function isCorrectPhoneAndNameAndEmail(phone, name, email) {
-    return isCorrectPhone(phone) && isCorrectName(name) &&
-    (typeof email === 'string' || email === undefined);
+function isCorrectRecord(phone, name, email) {
+    return isCorrectPhone(phone) && isCorrectName(name) && isCorrectEmail(email);
 }
 
-function checkQueryContains(field, query) {
-    return query === '*' || field !== undefined && field.includes(query);
+function containsQuery(field, query) {
+    return query === '*' || (field && field.includes(query));
 }
 
-function checkContains(phoneNote) {
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneNote.mPhone === phoneBook[i].mPhone) {
-            return true;
-        }
-    }
-
-    return false;
+function hasRecord(phoneRecord) {
+    return phoneBook.some(element => element.phone === phoneRecord.phone);
 }
 
 /**
@@ -51,15 +48,15 @@ function checkContains(phoneNote) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isCorrectPhoneAndNameAndEmail(phone, name, email)) {
+    if (!isCorrectRecord(phone, name, email)) {
         return false;
     }
-    const phoneNote = { mPhone: phone, mName: name, mEmail: email };
+    const phoneRecord = { phone: phone, name: name, email: email };
 
-    if (checkContains(phoneNote)) {
+    if (hasRecord(phoneRecord)) {
         return false;
     }
-    phoneBook.push(phoneNote);
+    phoneBook.push(phoneRecord);
 
     return true;
 }
@@ -72,21 +69,19 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrectPhoneAndNameAndEmail(phone, name, email)) {
+    if (!isCorrectRecord(phone, name, email)) {
         return false;
     }
-    let newPhoneNote = { mPhone: phone, mName: name, mEmail: email };
+    const newPhoneRecord = { phone: phone, name: name, email: email };
 
-    if (!checkContains(newPhoneNote)) {
+    if (!hasRecord(newPhoneRecord)) {
         return false;
     }
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phone === phoneBook[i].mPhone) {
-            phoneBook[i] = newPhoneNote;
+    const index = phoneBook.findIndex(element => element.phone === phone);
 
-            return true;
-        }
-    }
+    phoneBook[index] = newPhoneRecord;
+
+    return true;
 }
 
 /**
@@ -94,21 +89,22 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
+// need fix
 function findAndRemove(query) {
     if (!isCorrectQuery(query)) {
         return [];
     }
-    let finded = find(query).reverse();
-    for (let i = 0; i < finded.length; i++) {
-        let splited = finded[i].split(', ');
-        let phoneNote = { mPhone: splited[0], mName: splited[1], mEmail: splited[2] };
-        phoneBook.splice(phoneBook.indexOf(phoneNote), 1);
+    const foundRecords = find(query);
+    for (let i = 0; i < foundRecords.length; i++) {
+        const splited = foundRecords[i].split(', ');
+        const phoneRecord = { phone: splited[0], name: splited[1], email: splited[2] };
+        phoneBook.splice(phoneBook.indexOf(phoneRecord) - 1, 1);
     }
 
-    return finded.length;
+    return foundRecords.length;
 }
 
-function concatPhone(phone) {
+function formatPhone(phone) {
     return '+7 ('
         .concat(phone.slice(0, 3))
         .concat(') ')
@@ -119,8 +115,9 @@ function concatPhone(phone) {
         .concat(phone.slice(8, 10));
 }
 
-function concatNote(phone, name, email) {
+function formatRecord(phone, name, email) {
     let result;
+
     if (email) {
         result = [name, phone, email].join(', ');
     } else {
@@ -136,15 +133,15 @@ function concatNote(phone, name, email) {
  * @returns {String[]}
  */
 function find(query) {
-    let result = [];
     if (!isCorrectQuery(query)) {
         return [];
     }
+    const result = [];
     for (let i = 0; i < phoneBook.length; i++) {
-        let newPhone = concatPhone(phoneBook[i].mPhone);
-        if ([phoneBook[i].mPhone, phoneBook[i].mName, phoneBook[i].mEmail]
-            .some(field => checkQueryContains(field, query))) {
-            result.push(concatNote(newPhone, phoneBook[i].mName, phoneBook[i].mEmail));
+        const newPhone = formatPhone(phoneBook[i].phone);
+        const record = [phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email];
+        if (record.some(field => containsQuery(field, query))) {
+            result.push(formatRecord(newPhone, phoneBook[i].name, phoneBook[i].email));
         }
     }
 
