@@ -70,10 +70,10 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let found = find(query)
-        .forEach(e => phoneBook(e.phone));
+    let found = getAllMatching(query);
+    found.forEach(e => delete phoneBook[e.phone]);
 
-    return found.length;
+    return Object.keys(found).length;
 }
 
 /**
