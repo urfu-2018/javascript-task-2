@@ -76,6 +76,7 @@ function findAndRemove(query) {
 
             return ++count;
         }, 0);
+
     return result;
 }
 
