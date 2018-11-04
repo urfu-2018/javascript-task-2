@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
@@ -70,7 +71,7 @@ function update(phone, name, email = '') {
  */
 function findAndRemove(query) {
     let found = find(query)
-        .forEach(e => phoneBook(e.phone))
+        .forEach(e => phoneBook(e.phone));
 
     return found.length;
 }
