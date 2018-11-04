@@ -53,8 +53,10 @@ function update(phone, name, email = '') {
     if (isValidName(name) &&
         isValidPhone(phone) &&
         phoneBook[phone] !== undefined) {
-        phoneBook[phone].email = email;
-        phoneBook[phone].name = name;
+        phoneBook[phone] = {
+            name: name,
+            email: email
+        }
 
         return true;
     }
