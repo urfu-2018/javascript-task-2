@@ -4,8 +4,8 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-const isStar = false;
-var phoneBook;
+const isStar = true;
+var phoneBook = {};
 
 /**
  * Телефонная книга
@@ -20,9 +20,6 @@ const phonePattern = /^\d{10}$/;
  * @returns {Boolean}
  */
 function add(phone, name, email = '') {
-    if (!phoneBook) {
-        phoneBook = {};
-    }
     if (isValidName(name) &&
         isValidPhone(phone) &&
         phoneBook[phone] === undefined) {
@@ -88,7 +85,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     var matchingArray = [];
-    if (typeof(query) !== 'string' ||
+    if (typeof query !== 'string' ||
         query === '') {
         return [];
     }
@@ -145,11 +142,18 @@ function getAllMatching(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+    if (!csv || csv === '') {
+        return 0;
+    }
+    const contacts = csv.split('\n');
 
-    return csv.split('\n').length;
+    return contacts.reduce((count, contact) => {
+        const [name, phone, email] = contact.split(';');
+        const isUpdated = update(phone, name, email);
+        const isAdded = add(phone, name, email);
+
+        return isUpdated || isAdded ? ++count : count;
+    }, 0);
 }
 
 module.exports = {
