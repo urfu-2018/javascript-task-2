@@ -77,7 +77,7 @@ function findAndRemove(query) {
 function nameCompare(name1, name2) {
     if (name1 > name2) {
         return 1;
-    } else if (name1 > name2) {
+    } else if (name1 < name2) {
 
         return -1;
     }
