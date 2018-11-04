@@ -104,7 +104,7 @@ function find(query) {
     let result = [];
     if (query === '*') {
         result = getData(phoneBook);
-    } else if (typeof(query) !== 'undefined' && query.length > 0) {
+    } else if (typeof(query) !== 'undefined' && query.trim().length > 0) {
         result = getData(phoneBook, query);
     }
     result.sort();
