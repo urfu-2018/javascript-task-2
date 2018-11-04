@@ -19,7 +19,7 @@ const phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isCorrectArgs(phone, name) || phoneBook.has(phone)) {
+    if (!isCorrectArgs(phone, name, email) || phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, { name, email });
@@ -35,7 +35,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isCorrectArgs(phone, name) || !phoneBook.has(phone)) {
+    if (!isCorrectArgs(phone, name, email) || !phoneBook.has(phone)) {
         return false;
     }
     phoneBook.set(phone, { name, email });
@@ -85,17 +85,17 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    let n = 0;
+    let newRecordCounter = 0;
     for (const line of csv.split('\n')) {
         const [name, phone, email] = line.split(';');
         if (phoneBook.has(phone)) {
-            n += update(phone, name, email) ? 1 : 0;
+            newRecordCounter += update(phone, name, email) ? 1 : 0;
         } else {
-            n += add(phone, name, email) ? 1 : 0;
+            newRecordCounter += add(phone, name, email) ? 1 : 0;
         }
     }
 
-    return n;
+    return newRecordCounter;
 }
 
 /**
@@ -105,8 +105,13 @@ function importFromCsv(csv) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function isCorrectArgs(phone, name) {
-    return /^\d{10}$/.test(phone) && typeof name === 'string' && name;
+function isCorrectArgs(phone, name, email) {
+    return (
+        /^\d{10}$/.test(phone) &&
+        typeof name === 'string' &&
+        name &&
+        (!email || /^\S+@\S+$/i.test(email))
+    );
 }
 
 /**
