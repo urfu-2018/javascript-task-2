@@ -23,9 +23,8 @@ function add(phone, name, email = '') {
     if (!phoneBook) {
         phoneBook = [];
     }
-    if (typeof(phone) === 'string' &&
-        typeof(name) === 'string' &&
-        phonePattern.test(phone) &&
+    if (isValidName(name) &&
+        isValidPhone(phone) &&
         phoneBook[phone] === undefined) {
         phoneBook[phone] = {
             name: name,
@@ -38,6 +37,14 @@ function add(phone, name, email = '') {
     return false;
 }
 
+function isValidName(name) {
+    return typeof name === 'string' && name !== '';
+}
+
+function isValidPhone(phone) {
+    return typeof phone === 'string' && phonePattern.test(phone);
+}
+
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -46,9 +53,8 @@ function add(phone, name, email = '') {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    if (typeof(phone) === 'string' &&
-        typeof(name) === 'string' &&
-        phonePattern.test(phone) &&
+    if (isValidName(name) &&
+        isValidPhone(phone) &&
         phoneBook[phone] !== undefined) {
         phoneBook[phone].email = email;
         phoneBook[phone].name = name;
@@ -65,17 +71,19 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!query) {
-        return [];
-    }
-    if (typeof(query) !== 'string' &&
-        query !== 'string') {
+    if (typeof(query) !== 'string') {
 
         return 0;
     }
-    let matchingArray = [];
 
-    return getAllMatching(query, matchingArray).length;
+    let result = Object.keys(getAllMatching(query))
+        .reduce((count, phone) => {
+            delete phoneBook[phone];
+
+            return ++count;
+        }, 0);
+
+    return result;
 }
 
 /**
@@ -89,9 +97,17 @@ function find(query) {
         query === '') {
         return;
     }
-    matchingArray = getAllMatching(query)
-        .sort(function (a, b) {
-            return a > b;
+    matchingArray = getAllMatching(query);
+
+    matchingArray = Object.keys(matchingArray)
+        .map(function (phone) {
+            return getRepresentation(phone);
+        })
+        .sort(function (record1, record2) {
+            const nameA = record1.split(',')[0].trim();
+            const nameB = record2.split(',')[0].trim();
+
+            return nameA.localeCompare(nameB);
         });
 
     return matchingArray;
@@ -120,7 +136,7 @@ function getAllMatching(query) {
                 phone.includes(query) ||
                 phoneBook[phone].name.includes(query) ||
                 phoneBook[phone].email.includes(query)) {
-                result.push(getRepresentation(phone));
+                result[phone] = phoneBook[phone];
             }
 
             return result;
