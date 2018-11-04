@@ -87,8 +87,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     var matchingArray = [];
-    if (typeof query !== 'string' ||
-        query === '') {
+    if (query === '') {
         return [];
     }
     matchingArray = getAllMatching(query);
