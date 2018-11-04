@@ -56,7 +56,7 @@ function update(phone, name, email = '') {
         phoneBook[phone] = {
             name: name,
             email: email
-        }
+        };
 
         return true;
     }
