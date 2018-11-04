@@ -21,7 +21,7 @@ const phonePattern = /^\d{10}$/;
  */
 function add(phone, name, email = '') {
     if (!phoneBook) {
-        phoneBook = [];
+        phoneBook = {};
     }
     if (isValidName(name) &&
         isValidPhone(phone) &&
@@ -71,11 +71,6 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (typeof(query) !== 'string') {
-
-        return 0;
-    }
-
     let result = Object.keys(getAllMatching(query))
         .reduce((count, phone) => {
             delete phoneBook[phone];
@@ -95,7 +90,7 @@ function find(query) {
     var matchingArray = [];
     if (typeof(query) !== 'string' ||
         query === '') {
-        return;
+        return [];
     }
     matchingArray = getAllMatching(query);
 
