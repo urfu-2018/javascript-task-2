@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
@@ -70,14 +69,10 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let result = Object.keys(getAllMatching(query))
-        .reduce((count, phone) => {
-            delete phoneBook[phone];
+    let found = find(query)
+        .forEach(e => phoneBook(e.phone))
 
-            return ++count;
-        }, 0);
-
-    return result;
+    return found.length;
 }
 
 /**
@@ -87,7 +82,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     var matchingArray = [];
-    if (!query) {
+    if (!query || typeof query !== 'string') {
         return [];
     }
     matchingArray = getAllMatching(query);
