@@ -71,7 +71,7 @@ function update(phone, name, email = '') {
  */
 function findAndRemove(query) {
     let found = getAllMatching(query);
-    found.forEach(e => delete phoneBook[e.phone]);
+    found.forEach(phone => delete phoneBook[phone]);
 
     return Object.keys(found).length;
 }
