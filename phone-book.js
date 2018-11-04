@@ -47,7 +47,6 @@ function update(phone, name, email) {
         typeof(name) === 'string' &&
         phonePattern.test(phone) &&
         phoneBook[phone] !== undefined) {
-        email = email === undefined ? '' : email;
         phoneBook[phone].email = email;
         phoneBook[phone].name = name;
 
@@ -126,7 +125,8 @@ function getAllMatching(query, matchingArray) {
     for (let i = 0; i < Object.keys(phoneBook).length; i++) {
         if (Object.keys(phoneBook)[i].includes(query) ||
         phoneBook[Object.keys(phoneBook)[i]].name.includes(query) ||
-        phoneBook[Object.keys(phoneBook)[i]].email.includes(query)) {
+        (phoneBook[Object.keys(phoneBook)[i]].email !== undefined &&
+        phoneBook[Object.keys(phoneBook)[i]].email.includes(query))) {
             matchingArray.push(getRepresentation(Object.keys(phoneBook)[i]));
         }
     }
