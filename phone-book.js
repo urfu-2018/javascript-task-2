@@ -70,14 +70,20 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let result = Object.keys(getAllMatching(query))
-        .reduce((count, phone) => {
+    let result = find(query)
+        .reduce((count, note) => {
+            let phone = getBaseNumber(note.split(', ')[1]);
             delete phoneBook[phone];
 
             return ++count;
         }, 0);
 
     return result;
+}
+
+function getBaseNumber(phone) {
+    return phone.replace(/[() -]/g, '')
+        .replace('+7', '');
 }
 
 /**
