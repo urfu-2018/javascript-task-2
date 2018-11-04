@@ -84,12 +84,18 @@ function update(phone, name, email) {
     return true;
 }
 
+function destructPhone(phone) {
+    return phone
+        .slice(4)
+        .split(/\D/)
+        .join('');
+}
+
 /**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
-// need fix
 function findAndRemove(query) {
     if (!isCorrectQuery(query)) {
         return [];
@@ -97,8 +103,8 @@ function findAndRemove(query) {
     const foundRecords = find(query);
     for (let i = 0; i < foundRecords.length; i++) {
         const splited = foundRecords[i].split(', ');
-        const phoneRecord = { phone: splited[0], name: splited[1], email: splited[2] };
-        phoneBook.splice(phoneBook.indexOf(phoneRecord) - 1, 1);
+        const phone = destructPhone(splited[1]);
+        phoneBook.splice(phoneBook.findIndex(element => element.phone === phone), 1);
     }
 
     return foundRecords.length;
