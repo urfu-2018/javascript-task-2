@@ -11,8 +11,7 @@ const isStar = false;
  */
 let phoneBook = [];
 const phonePattern = /^\d{10}$/;
-const mailPattern = /\w+@\w+\.\w+/;
-console.log(phoneBook[34] === undefined)
+// const mailPattern = /\w+@\w+\.\w+/;
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -24,9 +23,7 @@ function add(phone, name, email) {
     if (typeof(name) === 'string' &&
         name !== '' &&
         phonePattern.test(phone) &&
-        phoneBook[phone] === undefined &&
-        !(typeof email === 'string' &&
-            !mailPattern.test(email))) {
+        phoneBook[phone] === undefined) {
         phoneBook[phone] = {
             name: name,
             email: email
