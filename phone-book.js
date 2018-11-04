@@ -11,6 +11,26 @@ const isStar = true;
  */
 let phoneBook = [];
 
+function phoneInPhoneBook(phone) {
+    return phoneBook.some(contact => {
+        return contact.phone === phone;
+    });
+}
+
+function outputNameAndPhone(name, phone) {
+    return name + ', +7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) +
+    '-' + phone.substr(6, 2) + '-' + phone.substr(8, 2);
+}
+
+function queryMatches(query, name, phone, email) {
+    if (email === undefined) {
+        email = '';
+    }
+
+    return name.includes(query) || phone.includes(query) ||
+    email.includes(query);
+}
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,21 +39,14 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (/^\d{10}$/.test(phone) && name &&
-    (!phoneBook.reduce((acc, contact) => {
-        acc += (contact.phone === phone);
-
-        return acc;
-    }, false))) {
-        const lenghtBeforeСhanges = phoneBook.length;
+    if (/^\d{10}$/.test(phone) && name && !phoneInPhoneBook(phone)) {
         phoneBook.push({
             name,
             phone,
             email
         });
-        if (lenghtBeforeСhanges === phoneBook.length - 1) {
-            return true;
-        }
+
+        return true;
     }
 
     return false;
@@ -48,17 +61,10 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     let requiredPhoneIndex;
-    if (phone && (name || email) &&
-    (phoneBook.reduce((acc, contact, index) => {
-        acc += (contact.phone === phone);
-        if (contact.phone === phone) {
-            requiredPhoneIndex = index;
-        }
-
-        return acc;
-    }, false))) {
+    if (phone && (name || email) && phoneInPhoneBook(phone)) {
+        requiredPhoneIndex = phoneBook.findIndex(contact =>
+            contact.phone === phone);
         phoneBook[requiredPhoneIndex].name = name;
-        phoneBook[requiredPhoneIndex].phone = phone;
         phoneBook[requiredPhoneIndex].email = email;
 
         return true;
@@ -73,28 +79,21 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let requiredPhoneIndexes;
+    let countDeletedContacts;
     if (!query) {
         return 0;
     }
     if (query === '*') {
-        requiredPhoneIndexes = phoneBook.length;
+        countDeletedContacts = phoneBook.length;
         phoneBook = [];
 
-        return requiredPhoneIndexes;
+        return countDeletedContacts;
     }
-    requiredPhoneIndexes = [];
+    let requiredPhoneIndexes = [];
     phoneBook.forEach((contact, index) => {
-        if (!contact.email) {
-            if (contact.phone.includes(query) ||
-            contact.name.includes(query)) {
-                requiredPhoneIndexes.push(index);
-            }
-        }
-    });
-    phoneBook.forEach((contact, index) => {
-        if (contact.email && (contact.name.includes(query) ||
-        contact.phone.includes(query) || contact.email.includes(query))) {
+        if (((!contact.email) &&
+        queryMatches(query, contact.name, contact.phone)) || (contact.email &&
+        queryMatches(query, contact.name, contact.phone, contact.email))) {
             requiredPhoneIndexes.push(index);
         }
     });
@@ -119,24 +118,20 @@ function find(query) {
     } else if (query !== '*') {
         requiredPhoneIndexes = phoneBook.filter(contact => {
             if (!contact.email) {
-                return contact.phone.includes(query) ||
-                contact.name.includes(query);
+
+                return queryMatches(query, contact.name, contact.phone);
             }
 
-            return contact.name.includes(query) || contact.phone.includes(query) ||
-            contact.email.includes(query);
+            return queryMatches(query, contact.name, contact.phone,
+                contact.email);
         });
     }
     requiredPhoneIndexes = requiredPhoneIndexes.map(contact => {
         if (!contact.email) {
-            return contact.name + ', +7 (' + contact.phone.substr(0, 3) +
-            ') ' + contact.phone.substr(3, 3) + '-' +
-            contact.phone.substr(6, 2) + '-' + contact.phone.substr(8, 2);
+            return outputNameAndPhone(contact.name, contact.phone);
         }
 
-        return contact.name + ', +7 (' + contact.phone.substr(0, 3) +
-        ') ' + contact.phone.substr(3, 3) + '-' +
-        contact.phone.substr(6, 2) + '-' + contact.phone.substr(8, 2) + ', ' +
+        return outputNameAndPhone(contact.name, contact.phone) + ', ' +
         contact.email;
     });
 
@@ -152,30 +147,18 @@ function find(query) {
 function importFromCsv(csv) {
     // Парсим csv
     let csvArrContacts = csv.split('\n');
-    let amountUpdatedOrAddeddContacts = 0;
+    let amountUpdatedOrAddedContacts = 0;
     csvArrContacts.forEach((csvArrContact) => {
         csvArrContact = csvArrContact.split(';');
-        const name = csvArrContact[0];
-        const phone = csvArrContact[1];
-        const email = csvArrContact[2];
-        if (phoneBook.reduce((acc, contact) => {
-            acc += (contact.phone === phone);
-
-            return acc;
-        }, false)) { // Обновляем, если запись с таким телефоном уже существует
-            if (update(phone, name, email)) {
-                amountUpdatedOrAddeddContacts++;
-            }
-            update(phone, name, email);
-        } else { // Либо добавляем
-            if (add(phone, name, email)) {
-                amountUpdatedOrAddeddContacts++;
-            }
-            add(phone, name, email);
+        const [name, phone, email] = csvArrContact;
+        if (phoneInPhoneBook(phone) && update(phone, name, email)) { // Обновляем
+            amountUpdatedOrAddedContacts++;
+        } else if (add(phone, name, email)) { // Либо добавляем
+            amountUpdatedOrAddedContacts++;
         }
     });
 
-    return amountUpdatedOrAddeddContacts;
+    return amountUpdatedOrAddedContacts;
 }
 
 module.exports = {
