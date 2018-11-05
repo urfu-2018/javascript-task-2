@@ -134,7 +134,7 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    if (typeof csv !== 'string' || csv === '') {
+    if (checkStrFormat(csv)) {
         return 0;
     }
     let arr = csv.split('\n');
@@ -144,10 +144,7 @@ function importFromCsv(csv) {
         let name = strArr[0];
         let phone = strArr[1];
         let email = strArr[2];
-        if (phoneBook.has(phone)) {
-            update(phone, name, email);
-        } else {
-            add(phone, name, email);
+        if (update(phone, name, email) || add(phone, name, email)) {
             count++;
         }
     }
