@@ -73,6 +73,7 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
+
 function findAndRemove(query) {
     if (query === '') {
         return 0;
