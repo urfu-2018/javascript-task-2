@@ -68,11 +68,11 @@ function checkInputInfo(phone, name, email) {
  */
 function update(phone, name, email) {
     if (checkInputInfo(phone, name, email) && phoneBook.has(phone)) {
-        const newPerson = new Record(name, phone, email);
-        const oldPerson = phoneBook.get(phone);
-        if (personsEqual(newPerson, oldPerson)) {
-            return false;
-        }
+        // const newPerson = new Record(name, phone, email);
+        // const oldPerson = phoneBook.get(phone);
+        // if (personsEqual(newPerson, oldPerson)) {
+        //     return false;
+        // }
         phoneBook.set(phone, new Record(name, phone, email));
 
         return true;
@@ -81,14 +81,14 @@ function update(phone, name, email) {
     return false;
 }
 
-function personsEqual(per1, per2) {
-    if (per1._name === per2._name &&
-        per1._phone === per2._phone &&
-        per1._email === per2._email) {
+// function personsEqual(per1, per2) {
+//     if (per1._name === per2._name &&
+//         per1._phone === per2._phone &&
+//         per1._email === per2._email) {
 
-        return false;
-    }
-}
+//         return false;
+//     }
+// }
 
 /**
  * Удаление записей по запросу из телефонной книги
