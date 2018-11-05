@@ -1,25 +1,26 @@
 'use strict';
 
-class Person {
+class Record {
     constructor(name, phone, email) {
-        this.name = name;
-        this.convertedPhone = tryConvertPhoneNumber(phone);
-        this.email = email || '';
-        this.standartPhone = phone;
+        this._name = name;
+        this._convertedPhone = convertPhoneNumber(phone);
+        this._email = email || '';
+        this._phone = phone;
     }
 
     toString() {
-        let result = this.name + ', ' + this.convertedPhone;
-        if (this.email !== '') {
-            result += ', ' + this.email;
+        let result = this._name + ', ' + this._convertedPhone;
+        if (this._email !== '') {
+            result += ', ' + this._email;
         }
 
         return result;
     }
 
     contains(query) {
-        return this.name.includes(query) || this.standartPhone.includes(query) ||
-        this.email.includes(query);
+        return this._name.includes(query) ||
+                this._phone.includes(query) ||
+                this._email.includes(query);
     }
 }
 
@@ -43,14 +44,19 @@ let phoneBook = new Map();
  */
 
 function add(phone, name, email) {
-    const convertedPhone = tryConvertPhoneNumber(phone);
-    if (isName(name) && convertedPhone && isEmail(email) && !phoneBook.has(phone)) {
-        phoneBook.set(phone, new Person(name, phone, email));
+    if (checkInputInfo(phone, name, email) && !phoneBook.has(phone)) {
+        phoneBook.set(phone, new Record(name, phone, email));
 
         return true;
     }
 
     return false;
+}
+
+function checkInputInfo(phone, name, email) {
+    const correctPhone = phoneIsCorrect(phone);
+
+    return isName(name) && correctPhone && isEmail(email);
 }
 
 /**
@@ -61,14 +67,13 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const convertedPhone = tryConvertPhoneNumber(phone);
-    if (isName(name) && convertedPhone && isEmail(email) && phoneBook.has(phone)) {
-        const newPerson = new Person(name, phone, email);
+    if (checkInputInfo(phone, name, email) && phoneBook.has(phone)) {
+        const newPerson = new Record(name, phone, email);
         const oldPerson = phoneBook.get(phone);
         if (personsEqual(newPerson, oldPerson)) {
             return false;
         }
-        phoneBook.set(phone, new Person(name, phone, email));
+        phoneBook.set(phone, new Record(name, phone, email));
 
         return true;
     }
@@ -77,9 +82,9 @@ function update(phone, name, email) {
 }
 
 function personsEqual(per1, per2) {
-    if (per1.name === per2.name &&
-        per1.phone === per2.phone &&
-        per1.email === per2.email) {
+    if (per1._name === per2._name &&
+        per1._phone === per2._phone &&
+        per1._email === per2._email) {
 
         return false;
     }
@@ -94,16 +99,10 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    const found = find(query);
-    found.map(person => phoneBook.delete(getPhoneFromPerson(person)));
+    const foundPersons = findPerson(query);
+    foundPersons.map(person => phoneBook.delete(person._phone));
 
-    return found.length;
-}
-
-function getPhoneFromPerson(person) {
-    let [, phone] = person.split(',');
-
-    return phone.replace(/[^0-9]/g, '').slice(1);
+    return foundPersons.length;
 }
 
 /**
@@ -112,18 +111,23 @@ function getPhoneFromPerson(person) {
  * @returns {String[]}
  */
 function find(query) {
+    const persons = findPerson(query);
+
+    return persons.map(person => person.toString());
+}
+
+function findPerson(query) {
     if (typeof query !== 'string' || query === '') {
         return [];
     }
     let persons = Array.from(phoneBook.values());
-    persons.sort((per1, per2) => per1.name > per2.name);
+    persons.sort((a, b) => a._name > b._name);
     if (query === '*') {
 
-        return persons.map(person => person.toString());
+        return persons;
     }
 
-    return persons.filter((person) => person.contains(query))
-        .map(person => person.toString());
+    return persons.filter((person) => person.contains(query));
 }
 
 /**
@@ -142,7 +146,8 @@ function importFromCsv(csv) {
 function isEmail(email) {
     return typeof email === 'undefined' || typeof email === 'string';
 }
-function tryConvertPhoneNumber(phone) {
+
+function phoneIsCorrect(phone) {
     if (typeof phone !== 'string' || phone.length !== 10) {
         return false;
     }
@@ -153,6 +158,13 @@ function tryConvertPhoneNumber(phone) {
 
         return false;
     }
+
+    return true;
+}
+
+function convertPhoneNumber(phone) {
+    const correctPhone = /^(\d{3})(\d{3})(\d{2})(\d{2})$/; // 5556667788
+    const match = phone.match(correctPhone);
 
     return `+7 (${match[1]}) ${match[2]}-${match[3]}-${match[4]}`; // +7 (555) 666-77-88
 }
