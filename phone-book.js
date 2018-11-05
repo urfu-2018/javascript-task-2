@@ -95,8 +95,8 @@ function matchSearch(record, query) {
     if (query === '*') {
         return record;
     }
-    if (record[0].indexOf(query) !== -1 || record[1].indexOf(query) !== -1 ||
-        (record[2] && record[2].indexOf(query) !== -1)) {
+    if (record[0].includes(query) === true || record[1].includes(query) === true ||
+        (record[2] && record[2].includes(query) === true)) {
 
         return record;
     }
@@ -163,8 +163,8 @@ function importFromCsv(csv) {
     }
     const newCsv = csv.split('\n');
     var count = 0;
-    for (let value of newCsv) {
-        let contact = value.split(';');
+    for (let line of newCsv) {
+        let contact = line.split(';');
         var phone = contact[1];
         var name = contact[0];
         var email = contact[2];
