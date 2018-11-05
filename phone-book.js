@@ -22,7 +22,7 @@ function isValidParams(phone, name) {
     var tel = /(^[0-9]{10}$)/;
 
     return phone && (tel.test(phone)) && (name !== '') &&
-        (name !== undefined) && (typeof name === 'string');
+        name && (typeof name === 'string');
 }
 
 /**
@@ -34,7 +34,7 @@ function isValidParams(phone, name) {
  */
 function add(phone, name, email) {
     if (!(phone in phoneBook) && isValidParams(phone, name, email)) {
-        if (email === undefined) {
+        if ((email) && (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -56,7 +56,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (phoneBook[phone] && isValidParams(phone, name, email)) {
-        if (email === undefined) {
+        if ((email) && (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -165,9 +165,9 @@ function importFromCsv(csv) {
     var count = 0;
     for (let line of newCsv) {
         let contact = line.split(';');
-        var phone = contact[1];
-        var name = contact[0];
-        var email = contact[2];
+        let phone = contact[1];
+        let name = contact[0];
+        let email = contact[2];
         if (add(phone, name, email) || update(phone, name, email)) {
             count++;
         }
