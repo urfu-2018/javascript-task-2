@@ -18,10 +18,10 @@ let phoneBook = {};
  * @param {String?} email
  * @returns {Boolean}
  */
-function trueParam(phone, name) {
+function isValidParams(phone, name) {
     var tel = /(^[0-9]{10}$)/;
 
-    return (typeof phone !== undefined) && (tel.test(phone)) && (name !== '') &&
+    return phone && (tel.test(phone)) && (name !== '') &&
         (name !== undefined) && (typeof name === 'string');
 }
 
@@ -33,7 +33,7 @@ function trueParam(phone, name) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!(phone in phoneBook) && trueParam(phone, name, email)) {
+    if (!(phone in phoneBook) && isValidParams(phone, name, email)) {
         if (email === undefined) {
             phoneBook[phone] = [phone, name];
         } else {
@@ -55,7 +55,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook[phone] && trueParam(phone, name, email)) {
+    if (phoneBook[phone] && isValidParams(phone, name, email)) {
         if (email === undefined) {
             phoneBook[phone] = [phone, name];
         } else {
@@ -77,7 +77,7 @@ function findAndRemove(query) {
     if (query === '') {
         return 0;
     }
-    var res;
+    let res;
     var count = 0;
     for (var phone of Object.keys(phoneBook)) {
         res = matchSearch(phoneBook[phone], query);
