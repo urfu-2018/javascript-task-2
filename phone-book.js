@@ -96,9 +96,6 @@ function personsEqual(per1, per2) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (query === '') {
-        return 0;
-    }
     const foundPersons = findPerson(query);
     foundPersons.map(person => phoneBook.delete(person._phone));
 
