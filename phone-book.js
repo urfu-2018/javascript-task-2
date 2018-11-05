@@ -34,7 +34,7 @@ function isValidParams(phone, name) {
  */
 function add(phone, name, email) {
     if (!(phone in phoneBook) && isValidParams(phone, name, email)) {
-        if ((email) || (email !== '')) {
+        if ((!email) || (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -56,7 +56,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (phoneBook[phone] && isValidParams(phone, name, email)) {
-        if ((email) || (email !== '')) {
+        if ((!email) || (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
