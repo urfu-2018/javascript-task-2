@@ -19,14 +19,11 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!isPhone(phone) || isOldPhone(phone) || !isString(name)) {
+    if (!isPhone(phone) || isOldPhone(phone) || !isCorrectValue(name)) {
         return false;
     }
-    let phoneContact = {
-        phone: phone,
-        name: name
-    };
-    if (isString(email)) {
+    let phoneContact = { phone, name };
+    if (isCorrectValue(email)) {
         phoneContact.email = email;
     }
     phoneBook.push(phoneContact);
@@ -35,15 +32,11 @@ function add(phone, name, email) {
 }
 
 function isPhone(phone) {
-    let maskPhone = /^\d{10}$/;
-
-    return maskPhone.test(phone) && phone.length === 10 && typeof phone === 'string';
+    return /^\d{10}$/.test(phone) && phone.length === 10 && typeof phone === 'string';
 }
 
 function isOldPhone(phone) {
-    return phoneBook.some(function (contact) {
-        return contact.phone === phone;
-    });
+    return phoneBook.some((contact) => contact.phone === phone);
 }
 
 /**
@@ -54,15 +47,15 @@ function isOldPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!isPhone(phone) || !isString(name) || !isOldPhone(phone)) {
+    if (!isPhone(phone) || !isCorrectValue(name) || !isOldPhone(phone)) {
         return false;
     }
-    let index = phoneBook.findIndex(x=>x.phone === phone);
-    phoneBook[index].name = name;
-    if (isString(email)) {
-        phoneBook[index].email = email;
-    } else if ('email' in phoneBook[index]) {
-        delete phoneBook[index].email;
+    const INDEX = phoneBook.findIndex(contact=>contact.phone === phone);
+    phoneBook[INDEX].name = name;
+    if (isCorrectValue(email)) {
+        phoneBook[INDEX].email = email;
+    } else if (phoneBook[INDEX].email) {
+        delete phoneBook[INDEX].email;
     }
 
     return true;
@@ -74,7 +67,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    if (!isString(query)) {
+    if (!isCorrectValue(query)) {
         return 0;
     }
     let count = 0;
@@ -84,26 +77,17 @@ function findAndRemove(query) {
 
         return count;
     }
-    let index;
-    while ((index = findContact(query)) !== -1) {
-        phoneBook.splice(index, 1);
-        count++;
-    }
+    count = phoneBook.length;
+    let clearContacts = phoneBook.filter((contact) => !contactIncludes(contact, query));
+    phoneBook = clearContacts;
 
-    return count;
+    return count - clearContacts.length;
 }
 
-/*
-* Поиск индекса контакта по строке
-*/
-function findContact(query) {
-    return phoneBook.findIndex(x => objectIncludes(x, query));
-}
-
-function objectIncludes(contact, query) {
+function contactIncludes(contact, query) {
     return contact.name.includes(query) ||
-    contact.phone.includes(query) ||
-    ('email' in contact && contact.email.includes(query));
+        contact.phone.includes(query) ||
+        (contact.email && contact.email.includes(query));
 }
 
 /**
@@ -112,13 +96,17 @@ function objectIncludes(contact, query) {
  * @returns {String[]}
  */
 function find(query) {
-    if (!isString(query)) {
+    if (!isCorrectValue(query)) {
         return [];
     }
 
     return filterContact(query)
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort(contactComparer)
         .map(renderContact);
+}
+
+function contactComparer(a, b) {
+    return a.name.localeCompare(b.name);
 }
 
 function filterContact(query) {
@@ -126,13 +114,13 @@ function filterContact(query) {
         return phoneBook;
     }
 
-    return phoneBook.filter((contact) => objectIncludes(contact, query));
+    return phoneBook.filter((contact) => contactIncludes(contact, query));
 }
 
 /*
 * Проверка на string
 */
-function isString(value) {
+function isCorrectValue(value) {
     return typeof value === 'string' && value !== '';
 }
 
@@ -140,9 +128,8 @@ function isString(value) {
 * Форматирование контакта
 */
 function renderContact(contact) {
-    let phone = editPhone(contact.phone);
-    let result = [contact.name, phone];
-    if ('email' in contact) {
+    let result = [contact.name, editPhone(contact.phone)];
+    if (contact.email) {
         result.push(contact.email);
     }
 
@@ -153,12 +140,12 @@ function renderContact(contact) {
 * Форматирование номера
 */
 function editPhone(phone) {
-    let p1 = phone.substr(0, 3);
-    let p2 = phone.substr(3, 3);
-    let p3 = phone.substr(6, 2);
-    let p4 = phone.substr(8, 2);
+    const PARTS = [phone.substr(0, 3),
+        phone.substr(3, 3),
+        phone.substr(6, 2),
+        phone.substr(8, 2)];
 
-    return `+7 (${p1}) ${p2}-${p3}-${p4}`;
+    return `+7 (${PARTS[0]}) ${PARTS[1]}-${PARTS[2]}-${PARTS[3]}`;
 }
 
 /**
@@ -168,17 +155,17 @@ function editPhone(phone) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
-    if (!isString(csv)) {
+    if (!isCorrectValue(csv)) {
         return 0;
     }
     let countAdded = 0;
-    let contacts = csv.split('\n');
-    for (let i = 0; i < contacts.length; i++) {
-        let contact = contacts[i].split(';');
-        if (isOldPhone(contact[1])) {
-            countAdded += update(contact[1], contact[0], contact[2]) ? 1 : 0;
+    const CONTACTS = csv.split('\n');
+    for (const contact of CONTACTS) {
+        const [name, phone, email] = contact.split(';');
+        if (isOldPhone(phone)) {
+            countAdded += update(phone, name, email) ? 1 : 0;
         } else {
-            countAdded += add(contact[1], contact[0], contact[2]) ? 1 : 0;
+            countAdded += add(phone, name, email) ? 1 : 0;
         }
     }
 
