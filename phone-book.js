@@ -34,7 +34,7 @@ function isValidParams(phone, name) {
  */
 function add(phone, name, email) {
     if (!(phone in phoneBook) && isValidParams(phone, name, email)) {
-        if ((email) && (email !== '')) {
+        if ((email) || (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -56,7 +56,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (phoneBook[phone] && isValidParams(phone, name, email)) {
-        if ((email) && (email !== '')) {
+        if ((email) || (email !== '')) {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -82,7 +82,7 @@ function findAndRemove(query) {
     var count = 0;
     for (var phone of Object.keys(phoneBook)) {
         res = matchSearch(phoneBook[phone], query);
-        if (res !== undefined) {
+        if (res) {
             delete phoneBook[phone];
             count++;
         }
@@ -114,11 +114,11 @@ function find(query) {
     const result = [];
     var res;
     for (var phone of Object.keys(phoneBook)) {
-        if (phoneBook[phone] === undefined) {
+        if (!phoneBook[phone]) {
             return [];
         }
         res = matchSearch(phoneBook[phone], query);
-        if (res !== undefined) {
+        if (res) {
             result.push(res);
         }
     }
@@ -135,10 +135,10 @@ function newNumber(phone) {
 function view(result) {
     var recordSought = [];
     for (let info of result) {
-        if (info === undefined) {
+        if (!info) {
             return [];
         }
-        if (info[2] !== undefined) {
+        if (info[2]) {
             recordSought.push(info[1] + ', ' + newNumber(info[0]) + ', ' + info[2]);
         } else {
             recordSought.push(info[1] + ', ' + newNumber(info[0]));
@@ -158,16 +158,16 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    if (csv === undefined || csv === '') {
+    if (!csv || csv === '') {
         return 0;
     }
     const newCsv = csv.split('\n');
     var count = 0;
     for (let line of newCsv) {
         let contact = line.split(';');
-        let phone = contact[1];
-        let name = contact[0];
-        let email = contact[2];
+        var phone = contact[1];
+        var name = contact[0];
+        var email = contact[2];
         if (add(phone, name, email) || update(phone, name, email)) {
             count++;
         }
