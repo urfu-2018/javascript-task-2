@@ -11,6 +11,23 @@ const isStar = true;
  */
 let phoneBook = {};
 
+function findPhones(query) {
+    const keys = Object.keys(phoneBook);
+    const result = {};
+    keys.forEach(phone => {
+        const value = phoneBook[phone];
+        if (contains(phone, value.name, value.email, query)) {
+            result[value.name] = { phone, value };
+        }
+    });
+
+    return Object.keys(result)
+        .sort()
+        .map(function (key) {
+            return result[key];
+        });
+}
+
 function formatPhone(record) {
     let phone = record.phone;
     const value = record.value;
@@ -26,12 +43,6 @@ function contains(phone, name, email, query) {
         phone.indexOf(query) !== -1 ||
         name.indexOf(query) !== -1 ||
         email && email.indexOf(query) !== -1);
-}
-
-function revertPhoneFormat(record) {
-    const phone = record.split(', ')[1];
-
-    return phone.slice(4, 7) + phone.slice(9, 12) + phone.slice(13, 15) + phone.slice(16, 18);
 }
 
 /**
@@ -75,9 +86,9 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const found = find(query);
+    const found = findPhones(query);
     for (let i = 0; i < found.length; ++i) {
-        let phone = revertPhoneFormat(found[i]);
+        let phone = found[i];
         delete phoneBook[phone];
     }
 
@@ -90,21 +101,10 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const keys = Object.keys(phoneBook);
-    const result = {};
-    keys.forEach(phone => {
-        const value = phoneBook[phone];
-        if (contains(phone, value.name, value.email, query)) {
-            result[value.name] = { phone, value };
-        }
-    });
-    const ans = Object.keys(result)
-        .sort()
-        .map(function (key) {
-            return formatPhone(result[key]);
-        });
+    let phones = findPhones(query);
+    phones = phones.map(formatPhone);
 
-    return ans;
+    return phones;
 }
 
 /**
