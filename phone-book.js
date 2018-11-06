@@ -161,11 +161,13 @@ function handleRecords(records) {
  */
 function findAndRemove(query) {
     var findResult = find(query);
+    const prevLen = phoneBook.size;
     for (var element of findResult) {
         phoneBook.delete(element);
     }
 
-    return findResult.length;
+
+    return prevLen - phoneBook.size;
 }
 
 
