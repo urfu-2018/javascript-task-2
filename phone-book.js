@@ -117,11 +117,17 @@ function updatePhoneBook(phone, name, email) {
  * @returns {String[]}
  */
 function find(query) {
+    const findings = findWithoutHandling(query);
+
+    return handleRecords(findings);
+}
+
+function findWithoutHandling(query) {
     if (!isString(query) || hasWrongValue(query)) {
         return []; // как будто пустой запрос
     }
     if (query === '*') {
-        return handleRecords(phoneBook);
+        return phoneBook;
     }
     var suitablesForQuery = [];
     phoneBook.forEach(element => {
@@ -133,7 +139,7 @@ function find(query) {
         return [];
     }
 
-    return handleRecords(suitablesForQuery);
+    return suitablesForQuery;
 }
 
 function handleRecords(records) {
@@ -160,12 +166,9 @@ function handleRecords(records) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    var findResult = find(query);
+    var findResult = findWithoutHandling(query);
     const prevLen = phoneBook.size;
-    for (var element of findResult) {
-        phoneBook.delete(element);
-    }
-
+    findResult.forEach(record => phoneBook.delete(record));
 
     return prevLen - phoneBook.size;
 }
