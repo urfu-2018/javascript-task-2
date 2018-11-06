@@ -26,6 +26,10 @@ describe('phone-book', () => {
         assert.ok(phoneBook.update('5553330033', 'Валерий'));
     });
 
+    it('не должен обновлять записи только с указанным телефоном', () => {
+        assert.ok(!phoneBook.update('5551112233'));
+    });
+
     it('должен искать все записи по запросу "*"', () => {
         assert.deepStrictEqual(phoneBook.find('*'), [
             'Алексей, +7 (555) 111-00-11, alex@example.com',
