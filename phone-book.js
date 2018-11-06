@@ -75,14 +75,13 @@ function findAndRemove(query) {
     }
     Object.keys(phoneBook).map(
         function (objectKey) {
-            let k = objectKey;
-            let p = '+7 (' + k.slice(0, 3) + ') ';
-            p += k.slice(3, 6) + '-' + k.slice(6, 8) + '-' + k.slice(8);
-            let n = phoneBook[k][0];
-            let e = phoneBook[k][1];
-            let emailTrue = (e !== undefined && e !== '') ? ', ' + e : '';
-            let item = n + ', ' + p + emailTrue;
-            if (item.indexOf(query) !== -1 || query === '*') {
+            let p = objectKey.indexOf(query);
+            let n = phoneBook[objectKey][0].indexOf(query);
+            let e = -1;
+            if (phoneBook[objectKey][1]) {
+                e = phoneBook[objectKey][1].indexOf(query);
+            }
+            if (p !== -1 || n !== -1 || e !== -1 || query === '*') {
                 delete phoneBook[objectKey];
                 count++;
             }
