@@ -99,18 +99,18 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let listQuery = [];
     if (query === '' || query === undefined || typeof query !== 'string') {
 
-        return false;
+        return listQuery;
     }
-    let listQuery = [];
     Object.keys(phoneBook).map(
         function (objectKey) {
             let k = objectKey;
             let p = '+7 (' + k.slice(0, 3) + ') ';
             p += k.slice(3, 6) + '-' + k.slice(6, 8) + '-' + k.slice(8);
-            let n = phoneBook[objectKey][0];
-            let e = phoneBook[objectKey][1];
+            let n = phoneBook[k][0];
+            let e = phoneBook[k][1];
             let emailTrue = (e !== undefined && e !== '') ? ', ' + e : '';
             let item = n + ', ' + p + emailTrue;
             if (item.indexOf(query) !== -1 || query === '*') {
