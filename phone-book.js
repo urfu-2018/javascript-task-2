@@ -88,7 +88,7 @@ function update(phone, name, email) {
 function findAndRemove(query) {
     const found = findPhones(query);
     for (let i = 0; i < found.length; ++i) {
-        let phone = found[i];
+        let phone = found[i].phone;
         delete phoneBook[phone];
     }
 
