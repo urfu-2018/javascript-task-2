@@ -40,9 +40,9 @@ function formatPhone(record) {
 
 function contains(phone, name, email, query) {
     return query && (query === '*' ||
-        phone.indexOf(query) !== -1 ||
-        name.indexOf(query) !== -1 ||
-        email && email.indexOf(query) !== -1);
+        phone.includes(query) ||
+        name.includes(query) ||
+        email && email.includes(query));
 }
 
 /**
