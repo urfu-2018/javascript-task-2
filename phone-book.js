@@ -17,16 +17,17 @@ function phoneInPhoneBook(phone) {
     });
 }
 
-function outputNameAndPhone(name, phone) {
-    return name + ', +7 (' + phone.substr(0, 3) + ') ' + phone.substr(3, 3) +
-    '-' + phone.substr(6, 2) + '-' + phone.substr(8, 2);
-}
-
-function queryMatches(query, name, phone, email) {
-    if (email === undefined) {
-        email = '';
+function output(name, phone, email) {
+    let info = `${name}, +7 (${phone.substr(0, 3)}) ${phone.substr(3, 3)}` +
+    `-${phone.substr(6, 2)}-${phone.substr(8, 2)}`;
+    if (email) {
+        info += `, ${email}`;
     }
 
+    return info;
+}
+
+function queryMatches(query, name, phone, email = '') {
     return name.includes(query) || phone.includes(query) ||
     email.includes(query);
 }
@@ -115,27 +116,28 @@ function find(query) {
     let requiredPhoneIndexes = phoneBook;
     if (!query) {
         return [];
-    } else if (query !== '*') {
-        requiredPhoneIndexes = phoneBook.filter(contact => {
-            if (!contact.email) {
-
-                return queryMatches(query, contact.name, contact.phone);
-            }
-
-            return queryMatches(query, contact.name, contact.phone,
-                contact.email);
-        });
     }
-    requiredPhoneIndexes = requiredPhoneIndexes.map(contact => {
+    if (query === '*') {
+        query = '';
+    }
+    requiredPhoneIndexes = phoneBook.filter(contact => {
         if (!contact.email) {
-            return outputNameAndPhone(contact.name, contact.phone);
+
+            return queryMatches(query, contact.name, contact.phone);
         }
 
-        return outputNameAndPhone(contact.name, contact.phone) + ', ' +
-        contact.email;
+        return queryMatches(query, contact.name, contact.phone,
+            contact.email);
+    });
+    const requiredContacts = requiredPhoneIndexes.map(contact => {
+        if (!contact.email) {
+            return output(contact.name, contact.phone);
+        }
+
+        return output(contact.name, contact.phone, contact.email);
     });
 
-    return requiredPhoneIndexes.sort();
+    return requiredContacts.sort();
 }
 
 /**
