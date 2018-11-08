@@ -70,13 +70,13 @@ function findAndRemove(query) {
     if (query === '') {
         return deletedCount;
     }
-    const result = phoneBook
+    phoneBook
         .map((bookRecord, index) => ({ bookRecord, index }))
-        .filter(indexedRecord => filterBook(indexedRecord.bookRecord, query));
-    for (let i = 0; i < result.length; i++) {
-        phoneBook.splice(result[i].index - i, 1);
-        deletedCount++;
-    }
+        .filter(indexedRecord => filterBook(indexedRecord.bookRecord, query))
+        .forEach((bookRecord, i) => {
+            phoneBook.splice(bookRecord.index - i, 1);
+            deletedCount++;
+        });
 
     return deletedCount;
 }
