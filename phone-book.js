@@ -19,13 +19,10 @@ let phoneBook = [];
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!name || name.trim() === '' || !/^[0-9]{10}$/.test(phone)) {
+    if (!name ||
+        !/^[0-9]{10}$/.test(phone) ||
+        phoneBook.some(bookRecord => bookRecord.phone === phone)) {
         return false;
-    }
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return false;
-        }
     }
     phoneBook.push({ phone: phone, name: name, email: email });
 
@@ -43,21 +40,24 @@ function update(phone, name, email) {
     if (!name || name.trim() === '') {
         return false;
     }
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            phoneBook[i] = { phone: phone, name: name, email: email };
 
-            return true;
+    let isFound = false;
+    phoneBook = phoneBook.map(bookRecord => {
+        if (bookRecord.phone === phone) {
+            bookRecord = { phone, name, email };
+            isFound = true;
         }
-    }
 
-    return false;
+        return bookRecord;
+    });
+
+    return isFound;
 }
 
-function filterBook(x, query) {
-    return query !== '' && (query === '*' || x.phone.includes(query) ||
-        x.name.includes(query) ||
-        x.email !== undefined && x.email.includes(query));
+function filterBook(bookRecord, query) {
+    return query === '*' || bookRecord.phone.includes(query) ||
+        bookRecord.name.includes(query) ||
+        bookRecord.email !== undefined && bookRecord.email.includes(query);
 }
 
 /**
@@ -66,15 +66,19 @@ function filterBook(x, query) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let startCount = phoneBook.length;
-    const result = phoneBook.map((x, i) => {
-        return { line: x, index: i };
-    }).filter(x=>filterBook(x.line, query));
+    let deletedCount = 0;
+    if (query === '') {
+        return deletedCount;
+    }
+    const result = phoneBook
+        .map((bookRecord, index) => ({ bookRecord, index }))
+        .filter(indexedRecord => filterBook(indexedRecord.bookRecord, query));
     for (let i = 0; i < result.length; i++) {
         phoneBook.splice(result[i].index - i, 1);
+        deletedCount++;
     }
 
-    return startCount - phoneBook.length;
+    return deletedCount;
 }
 
 /**
@@ -83,19 +87,24 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    const result = phoneBook.filter(x=>filterBook(x, query))
-        .map(x => {
-            const phone = `+7 (${x.phone.slice(0, 3)}) ${x.phone.slice(3, 6)}-` +
-                `${x.phone.slice(6, 8)}-${x.phone.slice(8, 10)}`;
+    if (query === '') {
+        return [];
+    }
 
-            return { name: x.name, phone: phone, email: x.email };
+    return phoneBook.filter(bookRecord => filterBook(bookRecord, query))
+        .map(bookRecord => {
+            let firstPart = bookRecord.phone.slice(0, 3);
+            let secondPart = bookRecord.phone.slice(3, 6);
+            let thirdPart = bookRecord.phone.slice(6, 8);
+            let forthPart = bookRecord.phone.slice(8, 10);
+            const phone = `+7 (${firstPart}) ${secondPart}-${thirdPart}-${forthPart}`;
+
+            return { name: bookRecord.name, phone: phone, email: bookRecord.email };
         })
-        .sort((x, y) => x.name.localeCompare(y.name))
-        .map(x => Object.values(x).filter(y => y !== undefined)
-            .join(', ')
-        );
-
-    return result;
+        .sort((firstRecord, secondRecord) => firstRecord.name.localeCompare(secondRecord.name))
+        .map(bookRecord => Object.values(bookRecord)
+            .filter(recordValue => recordValue !== undefined)
+            .join(', '));
 }
 
 /**
@@ -106,18 +115,12 @@ function find(query) {
  */
 function importFromCsv(csv) {
     let count = 0;
-    const lines = csv.split('\n');
-    for (let i = 0; i < lines.length; i++) {
-        const strings = lines[i].split(';');
-        let email = strings[2];
-        let phone = strings[1];
-        let name = strings[0];
-        if (!add(phone, name, email) &&
-            !update(phone, name, email)) {
-            continue;
+    csv.split('\n').forEach(line => {
+        let [name, phone, email] = line.split(';');
+        if (add(phone, name, email) || update(phone, name, email)) {
+            count++;
         }
-        count++;
-    }
+    });
 
     return count;
 }

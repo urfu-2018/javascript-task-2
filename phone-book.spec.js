@@ -35,6 +35,10 @@ describe('phone-book', () => {
         ]);
     });
 
+    it('должен искать все записи по запросу ""', () => {
+        assert.deepStrictEqual(phoneBook.find(''), []);
+    });
+
     it('должен искать все записи по запросу "555"', () => {
         assert.deepStrictEqual(phoneBook.find('555'), [
             'Алексей, +7 (555) 111-00-11, alex@example.com',
@@ -48,17 +52,31 @@ describe('phone-book', () => {
         assert.strictEqual(phoneBook.findAndRemove('@'), 3);
     });
 
-    if (phoneBook.isStar) {
-        it('должен экспортировать из cvs', () => {
-            const csv = [
-                'Борис;5552220022;boris@example.com',
-                'Григорий;5554440044;grisha@example.com',
-                'Алексей;5551110011;alex@example.com',
-                'Валерий;5553330033;valera@example.com',
-                'Неизвестный;3330033;unknown@example.com'
-            ].join('\n');
+    it('должен удалять элементы из телефонной книги', () => {
+        assert.strictEqual(phoneBook.findAndRemove('boris'), 0);
+    });
 
-            assert.strictEqual(phoneBook.importFromCsv(csv), 4);
-        });
-    }
+    it('должен экспортировать из cvs', () => {
+        const csv = [
+            'Борис;5552220022;boris@example.com',
+            'Григорий;5554440044;grisha@example.com',
+            'Алексей;5551110011;alex@example.com',
+            'Валерий;5553330033;valera@example.com',
+            'Неизвестный;3330033;unknown@example.com'
+        ].join('\n');
+
+        assert.strictEqual(phoneBook.importFromCsv(csv), 4);
+    });
+
+    it('должен экспортировать из cvs', () => {
+        const csv = [
+            'Борис;5552220022',
+            'Григорий;5554440044;grisha@example.com',
+            'Алексей;5551110011;alex@example.com',
+            'Валерий;5553330033;valera@example.com',
+            'Неизвестный;3330033;unknown@example.com'
+        ].join('\n');
+
+        assert.strictEqual(phoneBook.importFromCsv(csv), 4);
+    });
 });
