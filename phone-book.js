@@ -71,7 +71,6 @@ function findAndRemove(query) {
     let forRemove = find(query);
     for (let i = 0; i < forRemove.length; i++) {
         delete phoneBook[forRemove[i].split(', ')[1]];
-        phoneBook[forRemove[i].split(', ')[1]] = undefined;
     }
 
     return forRemove.length;
