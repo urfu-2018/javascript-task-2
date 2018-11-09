@@ -21,7 +21,7 @@ function checkValid(phone, name, email) {
 }
 
 function checkPhone(query) {
-    let phone = '';
+    let phone = query;
     if (query.length === 10) {
         phone = '+7 (' + query.slice(0, 3) + ') ';
         phone += query.slice(3, 6) + '-' + query.slice(6, 8) + '-' + query.slice(8);
