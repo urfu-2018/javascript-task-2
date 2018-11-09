@@ -71,6 +71,7 @@ function findAndRemove(query) {
     let forRemove = find(query);
     for (let i = 0; i < forRemove.length; i++) {
         delete phoneBook[forRemove[i].split(', ')[1]];
+        phoneBook[forRemove[i].split(', ')[1]] = undefined;
     }
 
     return forRemove.length;
@@ -78,7 +79,8 @@ function findAndRemove(query) {
 
 function extraChecking(query, data, key) {
     return typeof(query) === 'undefined' || key.indexOf(query) >= 0 ||
-        data[key][0].indexOf(query) >= 0 || data[key][1].indexOf(query) >= 0;
+        data[key][0].indexOf(query) >= 0 ||
+        typeof(data[key][1]) !== 'undefined' && data[key][1].indexOf(query) >= 0;
 }
 
 function getData(data, query) {
