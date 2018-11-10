@@ -75,14 +75,12 @@ function findAndRemove(query) {
 
         return count;
     }
+    let valueIndex = 0;
     let arrayIndex = indexRepeatEl(query);
-    let ind = 0;
-    let arrayResult = [];
     for (let i = 0; i < arrayIndex.length; i++) {
-        arrayResult = arrayResult.concat(phoneBook.slice(ind, arrayIndex[i]));
-        ind = arrayIndex[i] + 1;
+        phoneBook.splice(arrayIndex[i] - valueIndex, 1);
+        valueIndex++;
     }
-    phoneBook = arrayResult;
 
     return arrayIndex.length;
 }
