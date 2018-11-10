@@ -76,8 +76,11 @@ function findAndRemove(query) {
         return count;
     }
     let arrayIndex = indexRepeatEl(query);
+    let ind = 0;
+    let arrayResult = [];
     for (let i = 0; i < arrayIndex.length; i++) {
-        phoneBook.splice(arrayIndex[i], 1);
+        arrayResult = arrayResult.concat(phoneBook.slice(ind, arrayIndex[i]));
+        ind = arrayIndex[i] + 1;
     }
     count = arrayIndex.length;
 
@@ -108,8 +111,9 @@ function find(query) {
     }
     let resultArray = [];
     phoneBook.sort(sortByName);
-    for (let i = 0; i < phoneBook.length; i++) {
-        let x = findElementAndFormat(i, query);
+    let arrayIndex = indexRepeatEl(query);
+    for (let i = 0; i < arrayIndex.length; i++) {
+        let x = formatElement(arrayIndex[i]);
         if (x !== '') {
             resultArray.push(x);
         }
@@ -128,15 +132,6 @@ function findElement(ph, nm, em = '', query) {
     }
 
     return false;
-}
-
-function findElementAndFormat(i, query) {
-    let element = findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query);
-    if ((element) || query === '*') {
-        return formatElement(i);
-    }
-
-    return '';
 }
 
 function formatElement(i) {
