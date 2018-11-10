@@ -73,22 +73,21 @@ function find(query) {
         return [];
     }
     let array = [];
-    for (let [key, value] of phoneBook) {
-        if (receive(key, value, query)) {
-            array.push({ phone: key, name: value.name, email: value.email });
+    for (let [phone, value] of phoneBook) {
+        if (receive(phone, value, query)) {
+            array.push({ phone, name: value.name, email: value.email });
         }
     }
 
     return array.sort((a, b) => a.name.localeCompare(b.name)).map(formatRecord);
 }
 
-function receive(key, value, query) {
+function receive(phone, { name, email = '' }, query) {
     if (query === '*') {
         return true;
     }
-    let email = value.email || '';
 
-    return key.includes(query) || value.name.includes(query) || email.includes(query);
+    return phone.includes(query) || name.includes(query) || email.includes(query);
 }
 
 function formatRecord({ name, email, phone }) {
