@@ -92,12 +92,9 @@ function receive(key, value, query) {
 }
 
 function formatRecord({ name, email, phone }) {
-    let result = `${name}, ${format(phone)}`;
-    if (typeof email !== 'undefined') {
-        result += `, ${email}`;
-    }
 
-    return result;
+
+    return `${name}, ${style(phone)}${email ? ', ' + email : ''}`;
 }
 
 /**
@@ -126,8 +123,8 @@ function checkPhone(phone) {
 function checkName(name) {
     return typeof name === 'string' && name !== '';
 }
-function format(phone) {
-    var part = `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}`;
+function style(phone) {
+    let part = `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}`;
 
     return part + `-${phone.slice(6, 8)}-${phone.slice(8)}`;
 }
