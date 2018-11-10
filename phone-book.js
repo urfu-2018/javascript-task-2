@@ -19,12 +19,12 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    const CorrectInput = !phoneBook.has(phone) && checkPhone(phone) && checkName(name);
-    if (CorrectInput) {
+    const correctInput = !phoneBook.has(phone) && checkPhone(phone) && checkName(name);
+    if (correctInput) {
         phoneBook.set(phone, { name: name, email: email });
     }
 
-    return CorrectInput;
+    return correctInput;
 }
 
 /**
@@ -35,12 +35,12 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    const CorrectInput = phoneBook.has(phone) && checkPhone(phone) && checkName(name);
-    if (CorrectInput) {
+    const correctInput = phoneBook.has(phone) && checkPhone(phone) && checkName(name);
+    if (correctInput) {
         phoneBook.set(phone, { name: name, email: email });
     }
 
-    return CorrectInput;
+    return correctInput;
 }
 
 /**
@@ -91,10 +91,10 @@ function gotIt(key, value, query) {
     return key.includes(query) || value.name.includes(query) || email.includes(query);
 }
 
-function formatRecord(record) {
-    let result = `${record.name}, ${format(record.phone)}`;
-    if (typeof record.email !== 'undefined') {
-        result += `, ${record.email}`;
+function formatRecord({ name, email, phone }) {
+    let result = `${name}, ${format(phone)}`;
+    if (typeof email !== 'undefined') {
+        result += `, ${email}`;
     }
 
     return result;
