@@ -21,7 +21,7 @@ let phoneBook = new Map();
 function add(phone, name, email) {
     const correctInput = !phoneBook.has(phone) && checkPhone(phone) && checkName(name);
     if (correctInput) {
-        phoneBook.set(phone, { name: name, email: email });
+        phoneBook.set(phone, { name, email });
     }
 
     return correctInput;
@@ -37,7 +37,7 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     const correctInput = phoneBook.has(phone) && checkPhone(phone) && checkName(name);
     if (correctInput) {
-        phoneBook.set(phone, { name: name, email: email });
+        phoneBook.set(phone, { name, email });
     }
 
     return correctInput;
@@ -54,7 +54,7 @@ function findAndRemove(query) {
     }
     let count = 0;
     for (let [key, value] of phoneBook) {
-        if (gotIt(key, value, query)) {
+        if (receive(key, value, query)) {
             count++;
             phoneBook.delete(key);
         }
@@ -74,7 +74,7 @@ function find(query) {
     }
     let array = [];
     for (let [key, value] of phoneBook) {
-        if (gotIt(key, value, query)) {
+        if (receive(key, value, query)) {
             array.push({ phone: key, name: value.name, email: value.email });
         }
     }
@@ -82,7 +82,7 @@ function find(query) {
     return array.sort((a, b) => a.name.localeCompare(b.name)).map(formatRecord);
 }
 
-function gotIt(key, value, query) {
+function receive(key, value, query) {
     if (query === '*') {
         return true;
     }
@@ -110,8 +110,9 @@ function importFromCsv(csv) {
     let count = 0;
     let records = csv.split('\n');
     for (let i = 0; i < records.length; i++) {
-        const record = records[i].split(';');
-        if (add(record[1], record[0], record[2]) || update(record[1], record[0], record[2])) {
+        const [phone, name, email] = records[i].split(';');
+        if (add([phone, name, email][1], [phone, name, email][0], [phone, name, email][2]) ||
+            update([phone, name, email][1], [phone, name, email][0], [phone, name, email][2])) {
             count++;
         }
     }
