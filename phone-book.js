@@ -82,9 +82,9 @@ function findAndRemove(query) {
         arrayResult = arrayResult.concat(phoneBook.slice(ind, arrayIndex[i]));
         ind = arrayIndex[i] + 1;
     }
-    count = arrayIndex.length;
+    phoneBook = arrayResult;
 
-    return count;
+    return arrayIndex.length;
 }
 
 function indexRepeatEl(query) {
