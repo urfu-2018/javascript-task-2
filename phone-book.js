@@ -108,9 +108,8 @@ function find(query) {
     }
     let resultArray = [];
     phoneBook.sort(sortByName);
-    let arrayIndex = indexRepeatEl(query);
-    for (let i = 0; i < arrayIndex.length; i++) {
-        let x = formatElement(arrayIndex[i]);
+    for (let i = 0; i < phoneBook.length; i++) {
+        let x = findElementAndFormat(i, query);
         if (x !== '') {
             resultArray.push(x);
         }
@@ -129,6 +128,15 @@ function findElement(ph, nm, em = '', query) {
     }
 
     return false;
+}
+
+function findElementAndFormat(i, query) {
+    let element = findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query);
+    if ((element) || query === '*') {
+        return formatElement(i);
+    }
+
+    return '';
 }
 
 function formatElement(i) {
