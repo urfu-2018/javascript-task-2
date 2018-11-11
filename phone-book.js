@@ -15,6 +15,18 @@ function phoneIsCorrect(phone) {
     return /^[0-9]{10}$/.test(phone);
 }
 
+function checkAndCorrect(phone, name, email, include) {
+    if (!correctNameAndPhone(name, phone)) {
+        return false;
+    }
+    if (include) {
+        phoneBook[phone] = { name, email };
+
+        return true;
+    }
+
+    return false;
+}
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -22,14 +34,8 @@ function phoneIsCorrect(phone) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name = '', email = '') {
-    if (phoneIsCorrect(phone) && !phoneBook[phone] && name.length !== 0) {
-        phoneBook[phone] = { 'name': name, 'email': email };
-
-        return true;
-    }
-
-    return false;
+function add(phone, name, email) {
+    return checkAndCorrect(phone, name, email, !phoneBook[phone]);
 }
 
 /**
@@ -39,14 +45,8 @@ function add(phone, name = '', email = '') {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name = '', email = '') {
-    if (phoneIsCorrect(phone) && phoneBook[phone] !== undefined && name.length !== 0) {
-        phoneBook[phone] = { 'name': name, 'email': email };
-
-        return true;
-    }
-
-    return false;
+function update(phone, name, email) {
+    return checkAndCorrect(phone, name, email, phoneBook[phone]);
 }
 
 function reformatPhone(formattedPhone) {
@@ -60,30 +60,35 @@ function reformatPhone(formattedPhone) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const stringsToRemove = find(query);
-    for (let i = 0; i < stringsToRemove.length; i++) {
-        const firstChar = stringsToRemove[i].indexOf('+');
-        delete phoneBook[reformatPhone(stringsToRemove[i].slice(firstChar, firstChar + 18))];
-    }
-
-    return stringsToRemove.length;
+    return getProperties(query).map(phone => delete phoneBook[phone]).length;
 }
 
-function formatPhone(phone) {
-    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 8)}-${phone.slice(-2)}`;
+function getProperties(query) {
+    if (!query) {
+        return [];
+    }
+
+    if (query === '*') {
+        return Object.keys(phoneBook);
+    }
+
+    return Object.keys(phoneBook)
+        .filter(phone => propertiesIncludes(phone, query));
+}
+
+function find(query) {
+    return getProperties(query)
+        .sort(sortByName)
+        .map(contactView);
 }
 
 function checkSpecialSymbols(query) {
     if (query === '') {
         return '/^[0-9a-z_]+$/i;';
-    } else if (query === '*') {
-        return '';
-    }
-
+    } 
     return query;
 }
 
-RegExp.quote = str => str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&');
 
 /**
  * Поиск записей по запросу в телефонной книге
@@ -91,22 +96,18 @@ RegExp.quote = str => str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&');
  * @returns {String[]}
  */
 function find(query) {
-    const keys = Object.keys(phoneBook);
-    let result = [];
-    query = checkSpecialSymbols(query);
-    let re = new RegExp(RegExp.quote(query));
-    for (let i = 0; i < keys.length; i++) {
-        if (re.test(
-            keys[i]) || re.test(phoneBook[keys[i]].name) || re.test(phoneBook[keys[i]].email
-        )) {
-            result.push(
-                `${phoneBook[keys[i]].name}, ${formatPhone(keys[i])}` +
-                `${phoneBook[keys[i]].email ? ', ' + phoneBook[keys[i]].email : ''}`
-            );
-        }
-    }
+    return getProperties(query)
+        .sort(sortByName)
+        .map(contactView);
+}
 
-    return result.sort();
+function contactView(phone) {
+    return [phoneBook[phone].name, phoneView(phone),
+        phoneBook[phone].email].filter(Boolean).join(', ');
+}
+
+function sortByName(x, y) {
+    return phoneBook[x].name > phoneBook[y].name;
 }
 
 /**
@@ -119,16 +120,21 @@ function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
-    const records = csv.split('\n');
-    let validRecords = 0;
-    for (let i = 0; i < records.length; i++) {
-        const [name, phone, email] = records[i].split(';');
-        if (add(phone, name, email) || update(phone, name, email)) {
-            validRecords ++;
-        }
+    if (!csv || typeof csv !== 'string') {
+        return 0;
     }
 
-    return validRecords;
+    return csv.split('\n')
+        .map(contact => {
+            const [name, phone, email] = contact.split(';');
+            if (phoneBook[phone]) {
+                return update(phone, name, email);
+            }
+
+            return add(phone, name, email);
+        })
+        .filter(Boolean)
+        .length;
 }
 
 module.exports = {
