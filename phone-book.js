@@ -69,6 +69,9 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (email !== undefined) {
+        email = String(email);
+    }
     if (!isAllArgumentsCorrect(phone, name) && !recordExists(phone)) {
         return false;
     }
