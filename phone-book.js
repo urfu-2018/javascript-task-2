@@ -127,7 +127,6 @@ function find(query) {
  * @param {String} csv
  * @returns {Number} – количество добавленных и обновленных записей
  */
- 
 function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
