@@ -73,9 +73,9 @@ function find(query) {
         return [];
     }
     let array = [];
-    for (let [phone, value] of phoneBook) {
-        if (receive(phone, value, query)) {
-            array.push({ phone, name: value.name, email: value.email });
+    for (let [phone, { name, email = '' }] of phoneBook) {
+        if (receive(phone, { name, email }, query)) {
+            array.push({ phone, name, email });
         }
     }
 
