@@ -79,7 +79,8 @@ function find(query) {
         }
     }
 
-    return array.sort((a, b) => a.name.localeCompare(b.name)).map(formatRecord);
+    return array.sort((a, b) => a.name.localeCompare(b.name))
+        .map(formatRecord);
 }
 
 function receive(phone, { name, email = '' }, query) {
@@ -124,8 +125,9 @@ function checkName(name) {
 }
 function style(phone) {
     let part = `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}`;
+    let part2 = `-${phone.slice(6, 8)}-${phone.slice(8)}`;
 
-    return part + `-${phone.slice(6, 8)}-${phone.slice(8)}`;
+    return part + part2;
 }
 module.exports = {
     add,
