@@ -4,11 +4,13 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
+
 const isStar = true;
 
 /**
  * Телефонная книга
  */
+
 let phoneBook = {};
 
 function correctPhone(phone) {
@@ -43,6 +45,7 @@ function checkAndCorrect(phone, name, email, include) {
  * @param {String?} email
  * @returns {Boolean}
  */
+
 function add(phone, name, email) {
     return checkAndCorrect(phone, name, email, !phoneBook[phone]);
 }
@@ -54,6 +57,7 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
+
 function update(phone, name, email) {
     return checkAndCorrect(phone, name, email, phoneBook[phone]);
 }
@@ -63,14 +67,17 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
+
 function findAndRemove(query) {
     return getProperties(query).map(phone => delete phoneBook[phone]).length;
 }
+
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
  * @returns {String[]}
  */
+
 function phoneView(phone) {
     let firstPart = phone.slice(0, 3);
     let secondPart = phone.slice(3, 6);
@@ -80,7 +87,7 @@ function phoneView(phone) {
     return `+7 (${firstPart}) ${secondPart}-${thirdPart}-${fourthPart}`;
 }
 
- function contactView(phone) {
+function contactView(phone) {
     return [phoneBook[phone].name, phoneView(phone),
         phoneBook[phone].email].filter(Boolean).join(', ');
 }
@@ -113,12 +120,14 @@ function find(query) {
         .sort(sortByName)
         .map(contactView);
 }
+
 /**
  * Импорт записей из csv-формата
  * @star
  * @param {String} csv
  * @returns {Number} – количество добавленных и обновленных записей
  */
+ 
 function importFromCsv(csv) {
     // Парсим csv
     // Добавляем в телефонную книгу
