@@ -21,8 +21,8 @@ let phoneBook = {};
 function isValidParams(phone, name) {
     var tel = /(^[0-9]{10}$)/;
 
-    return phone && (tel.test(phone)) && (name !== '') &&
-        name && (typeof name === 'string');
+    return phone && tel.test(phone) &&
+        name && typeof name === 'string';
 }
 
 /**
@@ -34,7 +34,7 @@ function isValidParams(phone, name) {
  */
 function add(phone, name, email) {
     if (!(phone in phoneBook) && isValidParams(phone, name, email)) {
-        if (!email || (email === '')) {
+        if (!email || email === '') {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -56,7 +56,7 @@ function add(phone, name, email) {
  */
 function update(phone, name, email) {
     if (phoneBook[phone] && isValidParams(phone, name, email)) {
-        if (!email || (email === '')) {
+        if (!email || email === '') {
             phoneBook[phone] = [phone, name];
         } else {
             phoneBook[phone] = [phone, name, email];
@@ -79,8 +79,8 @@ function findAndRemove(query) {
         return 0;
     }
     let res;
-    var count = 0;
-    for (var phone of Object.keys(phoneBook)) {
+    let count = 0;
+    for (const phone of Object.keys(phoneBook)) {
         res = matchSearch(phoneBook[phone], query);
         if (res) {
             delete phoneBook[phone];
@@ -112,7 +112,7 @@ function find(query) {
         return [];
     }
     const result = [];
-    var res;
+    let res;
     for (var phone of Object.keys(phoneBook)) {
         if (!phoneBook[phone]) {
             return [];
@@ -133,7 +133,7 @@ function newNumber(phone) {
 }
 
 function view(result) {
-    var recordSought = [];
+    const recordSought = [];
     for (let info of result) {
         if (!info) {
             return [];
@@ -162,7 +162,7 @@ function importFromCsv(csv) {
         return 0;
     }
     const newCsv = csv.split('\n');
-    var count = 0;
+    let count = 0;
     for (let line of newCsv) {
         let contact = line.split(';');
         var phone = contact[1];
