@@ -11,8 +11,16 @@ const isStar = true;
  */
 let phoneBook = {};
 
-function phoneIsCorrect(phone) {
-    return /^[0-9]{10}$/.test(phone);
+function correctPhone(phone) {
+    return typeof phone === 'string' && /^\d{10}$/.test(phone);
+}
+
+function correctName(name) {
+    return typeof name === 'string' && name.length > 0;
+}
+
+function correctNameAndPhone(name, phone) {
+    return correctPhone(phone) && correctName(name);
 }
 
 function checkAndCorrect(phone, name, email, include) {
@@ -27,6 +35,7 @@ function checkAndCorrect(phone, name, email, include) {
 
     return false;
 }
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -49,11 +58,6 @@ function update(phone, name, email) {
     return checkAndCorrect(phone, name, email, phoneBook[phone]);
 }
 
-function reformatPhone(formattedPhone) {
-    return `${formattedPhone.slice(4, 7)}${formattedPhone.slice(9, 12)}` +
-        `${formattedPhone.slice(13, 15)}${formattedPhone.slice(16, 18)}`;
-}
-
 /**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
@@ -61,6 +65,34 @@ function reformatPhone(formattedPhone) {
  */
 function findAndRemove(query) {
     return getProperties(query).map(phone => delete phoneBook[phone]).length;
+}
+/**
+ * Поиск записей по запросу в телефонной книге
+ * @param {String} query
+ * @returns {String[]}
+ */
+function phoneView(phone) {
+    let firstPart = phone.slice(0, 3);
+    let secondPart = phone.slice(3, 6);
+    let thirdPart = phone.slice(6, 8);
+    let fourthPart = phone.slice(8, 10);
+
+    return `+7 (${firstPart}) ${secondPart}-${thirdPart}-${fourthPart}`;
+}
+
+ function contactView(phone) {
+    return [phoneBook[phone].name, phoneView(phone),
+        phoneBook[phone].email].filter(Boolean).join(', ');
+}
+
+function sortByName(x, y) {
+    return phoneBook[x].name > phoneBook[y].name;
+}
+
+function propertiesIncludes(phone, query) {
+    return phone.includes(query) ||
+        phoneBook[phone].name.includes(query) ||
+            (phoneBook[phone].email && phoneBook[phone].email.includes(query));
 }
 
 function getProperties(query) {
@@ -81,35 +113,6 @@ function find(query) {
         .sort(sortByName)
         .map(contactView);
 }
-
-function checkSpecialSymbols(query) {
-    if (query === '') {
-        return '/^[0-9a-z_]+$/i;';
-    } 
-    return query;
-}
-
-
-/**
- * Поиск записей по запросу в телефонной книге
- * @param {String} query
- * @returns {String[]}
- */
-function find(query) {
-    return getProperties(query)
-        .sort(sortByName)
-        .map(contactView);
-}
-
-function contactView(phone) {
-    return [phoneBook[phone].name, phoneView(phone),
-        phoneBook[phone].email].filter(Boolean).join(', ');
-}
-
-function sortByName(x, y) {
-    return phoneBook[x].name > phoneBook[y].name;
-}
-
 /**
  * Импорт записей из csv-формата
  * @star
