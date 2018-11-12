@@ -20,16 +20,6 @@ function checkValid(phone, name, email) {
     return phoneValid && nameValid && emailValid;
 }
 
-function checkPhone(query) {
-    let phone = query;
-    if (query.length === 10) {
-        phone = '+7 (' + query.slice(0, 3) + ') ';
-        phone += query.slice(3, 6) + '-' + query.slice(6, 8) + '-' + query.slice(8);
-    }
-
-    return phone;
-}
-
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -123,8 +113,7 @@ function find(query) {
             let e = phoneBook[k][1];
             let emailTrue = (e !== undefined && e !== '') ? ', ' + e : '';
             let item = n + ', ' + p + emailTrue;
-            let phone = checkPhone(query);
-            if (item.indexOf(query) !== -1 || query === '*' || item.indexOf(phone) !== -1) {
+            if (item.indexOf(query) !== -1 || k.indexOf(query) !== -1 || query === '*') {
                 listQuery.push(item);
             }
 
