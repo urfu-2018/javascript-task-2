@@ -76,7 +76,7 @@ function findAndRemove(query) {
         return count;
     }
     let valueIndex = 0;
-    let arrayIndex = indexRepeatEl(query);
+    let arrayIndex = findIndexesByQuery(query);
     for (let i = 0; i < arrayIndex.length; i++) {
         phoneBook.splice(arrayIndex[i] - valueIndex, 1);
         valueIndex++;
@@ -85,7 +85,7 @@ function findAndRemove(query) {
     return arrayIndex.length;
 }
 
-function indexRepeatEl(query) {
+function findIndexesByQuery(query) {
     let arrayIndex = [];
     for (let i = 0; i < phoneBook.length; i++) {
         let element = findElement(phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email, query);
@@ -109,12 +109,10 @@ function find(query) {
     }
     let resultArray = [];
     phoneBook.sort(sortByName);
-    let arrayIndex = indexRepeatEl(query);
+    let arrayIndex = findIndexesByQuery(query);
     for (let i = 0; i < arrayIndex.length; i++) {
         let x = formatElement(arrayIndex[i]);
-        if (x !== '') {
-            resultArray.push(x);
-        }
+        resultArray.push(x);
     }
 
     return resultArray;
