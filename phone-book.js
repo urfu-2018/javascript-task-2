@@ -100,7 +100,7 @@ function findAndRemove(query) {
  */
 function find(query) {
     let listQuery = [];
-    if (query === '' || query === undefined || typeof query !== 'string') {
+    if (!query || query === '' || query === undefined || typeof query !== 'string') {
 
         return listQuery;
     }
