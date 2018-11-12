@@ -51,7 +51,7 @@ function add(phone, name, email) {
     if (!isCorrectRecord(phone, name, email)) {
         return false;
     }
-    const phoneRecord = { phone: phone, name: name, email: email };
+    const phoneRecord = { phone, name, email };
 
     if (hasRecord(phoneRecord)) {
         return false;
@@ -72,7 +72,7 @@ function update(phone, name, email) {
     if (!isCorrectRecord(phone, name, email)) {
         return false;
     }
-    const newPhoneRecord = { phone: phone, name: name, email: email };
+    const newPhoneRecord = { phone, name, email };
 
     if (!hasRecord(newPhoneRecord)) {
         return false;
@@ -98,7 +98,7 @@ function destructPhone(phone) {
  */
 function findAndRemove(query) {
     if (!isCorrectQuery(query)) {
-        return [];
+        return 0;
     }
     const foundRecords = find(query);
     for (let i = 0; i < foundRecords.length; i++) {
