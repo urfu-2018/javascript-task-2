@@ -93,6 +93,23 @@ function findAndRemove(query) {
     return count;
 }
 
+function findQuery(key, name, email, query) {
+    let checkK = key.indexOf(query);
+    let checkN = name.indexOf(query);
+    let checkE = email;
+    if (email) {
+        checkE = email.indexOf(query);
+    } else {
+        checkE = -1;
+    }
+    if (checkK !== -1 || checkN !== -1 || checkE !== -1 || query === '*') {
+
+        return true;
+    }
+
+    return false;
+}
+
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
@@ -107,13 +124,13 @@ function find(query) {
     Object.keys(phoneBook).map(
         function (objectKey) {
             let k = objectKey;
-            let p = '+7 (' + k.slice(0, 3) + ') ';
-            p += k.slice(3, 6) + '-' + k.slice(6, 8) + '-' + k.slice(8);
             let n = phoneBook[k][0];
             let e = phoneBook[k][1];
-            let emailTrue = (e !== undefined && e !== '') ? ', ' + e : '';
-            let item = n + ', ' + p + emailTrue;
-            if (item.indexOf(query) !== -1 || k.indexOf(query) !== -1 || query === '*') {
+            if (findQuery(k, n, e, query)) {
+                let p = '+7 (' + k.slice(0, 3) + ') ';
+                p += k.slice(3, 6) + '-' + k.slice(6, 8) + '-' + k.slice(8);
+                let emailTrue = (e !== undefined && e !== '') ? ', ' + e : '';
+                let item = n + ', ' + p + emailTrue;
                 listQuery.push(item);
             }
 
