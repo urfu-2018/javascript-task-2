@@ -11,6 +11,7 @@ const isStar = true;
  */
 let phoneBook = new Map();
 
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -56,7 +57,8 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const oldPhoneBookLength = Array.from(phoneBook.keys()).length;
+    let phoneArray = Array.from(phoneBook.keys());
+    const oldPhoneBookLength = phoneArray.length;
 
     if (!query) {
         return 0;
@@ -68,14 +70,11 @@ function findAndRemove(query) {
         return oldPhoneBookLength;
     }
 
-    let phoneArray = Array.from(phoneBook.keys()).filter(phone => {
+    phoneArray = phoneArray.filter(phone => {
         const email = phoneBook.get(phone).email;
         const hasPhoneQuery = phone.includes(query);
         const hasNameQuery = phoneBook.get(phone).name.includes(query);
-        if (!email) {
-            return !(hasPhoneQuery || hasNameQuery);
-        }
-        const hasEmailQuery = phoneBook.get(phone).email.includes(query);
+        const hasEmailQuery = email && email.includes(query);
 
         const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
 
@@ -125,10 +124,7 @@ function find(query) {
         const email = phoneBook.get(phone).email;
         const hasPhoneQuery = phone.includes(query);
         const hasNameQuery = phoneBook.get(phone).name.includes(query);
-        if (!email) {
-            return hasPhoneQuery || hasNameQuery;
-        }
-        const hasEmailQuery = email.includes(query);
+        const hasEmailQuery = email && email.includes(query);
 
         return hasPhoneQuery || hasNameQuery || hasEmailQuery;
     });
