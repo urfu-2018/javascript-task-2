@@ -41,7 +41,6 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-
     if (phoneBook.get(phone)) {
         phoneBook.set(phone, { name, email });
 
@@ -65,7 +64,7 @@ function findAndRemove(query) {
     }
 
     if (query === '*') {
-        phoneBook.clear();
+        phoneBook = new Map();
 
         return oldPhoneBookLength;
     }
@@ -95,16 +94,16 @@ function findAndRemove(query) {
  */
 function find(query) {
     const formatLog = phone => {
-        const phoneFormatted = `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}-` +
-            `${phone.substring(6, 8)}-${phone.substring(8, 10)}`;
+        const phoneFormatted = phone
+            .replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
+        const name = phoneBook.get(phone).name;
+        const email = phoneBook.get(phone).email;
 
-        if (!phoneBook.get(phone).email) {
-            return [phoneBook.get(phone).name, phoneFormatted]
-                .join(', ');
+        if (!email) {
+            return [name, phoneFormatted].join(', ');
         }
 
-        return [phoneBook.get(phone).name, phoneFormatted, phoneBook.get(phone).email]
-            .join(', ');
+        return [name, phoneFormatted, email].join(', ');
     };
 
     if (!query) {
@@ -115,9 +114,10 @@ function find(query) {
 
     if (query === '*') {
         return phoneArray
-            .sort((phoneOne, phoneTwo) => (phoneBook.get(phoneOne).name
-                .localeCompare(phoneBook.get(phoneTwo).name)))
-            .map(formatLog);
+            .sort((phoneOne, phoneTwo) => (
+                phoneBook.get(phoneOne).name
+                    .localeCompare(phoneBook.get(phoneTwo).name))
+            ).map(formatLog);
     }
 
     let phoneBookQuerySet = phoneArray.filter(phone => {
@@ -142,16 +142,14 @@ function find(query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 function importFromCsv(csv) {
+    // Парсим csv
     if (typeof(csv) !== 'string' || !csv) {
         return 0;
     }
 
     const listOfPhoneLogs = csv.split('\n');
     const result = listOfPhoneLogs.filter(log => {
-        const logData = log.split(';');
-        const name = logData[0];
-        const phone = logData[1];
-        const email = logData[2];
+        const [name, phone, email] = log.split(';');
 
         return add(phone, name, email) || update(phone, name, email);
     });
