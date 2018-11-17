@@ -12,16 +12,16 @@ const isStar = true;
 let phoneBook = new Map();
 
 
-function findData(phone, data, query) {
-    const email = data.email;
-    const hasPhoneQuery = phone.includes(query);
-    const hasNameQuery = data.name.includes(query);
-    const hasEmailQuery = email && email.includes(query);
+// function findInLine(phone, data, query) {
+//     const email = data.email;
+//     const hasPhoneQuery = phone.includes(query);
+//     const hasNameQuery = data.name.includes(query);
+//     const hasEmailQuery = email && email.includes(query);
 
-    const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
+//     const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
 
-    return filterPredicate;
-}
+//     return filterPredicate;
+// }
 
 
 /**
@@ -68,8 +68,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    // let phoneArray = ;
-    const oldPhoneBookLength = Array.from(phoneBook.keys()).length;
+    const oldPhoneBookLength = phoneBook.size;
 
     if (!query) {
         return 0;
@@ -81,31 +80,20 @@ function findAndRemove(query) {
         return oldPhoneBookLength;
     }
 
-    let count = 0;
+    Array.from(phoneBook.keys()).forEach(phone => {
+        const email = phoneBook.get(phone).email;
+        const hasPhoneQuery = phone.includes(query);
+        const hasNameQuery = phoneBook.get(phone).name.includes(query);
+        const hasEmailQuery = email && email.includes(query);
 
-    for (var [phone, data] of phoneBook.entries()) {
-        if (query === '*' || findData(phone, data, query)) {
+        const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
+
+        if (filterPredicate) {
             phoneBook.delete(phone);
-            count++;
         }
-    }
+    });
 
-    // phoneArray = phoneArray.filter(phone => {
-    // const email = phoneBook.get(phone).email;
-    // const hasPhoneQuery = phone.includes(query);
-    // const hasNameQuery = phoneBook.get(phone).name.includes(query);
-    // const hasEmailQuery = email && email.includes(query);
-
-    // const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
-
-    // if (filterPredicate) {
-    //     phoneBook.delete(phone);
-    // }
-
-    // return !filterPredicate;
-    // });
-
-    return count;
+    return oldPhoneBookLength - phoneBook.size;
 }
 
 /**
@@ -121,11 +109,9 @@ function find(query) {
         const name = phoneBook.get(phone).name;
         const email = phoneBook.get(phone).email;
 
-        if (!email) {
-            return [name, phoneFormatted].join(', ');
-        }
-
-        return [name, phoneFormatted, email].join(', ');
+        return email
+            ? [name, phoneFormatted, email].join(', ')
+            : [name, phoneFormatted].join(', ');
     };
 
     if (!query) {
@@ -133,13 +119,10 @@ function find(query) {
     }
 
     if (query === '*') {
-        return phoneArray
-            .sort((phoneOne, phoneTwo) => (phoneBook.get(phoneOne).name
-                .localeCompare(phoneBook.get(phoneTwo).name))
-            ).map(formatLog);
+        return phoneArray.sort().map(formatLog);
     }
 
-    let phoneBookQuerySet = phoneArray.filter(phone => {
+    phoneArray = phoneArray.filter(phone => {
         const email = phoneBook.get(phone).email;
         const hasPhoneQuery = phone.includes(query);
         const hasNameQuery = phoneBook.get(phone).name.includes(query);
@@ -148,10 +131,7 @@ function find(query) {
         return hasPhoneQuery || hasNameQuery || hasEmailQuery;
     });
 
-    return phoneBookQuerySet
-        .sort((phoneOne, phoneTwo) => (phoneBook.get(phoneOne).name
-            .localeCompare(phoneBook.get(phoneTwo).name))
-        ).map(formatLog);
+    return phoneArray.sort().map(formatLog);
 }
 
 /**
