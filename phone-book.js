@@ -21,6 +21,17 @@ function findQuery(phone, data, query) {
     return hasPhoneQuery || hasNameQuery || hasEmailQuery || query === '*';
 }
 
+function formatLog(phone) {
+    const phoneFormatted = phone
+        .replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
+    const name = phoneBook.get(phone).name;
+    const email = phoneBook.get(phone).email;
+
+    return email
+        ? [name, phoneFormatted, email].join(', ')
+        : [name, phoneFormatted].join(', ');
+}
+
 
 /**
  * Добавление записи в телефонную книгу
@@ -31,7 +42,7 @@ function findQuery(phone, data, query) {
  */
 function add(phone, name, email) {
     const isPhoneValid = /^\d{10}$/.test(phone);
-    const isNameValid = name.length > 0;
+    const isNameValid = name && name.length > 0;
     const isNameInPhoneBook = phoneBook.get(phone);
 
     if (isPhoneValid && isNameValid && !isNameInPhoneBook) {
@@ -51,7 +62,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook.get(phone) && name.length > 0) {
+    if (phoneBook.get(phone)) {
         phoneBook.set(phone, { name, email });
 
         return true;
@@ -88,19 +99,9 @@ function findAndRemove(query) {
  */
 function find(query) {
     let phoneArray = [];
-    const formatLog = phone => {
-        const phoneFormatted = phone
-            .replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
-        const name = phoneBook.get(phone).name;
-        const email = phoneBook.get(phone).email;
-
-        return email
-            ? [name, phoneFormatted, email].join(', ')
-            : [name, phoneFormatted].join(', ');
-    };
 
     if (!query) {
-        return [];
+        return phoneArray;
     }
 
     for (let [phone, data] of phoneBook.entries()) {
@@ -110,8 +111,9 @@ function find(query) {
     }
 
     return phoneArray
-        .map(formatLog)
-        .sort();
+        .sort((phoneOne, phoneTwo) => (
+            phoneBook.get(phoneOne).name.localeCompare(phoneBook.get(phoneTwo).name))
+        ).map(formatLog);
 }
 
 /**
