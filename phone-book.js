@@ -62,7 +62,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook.has(phone) && name.length > 0) {
+    if (phoneBook.has(phone) && name.length > 0 && name) {
         phoneBook.set(phone, { name, email });
 
         return true;
