@@ -12,16 +12,14 @@ const isStar = true;
 let phoneBook = new Map();
 
 
-// function findInLine(phone, data, query) {
-//     const email = data.email;
-//     const hasPhoneQuery = phone.includes(query);
-//     const hasNameQuery = data.name.includes(query);
-//     const hasEmailQuery = email && email.includes(query);
+function findQuery(phone, data, query) {
+    const email = data.email;
+    const hasPhoneQuery = phone.includes(query);
+    const hasNameQuery = data.name.includes(query);
+    const hasEmailQuery = email && email.includes(query);
 
-//     const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
-
-//     return filterPredicate;
-// }
+    return hasPhoneQuery || hasNameQuery || hasEmailQuery || query === '*';
+}
 
 
 /**
@@ -80,18 +78,11 @@ function findAndRemove(query) {
         return oldPhoneBookLength;
     }
 
-    Array.from(phoneBook.keys()).forEach(phone => {
-        const email = phoneBook.get(phone).email;
-        const hasPhoneQuery = phone.includes(query);
-        const hasNameQuery = phoneBook.get(phone).name.includes(query);
-        const hasEmailQuery = email && email.includes(query);
-
-        const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
-
-        if (filterPredicate) {
+    for (let [phone, data] of phoneBook.entries()) {
+        if (findQuery(phone, data, query)) {
             phoneBook.delete(phone);
         }
-    });
+    }
 
     return oldPhoneBookLength - phoneBook.size;
 }
@@ -102,7 +93,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    let phoneArray = Array.from(phoneBook.keys());
+    let phoneArray = [];
     const formatLog = phone => {
         const phoneFormatted = phone
             .replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
@@ -119,19 +110,20 @@ function find(query) {
     }
 
     if (query === '*') {
-        return phoneArray.sort().map(formatLog);
+        return Array.from(phoneBook.keys())
+            .map(formatLog)
+            .sort();
     }
 
-    phoneArray = phoneArray.filter(phone => {
-        const email = phoneBook.get(phone).email;
-        const hasPhoneQuery = phone.includes(query);
-        const hasNameQuery = phoneBook.get(phone).name.includes(query);
-        const hasEmailQuery = email && email.includes(query);
+    for (let [phone, data] of phoneBook.entries()) {
+        if (findQuery(phone, data, query)) {
+            phoneArray.push(phone);
+        }
+    }
 
-        return hasPhoneQuery || hasNameQuery || hasEmailQuery;
-    });
-
-    return phoneArray.sort().map(formatLog);
+    return phoneArray
+        .map(formatLog)
+        .sort();
 }
 
 /**
