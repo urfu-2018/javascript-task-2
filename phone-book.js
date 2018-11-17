@@ -12,6 +12,18 @@ const isStar = true;
 let phoneBook = new Map();
 
 
+function findData(phone, data, query) {
+    const email = data.email;
+    const hasPhoneQuery = phone.includes(query);
+    const hasNameQuery = data.name.includes(query);
+    const hasEmailQuery = email && email.includes(query);
+
+    const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
+
+    return filterPredicate;
+}
+
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -56,35 +68,44 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let phoneArray = Array.from(phoneBook.keys());
-    const oldPhoneBookLength = phoneArray.length;
+    // let phoneArray = ;
+    const oldPhoneBookLength = Array.from(phoneBook.keys()).length;
 
     if (!query) {
         return 0;
     }
 
     if (query === '*') {
-        phoneBook = new Map();
+        phoneBook.clear();
 
         return oldPhoneBookLength;
     }
 
-    phoneArray = phoneArray.filter(phone => {
-        const email = phoneBook.get(phone).email;
-        const hasPhoneQuery = phone.includes(query);
-        const hasNameQuery = phoneBook.get(phone).name.includes(query);
-        const hasEmailQuery = email && email.includes(query);
+    let count = 0;
 
-        const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
-
-        if (filterPredicate) {
+    for (var [phone, data] of phoneBook.entries()) {
+        if (query === '*' || findData(phone, data, query)) {
             phoneBook.delete(phone);
+            count++;
         }
+    }
 
-        return !filterPredicate;
-    });
+    // phoneArray = phoneArray.filter(phone => {
+    // const email = phoneBook.get(phone).email;
+    // const hasPhoneQuery = phone.includes(query);
+    // const hasNameQuery = phoneBook.get(phone).name.includes(query);
+    // const hasEmailQuery = email && email.includes(query);
 
-    return oldPhoneBookLength - phoneArray.length;
+    // const filterPredicate = hasPhoneQuery || hasNameQuery || hasEmailQuery;
+
+    // if (filterPredicate) {
+    //     phoneBook.delete(phone);
+    // }
+
+    // return !filterPredicate;
+    // });
+
+    return count;
 }
 
 /**
@@ -93,6 +114,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    let phoneArray = Array.from(phoneBook.keys());
     const formatLog = phone => {
         const phoneFormatted = phone
             .replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4');
@@ -110,13 +132,10 @@ function find(query) {
         return [];
     }
 
-    let phoneArray = Array.from(phoneBook.keys());
-
     if (query === '*') {
         return phoneArray
-            .sort((phoneOne, phoneTwo) => (
-                phoneBook.get(phoneOne).name
-                    .localeCompare(phoneBook.get(phoneTwo).name))
+            .sort((phoneOne, phoneTwo) => (phoneBook.get(phoneOne).name
+                .localeCompare(phoneBook.get(phoneTwo).name))
             ).map(formatLog);
     }
 
@@ -131,8 +150,8 @@ function find(query) {
 
     return phoneBookQuerySet
         .sort((phoneOne, phoneTwo) => (phoneBook.get(phoneOne).name
-            .localeCompare(phoneBook.get(phoneTwo).name)))
-        .map(formatLog);
+            .localeCompare(phoneBook.get(phoneTwo).name))
+        ).map(formatLog);
 }
 
 /**
