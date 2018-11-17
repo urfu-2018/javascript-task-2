@@ -72,12 +72,6 @@ function findAndRemove(query) {
         return 0;
     }
 
-    if (query === '*') {
-        phoneBook.clear();
-
-        return oldPhoneBookLength;
-    }
-
     for (let [phone, data] of phoneBook.entries()) {
         if (findQuery(phone, data, query)) {
             phoneBook.delete(phone);
@@ -107,12 +101,6 @@ function find(query) {
 
     if (!query) {
         return [];
-    }
-
-    if (query === '*') {
-        return Array.from(phoneBook.keys())
-            .map(formatLog)
-            .sort();
     }
 
     for (let [phone, data] of phoneBook.entries()) {
