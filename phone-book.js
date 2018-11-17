@@ -43,7 +43,7 @@ function formatLog(phone) {
 function add(phone, name, email) {
     const isPhoneValid = /^\d{10}$/.test(phone);
     const isNameValid = name && name.length > 0;
-    const isNameInPhoneBook = phoneBook.get(phone);
+    const isNameInPhoneBook = phoneBook.has(phone);
 
     if (isPhoneValid && isNameValid && !isNameInPhoneBook) {
         phoneBook.set(phone, { name, email });
@@ -62,7 +62,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook.get(phone)) {
+    if (phoneBook.has(phone) && name.length > 0) {
         phoneBook.set(phone, { name, email });
 
         return true;
