@@ -13,10 +13,9 @@ let phoneBook = new Map();
 
 
 function findQuery(phone, data, query) {
-    const email = data.email;
     const hasPhoneQuery = phone.includes(query);
     const hasNameQuery = data.name.includes(query);
-    const hasEmailQuery = email && email.includes(query);
+    const hasEmailQuery = data.email && data.email.includes(query);
 
     return hasPhoneQuery || hasNameQuery || hasEmailQuery || query === '*';
 }
@@ -62,7 +61,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook.has(phone) && name.length > 0 && name) {
+    if (phoneBook.has(phone)) {
         phoneBook.set(phone, { name, email });
 
         return true;
@@ -77,19 +76,22 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    const oldPhoneBookLength = phoneBook.size;
+    // const oldPhoneBookLength = phoneBook.size;
 
     if (!query) {
         return 0;
     }
 
+    let count = 0;
+
     for (let [phone, data] of phoneBook.entries()) {
         if (findQuery(phone, data, query)) {
             phoneBook.delete(phone);
+            count++;
         }
     }
 
-    return oldPhoneBookLength - phoneBook.size;
+    return count;
 }
 
 /**
