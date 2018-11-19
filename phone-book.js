@@ -61,7 +61,7 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (phoneBook.has(phone)) {
+    if (phoneBook.has(phone) && name) {
         phoneBook.set(phone, { name, email });
 
         return true;
@@ -76,22 +76,19 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    // const oldPhoneBookLength = phoneBook.size;
+    const oldPhoneBookLength = phoneBook.size;
 
     if (!query) {
         return 0;
     }
 
-    let count = 0;
-
     for (let [phone, data] of phoneBook.entries()) {
         if (findQuery(phone, data, query)) {
             phoneBook.delete(phone);
-            count++;
         }
     }
 
-    return count;
+    return oldPhoneBookLength - phoneBook.size;
 }
 
 /**
