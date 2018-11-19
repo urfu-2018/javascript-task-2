@@ -11,6 +11,8 @@ describe('phone-book', () => {
         assert.ok(phoneBook.add('5552220022', 'Борис', 'boris@example.com'));
         assert.ok(phoneBook.add('5551110011', 'Алекс'));
         assert.ok(phoneBook.add('5553330033', 'Валерий', 'valera@example.com'));
+        assert.ok(!phoneBook.add('+7557894562', '', 'valera@example.com'));
+        assert.ok(!phoneBook.add('55533453872', 'Валерий', 'valera@example.com'));
     });
 
     it('не должен добавлять неправильные записи', () => {

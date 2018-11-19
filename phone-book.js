@@ -19,7 +19,7 @@ var phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (typeof(email) === 'undefined') {
+    if (typeof (email) === 'undefined') {
         email = '';
     }
     if (areCorrectInputs(phone, name, email) && !(phoneBook.has(phone))) {
@@ -47,7 +47,7 @@ function areCorrectInputs(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (typeof(email) === 'undefined') {
+    if (typeof (email) === 'undefined') {
         email = '';
     }
     if (!areCorrectInputs(phone, name, email)) {
@@ -73,11 +73,14 @@ function findAndRemove(query) {
     if (typeof (query) !== 'string') {
         return false;
     }
+    if (query === '*') {
+        return phoneBook.length;
+    }
     var convertedMap = сonvertMapToArray();
     var keys = getKeys(phoneBook);
     var removedCount = 0;
     for (let i = 0; i < convertedMap.length; i++) {
-        if (convertedMap[i].indexOf(query) || query === '*') {
+        if (convertedMap[i].indexOf(query)) {
             phoneBook.delete(keys[i]);
             removedCount++;
         }
@@ -126,16 +129,17 @@ function сonvertMapToArray() {
 }
 
 function transformString(phone, name, email) {
+    var changedEmail = '';
     if (email.length === 0) {
-        email = '';
+        email = changedEmail;
     } else {
-        email = ', ' + email;
+        changedEmail = ', ' + email;
     }
     let changedPhone = '+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) +
         '-' + phone.slice(6, 8) + '-' + phone.slice(8, 10);
     var changedName = name + ', ';
 
-    return changedName + changedPhone + email;
+    return changedName + changedPhone + changedEmail;
 }
 
 /**
