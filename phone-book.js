@@ -70,32 +70,29 @@ function findAndRemove(query) {
     if (query === '' || typeof query !== 'string') {
         return 0;
     }
-    const toDelete = findAllRecords(query);
-    const count = toDelete.length;
-    deleteAllRecords(toDelete);
+    const toDelete = findRecordsToDelete(query);
+    deleteRecords(toDelete);
 
-    return count;
+    return toDelete.length;
 }
 
-function deleteAllRecords(toDelete) {
-    for (let line of toDelete) {
-        phoneBook.delete(line.phone);
+function deleteRecords(toDelete) {
+    for (const record of toDelete) {
+        phoneBook.delete(record.phone);
     }
 }
 
-function findAllRecords(query) {
-    const result = [];
-    for (let phone of phoneBook.keys()) {
-        if (dataIncludesQuery(phone, phoneBook.get(phone).name,
-            phoneBook.get(phone).email, query)) {
-            result.push({
+function findRecordsToDelete(query) {
+
+    return Array.from(phoneBook.keys())
+        .filter(phone => dataIncludesQuery(
+            phone, phoneBook.get(phone).name, phoneBook.get(phone).email, query))
+        .map((phone) => {
+            return {
                 phone,
                 name: phoneBook.get(phone).name,
-                email: phoneBook.get(phone).email });
-        }
-    }
-
-    return result;
+                email: phoneBook.get(phone).email };
+        });
 }
 
 function dataIncludesQuery(phone, name, email, query) {
@@ -114,7 +111,7 @@ function find(query) {
     if (query === '' || typeof query !== 'string') {
         return [];
     }
-    const result = findAllRecords(query);
+    const result = findRecordsToDelete(query);
 
     return bookToString(result);
 }
@@ -145,7 +142,7 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
     let count = 0;
-    for (let line of csv.split('\n')) {
+    for (const line of csv.split('\n')) {
         const [name, phone, email] = line.split(';');
         count += (add(phone, name, email) || update(phone, name, email)) ? 1 : 0;
     }
