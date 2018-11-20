@@ -120,7 +120,7 @@ function find(query) {
 }
 
 function bookToString(records) {
-    let result = [];
+    const result = [];
     for (let i = 0; i < records.length; i++) {
         const record = records[i];
         const phone = record.phone;
