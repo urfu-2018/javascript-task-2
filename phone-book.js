@@ -9,7 +9,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = new Map();
+const phoneBook = new Map();
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,8 +19,8 @@ let phoneBook = new Map();
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (isCorrectData(phone, name, email) && !phoneBook.has(phone)) {
-        phoneBook.set(phone, [name, email]);
+    if (isCorrectData(phone, name) && !phoneBook.has(phone)) {
+        phoneBook.set(phone, { name, email });
 
         return true;
     }
@@ -28,8 +28,8 @@ function add(phone, name, email) {
     return false;
 }
 
-function isCorrectData(phone, name, email) {
-    return isPhone(phone) && isName(name) && isEmail(email) || isPhone(phone) && isName(name);
+function isCorrectData(phone, name) {
+    return isPhone(phone) && isName(name);
 }
 
 function isPhone(phone) {
@@ -52,8 +52,8 @@ function isEmail(email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (isCorrectData(phone, name, email) && phoneBook.delete(phone)) {
-        phoneBook.set(phone, [name, email]);
+    if (isCorrectData(phone, name) && phoneBook.has(phone)) {
+        phoneBook.set(phone, { name, email });
 
         return true;
     }
@@ -70,9 +70,8 @@ function findAndRemove(query) {
     if (query === '' || typeof query !== 'string') {
         return 0;
     }
-    let count = 0;
-    let toDelete = findAllRecords(query);
-    count = toDelete.length;
+    const toDelete = findAllRecords(query);
+    const count = toDelete.length;
     deleteAllRecords(toDelete);
 
     return count;
@@ -80,15 +79,19 @@ function findAndRemove(query) {
 
 function deleteAllRecords(toDelete) {
     for (let line of toDelete) {
-        phoneBook.delete(line[0]);
+        phoneBook.delete(line.phone);
     }
 }
 
 function findAllRecords(query) {
-    let result = [];
-    for (let key of phoneBook.keys()) {
-        if (dataIncludesQuery(key, phoneBook.get(key)[0], phoneBook.get(key)[1], query)) {
-            result.push([key, phoneBook.get(key)[0], phoneBook.get(key)[1]]);
+    const result = [];
+    for (let phone of phoneBook.keys()) {
+        if (dataIncludesQuery(phone, phoneBook.get(phone).name,
+            phoneBook.get(phone).email, query)) {
+            result.push({
+                phone,
+                name: phoneBook.get(phone).name,
+                email: phoneBook.get(phone).email });
         }
     }
 
@@ -111,20 +114,20 @@ function find(query) {
     if (query === '' || typeof query !== 'string') {
         return [];
     }
-    let result = findAllRecords(query);
-    let bookString = bookToString(result);
+    const result = findAllRecords(query);
 
-    return bookString;
+    return bookToString(result);
 }
 
 function bookToString(records) {
     let result = [];
     for (let i = 0; i < records.length; i++) {
-        let line = records[i];
-        let ph = `+7 (${line[0].substr(0, 3)}) ${line[0].substr(3, 3)}-${
-            line[0].substr(6, 2)}-${line[0].substr(8, 2)}`;
-        let name = line[1];
-        let email = typeof line[2] === 'undefined' ? '' : ', ' + line[2];
+        const record = records[i];
+        const phone = record.phone;
+        const ph = `+7 (${phone.substr(0, 3)}) ${phone.substr(3, 3)}-${
+            phone.substr(6, 2)}-${phone.substr(8, 2)}`;
+        const name = record.name;
+        const email = typeof record.email === 'undefined' ? '' : ', ' + record.email;
         result.push(`${name}, ${ph}${email}`);
     }
 
@@ -143,10 +146,8 @@ function importFromCsv(csv) {
     // Либо обновляем, если запись с таким телефоном уже существует
     let count = 0;
     for (let line of csv.split('\n')) {
-        let name = line.split(';')[0];
-        let phone = line.split(';')[1];
-        let email = line.split(';')[2];
-        count += add(phone, name, email) || update(phone, name, email) ? 1 : 0;
+        const [name, phone, email] = line.split(';');
+        count += (add(phone, name, email) || update(phone, name, email)) ? 1 : 0;
     }
 
     return count;
