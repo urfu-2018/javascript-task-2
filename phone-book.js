@@ -11,7 +11,7 @@ var phoneBook = {};
  * Телефонная книга
  */
 const phonePattern = /^\d{10}$/;
-// const mailPattern = /\w+@\w+\.\w+/;
+
 /**
  * Добавление записи в телефонную книгу
  * @param {String} phone
@@ -19,10 +19,9 @@ const phonePattern = /^\d{10}$/;
  * @param {String?} email
  * @returns {Boolean}
  */
+
 function add(phone, name, email = '') {
-    if (isValidName(name) &&
-        isValidPhone(phone) &&
-        phoneBook[phone] === undefined) {
+    if (isValidRecord(phone, name) && phoneBook[phone] === undefined) {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -32,6 +31,10 @@ function add(phone, name, email = '') {
     }
 
     return false;
+}
+
+function isValidRecord(phone, name) {
+    return isValidName(name) && isValidPhone(phone);
 }
 
 function isValidName(name) {
@@ -50,9 +53,7 @@ function isValidPhone(phone) {
  * @returns {Boolean}
  */
 function update(phone, name, email = '') {
-    if (isValidName(name) &&
-        isValidPhone(phone) &&
-        phoneBook[phone] !== undefined) {
+    if (isValidRecord(phone, name) && phoneBook[phone] !== undefined) {
         phoneBook[phone] = {
             name: name,
             email: email
@@ -70,12 +71,12 @@ function update(phone, name, email = '') {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let result = find(query)
+    const result = find(query)
         .reduce((count, note) => {
             let phone = getBaseNumber(note.split(', ')[1]);
             delete phoneBook[phone];
 
-            return ++count;
+            return count + 1;
         }, 0);
 
     return result;
@@ -92,13 +93,12 @@ function getBaseNumber(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    var matchingArray = [];
     if (!query || typeof query !== 'string') {
         return [];
     }
-    matchingArray = getAllMatching(query);
+    let matching = getAllMatching(query);
 
-    matchingArray = Object.keys(matchingArray)
+    return Object.keys(matching)
         .map(function (phone) {
             return getRepresentation(phone);
         })
@@ -108,24 +108,21 @@ function find(query) {
 
             return nameA.localeCompare(nameB);
         });
-
-    return matchingArray;
 }
 
+function getPhoneRepresentation(phone) {
+    return '+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) + '-' +
+    phone.slice(6, 8) + '-' + phone.slice(8, 10);
+}
 
 function getRepresentation(phone) {
     let name = phoneBook[phone].name;
     let email = phoneBook[phone].email;
     let repr = '';
-    let phoneRepresentation = '+7 (' + phone.slice(0, 3) + ') ' +
-    phone.slice(3, 6) + '-' + phone.slice(6, 8) + '-' + phone.slice(8, 10);
-    if (email) {
-        repr = name + ', ' + phoneRepresentation + ', ' + email;
-    } else {
-        repr = name + ', ' + phoneRepresentation;
-    }
+    let phoneRepresentation = getPhoneRepresentation(phone);
+    repr = name + ', ' + phoneRepresentation;
 
-    return repr;
+    return email ? repr + ', ' + email : repr;
 }
 
 function getAllMatching(query) {
