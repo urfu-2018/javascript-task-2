@@ -9,7 +9,34 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = [];
+let phoneBook = {};
+
+function isMatchFound(query, phone, name, email) {
+    if (query === '*') {
+        return true;
+    }
+
+    return query && ((name.indexOf(query) >= 0 ||
+        (email !== '' && email.indexOf(query) >= 0) ||
+        phone.indexOf(query)) >= 0);
+}
+
+function getNote(phone) {
+    let note;
+    const name = phoneBook[phone].name;
+    const email = phoneBook[phone].email;
+    note = `${name}, ${getCorrectPhoneFormat(phone)}`;
+    if (email !== '') {
+        note += `, ${email}`;
+    }
+
+    return note;
+}
+
+function getCorrectPhoneFormat(phone) {
+    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
+        `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -22,13 +49,16 @@ function add(phone, name, email) {
     if (!/^[0-9]{10}$/.test(phone) || typeof name !== 'string') {
         return false;
     }
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            return false;
-        }
+    if (phone in phoneBook) {
+        return false;
     }
-    let notation = { phone: phone, name: name, email: email };
-    phoneBook.push(notation);
+    if (typeof name === 'undefined') {
+        name = '';
+    }
+    if (typeof email === 'undefined') {
+        email = '';
+    }
+    phoneBook[phone] = { name, email };
 
     return true;
 }
@@ -44,21 +74,14 @@ function update(phone, name, email) {
     if (phoneBook.length === 0) {
         return false;
     }
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (tryUpdateNote(phone, name, email, i)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function tryUpdateNote(phone, name, email, index) {
-    if (phoneBook[index].phone === phone) {
+    if (phone in phoneBook) {
         if (typeof name !== 'undefined') {
-            phoneBook[index].name = name;
+            phoneBook[phone].name = name;
         }
-        phoneBook[index].email = email;
+        if (typeof email === 'undefined') {
+            email = '';
+        }
+        phoneBook[phone].email = email;
 
         return true;
     }
@@ -73,9 +96,9 @@ function tryUpdateNote(phone, name, email, index) {
  */
 function findAndRemove(query) {
     let count = 0;
-    for (let i = phoneBook.length - 1; i >= 0; i--) {
-        if (isMatchFound(query, i)) {
-            phoneBook.pop();
+    for (const phone in phoneBook) {
+        if (isMatchFound(query, phone, phoneBook[phone].name, phoneBook[phone].email)) {
+            delete phoneBook[phone];
             count++;
         }
     }
@@ -90,9 +113,10 @@ function findAndRemove(query) {
  */
 function find(query) {
     let notes = [];
-    for (let i = 0; i < phoneBook.length; i++) {
-        if (isMatchFound(query, i)) {
-            notes.push(getNote(i));
+
+    for (let phone in phoneBook) {
+        if (isMatchFound(query, phone, phoneBook[phone].name, phoneBook[phone].email)) {
+            notes.push(getNote(phone));
         }
     }
 
@@ -103,32 +127,6 @@ function find(query) {
 
         return 0;
     });
-}
-
-function getNote(index) {
-    let note;
-    note = `${phoneBook[index].name}, ${getCorrectPhoneFormat(phoneBook[index].phone)}`;
-    if (typeof phoneBook[index].email !== 'undefined') {
-        note += `, ${phoneBook[index].email}`;
-    }
-
-    return note;
-}
-
-function getCorrectPhoneFormat(phone) {
-    return `+7 (${phone.slice(0, 3)}) ${phone.slice(3, 6)}-` +
-        `${phone.slice(6, 8)}-${phone.slice(8, 10)}`;
-}
-
-function isMatchFound(query, index) {
-    if (query === '*') {
-        return true;
-    }
-
-    return (phoneBook[index].name.indexOf(query) >= 0 ||
-        (typeof phoneBook[index].email !== 'undefined' &&
-            phoneBook[index].email.indexOf(query) >= 0) ||
-        phoneBook[index].phone.indexOf(query) >= 0);
 }
 
 /**
