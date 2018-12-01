@@ -22,8 +22,8 @@ function add(phone, name, email) {
     if (phoneBook.has(phone)) {
         return false;
     }
-    if (nameIsCorrect(name) && /^[0-9]{10}$/.test(phone) && name) {
-        phoneBook.set(phone, { name: name, phone: phone, email: email });
+    if (name && isCorrectString(name) && /^[0-9]{10}$/.test(phone)) {
+        phoneBook.set(phone, { name, phone, email });
 
         return true;
     }
@@ -43,17 +43,13 @@ function phoneIsCorrect(phone) {
     return phone && typeof phone === 'string' && /^[0-9]{10}$/.test(phone);
 }
 
-function nameIsCorrect(name) {
-    return name && typeof name === 'string' && name.length > 0;
-}
-
-function emailIsCorrect(email) {
-    return email && typeof email === 'string' && email.length > 0;
+function isCorrectString(str) {
+    return str && typeof str === 'string' && str.length > 0;
 }
 
 function correctData(phone, name, email) {
-    return nameIsCorrect(name) && phoneIsCorrect(phone) &&
-        (!email || emailIsCorrect(email));
+    return isCorrectString(name) && phoneIsCorrect(phone) &&
+        (!email || isCorrectString(email));
 }
 
 /**
