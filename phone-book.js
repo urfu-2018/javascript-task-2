@@ -22,8 +22,8 @@ function createRecord(name, phone, email) {
 }
 
 function isRecordContainsQuery(record, query) {
-    return record[0].indexOf(query) >= 0 || record[1].indexOf(query) >= 0 ||
-        record[2] !== undefined && record[2].indexOf(query) >= 0;
+    return record[0].includes(query) || record[1].includes(query) ||
+        record[2] !== undefined && record[2].includes(query);
 }
 
 function formatPhoneNumber(phone) {
@@ -55,6 +55,7 @@ let phoneBook = new Map();
  */
 function add(phone, name, email) {
     const newRecord = createRecord(name, phone, email);
+
     if (newRecord === undefined || phoneBook.has(phone)) {
         return false;
     }

@@ -3,26 +3,23 @@
 const phoneBook = require('./phone-book');
 
 // Эти записи добавятся, вернется `true`
-// console.info(phoneBook.add('5554440044', 'Григорий', 'grisha@example.com'));
-// console.info(phoneBook.add('5552220022', 'Борис', 'boris@example.com'));
-// console.info(phoneBook.add('5551110011', 'Алекс'));
-// console.info(phoneBook.add('5553330033', 'Валерий', 'valera@example.com'));
+phoneBook.add('5554440044', 'Григорий', 'grisha@example.com');
+phoneBook.add('5552220022', 'Борис', 'boris@example.com');
+phoneBook.add('5551110011', 'Алекс');
+phoneBook.add('5553330033', 'Валерий', 'valera@example.com');
 
 // Эти записи не добавятся, вернется `false`
-// console.info(phoneBook.add('3330033', 'Неизвестный', 'unknown@example.com'));
-// console.info(phoneBook.add('5551110011', 'Алексей'));
-// console.info(phoneBook.add('5555550055'));
-console.info(phoneBook.add('abc5556660055', 'Николай', 'kolya@example.com'));
+phoneBook.add('3330033', 'Неизвестный', 'unknown@example.com');
+phoneBook.add('5551110011', 'Алексей');
+phoneBook.add('5555550055');
 
 // Обновление ранее добавленных записей
-// console.info(phoneBook.update('5551110011', 'Алексей', 'alex@example.com'));
-// console.info(phoneBook.update('5553330033', 'Валерий'));
+phoneBook.update('5551110011', 'Алексей', 'alex@example.com');
+phoneBook.update('5553330033', 'Валерий');
 
 // В следующих примерах вернутся все записи
-// console.info(phoneBook.find('*'));
-// console.info(phoneBook.find('555'));
-// console.info(phoneBook.find('*'));
-// console.info(phoneBook.find('555'));
+console.info(phoneBook.find('*'));
+console.info(phoneBook.find('555'));
 // В обоих случаях вывод будет следующий
 // [
 //   'Алексей, +7 (555) 111-00-11, alex@example.com',
@@ -32,7 +29,7 @@ console.info(phoneBook.add('abc5556660055', 'Николай', 'kolya@example.com
 // ]
 
 // Удаление записей, содержащих '@', вернется `3`
-// console.info(phoneBook.findAndRemove('@'));
+phoneBook.findAndRemove('@');
 
 if (phoneBook.isStar) {
     const csv = [
@@ -44,5 +41,5 @@ if (phoneBook.isStar) {
     ].join('\n');
 
     // Импорт записей из csv, вернется `4`
-    console.info(phoneBook.importFromCsv(csv));
+    phoneBook.importFromCsv(csv);
 }
