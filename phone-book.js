@@ -141,12 +141,12 @@ function importFromCsv(csv) {
     let count = 0;
     csv = csv.split('\n');
     for (let i = 0; i < csv.length; i++) {
-        let note = csv[i].split(';');
-        if (update(note[1], note[0], note[2])) {
+        const [name, phone, email] = csv[i].split(';');
+        if (update(phone, name, email)) {
             count++;
             continue;
         }
-        if (add(note[1], note[0], note[2])) {
+        if (add(phone, name, email)) {
             count++;
         }
     }
