@@ -7,9 +7,12 @@
 const isStar = false;
 
 /**
- * Телефонная книга
+ * Телефонная книга {
+ *      phoneNumber1 : {"name" : ... , "email": ...},
+ *      phoneNumber2 : {"name" : ... , "email": ...},
+ *  }
  */
-let phoneBook;
+let phoneBook = {};
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +22,17 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    if (!/\d{10}/.test(phone)) {
+        return false;
+    }
 
+    if (name === undefined) {
+        return false;
+    }
+
+    phoneBook[phone] = {'name' : name, 'email' : email};
+
+    return true;
 }
 
 /**
