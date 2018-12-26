@@ -30,9 +30,12 @@ function add(phone, name, email) {
         return false;
     }
 
-    phoneBook[phone] = {'name' : name, 'email' : email};
+    if (!phone in phoneBook) {
+        phoneBook[phone] = {'name' : name, 'email' : email};
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 /**
