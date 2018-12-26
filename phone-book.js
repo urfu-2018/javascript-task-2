@@ -30,8 +30,9 @@ function add(phone, name, email) {
         return false;
     }
 
-    if (!phone in phoneBook) {
-        phoneBook[phone] = {'name' : name, 'email' : email};
+    if (!(phone in phoneBook)) {
+        phoneBook[phone] = {'name': name, 'email': email};
+
         return true;
     }
 
@@ -46,7 +47,21 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    if (!/\d{10}/.test(phone)) {
+        return false;
+    }
 
+    if (phone in phoneBook) {
+        if (name !== undefined) {
+            phoneBook[phone].name = name;
+        }
+
+        phoneBook[phone].email = email;
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -64,7 +79,20 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
+    if (query === '') {
+        return '';
+    }
 
+    if (query === '*') {
+        const result = [];
+        for (const phone in phoneBook) {
+            result.push(phoneBook[phone].name
+            + ', +7 (' + phone.slice(0, 3) + ') '
+            + phone.slice(3,6) + '-' + phone.slice(6, 8) + '-' + phone.slice(8, 10)
+            + (phoneBook[phone].email ? ', ' + phoneBook[phone].email : '')); // todo: переписать красиво, взм вынести в функцию
+        }
+        return result.sort();
+    }
 }
 
 /**
