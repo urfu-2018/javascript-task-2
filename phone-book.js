@@ -8,11 +8,20 @@ const isStar = false;
 
 /**
  * Телефонная книга {
- *      phoneNumber1 : {"name" : ... , "email": ...},
- *      phoneNumber2 : {"name" : ... , "email": ...},
+ *      phoneNumber1 : {'name' : ... , 'email': ...},
+ *      phoneNumber2 : {'name' : ... , 'email': ...},
  *  }
  */
 let phoneBook = {};
+
+/**
+ * Проверка номера телефона на удовлетворение виду: 1234567890
+ * @param {String} phone
+ * @returns {Boolean}
+ */
+function phoneValidCheck(phone) {
+    return /\d{10}/.test(phone);
+}
 
 /**
  * Добавление записи в телефонную книгу
@@ -22,16 +31,19 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    if (!/\d{10}/.test(phone)) {
+    if (!phoneValidCheck(phone)) {
         return false;
     }
 
-    if (name === undefined) {
+    if (!name) {
         return false;
     }
 
     if (!(phone in phoneBook)) {
-        phoneBook[phone] = {'name': name, 'email': email};
+        phoneBook[phone] = {
+            'name': name,
+            'email': email
+        };
 
         return true;
     }
@@ -47,15 +59,12 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    if (!/\d{10}/.test(phone)) {
+    if (!phoneValidCheck(phone)) {
         return false;
     }
 
-    if (phone in phoneBook) {
-        if (name !== undefined) {
-            phoneBook[phone].name = name;
-        }
-
+    if (phone in phoneBook && name) {
+        phoneBook[phone].name = name;
         phoneBook[phone].email = email;
 
         return true;
@@ -74,6 +83,22 @@ function findAndRemove(query) {
 }
 
 /**
+ * Превращает переданный номер вида '1234567890' в '+7 (123) 456-78-90'
+ * @param {String} phone
+ * @returns {String}
+ */
+function formatPhone(phone) {
+    return '+7 (' +
+            phone.slice(0, 3) +
+            ') ' +
+            phone.slice(3, 6) +
+            '-' +
+            phone.slice(6, 8) +
+            '-' +
+            phone.slice(8, 10);
+}
+
+/**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
  * @returns {String[]}
@@ -86,11 +111,11 @@ function find(query) {
     if (query === '*') {
         const result = [];
         for (const phone in phoneBook) {
-            result.push(phoneBook[phone].name
-            + ', +7 (' + phone.slice(0, 3) + ') '
-            + phone.slice(3,6) + '-' + phone.slice(6, 8) + '-' + phone.slice(8, 10)
-            + (phoneBook[phone].email ? ', ' + phoneBook[phone].email : '')); // todo: переписать красиво, взм вынести в функцию
+            result.push(phoneBook[phone].name + ', ' +
+            formatPhone(phone) +
+            (phoneBook[phone].email ? ', ' + phoneBook[phone].email : ''));
         }
+
         return result.sort();
     }
 }
