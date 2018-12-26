@@ -79,7 +79,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-
+    return query;
 }
 
 /**
@@ -104,12 +104,12 @@ function formatPhone(phone) {
  * @returns {String[]}
  */
 function find(query) {
+    const result = [];
     if (query === '') {
-        return '';
+        return result;
     }
 
     if (query === '*') {
-        const result = [];
         for (const phone in phoneBook) {
             result.push(phoneBook[phone].name + ', ' +
             formatPhone(phone) +
@@ -118,6 +118,16 @@ function find(query) {
 
         return result.sort();
     }
+
+    for (const phone in phoneBook) {
+        if (phoneBookHasQuery(query)) { // todo: функция будет принимать подстроку и возвращать список удоветворябщих номеров или забить на это
+            result.push(phoneBook[phone].name + ', ' +
+            formatPhone(phone) +
+            (phoneBook[phone].email ? ', ' + phoneBook[phone].email : ''));
+        }
+    }
+
+    return result;
 }
 
 /**
