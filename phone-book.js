@@ -80,9 +80,11 @@ function update(phone, name, email) {
  * @returns {Boolean}
  */
 function checkPhoneMatchesQuery(phone, query) {
-    return phone.indexOf(query) !== -1 ||
+    return query !== '' && (
+        phone.indexOf(query) !== -1 ||
         phoneBook[phone].name.indexOf(query) !== -1 ||
-        phoneBook[phone].email && phoneBook[phone].email.indexOf(query) !== -1;
+        phoneBook[phone].email && phoneBook[phone].email.indexOf(query) !== -1
+    );
 }
 
 /**
@@ -94,7 +96,7 @@ function findAndRemove(query) {
     let countOfRemovedPhones = 0;
 
     for (const phone in phoneBook) {
-        if (checkPhoneMatchesQuery(phone, query)) {
+        if (query === '*' || checkPhoneMatchesQuery(phone, query)) {
             delete phoneBook[phone];
             countOfRemovedPhones++;
         }
