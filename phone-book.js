@@ -20,7 +20,7 @@ let phoneBook = {};
  * @returns {Boolean}
  */
 function phoneValidCheck(phone) {
-    return /\d{10}/.test(phone);
+    return /^\d{10}$/.test(phone);
 }
 
 /**
@@ -74,21 +74,33 @@ function update(phone, name, email) {
 }
 
 /**
+ * Проверка, удовлетворяет ли телефон запросу
+ * @param {String} phone
+ * @param {String} query
+ * @returns {Boolean}
+ */
+function checkPhoneMatchesQuery(phone, query) {
+    return phone.indexOf(query) !== -1 ||
+        phoneBook[phone].name.indexOf(query) !== -1 ||
+        phoneBook[phone].email && phoneBook[phone].email.indexOf(query) !== -1;
+}
+
+/**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let countOfRemovablePhones = 0;
+    let countOfRemovedPhones = 0;
+
     for (const phone in phoneBook) {
-        if (phone.indexOf(query) !== -1) {
+        if (checkPhoneMatchesQuery(phone, query)) {
             delete phoneBook[phone];
-            countOfRemovablePhones += 1;
+            countOfRemovedPhones++;
         }
-        //todo: name and email
     }
 
-    return countOfRemovablePhones;
+    return countOfRemovedPhones;
 }
 
 /**
@@ -113,32 +125,26 @@ function formatPhone(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    const result = [];
     if (query === '') {
-        return result;
+        return [];
     }
 
-    if (query === '*') {
-        for (const phone in phoneBook) {
-            result.push(phoneBook[phone].name + ', ' +
-            formatPhone(phone) +
-            (phoneBook[phone].email ? ', ' + phoneBook[phone].email : ''));
+    const reducer = (acc, phone) => {
+        if (query === '*' || checkPhoneMatchesQuery(phone, query)) {
+            acc.push(
+                phoneBook[phone].name + ', ' +
+                formatPhone(phone) +
+                (phoneBook[phone].email ? ', ' + phoneBook[phone].email : '')
+            );
         }
 
-        return result.sort();
-    }
+        return acc;
+    };
 
-    for (const phone in phoneBook) {
-        if (phone.indexOf(query) !== -1 ||
-        (phoneBook[phone].name).indexOf(query) !== -1 || // will not work
-        (phoneBook[phone].email).indexOf(query) !== -1) {
-            result.push(phoneBook[phone].name + ', ' +
-            formatPhone(phone) +
-            (phoneBook[phone].email ? ', ' + phoneBook[phone].email : ''));
-        }
-    }
-
-    return result.sort();
+    return Object
+        .keys(phoneBook)
+        .reduce(reducer, [])
+        .sort();
 }
 
 /**
