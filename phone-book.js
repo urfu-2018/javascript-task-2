@@ -79,7 +79,16 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    return query;
+    let countOfRemovablePhones = 0;
+    for (const phone in phoneBook) {
+        if (phone.indexOf(query) !== -1) {
+            delete phoneBook[phone];
+            countOfRemovablePhones += 1;
+        }
+        //todo: name and email
+    }
+
+    return countOfRemovablePhones;
 }
 
 /**
@@ -120,14 +129,16 @@ function find(query) {
     }
 
     for (const phone in phoneBook) {
-        if (phoneBookHasQuery(query)) { // todo: функция будет принимать подстроку и возвращать список удоветворябщих номеров или забить на это
+        if (phone.indexOf(query) !== -1 ||
+        (phoneBook[phone].name).indexOf(query) !== -1 || // will not work
+        (phoneBook[phone].email).indexOf(query) !== -1) {
             result.push(phoneBook[phone].name + ', ' +
             formatPhone(phone) +
             (phoneBook[phone].email ? ', ' + phoneBook[phone].email : ''));
         }
     }
 
-    return result;
+    return result.sort();
 }
 
 /**
