@@ -3,7 +3,8 @@
   "main": "phone-book.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint && mocha --exit *.spec.js",
+    "mocha": "mocha --exit *.spec.js",
+    "test": "npm run lint && npm run mocha",
     "start": "node index.js"
   },
   "dependencies": {
