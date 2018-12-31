@@ -8,8 +8,8 @@ const isStar = false;
 
 /**
  * Телефонная книга {
- *      phoneNumber1 : {'name' : ... , 'email': ...},
- *      phoneNumber2 : {'name' : ... , 'email': ...},
+ *      phoneNumber1 : { name, email, phone},
+ *      phoneNumber2 : { name, email, phone},
  *  }
  */
 let phoneBook = {};
@@ -41,8 +41,9 @@ function add(phone, name, email) {
 
     if (!(phone in phoneBook)) {
         phoneBook[phone] = {
-            'name': name,
-            'email': email
+            name,
+            email,
+            phone
         };
 
         return true;
@@ -80,10 +81,8 @@ function update(phone, name, email) {
  * @returns {Boolean}
  */
 function checkPhoneMatchesQuery(phone, query) {
-    return query !== '' && (
-        phone.indexOf(query) !== -1 ||
-        phoneBook[phone].name.indexOf(query) !== -1 ||
-        phoneBook[phone].email && phoneBook[phone].email.indexOf(query) !== -1
+    return query && Object.values(phoneBook[phone]).some(
+        value => value && value.includes(query)
     );
 }
 
@@ -127,16 +126,16 @@ function formatPhone(phone) {
  * @returns {String[]}
  */
 function find(query) {
-    if (query === '') {
+    if (!query) {
         return [];
     }
 
     const reducer = (acc, phone) => {
+        const record = phoneBook[phone];
+
         if (query === '*' || checkPhoneMatchesQuery(phone, query)) {
             acc.push(
-                phoneBook[phone].name + ', ' +
-                formatPhone(phone) +
-                (phoneBook[phone].email ? ', ' + phoneBook[phone].email : '')
+                `${record.name}, ${formatPhone(phone)}${record.email ? ', ' + record.email : ''}`
             );
         }
 
