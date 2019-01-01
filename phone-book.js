@@ -5,11 +5,35 @@
  * Реализован метод importFromCsv
  */
 const isStar = true;
-const tuple = (...args) => Object.freeze(args);
+
+class Record {
+    constructor(name, phone, email) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+    }
+
+    isContainsQuery(query) {
+        return this.name.includes(query) ||
+            this.phone.includes(query) ||
+            this.email !== undefined && this.email.includes(query);
+    }
+
+    getFomattedPhone() {
+        var secondPart = [this.phone.slice(3, 6), this.phone.slice(6, 8), this.phone.slice(8, 10)];
+
+        return `+7 (${this.phone.slice(0, 3)}) ${secondPart.join('-')}`;
+    }
+
+    getPrettyRecord() {
+        return [this.name, this.getFomattedPhone(), this.email]
+            .filter(value => typeof value === 'string').join(', ');
+    }
+}
 
 function createRecord(name, phone, email) {
     if (validatePhone(phone) && validateName(name)) {
-        return tuple(name, phone, email);
+        return new Record(name, phone, email);
     }
 
     function validatePhone(arg) {
@@ -19,25 +43,6 @@ function createRecord(name, phone, email) {
     function validateName(arg) {
         return typeof arg === 'string' && arg !== '';
     }
-}
-
-function isRecordContainsQuery(record, query) {
-    return record[0].includes(query) || record[1].includes(query) ||
-        record[2] !== undefined && record[2].includes(query);
-}
-
-function formatPhoneNumber(phone) {
-    var secondPart = [phone.slice(3, 6), phone.slice(6, 8), phone.slice(8, 10)];
-
-    return `+7 (${phone.slice(0, 3)}) ${secondPart.join('-')}`;
-}
-
-function getPrettyRecord(record) {
-    const name = record[0];
-    const phone = formatPhoneNumber(record[1]);
-    const email = record[2];
-
-    return [name, phone, email].filter(value => typeof value === 'string').join(', ');
 }
 
 
@@ -100,7 +105,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    return findRecords(query).map(value => getPrettyRecord(value));
+    return findRecords(query).map(value => value.getPrettyRecord());
 }
 
 /**
@@ -114,9 +119,9 @@ function findRecords(query) {
     }
 
     let entries = Array.from(phoneBook.values());
-    entries.sort((first, second) => first[0] > second[0]);
+    entries.sort((first, second) => first.name.localeCompare(second.name));
 
-    return entries.filter(value => query === '*' || isRecordContainsQuery(value, query));
+    return entries.filter(value => query === '*' || value.isContainsQuery(query));
 }
 
 /**
