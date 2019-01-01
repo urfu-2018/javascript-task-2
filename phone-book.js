@@ -95,7 +95,7 @@ function update(phone, name, email) {
  */
 function findAndRemove(query) {
     return findRecords(query)
-        .map(value => phoneBook.delete(value[1]))
+        .map(value => phoneBook.delete(value.phone))
         .length;
 }
 
