@@ -141,15 +141,13 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    let count = 0;
+    const necessaryRecords = findNecessaryRecords(query);
 
-    const records = findNecessaryRecords(query);
-    for (let i = 0; i < records.length; i++) {
-        phoneBook[records[i][0]] = undefined;
-        count++;
-    }
+    necessaryRecords
+        .forEach(record =>
+            delete phoneBook[record[0]]);
 
-    return count;
+    return necessaryRecords.length;
 }
 
 /**
