@@ -145,7 +145,6 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    isValidParameterTypes(query, 'string');
     let count = 0;
 
     const records = findNecessaryRecords(query);
@@ -163,8 +162,6 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    isValidParameterTypes(query, 'string');
-
     return findNecessaryRecords(query).map(recordToNormalFormat);
 }
 
