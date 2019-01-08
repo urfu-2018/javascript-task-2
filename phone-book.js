@@ -50,7 +50,7 @@ function contains(substring, sources) {
 }
 
 function findNecessaryRecords(query) {
-    if (query.trim() === '') {
+    if (!isValidParameterTypes(query, 'string') || query.trim() === '') {
         return [];
     }
 
