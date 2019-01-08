@@ -28,7 +28,7 @@ function isValidPhone(phone) {
 }
 
 function isValidName(name) {
-    return /^[A-ZА-Я][a-zа-я]*$/.test(name) && name.length !== 0;
+    return name.trim() !== '';
 }
 
 function contains(substring, sources) {
