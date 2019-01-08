@@ -62,11 +62,7 @@ function findNecessaryRecords(query) {
         const firstName = a[1];
         const secondName = b[1];
 
-        if (secondName === firstName) {
-            return 0;
-        }
-
-        return firstName > secondName ? 1 : -1;
+        return firstName.localeCompare(secondName);
     });
 
     return records;
