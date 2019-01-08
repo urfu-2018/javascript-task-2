@@ -122,12 +122,15 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    isValidParameterTypes(phone, 'string', name, 'string');
-    if (email) {
-        isValidParameterTypes(email, 'string');
+    if (!isValidParameterTypes(phone, 'string', name, 'string')) {
+        return false;
     }
 
-    if (!isValidPhone(phone) || !isValidName(name)) {
+    if (!isValidPhone(phone) || !isValidName(name) || !isValidEmail(email)) {
+        return false;
+    }
+
+    if (!(phone in phoneBook)) {
         return false;
     }
 
