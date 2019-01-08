@@ -11,16 +11,18 @@ const isStar = false;
  */
 let phoneBook = {};
 
-function checkParameterTypes(...params) {
+function isValidParameterTypes(...params) {
     if (params.length % 2 !== 0) {
-        throw new TypeError();
+        return false;
     }
 
-    for (let i = 0; i < params.length; i += 2) {
-        if (typeof params[i - 1] === params[i]) {
-            throw new TypeError();
+    for (let i = 1; i < params.length; i += 2) {
+        if (typeof params[i - 1] !== params[i]) {
+            return false;
         }
     }
+
+    return true;
 }
 
 function isValidPhone(phone) {
@@ -29,6 +31,14 @@ function isValidPhone(phone) {
 
 function isValidName(name) {
     return name.trim() !== '';
+}
+
+function isValidEmail(email) {
+    if (email && !isValidParameterTypes(email, 'string')) {
+        return false;
+    }
+
+    return true;
 }
 
 function contains(substring, sources) {
@@ -87,9 +97,12 @@ function recordToNormalFormat(record) {
  * @returns {Boolean}
  */
 function add(phone, name, email) {
-    checkParameterTypes(phone, 'string', name, 'string');
-    if (email) {
-        checkParameterTypes(email, 'string');
+    if (!isValidParameterTypes(phone, 'string', name, 'string')) {
+        return false;
+    }
+
+    if (!isValidEmail(email)) {
+        return false;
     }
 
     if (!isValidPhone(phone) || !isValidName(name) || phone in phoneBook) {
@@ -109,9 +122,9 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
-    checkParameterTypes(phone, 'string', name, 'string');
+    isValidParameterTypes(phone, 'string', name, 'string');
     if (email) {
-        checkParameterTypes(email, 'string');
+        isValidParameterTypes(email, 'string');
     }
 
     if (!isValidPhone(phone) || !isValidName(name)) {
@@ -129,7 +142,7 @@ function update(phone, name, email) {
  * @returns {Number}
  */
 function findAndRemove(query) {
-    checkParameterTypes(query, 'string');
+    isValidParameterTypes(query, 'string');
     let count = 0;
 
     const records = findNecessaryRecords(query);
@@ -147,7 +160,7 @@ function findAndRemove(query) {
  * @returns {String[]}
  */
 function find(query) {
-    checkParameterTypes(query, 'string');
+    isValidParameterTypes(query, 'string');
 
     return findNecessaryRecords(query).map(recordToNormalFormat);
 }
