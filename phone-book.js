@@ -9,13 +9,13 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook = {};
+const phoneBook = {};
 
 function checkValid(phone, name, email) {
-    let phonePattern = new RegExp('^\\d{10}$');
-    let phoneValid = typeof phone === 'string' && phonePattern.test(phone);
-    let nameValid = typeof name === 'string' && name !== '';
-    let emailValid = (email !== undefined) ? typeof email === 'string' : true;
+    const phonePattern = new RegExp('^\\d{10}$');
+    const phoneValid = typeof phone === 'string' && phonePattern.test(phone);
+    const nameValid = typeof name === 'string' && name !== '';
+    const emailValid = (email !== undefined) ? typeof email === 'string' : true;
 
     return phoneValid && nameValid && emailValid;
 }
@@ -30,7 +30,7 @@ function checkValid(phone, name, email) {
 function add(phone, name, email) {
     if (checkValid(phone, name, email) && !(phone.replace(/[^0-9]+/, '') in phoneBook)) {
         phoneBook[phone] = [name];
-        if (email !== '' && email) {
+        if (email) {
             phoneBook[phone][1] = email;
         }
 
@@ -73,29 +73,28 @@ function findAndRemove(query) {
 
         return count;
     }
-    Object.keys(phoneBook).map(
-        function (objectKey) {
-            let p = objectKey.indexOf(query);
-            let n = phoneBook[objectKey][0].indexOf(query);
-            let e = -1;
-            if (phoneBook[objectKey][1]) {
-                e = phoneBook[objectKey][1].indexOf(query);
-            }
-            if (p !== -1 || n !== -1 || e !== -1 || query === '*') {
-                delete phoneBook[objectKey];
-                count++;
-            }
-
-            return false;
+    Object.keys(phoneBook).map(objectKey => {
+        const phone = objectKey.indexOf(query);
+        const name = phoneBook[objectKey][0].indexOf(query);
+        let email = -1;
+        if (phoneBook[objectKey][1]) {
+            email = phoneBook[objectKey][1].indexOf(query);
         }
+        if (phone !== -1 || name !== -1 || email !== -1 || query === '*') {
+            delete phoneBook[objectKey];
+            count++;
+        }
+
+        return false;
+    }
     );
 
     return count;
 }
 
 function findQuery(key, name, email, query) {
-    let checkK = key.indexOf(query);
-    let checkN = name.indexOf(query);
+    const checkK = key.indexOf(query);
+    const checkN = name.indexOf(query);
     let checkE = email;
     if (email) {
         checkE = email.indexOf(query);
@@ -121,21 +120,23 @@ function find(query) {
 
         return listQuery;
     }
-    Object.keys(phoneBook).map(
-        function (objectKey) {
-            let k = objectKey;
-            let n = phoneBook[k][0];
-            let e = phoneBook[k][1];
-            if (findQuery(k, n, e, query)) {
-                let p = '+7 (' + k.slice(0, 3) + ') ';
-                p += k.slice(3, 6) + '-' + k.slice(6, 8) + '-' + k.slice(8);
-                let emailTrue = (e !== undefined && e !== '') ? ', ' + e : '';
-                let item = n + ', ' + p + emailTrue;
-                listQuery.push(item);
-            }
-
-            return false;
+    Object.keys(phoneBook).map(objectKey => {
+        const number = objectKey;
+        const name = phoneBook[objectKey][0];
+        const email = phoneBook[objectKey][1];
+        if (findQuery(number, name, email, query)) {
+            const phone = [];
+            phone[0] = '+7 (' + number.slice(0, 3) + ') ';
+            phone[1] = number.slice(3, 6) + '-';
+            phone[2] = number.slice(6, 8) + '-';
+            phone[3] = number.slice(8);
+            const emailTrue = (email !== undefined && email !== '') ? ', ' + email : '';
+            let item = name + ', ' + phone[0] + phone[1] + phone[2] + phone[3] + emailTrue;
+            listQuery.push(item);
         }
+
+        return false;
+    }
     );
 
     return listQuery.sort();
@@ -152,13 +153,10 @@ function importFromCsv(csv) {
     // Добавляем в телефонную книгу
     // Либо обновляем, если запись с таким телефоном уже существует
     let count = 0;
-    let array = csv.split('\n');
+    const array = csv.split('\n');
     array.forEach(
         function (item) {
-            let arr = item.split(';');
-            let name = arr[0];
-            let phone = arr[1];
-            let email = arr[2];
+            const [name, phone, email] = item.split(';');
             if (checkValid(phone, name, email)) {
                 phoneBook[phone] = [name];
                 count++;
