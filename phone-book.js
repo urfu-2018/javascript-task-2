@@ -11,6 +11,7 @@ const isStar = false;
  */
 let phoneBook = [];
 let phoneNotes = [];
+let noteEmail = '';
 
 /**
  * Добавление записи в телефонную книгу
@@ -51,9 +52,10 @@ function update(phone, name, email) {
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].phone === phone && name !== undefined) {
             phoneBook[i].name = name;
+            phoneBook[i].email = email;
+            isUpdated = true;
+            return(isUpdated);
         }
-        isUpdated = true;
-        phoneBook[i].email = email;
     }
 
     return (isUpdated);
@@ -91,7 +93,7 @@ function find(query) {
         if (isNoteFound(query, i)) {
             phoneNotes.push(phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substr(0, 3) + ') ' +
                 phoneBook[i].phone.substr(3, 3) + '-' + phoneBook[i].phone.substr(6, 2) + '-' +
-                phoneBook[i].phone.substr(8, 2) + ', ' + phoneBook[i].email);
+                phoneBook[i].phone.substr(8, 2) + ', ' + noteEmail);
         }
     }
 
@@ -99,7 +101,7 @@ function find(query) {
 }
 
 function isNoteFound(query, i) {
-    let noteEmail = '';
+    noteEmail = '';
     if (phoneBook[i].email === undefined) {
         noteEmail = '';
     } else {
