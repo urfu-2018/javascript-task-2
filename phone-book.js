@@ -54,6 +54,7 @@ function update(phone, name, email) {
             phoneBook[i].name = name;
             phoneBook[i].email = email;
             isUpdated = true;
+            
             return(isUpdated);
         }
     }
