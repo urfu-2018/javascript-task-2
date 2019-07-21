@@ -21,9 +21,10 @@ let phoneNotes = [];
  */
 function add(phone, name, email) {
     let isNoteNew = true;
-    phoneBook.forEach(function (note, i, phoneBook) {
-        if (note.name === name || note.phone === phone)
+    phoneBook.forEach(function (note) {
+        if (note.name === name || note.phone === phone) {
             isNoteNew = false;
+        }
     });
     if (name !== undefined && isNoteNew && phone.length === 10 && !isNaN(phone)) {
         let newName = {};
@@ -31,10 +32,11 @@ function add(phone, name, email) {
         newName.phone = phone;
         newName.email = email;
         phoneBook.push(newName);
+
         return (true);
     }
-    return (false);
 
+    return (false);
 }
 
 /**
@@ -47,12 +49,15 @@ function add(phone, name, email) {
 function update(phone, name, email) {
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].phone === phone) {
-            if (name !== undefined)
+            if (name !== undefined) {
                 phoneBook[i].name = name;
+            }
             phoneBook[i].email = email;
+
             return (true);
         }
     }
+
     return (false);
 }
 
@@ -65,16 +70,12 @@ function findAndRemove(query) {
     let noteEmail = '';
     let deletedNotesCount = 0;
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].email === undefined) {
-            noteEmail = '';
-        } else 
-        noteEmail = phoneBook[i].email;
-        if (phoneBook[i].name.indexOf(query) >= 0 || phoneBook[i].phone.indexOf(query) >= 0 ||
-            noteEmail.indexOf(query) >= 0 || query === '*') {
+        if (isNoteFound(query, i)) {
                 phoneNotes.splice(i, 1);
                 deletedNotesCount++;
         }
     }
+
     return deletedNotesCount;
 }
 
@@ -86,20 +87,34 @@ function findAndRemove(query) {
 function find(query) {
     phoneNotes = [];
     let noteEmail = '';
-    if (query.length === 0 || query === undefined)
+    if (query.length === 0 || query === undefined) {
+
         return;
+    }
     for (let i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].email === undefined) {
-            noteEmail = '';
-        } else 
-        noteEmail = phoneBook[i].email;
-        if (phoneBook[i].name.indexOf(query) >= 0 || phoneBook[i].phone.indexOf(query) >= 0 ||
-            noteEmail.indexOf(query) >= 0 || query === '*') {
-            phoneNotes.push(phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substr(0, 3) + ') ' + phoneBook[i].phone.substr(3, 3) +
-                '-' + phoneBook[i].phone.substr(6, 2) + '-' + phoneBook[i].phone.substr(8, 2) + ', ' + phoneBook[i].email);
+        if (isNoteFound(query, i)) {
+            phoneNotes.push(phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substr(0, 3) + ') ' 
+            + phoneBook[i].phone.substr(3, 3) + '-' + phoneBook[i].phone.substr(6, 2) + '-' +
+            phoneBook[i].phone.substr(8, 2) + ', ' + phoneBook[i].email);
         }
     }
+    
     return phoneNotes.sort();
+}
+
+function isNoteFound(query, i){
+    if (phoneBook[i].email === undefined) {
+        noteEmail = '';
+    } else {
+        noteEmail = phoneBook[i].email;
+    }
+    if (phoneBook[i].name.indexOf(query) >= 0 || phoneBook[i].phone.indexOf(query) >= 0 ||
+            noteEmail.indexOf(query) >= 0 || query === '*') {
+
+                return true;
+            } 
+
+    return false;
 }
 
 /**
