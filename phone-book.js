@@ -94,7 +94,7 @@ function find(query) {
         if (isNoteFound(query, i)) {
             phoneNotes.push(phoneBook[i].name + ', +7 (' + phoneBook[i].phone.substr(0, 3) + ') ' +
                 phoneBook[i].phone.substr(3, 3) + '-' + phoneBook[i].phone.substr(6, 2) + '-' +
-                phoneBook[i].phone.substr(8, 2) + ', ' + noteEmail);
+                phoneBook[i].phone.substr(8, 2) + noteEmail);
         }
     }
 
@@ -106,7 +106,7 @@ function isNoteFound(query, i) {
     if (phoneBook[i].email === undefined) {
         noteEmail = '';
     } else {
-        noteEmail = phoneBook[i].email;
+        noteEmail = ', ' + phoneBook[i].email;
     }
     if (phoneBook[i].name.indexOf(query) >= 0 || phoneBook[i].phone.indexOf(query) >= 0 ||
         noteEmail.indexOf(query) >= 0 || query === '*') {
