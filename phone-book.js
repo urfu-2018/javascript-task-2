@@ -47,16 +47,16 @@ function add(phone, name, email) {
  * @returns {Boolean}
  */
 function update(phone, name, email) {
+    let isUpdated = false;
     for (let i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].phone === phone && name !== undefined) {
             phoneBook[i].name = name;
         }
+        isUpdated = true;
         phoneBook[i].email = email;
-
-        return (true);
     }
 
-    return (false);
+    return (isUpdated);
 }
 
 /**
