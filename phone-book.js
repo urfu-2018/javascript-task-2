@@ -130,6 +130,7 @@ function сonvertMapToArray() {
 
 function transformString(phone, name, email) {
     var changedEmail = '';
+    var a = 0;
     if (email.length === 0) {
         email = changedEmail;
     } else {
