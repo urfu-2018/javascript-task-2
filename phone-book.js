@@ -1,3 +1,5 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable no-unused-vars */
 'use strict';
 
 /**
@@ -9,7 +11,7 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = [];
 
 /**
  * Добавление записи в телефонную книгу
@@ -19,7 +21,23 @@ let phoneBook;
  * @returns {Boolean}
  */
 function add(phone, name, email) {
+    const validPhone = (typeof (phone) === 'string') && /^\d{10}$/.test(phone);
+    const validName = (typeof (name) === 'string') && /^[a-zA-Za-яА-Я0-9]/.test(name);
+    const findContact = phoneBook.find(function (contact) {
+        return contact.phone === phone;
+    });
 
+    if (!validPhone || !validName || findContact !== undefined) {
+        return false;
+    }
+
+    let newContact = {};
+    newContact.phone = phone;
+    newContact.name = name;
+    newContact.email = email;
+    phoneBook.push(newContact);
+
+    return true;
 }
 
 /**
@@ -29,27 +47,24 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-
-}
+// function update(phone, name, email) {
+// }
 
 /**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query
  * @returns {Number}
  */
-function findAndRemove(query) {
-
-}
+// function findAndRemove(query) {
+// }
 
 /**
  * Поиск записей по запросу в телефонной книге
  * @param {String} query
  * @returns {String[]}
  */
-function find(query) {
-
-}
+// function find(query) {
+// }
 
 /**
  * Импорт записей из csv-формата
@@ -67,9 +82,9 @@ function importFromCsv(csv) {
 
 module.exports = {
     add,
-    update,
-    findAndRemove,
-    find,
+    // update,
+    // findAndRemove,
+    // find,
     importFromCsv,
 
     isStar
