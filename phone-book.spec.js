@@ -1,30 +1,27 @@
-/* eslint-env mocha */
-'use strict';
+const assert = require('assert')
 
-const assert = require('assert');
-
-const phoneBook = require('./phone-book');
+const phoneBook = require('./phone-book.js')
 
 describe('phone-book', () => {
     it('должен добавлять записи', () => {
-        assert.ok(phoneBook.add('5554440044', 'Григорий', 'grisha@example.com'));
-        assert.ok(phoneBook.add('5552220022', 'Борис', 'boris@example.com'));
-        assert.ok(phoneBook.add('5551110011', 'Алекс'));
-        assert.ok(phoneBook.add('5553330033', 'Валерий', 'valera@example.com'));
-    });
+        assert.ok(phoneBook.add('5554440044', 'Григорий', 'grisha@example.com'))
+        assert.ok(phoneBook.add('5552220022', 'Борис', 'boris@example.com'))
+        assert.ok(phoneBook.add('5551110011', 'Алекс'))
+        assert.ok(phoneBook.add('5553330033', 'Валерий', 'valera@example.com'))
+    })
 
     it('не должен добавлять неправильные записи', () => {
-        assert.ok(!phoneBook.add('3330033', 'Неизвестный', 'unknown@example.com'));
-        assert.ok(!phoneBook.add('abc5556660055', 'Николай', 'kolya@example.com'));
-        assert.ok(!phoneBook.add('5556660066abc', 'Герман', 'gera@example.com'));
-        assert.ok(!phoneBook.add('5551110011', 'Алексей'));
-        assert.ok(!phoneBook.add('5555550055'));
-    });
+        assert.ok(!phoneBook.add('3330033', 'Неизвестный', 'unknown@example.com'))
+        assert.ok(!phoneBook.add('abc5556660055', 'Николай', 'kolya@example.com'))
+        assert.ok(!phoneBook.add('5556660066abc', 'Герман', 'gera@example.com'))
+        assert.ok(!phoneBook.add('5551110011', 'Алексей'))
+        assert.ok(!phoneBook.add('5555550055'))
+    })
 
     it('должен обновлять существующие записи', () => {
-        assert.ok(phoneBook.update('5551110011', 'Алексей', 'alex@example.com'));
-        assert.ok(phoneBook.update('5553330033', 'Валерий'));
-    });
+        assert.ok(phoneBook.update('5551110011', 'Алексей', 'alex@example.com'))
+        assert.ok(phoneBook.update('5553330033', 'Валерий'))
+    })
 
     it('должен искать все записи по запросу "*"', () => {
         assert.deepStrictEqual(phoneBook.find('*'), [
@@ -32,8 +29,8 @@ describe('phone-book', () => {
             'Борис, +7 (555) 222-00-22, boris@example.com',
             'Валерий, +7 (555) 333-00-33',
             'Григорий, +7 (555) 444-00-44, grisha@example.com'
-        ]);
-    });
+        ])
+    })
 
     it('должен искать все записи по запросу "555"', () => {
         assert.deepStrictEqual(phoneBook.find('555'), [
@@ -41,12 +38,12 @@ describe('phone-book', () => {
             'Борис, +7 (555) 222-00-22, boris@example.com',
             'Валерий, +7 (555) 333-00-33',
             'Григорий, +7 (555) 444-00-44, grisha@example.com'
-        ]);
-    });
+        ])
+    })
 
     it('должен удалять элементы из телефонной книги', () => {
-        assert.strictEqual(phoneBook.findAndRemove('@'), 3);
-    });
+        assert.strictEqual(phoneBook.findAndRemove('@'), 3)
+    })
 
     if (phoneBook.isStar) {
         it('должен экспортировать из cvs', () => {
@@ -56,9 +53,9 @@ describe('phone-book', () => {
                 'Алексей;5551110011;alex@example.com',
                 'Валерий;5553330033;valera@example.com',
                 'Неизвестный;3330033;unknown@example.com'
-            ].join('\n');
+            ].join('\n')
 
-            assert.strictEqual(phoneBook.importFromCsv(csv), 4);
-        });
+            assert.strictEqual(phoneBook.importFromCsv(csv), 4)
+        })
     }
-});
+})

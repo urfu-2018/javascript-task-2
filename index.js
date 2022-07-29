@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 'use strict';
 
 const phoneBook = require('./phone-book');
@@ -37,7 +38,7 @@ if (phoneBook.isStar) {
         'Григорий;5554440044;grisha@example.com',
         'Алексей;5551110011;alex@example.com',
         'Валерий;5553330033;valera@example.com',
-        'Неизвестный;3330033;unknown@example.com'
+        'Неизвестный;3330033;unknown@example.com',
     ].join('\n');
 
     // Импорт записей из csv, вернется `4`
