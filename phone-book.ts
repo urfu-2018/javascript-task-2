@@ -12,6 +12,7 @@ interface IPhoneBook {
  */
 const phoneBook: IPhoneBook = {};
 
+
 /**
  * Добавление записи в телефонную книгу
  *
@@ -33,6 +34,7 @@ export function add(phone: string, name: string, email?: string): boolean {
     return false;
 }
 
+
 /**
  * Обновление записи в телефонной книге
  * @param {String} phone
@@ -53,42 +55,49 @@ export function update(phone: string, name: string, email?: string): boolean {
     return false;
 }
 
+function filterPhoneBook(query: string): string[] {
+
+    if (query === '') {
+        return [];
+    }
+
+    if (query === '*') {
+        return Object.keys(phoneBook);
+    }
+
+    const filterResult = Object.keys(phoneBook).filter((phone) => {
+
+        const isPhoneFound: boolean = phone.toLowerCase().includes(query.toLowerCase())
+        const isNameFound: boolean = phoneBook[phone][0].toLowerCase().includes(query.toLowerCase())
+        const isEmailFound: boolean | undefined = phoneBook[phone][1]?.toLowerCase().includes(query.toLowerCase())
+
+        if ((isPhoneFound || isNameFound || isEmailFound)) {
+            return true
+        } else {
+            return false
+        }
+
+    })
+
+    return filterResult
+
+}
+
+
 /**
  * Удаление записей по запросу из телефонной книги
  * @param {String} query   
  * @returns {Number}
  */
 export function findAndRemove(query: string): number {
-
-    // Преобразуем в phoneBook в массив, добавляем счетчик
-    const arrayPhoneBook = Object.entries(phoneBook);
     let deletedCount = 0
+    const fiteredContacts = filterPhoneBook(query)
 
-    // Условие для ''
-    if (query === '') {
-        return 0;
-    }
+    fiteredContacts.forEach((element) => {
+        delete phoneBook[element]
+        deletedCount++
+    })
 
-    // Условие для '*'
-    if (query === '*') {
-        query = '';
-    }
-
-    // Фильтрация массива
-    for (let i = 0; i < arrayPhoneBook.length; i++) {
-
-        const targetPhone: string = arrayPhoneBook[i][0]
-        const targetName: string = arrayPhoneBook[i][1][0]
-        const targetEmail: string | undefined = arrayPhoneBook[i][1][1]
-        const isPhoneFound: boolean = targetPhone.toLowerCase().includes(query.toLowerCase())
-        const isNameFound: boolean = targetName.toLowerCase().includes(query.toLowerCase())
-        const isEmailFound: boolean | undefined = targetEmail?.toLowerCase().includes(query.toLowerCase())
-
-        if ((isPhoneFound || isNameFound || isEmailFound)) {
-            delete phoneBook[targetPhone]
-            deletedCount++
-        }
-    }
     return deletedCount;
 }
 
@@ -100,73 +109,47 @@ export function findAndRemove(query: string): number {
  */
 export function find(query: string): string[] {
 
-    // Преобразуем в phoneBook в массив, добавляем массив выходных данных
-    const arrayPhoneBook = Object.entries(phoneBook);
-    const parsedPhoneBook: string[] = ['']
+    const fiteredContacts = filterPhoneBook(query)
 
-    // Условие для ''
-    if (query === '') {
-        return [''];
-    }
+    const parsedPhoneBook = fiteredContacts.map((phone) => {
 
-    // Условие для '*'
-    if (query === '*') {
-        query = '';
-    }
+        const name: string = phoneBook[phone][0]
+        const email: string | undefined = phoneBook[phone][1]
+        const modifiedPhone = `+7 (${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 8)}-${phone.substring(8, 10)}`
 
-    // Фильтрация массива
-    for (let i = 0; i < arrayPhoneBook.length; i++) {
-
-        const targetPhone: string = arrayPhoneBook[i][0]
-        const targetName: string = arrayPhoneBook[i][1][0]
-        const targetEmail: string | undefined = arrayPhoneBook[i][1][1]
-        const isEmailTypeString: boolean = typeof targetEmail === 'string'
-        const isPhoneFound: boolean = targetPhone.toLowerCase().includes(query.toLowerCase())
-        const isNameFound: boolean = targetName.toLowerCase().includes(query.toLowerCase())
-        const isEmailFound: boolean | undefined = targetEmail?.toLowerCase().includes(query.toLowerCase())
-
-        if ((isPhoneFound || isNameFound || isEmailFound)) {
-
-            const modifiedPhone = `+7 (${targetPhone.substring(0, 3)}) ${targetPhone.substring(3, 6)}-${targetPhone.substring(6, 8)}-${targetPhone.substring(8, 10)}`
-
-            if (isEmailTypeString) {
-                parsedPhoneBook[i] = `${targetName}, ${modifiedPhone}, ${targetEmail}`
-            }
-            else {
-                parsedPhoneBook[i] = `${targetName}, ${modifiedPhone}`
-            }
+        if (email) {
+            return `${name}, ${modifiedPhone}, ${email}`
         }
         else {
-            arrayPhoneBook.splice(i, 1)
-            i = i - 1;
+            return `${name}, ${modifiedPhone}`
         }
-    }
-    return parsedPhoneBook.sort();
+    })
 
+    return parsedPhoneBook.sort()
 }
 
-export const importFromCsv = (csv: string) => {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+export const importFromCsv = (csv: string): number => {
 
     const csvStringsFormat: string[] | null = csv.match(/.+(?=\n)/g)
     let counter = 0
-    if (!(csvStringsFormat === null)) {
-        for (let i = 0; i < csvStringsFormat.length; i++) {
-            const contact = csvStringsFormat[i].split(';')
-            if (typeof contact[2] === 'undefined') {
-                if (update(contact[1], contact[0]) || add(contact[1], contact[0])) {
-                    counter++
-                }
-            }
-            else {
-                if (update(contact[1], contact[0], contact[2]) || add(contact[1], contact[0], contact[2])) {
-                    counter++
-                }
+
+    if (!csvStringsFormat) {
+        return 0;
+    }
+
+    csvStringsFormat.forEach((element, i) => {
+        const contact = csvStringsFormat[i].split(';')
+        if (contact[2]) {
+            if (update(contact[1], contact[0], contact[2]) || add(contact[1], contact[0], contact[2])) {
+                counter++
             }
         }
-    }
+        else {
+            if (update(contact[1], contact[0]) || add(contact[1], contact[0])) {
+                counter++
+            }
+        }
+    })
 
     return counter;
 }
